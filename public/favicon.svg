@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" role="img" aria-label="Microsoft">
+  <!-- The Microsoft four-square mark, no wordmark. Official geometry: 9-unit
+       squares with a 1-unit gutter, edge to edge, matching the mark in
+       src/components/Layout/MicrosoftLogo.jsx so the tab icon and the in-app
+       logo cannot drift apart. The gutter is deliberately not smaller — at 16px
+       a narrower one anti-aliases into mud and the quadrants stop reading. -->
+  <rect x="0" y="0" width="9" height="9" fill="#F25022" />
+  <rect x="10" y="0" width="9" height="9" fill="#7FBA00" />
+  <rect x="0" y="10" width="9" height="9" fill="#00A4EF" />
+  <rect x="10" y="10" width="9" height="9" fill="#FFB900" />
+</svg>

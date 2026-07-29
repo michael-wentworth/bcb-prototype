@@ -17,17 +17,13 @@ import styles from './MicrosoftLogo.module.css';
 export default function MicrosoftLogo({ size = 20, as: As = 'span', ...rest }) {
   return (
     <As className={styles.lockup} style={{ '--ms-mark': `${size}px` }} {...rest}>
-      <svg
-        className={styles.mark}
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-        focusable="false"
-      >
-        {/* 48-unit squares with a 4-unit gutter, matching the asset's ~7% gap. */}
-        <rect x="0" y="0" width="48" height="48" fill="#F25022" />
-        <rect x="52" y="0" width="48" height="48" fill="#7FBA00" />
-        <rect x="0" y="52" width="48" height="48" fill="#00A4EF" />
-        <rect x="52" y="52" width="48" height="48" fill="#FFB900" />
+      <svg className={styles.mark} viewBox="0 0 19 19" aria-hidden="true" focusable="false">
+        {/* Official geometry: 9-unit squares with a 1-unit gutter. Kept in sync
+            with public/favicon.svg. */}
+        <rect x="0" y="0" width="9" height="9" fill="#F25022" />
+        <rect x="10" y="0" width="9" height="9" fill="#7FBA00" />
+        <rect x="0" y="10" width="9" height="9" fill="#00A4EF" />
+        <rect x="10" y="10" width="9" height="9" fill="#FFB900" />
       </svg>
       <span className={styles.wordmark}>Microsoft</span>
     </As>
