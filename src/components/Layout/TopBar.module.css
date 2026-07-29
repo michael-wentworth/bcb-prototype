@@ -140,20 +140,18 @@
   background-color: var(--colorBrandBackground);
 }
 
-/* -------------------------------- utilities -------------------------------- */
-
-.actions {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: var(--spacingHorizontalXS);
-}
+/* -------------------------------- utilities --------------------------------
+   The account button used to sit in an `.actions` flex row alongside the search
+   trigger and the theme toggle. With both of those gone it was the only child,
+   so the row went with them and the button is a direct flex item of the bar —
+   which also drops the margin-left that used to separate it from its siblings,
+   putting it back on the bar's own 12px gap. */
 
 .account {
+  flex: none;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-left: var(--spacingHorizontalXS);
   padding: 4px 6px 4px 10px;
   border: none;
   border-radius: var(--borderRadiusMedium);

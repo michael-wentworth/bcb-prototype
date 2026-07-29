@@ -18,6 +18,7 @@ import {
 import { applyNarrativeAction } from '../data/aiActions.js';
 import { DEMO_EXTRACTION, EXTRACTION_EVIDENCE } from '../data/demoCase.js';
 import { getStepIntro, resolveResponse } from '../data/aiScript.js';
+import { CURRENT_USER_ALIAS } from '../data/session.js';
 
 const AppStateContext = createContext(null);
 
@@ -48,7 +49,7 @@ const emptyEnvironment = {
   existingLicenses: [],
   competitorProducts: [],
   securityStack: [],
-  sellerAlias: 'michaelw@microsoft.com',
+  sellerAlias: CURRENT_USER_ALIAS,
 };
 
 const emptyCase = { name: '', analysisPeriod: 3 };

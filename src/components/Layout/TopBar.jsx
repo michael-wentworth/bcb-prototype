@@ -131,13 +131,11 @@ export default function TopBar() {
       {/* Global search lived here, but it had nothing to search across that the
           case list does not already filter in place. The one search that earns
           its keep is on My Cases, scoped to the rows in front of you. */}
-      <div className={styles.actions}>
-        <button type="button" className={styles.account} onClick={() => notImplemented('Account')}>
-          <span className={styles.accountName}>{CURRENT_USER}</span>
-          <Avatar name={CURRENT_USER} size={28} color="colorful" />
-          <ChevronDown12Regular aria-hidden="true" className={styles.accountChevron} />
-        </button>
-      </div>
+      <button type="button" className={styles.account} onClick={() => notImplemented('Account')}>
+        <span className={styles.accountName}>{CURRENT_USER}</span>
+        <Avatar name={CURRENT_USER} size={28} color="colorful" />
+        <ChevronDown12Regular aria-hidden="true" className={styles.accountChevron} />
+      </button>
     </header>
   );
 }

@@ -11,3 +11,11 @@
  * Woodgrove and Tailspin customers the prototype already ships with.
  */
 export const CURRENT_USER = 'Megan Bowen';
+
+/**
+ * The same persona as an alias. The Seller Alias field on step 1 is read-only
+ * and tells the user it came from their authenticated profile, so it has to name
+ * the person the top bar names — otherwise the form contradicts the chrome about
+ * who is signed in.
+ */
+export const CURRENT_USER_ALIAS = 'meganb@microsoft.com';

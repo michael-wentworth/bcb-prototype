@@ -114,13 +114,16 @@ src/
     authoring.js      authorship model and narrative sections
     aiActions.js      section-level text transformations
     aiScript.js       scripted intents and step commentary
+    caseLibrary.js    seeded My Cases and Example Cases, costed through model.js
+    session.js        the signed-in user, named once for the bar and the seeds
   components/
     CustomerDetails/  step 1
     SkuSelection/     step 2 (outcomes, SKUs, bundle, competitors)
     CustomerReport/   step 3
+    MyCases/          the case library, and the app's landing destination
     Narrative/        authorable prose sections
     ResultsDashboard/ PaybackChart, SpendComparison (charts only)
-    AIAssistantPanel/ the copilot
+    AIAssistantPanel/ the copilot — only mounted inside a case
     WorkflowHeader/   three-step stepper
     Layout/  shared/
   state/AppStateContext.jsx
