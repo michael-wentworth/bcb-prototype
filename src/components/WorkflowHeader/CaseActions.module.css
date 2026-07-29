@@ -1,0 +1,30 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalXS);
+  justify-self: end;
+}
+
+/* Secondary, not primary. The top bar already spends the one blue on "New
+   business case", and a second blue 56px below it reads as competition rather
+   than hierarchy. */
+.share {
+  flex: none;
+}
+
+.shareLabel {
+  white-space: nowrap;
+}
+
+/* Queries the band's width, not the viewport's — see the note in
+   WorkflowHeader.module.css for why that distinction is the whole problem here.
+   A container *name* is global rather than module-scoped, so this rule can sit in
+   the consuming component's own file while the container is declared next door.
+
+   The label is hidden rather than the button unmounted, so the control keeps its
+   identity, its tooltip and its accessible name at every width. */
+@container bcbBand (max-width: 699px) {
+  .shareLabel {
+    display: none;
+  }
+}

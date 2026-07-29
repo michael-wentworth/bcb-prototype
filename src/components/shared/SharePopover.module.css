@@ -1,0 +1,79 @@
+.surface {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+}
+
+.heading {
+  margin: 0 0 var(--spacingVerticalM);
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Allowed to wrap, unlike the band — the full name has to be readable somewhere. */
+.name {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+  overflow-wrap: anywhere;
+}
+
+.name[data-empty='true'] {
+  font-weight: var(--fontWeightRegular);
+  color: var(--colorNeutralForeground4);
+}
+
+.meta {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.owner {
+  margin: var(--spacingVerticalS) 0 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.warn {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalS);
+  margin-top: var(--spacingVerticalM);
+  padding: var(--spacingVerticalS) var(--spacingHorizontalS);
+  border-left: 3px solid var(--colorPaletteDarkOrangeBorderActive);
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorNeutralBackground3);
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.warn span {
+  flex: 1;
+  min-width: 0;
+}
+
+.divider {
+  display: block;
+  height: 1px;
+  margin: var(--spacingVerticalL) 0;
+  background-color: var(--colorNeutralStroke2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalS);
+}
+
+.caption {
+  margin: var(--spacingVerticalM) 0 0;
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground4);
+}

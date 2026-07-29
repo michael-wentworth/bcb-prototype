@@ -83,9 +83,17 @@
     position: relative;
   }
 
+  /* Starts below the step band rather than at the top of the body. At top: 0 the
+     overlay covered the band's right 380px, which hid steps 2 and 3 and would now
+     also bury Share — unreachable, with nothing on screen to say why. Dropping it
+     by the band's height leaves the band its full width, so at 1024px you get all
+     three step names, a labelled Share and a readable case name. The two headers
+     keep identical heights; they simply stop sharing a y at a width where the
+     panel already floats over the content with a shadow rather than sitting in a
+     continuous band beside it. */
   .body > aside {
     position: absolute;
-    top: 0;
+    top: var(--bcb-subheader-height);
     right: 0;
     bottom: 0;
     width: min(380px, 92vw);

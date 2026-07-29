@@ -33,7 +33,9 @@ export default function AppShell({ panelOpen, onTogglePanel }) {
       <div className={styles.body}>
         <main className={styles.workflow}>
           {/* The stepper belongs to a case in progress, not to browsing. */}
-          {inBuilder ? <WorkflowHeader /> : null}
+          {/* The band needs to know, because the collapsed copilot's tab is
+              positioned over its right edge and would sit on the case actions. */}
+          {inBuilder ? <WorkflowHeader copilotCollapsed={!panelOpen} /> : null}
           <div className={`${styles.workspace} scrollArea`} ref={workspaceRef}>
             <div
               className={`${styles.stageContainer} ${inBuilder ? '' : styles.wide}`}

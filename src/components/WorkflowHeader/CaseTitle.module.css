@@ -1,0 +1,110 @@
+/* The case identity, sized to whatever grid track the band gives it. Every level
+   from here down to the ellipsised span carries min-width: 0, because a flex or
+   grid child's default min-width is auto — without this the name would refuse to
+   shrink and would push the stepper sideways instead of truncating. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* Fixed 32px so the rename Input drops into exactly the box the title vacated —
+   the meta line under it must not move by a pixel when you start typing. */
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 32px;
+}
+
+.titleButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  /* Pulled left by its own padding so the text edge lines up with the meta line
+     below it rather than sitting indented from it. */
+  margin-left: -6px;
+  padding: 1px 6px;
+  border: none;
+  border-radius: var(--borderRadiusMedium);
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.titleButton:hover {
+  background-color: var(--colorSubtleBackgroundHover);
+}
+
+.titleButton:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+/* 14px, matching the Input this swaps into — a 16px title would jump size at the
+   moment of the swap, and would break the band's width budget by ~14%. */
+.titleText {
+  min-width: 0;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.titleText[data-empty='true'] {
+  font-weight: var(--fontWeightRegular);
+  color: var(--colorNeutralForeground4);
+  border-bottom: 1px dashed var(--colorNeutralStroke1);
+}
+
+/* The pencil's 16px plus its gap is reserved at all times, so revealing it on
+   hover never reflows the row. On an unnamed case it stays lit, because hover
+   does not exist in a room watching a projector. */
+.pencil {
+  flex: none;
+  font-size: 16px;
+  color: var(--colorNeutralForeground3);
+  opacity: 0;
+  transition: opacity var(--durationFaster) var(--curveEasyEase);
+}
+
+.titleButton:hover .pencil,
+.titleButton:focus-visible .pencil {
+  opacity: 1;
+}
+
+.titleText[data-empty='true'] + .pencil {
+  opacity: 1;
+  color: var(--colorBrandForeground1);
+}
+
+.editInput {
+  width: 100%;
+}
+
+/* Hold the weight across the swap, so only the affordance changes and not the
+   type. */
+.editInput input {
+  font-weight: var(--fontWeightSemibold);
+}
+
+/* Costs no horizontal width — it truncates inside the track the name already
+   claims — and no vertical, because the band was already two lines tall for the
+   step captions. That is the trade: the second line stops restating the step and
+   starts telling you which case you are in. */
+.meta {
+  padding-left: 6px;
+  font-size: var(--fontSizeBase100);
+  line-height: 14px;
+  color: var(--colorNeutralForeground3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

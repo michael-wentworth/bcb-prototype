@@ -1,26 +1,56 @@
 /* Height is shared with the copilot panel header so the two line up exactly —
-   see --bcb-subheader-height in global.css. */
+   see --bcb-subheader-height in global.css.
+
+   Three tracks: case title, stepper, case actions.
+
+   The side tracks MUST be minmax() with explicit floors, never a bare `1fr`.
+   `1fr` means `minmax(auto, 1fr)`, and an auto minimum resolves to min-content —
+   so a long case name would widen track 1 instead of ellipsising, and slide the
+   stepper to the right. A navigation control whose position depends on the length
+   of an unrelated string is a control people mis-click. Equal numeric floors keep
+   the two tracks symmetric, so the stepper's x never moves when the case is
+   renamed or a different case is opened. */
 .root {
+  container-type: inline-size;
+  container-name: bcbBand;
   flex: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: minmax(96px, 1fr) auto minmax(140px, 1fr);
+  align-items: center;
+  column-gap: var(--spacingHorizontalL);
   height: var(--bcb-subheader-height);
   box-sizing: border-box;
   background-color: var(--colorNeutralBackground1);
   border-bottom: 1px solid var(--colorNeutralStroke2);
+  /* Held constant on purpose. container-type queries the CONTENT box, so a
+     @container rule that changed this padding would both fail silently — a
+     container query cannot style its own container — and oscillate: 924 wide ->
+     24px padding -> content 876 -> threshold trips -> 16px padding -> content
+     892 -> un-trips. Anything width-dependent about the padding is applied by
+     attribute selector or media query below, never inside @container. */
   padding: 0 var(--spacingHorizontalXXL);
   z-index: 2;
+}
+
+/* When the copilot is minimised its 52px tab is absolutely positioned over this
+   band's right edge, which would sit on top of the actions. Reserve the width. */
+.root[data-copilot='collapsed'] {
+  padding-right: calc(var(--spacingHorizontalXXL) + 52px + var(--spacingHorizontalS));
+}
+
+.stepper {
+  min-width: 0;
 }
 
 .list {
   display: flex;
   align-items: center;
   gap: 0;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   list-style: none;
-  max-width: 1080px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Steps are sized to their own content and the rails take the leftover row
@@ -161,14 +191,26 @@
   border: 0;
 }
 
-@media (max-width: 1180px) {
+/* ------------------------------- degradation --------------------------------
+   These key off the BAND's width, not the viewport's, and that distinction is the
+   whole problem. The band is the full viewport, or viewport-408 with the copilot
+   docked, or viewport-372 at mid widths — so a 1400px viewport can mean a band of
+   1400 or 992 depending only on whether a panel is open.
+
+   The media queries that used to live here got this exactly backwards: they hid
+   the step captions at a 1024px viewport, where the band is a roomy 1024px wide,
+   and showed them at 1200px, where the band is a cramped 828px.
+
+   Order of sacrifice, each step buying room for the case name:
+     < 1140  the captions go        (stepper ~660 -> ~520)
+     <  880  all labels but the current step's go   (-> ~310)
+     <  700  Share drops to its icon — see CaseActions.module.css
+     <  580  the labels go entirely, markers only   (-> ~180)
+   ---------------------------------------------------------------------------- */
+
+@container bcbBand (max-width: 1139px) {
   .caption {
     display: none;
-  }
-
-  .root {
-    padding-left: var(--spacingHorizontalL);
-    padding-right: var(--spacingHorizontalL);
   }
 
   /* Give the space back to the labels before they start ellipsising — a short
@@ -183,8 +225,15 @@
   }
 }
 
-@media (max-width: 820px) {
-  .label {
-    font-size: var(--fontSizeBase200);
+/* Where you are still says its name; the steps either side become markers. */
+@container bcbBand (max-width: 879px) {
+  .item:not([data-state='current']) .labels {
+    display: none;
+  }
+}
+
+@container bcbBand (max-width: 579px) {
+  .labels {
+    display: none;
   }
 }

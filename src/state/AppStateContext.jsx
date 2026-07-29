@@ -18,7 +18,7 @@ import {
 import { applyNarrativeAction } from '../data/aiActions.js';
 import { DEMO_EXTRACTION, EXTRACTION_EVIDENCE } from '../data/demoCase.js';
 import { getStepIntro, resolveResponse } from '../data/aiScript.js';
-import { CURRENT_USER_ALIAS } from '../data/session.js';
+import { CURRENT_USER, CURRENT_USER_ALIAS } from '../data/session.js';
 
 const AppStateContext = createContext(null);
 
@@ -90,6 +90,13 @@ const initialState = {
    */
   view: 'myCases',
   activeCaseId: null,
+  /**
+   * Who owns the open case and what state it is in. Carried on the working case
+   * rather than looked up from the library each render, because a new case has no
+   * library entry to look up — it is a draft owned by whoever is signed in.
+   */
+  activeCaseStatus: 'draft',
+  activeCaseOwner: CURRENT_USER,
 
   step: 0,
   maxStepReached: 0,
@@ -150,6 +157,8 @@ function reducer(state, action) {
         ...initialState,
         view: 'builder',
         activeCaseId: null,
+        activeCaseStatus: 'draft',
+        activeCaseOwner: CURRENT_USER,
         customer: { ...emptyCustomer },
         environment: { ...emptyEnvironment },
         caseSetup: { ...emptyCase },
@@ -163,6 +172,8 @@ function reducer(state, action) {
         ...initialState,
         view: 'builder',
         activeCaseId: action.entry.id,
+        activeCaseStatus: action.entry.status || 'draft',
+        activeCaseOwner: action.entry.owner || CURRENT_USER,
         step: 0,
         maxStepReached: 2,
         customer: { ...emptyCustomer, ...i.customer },

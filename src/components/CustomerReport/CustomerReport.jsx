@@ -27,6 +27,7 @@ import MetricTile from '../shared/MetricTile.jsx';
 import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import SectionHeading from '../shared/SectionHeading.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
+import SharePopover from '../shared/SharePopover.jsx';
 import NarrativeSection from '../Narrative/NarrativeSection.jsx';
 import PaybackChart from '../ResultsDashboard/PaybackChart.jsx';
 import SpendComparison from '../ResultsDashboard/SpendComparison.jsx';
@@ -73,9 +74,12 @@ export default function CustomerReport() {
     <div className={styles.root}>
       <Toaster toasterId={toasterId} />
 
+      {/* The case name lives in the step band now, so the report does not title
+          itself with it — that would print it twice, 24px apart. The literal also
+          matches steps 1 and 2, which both use the step's own name. */}
       <SectionHeading
         eyebrow="Step 3 of 3"
-        title={caseSetup.name || customer.accountName || 'Customer Report'}
+        title="Customer Report"
         description={`${caseSetup.analysisPeriod}-year analysis${
           customer.numberOfUsers ? ` across ${Number(customer.numberOfUsers).toLocaleString('en-US')} users` : ''
         }. Every figure derives from what you entered on the previous two steps.`}
@@ -336,13 +340,14 @@ export default function CustomerReport() {
           >
             Download PDF
           </Button>
-          <Button
-            appearance="secondary"
-            icon={<Share20Regular />}
-            onClick={() => notify('Share link created', 'Prototype — nothing left the browser.')}
-          >
-            Share
-          </Button>
+          {/* The same popover the step band opens, so the two cannot diverge.
+              The downloads stay as buttons here — someone standing on the report
+              should not have to hunt up into the app chrome for them. */}
+          <SharePopover>
+            <Button appearance="secondary" icon={<Share20Regular />}>
+              Share
+            </Button>
+          </SharePopover>
         </div>
       </Card>
 
