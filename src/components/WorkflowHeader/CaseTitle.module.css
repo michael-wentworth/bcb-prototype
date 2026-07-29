@@ -1,27 +1,34 @@
-/* The case identity, sized to whatever grid track the band gives it. Every level
-   from here down to the ellipsised span carries min-width: 0, because a flex or
-   grid child's default min-width is auto — without this the name would refuse to
-   shrink and would push the stepper sideways instead of truncating. */
+/* The case identity: name, then its attributes on the same line. Every level from
+   here down to the ellipsised span carries min-width: 0, because a flex child's
+   default min-width is auto — without it the name would refuse to shrink and would
+   push against Share instead of truncating. */
 
 .root {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
   min-width: 0;
-  /* With the stepper gone the title track runs nearly the whole band. Cap it so a
-     long name stops at a readable measure instead of sprawling toward Share; the
-     ellipsis below is still the backstop. */
-  max-width: 60ch;
 }
 
-/* Fixed 32px so the rename Input drops into exactly the box the title vacated —
-   the meta line under it must not move by a pixel when you start typing. */
+/* Fixed height so the rename Input drops into exactly the box the title vacated.
+   40px is Fluent's `large` Input height — the size the title's 20px type matches. */
 .nameRow {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex: 0 1 auto;
   min-width: 0;
-  min-height: 32px;
+  min-height: 40px;
+  /* A long name stops at a readable measure rather than crowding the attributes
+     beside it; the ellipsis below is still the backstop. */
+  max-width: 52ch;
+}
+
+/* Grows to that same 52ch measure while editing, so the field is as wide as the
+   title was rather than shrinking to fit its own contents. */
+.nameRow[data-editing='true'] {
+  flex: 1 1 auto;
+  width: 52ch;
 }
 
 .titleButton {
@@ -29,10 +36,10 @@
   align-items: center;
   gap: 4px;
   min-width: 0;
-  /* Pulled left by its own padding so the text edge lines up with the meta line
-     below it rather than sitting indented from it. */
+  /* Pulled left by its own padding so the text edge sits flush with the band's
+     padding rather than looking indented from it. */
   margin-left: -6px;
-  padding: 1px 6px;
+  padding: 2px 6px;
   border: none;
   border-radius: var(--borderRadiusMedium);
   background: none;
@@ -50,12 +57,15 @@
   outline-offset: 1px;
 }
 
-/* 14px, matching the Input this swaps into — a 16px title would jump size at the
-   moment of the swap, and would break the band's width budget by ~14%. */
+/* 20px: the case is the document, so it carries the same weight in the chrome as
+   the product name above it, and stays a step below the 24px step heading in the
+   content — which is content, not chrome. */
 .titleText {
   min-width: 0;
-  font-size: var(--fontSizeBase300);
+  font-size: var(--fontSizeBase500);
+  line-height: var(--lineHeightBase500);
   font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.01em;
   color: var(--colorNeutralForeground1);
   white-space: nowrap;
   overflow: hidden;
@@ -68,9 +78,9 @@
   border-bottom: 1px dashed var(--colorNeutralStroke1);
 }
 
-/* The pencil's 16px plus its gap is reserved at all times, so revealing it on
-   hover never reflows the row. On an unnamed case it stays lit, because hover
-   does not exist in a room watching a projector. */
+/* The pencil's width plus its gap is reserved at all times, so revealing it on
+   hover never reflows the row. On an unnamed case it stays lit, because hover does
+   not exist in a room watching a projector. */
 .pencil {
   flex: none;
   font-size: 16px;
@@ -93,21 +103,38 @@
   width: 100%;
 }
 
-/* Hold the weight across the swap, so only the affordance changes and not the
-   type. */
+/* Hold both size and weight across the swap, so only the affordance changes and
+   never the type. `large` gives 16px; the title is 20px. */
 .editInput input {
+  font-size: var(--fontSizeBase500);
   font-weight: var(--fontWeightSemibold);
 }
 
-/* Costs no horizontal width — it truncates inside the track the name already
-   claims — and no vertical, because a 14px name over a 12px meta line is what a
-   60px band fits anyway. */
+/* --------------------------- name / attributes ----------------------------- */
+
+/* Same idiom as the top bar's rule between the Microsoft lockup and the product
+   name: it separates two kinds of thing without spending a glyph. */
+.rule {
+  flex: none;
+  width: 1px;
+  height: 20px;
+  background-color: var(--colorNeutralStroke2);
+}
+
+/* flex: none, so when the row runs out of room the NAME truncates and the
+   attributes stay whole — losing "Draft" off the end of a status would be worse
+   than losing the tail of a title that is already ellipsised. Below 620px of band
+   the attributes go entirely; the name matters more. */
 .meta {
-  padding-left: 6px;
-  font-size: var(--fontSizeBase100);
-  line-height: 14px;
+  flex: none;
+  font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+@container bcbBand (max-width: 620px) {
+  .rule,
+  .meta {
+    display: none;
+  }
 }

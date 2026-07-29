@@ -48,12 +48,18 @@ export default function CaseTitle({ renaming, onStartRename, onEndRename }) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.nameRow}>
+      {/* The row is content-sized while displaying, so the rule and the attributes
+          sit right after a short name. While editing it needs a definite width
+          instead: an Input at width:100% of a shrink-to-fit parent is circular and
+          collapses to something narrower than the title it replaced. */}
+      <div className={styles.nameRow} data-editing={renaming ? 'true' : undefined}>
         {renaming ? (
           <Input
             ref={inputRef}
             className={styles.editInput}
-            size="medium"
+            /* large is the 40px/16px size — the module then lifts it to 20px to
+               match the title exactly, so nothing moves on entering rename. */
+            size="large"
             appearance="filled-lighter"
             maxLength={100}
             autoFocus
@@ -86,7 +92,16 @@ export default function CaseTitle({ renaming, onStartRename, onEndRename }) {
         )}
       </div>
 
-      {meta ? <div className={styles.meta}>{meta}</div> : null}
+      {/* Beside the name rather than under it. The rule keeps the two apart
+          without adding a third kind of separator — the meta string already uses
+          middots internally, so another one between them would read as one long
+          list rather than a title and its attributes. */}
+      {meta ? (
+        <>
+          <span className={styles.rule} aria-hidden="true" />
+          <div className={styles.meta}>{meta}</div>
+        </>
+      ) : null}
     </div>
   );
 }
