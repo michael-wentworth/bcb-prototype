@@ -11,14 +11,21 @@
 
 /* --------------------------------- header --------------------------------- */
 
+/* Matches the workflow stepper's height so the two headers form one band. */
 .header {
   flex: none;
   display: flex;
   align-items: center;
   gap: var(--spacingHorizontalS);
-  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  height: var(--bcb-subheader-height);
+  box-sizing: border-box;
+  padding: 0 var(--spacingHorizontalM) 0 var(--spacingHorizontalL);
   border-bottom: 1px solid var(--colorNeutralStroke2);
   background-color: var(--colorNeutralBackground1);
+}
+
+.collapse {
+  flex: none;
 }
 
 .avatar,

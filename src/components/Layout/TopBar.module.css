@@ -1,85 +1,152 @@
+/* Global navigation, mirroring the azure.microsoft.com header:
+   Microsoft lockup · vertical rule · product name (large, semibold) · links,
+   with utilities pushed to the right edge. */
+
 .bar {
   flex: none;
   display: flex;
   align-items: center;
-  gap: var(--spacingHorizontalL);
-  height: 52px;
-  padding: 0 var(--spacingHorizontalL) 0 var(--spacingHorizontalXL);
+  gap: var(--spacingHorizontalM);
+  height: 56px;
+  padding: 0 var(--spacingHorizontalXXL);
   background-color: var(--colorNeutralBackground1);
   border-bottom: 1px solid var(--colorNeutralStroke2);
   z-index: 3;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: var(--spacingHorizontalS);
-  flex: none;
-}
+/* ------------------------------- Microsoft --------------------------------- */
 
-.mark {
+.msLockup {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--borderRadiusMedium);
-  color: #ffffff;
-  background: linear-gradient(135deg, var(--colorBrandBackground) 0%, #7a4fd6 100%);
-  box-shadow: var(--shadow2);
+  gap: 8px;
+  flex: none;
+  padding: 4px 6px 4px 2px;
+  border-radius: var(--borderRadiusSmall);
+  text-decoration: none;
 }
 
-.brandText {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
+.msLockup:hover .msWordmark {
+  text-decoration: underline;
 }
 
-.product {
-  font-size: var(--fontSizeBase300);
+.msLockup:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.msWordmark {
+  font-size: 15px;
   font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.01em;
   color: var(--colorNeutralForeground1);
+  white-space: nowrap;
 }
 
-.org {
-  font-size: var(--fontSizeBase100);
-  color: var(--colorNeutralForeground3);
-}
-
-.preview {
-  margin-left: 2px;
-}
-
-.context {
-  display: flex;
-  align-items: center;
-  gap: var(--spacingHorizontalS);
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.divider {
+.rule {
   flex: none;
   width: 1px;
   height: 22px;
   background-color: var(--colorNeutralStroke2);
 }
 
-.caseLabel {
-  font-size: var(--fontSizeBase200);
-  color: var(--colorNeutralForeground3);
-  flex: none;
-}
+/* ------------------------------ product name ------------------------------- */
 
-.caseName {
-  font-size: var(--fontSizeBase200);
+/* The one element allowed to be loud — it is the product, the way "Azure" is. */
+.product {
+  flex: none;
+  padding: 2px 6px;
+  margin-right: var(--spacingHorizontalS);
+  border: none;
+  border-radius: var(--borderRadiusSmall);
+  background: none;
+  font-family: inherit;
+  font-size: 20px;
   font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
   color: var(--colorNeutralForeground1);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  cursor: pointer;
 }
+
+.product:hover {
+  color: var(--colorBrandForeground1);
+}
+
+.product:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+/* --------------------------------- links ----------------------------------- */
+
+.nav {
+  flex: 1;
+  min-width: 0;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  position: relative;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--borderRadiusSmall);
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: var(--fontWeightRegular);
+  color: var(--colorNeutralForeground1);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.navLink:hover {
+  background-color: var(--colorSubtleBackgroundHover);
+}
+
+.navLink:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+/* Where you are, marked with a rule rather than a fill so the bar stays quiet. */
+.navLinkActive {
+  font-weight: var(--fontWeightSemibold);
+}
+
+.navChevron {
+  margin-left: 3px;
+  color: var(--colorNeutralForeground3);
+  vertical-align: middle;
+}
+
+.cta {
+  flex: none;
+  margin-left: var(--spacingHorizontalS);
+}
+
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--colorBrandBackground);
+}
+
+/* -------------------------------- utilities -------------------------------- */
 
 .actions {
   flex: none;
@@ -88,13 +155,110 @@
   gap: var(--spacingHorizontalXS);
 }
 
-@media (max-width: 780px) {
-  .context,
-  .org {
+.searchTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: var(--borderRadiusSmall);
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--colorNeutralForeground1);
+  cursor: pointer;
+}
+
+.searchTrigger:hover {
+  background-color: var(--colorSubtleBackgroundHover);
+}
+
+.searchTrigger:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+/* Wrapped so the label can drop out on narrow viewports, leaving the icon. */
+.searchLabel {
+  display: inline;
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.searchInput {
+  width: 300px;
+}
+
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: var(--spacingHorizontalXS);
+  padding: 4px 6px 4px 10px;
+  border: none;
+  border-radius: var(--borderRadiusMedium);
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.account:hover {
+  background-color: var(--colorSubtleBackgroundHover);
+}
+
+.account:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.accountName {
+  font-size: 13px;
+  color: var(--colorNeutralForeground1);
+  white-space: nowrap;
+}
+
+.accountChevron {
+  color: var(--colorNeutralForeground3);
+}
+
+/* ------------------------------- responsive -------------------------------- */
+
+@media (max-width: 1400px) {
+  .searchInput {
+    width: 220px;
+  }
+}
+
+@media (max-width: 1240px) {
+  .searchLabel,
+  .accountName {
     display: none;
   }
 
+  .navLink {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+/* Below this the destinations would crowd the product name, which matters more.
+   Azure collapses to a menu here; the prototype simply drops them. */
+@media (max-width: 1080px) {
+  .nav {
+    display: none;
+  }
+}
+
+@media (max-width: 780px) {
   .bar {
-    padding-left: var(--spacingHorizontalM);
+    padding: 0 var(--spacingHorizontalL);
+  }
+
+  .msWordmark {
+    display: none;
   }
 }

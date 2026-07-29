@@ -48,7 +48,7 @@ const emptyEnvironment = {
   existingLicenses: [],
   competitorProducts: [],
   securityStack: [],
-  sellerAlias: 'robin@microsoft.com',
+  sellerAlias: 'michaelw@microsoft.com',
 };
 
 const emptyCase = { name: '', analysisPeriod: 3 };
@@ -83,6 +83,13 @@ export const makeCompetitorRow = (seed = {}) => ({
 });
 
 const initialState = {
+  /**
+   * Which destination is showing. The builder is deliberately not a nav item —
+   * it is always scoped to one case, so you enter it by creating or opening one.
+   */
+  view: 'myCases',
+  activeCaseId: null,
+
   step: 0,
   maxStepReached: 0,
 
@@ -133,6 +140,50 @@ const aiTouch = (state, section) =>
 
 function reducer(state, action) {
   switch (action.type) {
+    /* ------------------------------ routing ----------------------------- */
+    case 'SET_VIEW':
+      return { ...state, view: action.view };
+
+    case 'NEW_CASE':
+      return {
+        ...initialState,
+        view: 'builder',
+        activeCaseId: null,
+        customer: { ...emptyCustomer },
+        environment: { ...emptyEnvironment },
+        caseSetup: { ...emptyCase },
+        narrative: emptyNarrative(),
+      };
+
+    /** Open a seeded case: its snapshot becomes the working input set. */
+    case 'LOAD_CASE': {
+      const i = action.entry.input;
+      return {
+        ...initialState,
+        view: 'builder',
+        activeCaseId: action.entry.id,
+        step: 0,
+        maxStepReached: 2,
+        customer: { ...emptyCustomer, ...i.customer },
+        environment: { ...emptyEnvironment },
+        caseSetup: { ...emptyCase, ...i.caseSetup },
+        outcomes: i.outcomes || [],
+        skus: (i.skus || []).map((s) => ({ ...s, authorship: AUTHORSHIP.MANUAL })),
+        bundle: { ...initialState.bundle, ...i.bundle },
+        competitors: {
+          msrpDiscount: i.competitors?.msrpDiscount ?? '',
+          rows: (i.competitors?.rows || []).map((r) => ({ ...r, authorship: AUTHORSHIP.MANUAL })),
+        },
+        narrative: emptyNarrative(),
+        sectionAuthorship: {
+          customer: AUTHORSHIP.MANUAL,
+          outcomes: AUTHORSHIP.MANUAL,
+          skus: AUTHORSHIP.MANUAL,
+          competitors: AUTHORSHIP.MANUAL,
+        },
+      };
+    }
+
     case 'SET_STEP': {
       const step = Math.max(0, Math.min(STEPS.length - 1, action.step));
       return { ...state, step, maxStepReached: Math.max(state.maxStepReached, step) };
@@ -538,6 +589,9 @@ export function AppStateProvider({ children }) {
 
   const actions = useMemo(
     () => ({
+      setView: (view) => dispatch({ type: 'SET_VIEW', view }),
+      newCase: () => dispatch({ type: 'NEW_CASE' }),
+      openCase: (entry) => dispatch({ type: 'LOAD_CASE', entry }),
       goToStep: (step) => dispatch({ type: 'SET_STEP', step }),
       setCustomer: (key, value) => dispatch({ type: 'SET_CUSTOMER', key, value }),
       setEnvironment: (key, value) => dispatch({ type: 'SET_ENVIRONMENT', key, value }),
@@ -606,18 +660,21 @@ export function AppStateProvider({ children }) {
     dispatch({ type: 'RESET' });
   }, [clearTimers]);
 
+  // Step commentary belongs to the builder — it should not fire while the
+  // seller is browsing their case list.
   useEffect(() => {
+    if (state.view !== 'builder') return;
     if (state.introShown[state.step]) return;
     const intro = getStepIntro(state.step, buildContext());
     if (!intro) return;
     dispatch({ type: 'MARK_INTRO_SHOWN', step: state.step });
     schedule(() => pushAssistant(intro.blocks, intro.intent), state.step === 0 ? 600 : 900);
-  }, [state.step, state.introShown, buildContext, pushAssistant, schedule]);
+  }, [state.view, state.step, state.introShown, buildContext, pushAssistant, schedule]);
 
   useEffect(() => {
-    if (state.step !== 2 || state.reportReady) return;
+    if (state.view !== 'builder' || state.step !== 2 || state.reportReady) return;
     schedule(() => dispatch({ type: 'SET_REPORT_READY' }), 1200);
-  }, [state.step, state.reportReady, schedule]);
+  }, [state.view, state.step, state.reportReady, schedule]);
 
   const value = useMemo(
     () => ({

@@ -6,6 +6,8 @@ import styles from './WorkflowHeader.module.css';
 
 export default function WorkflowHeader() {
   const { step, maxStepReached, goToStep } = useAppState();
+  // The stepper already states where you are; a "Step 1 of 3" line under it
+  // repeats the same fact, so the count lives in the screen heading instead.
 
   return (
     <nav className={styles.root} aria-label="Business case steps">
@@ -55,12 +57,6 @@ export default function WorkflowHeader() {
           );
         })}
       </ol>
-
-      <p className={styles.progress} aria-live="polite">
-        <span className={styles.progressStrong}>
-          Step {step + 1} of {STEPS.length}: {STEPS[step].label}
-        </span>
-      </p>
     </nav>
   );
 }

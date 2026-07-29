@@ -1,0 +1,190 @@
+.root {
+  max-width: 620px;
+  margin: var(--spacingVerticalXXXL) auto 0;
+  text-align: center;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground1);
+}
+
+.title {
+  margin: var(--spacingVerticalM) 0 0;
+  font-size: var(--fontSizeHero700);
+  line-height: 1.15;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.lead {
+  margin: var(--spacingVerticalS) 0 0;
+  font-size: var(--fontSizeBase400);
+  line-height: 24px;
+  color: var(--colorNeutralForeground2);
+}
+
+.note {
+  margin: var(--spacingVerticalXL) 0 0;
+  padding: 12px 16px;
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke2);
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground3);
+  text-align: left;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacingHorizontalS);
+  flex-wrap: wrap;
+  margin-top: var(--spacingVerticalXL);
+}
+
+/* ------------------------------ example cases ------------------------------- */
+
+.examplesRoot {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalL);
+}
+
+.examplesHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalXL);
+  flex-wrap: wrap;
+}
+
+.examplesHeader .title {
+  margin-top: var(--spacingVerticalS);
+}
+
+.examplesHeader .lead {
+  max-width: 74ch;
+}
+
+.eyebrow {
+  margin-bottom: var(--spacingVerticalXS);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: var(--spacingHorizontalL);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalM);
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke2);
+  box-shadow: var(--shadow2);
+  transition: box-shadow var(--durationNormal) var(--curveEasyEase);
+  animation: bcbRise 320ms var(--curveDecelerateMid) both;
+}
+
+.card:hover {
+  box-shadow: var(--shadow16);
+}
+
+.cardHit {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: none;
+  background: none;
+  border-radius: var(--borderRadiusLarge);
+  cursor: pointer;
+  padding: 0;
+}
+
+.cardHit:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
+.cardBody,
+.cardStats {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cardCustomer {
+  display: block;
+  font-size: var(--fontSizeBase100);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--colorNeutralForeground4);
+}
+
+.cardTitle {
+  margin: 4px 0 0;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  line-height: 1.3;
+  color: var(--colorNeutralForeground1);
+}
+
+.cardHighlight {
+  margin: 6px 0 0;
+  font-size: var(--fontSizeBase300);
+  line-height: 19px;
+  color: var(--colorNeutralForeground3);
+}
+
+.cardStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacingHorizontalS);
+  margin: auto 0 0;
+  padding-top: var(--spacingVerticalM);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+
+.cardStats dt {
+  font-size: var(--fontSizeBase100);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--colorNeutralForeground4);
+}
+
+.cardStats dd {
+  margin: 2px 0 0;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.footNote {
+  margin: 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground4);
+}

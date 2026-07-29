@@ -27,6 +27,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+:root {
+  /* The band directly under the top bar. The workflow stepper and the copilot
+     panel header both use it so they align across the full width. */
+  --bcb-subheader-height: 60px;
+}
+
 /* Size the app's FluentProvider from here rather than passing it a className.
    Fluent re-applies the provider's className to the portal nodes it mounts on
    <body> (so themes cascade into tooltips and popovers) — a height/background

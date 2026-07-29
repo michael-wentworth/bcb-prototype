@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Badge, Button, Textarea, Tooltip } from '@fluentui/react-components';
-import { Send24Filled, Sparkle20Filled } from '@fluentui/react-icons';
+import {
+  PanelRightContract20Regular,
+  Send24Filled,
+  Sparkle20Filled,
+} from '@fluentui/react-icons';
 import { DEMO_PROMPT } from '../../data/demoCase.js';
 import { STEPS } from '../../data/referenceData.js';
 import { STEP_SUGGESTIONS } from '../../data/aiScript.js';
@@ -8,8 +12,8 @@ import { useAppState } from '../../state/AppStateContext.jsx';
 import MessageBlocks from './MessageBlocks.jsx';
 import styles from './AIAssistantPanel.module.css';
 
-export default function AIAssistantPanel() {
-  const { messages, thinking, step, ask, goToStep } = useAppState();
+export default function AIAssistantPanel({ onCollapse }) {
+  const { messages, thinking, step, view, ask, goToStep } = useAppState();
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   const pinnedToBottom = useRef(true);
@@ -80,12 +84,27 @@ export default function AIAssistantPanel() {
         <div className={styles.headerText}>
           <span className={styles.title}>Business case copilot</span>
           <span className={styles.subtitle}>
-            {busy ? thinking.steps[thinking.index] : `Working on ${STEPS[step].label}`}
+            {busy
+              ? thinking.steps[thinking.index]
+              : view === 'builder'
+                ? `Working on ${STEPS[step].label}`
+                : 'Open a case and I can help with it'}
           </span>
         </div>
         <Badge appearance="outline" size="small" color="informative">
           Preview
         </Badge>
+        {/* The minimize control belongs to the panel, not the app chrome. */}
+        <Tooltip content="Minimize the copilot" relationship="label" withArrow>
+          <Button
+            appearance="subtle"
+            size="small"
+            icon={<PanelRightContract20Regular />}
+            onClick={onCollapse}
+            aria-label="Minimize the copilot panel"
+            className={styles.collapse}
+          />
+        </Tooltip>
       </header>
 
       <div className={`${styles.thread} scrollArea`} ref={scrollRef} onScroll={handleScroll}>
