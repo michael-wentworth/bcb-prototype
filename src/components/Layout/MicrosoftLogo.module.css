@@ -21,8 +21,15 @@
   /* Cap height ≈ 0.6 of the mark; Segoe UI's cap height is ~0.7 of its em, so
      the em lands at ~0.85 of the mark. */
   font-size: calc(var(--ms-mark, 20px) * 0.85);
-  font-weight: var(--fontWeightRegular);
-  letter-spacing: -0.01em;
+  /* Semibold, not regular. Stem width over cap height in the official asset
+     measures ~0.116, which is Segoe UI Semibold (~0.13) rather than Regular
+     (~0.09). Segoe UI has no true Medium, so 600 is the correct cut. */
+  font-weight: var(--fontWeightSemibold);
+  /* The asset is heavier than Segoe UI Regular yet narrower overall (4.69:1),
+     so its wordmark is a slightly condensed custom cut. Stock Segoe UI
+     Semibold at normal tracking lands at 4.98:1; this pulls it back toward the
+     real proportion without looking cramped. */
+  letter-spacing: -0.025em;
   /* The official wordmark grey. */
   color: #737373;
 }
