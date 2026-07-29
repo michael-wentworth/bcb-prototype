@@ -13,8 +13,12 @@
   min-height: 0;
 }
 
-/* The collapsed-copilot tab. Sits in the subheader band on the right edge, so
-   it reads as the panel tucked away rather than a stray floating button. */
+/* The collapsed-copilot tab. Sits at the top-right of the content area — the
+   corner the panel itself occupies — so it reads as the panel tucked away rather
+   than a stray floating button. Because the band is now above this box rather
+   than beside it, the tab can no longer cover the case actions, and the band
+   needs no reserve for it. White against the grey workspace also makes it more
+   findable than it was blending into the band. */
 .copilotTab {
   position: absolute;
   top: 0;
@@ -83,17 +87,12 @@
     position: relative;
   }
 
-  /* Starts below the step band rather than at the top of the body. At top: 0 the
-     overlay covered the band's right 380px, which hid steps 2 and 3 and would now
-     also bury Share — unreachable, with nothing on screen to say why. Dropping it
-     by the band's height leaves the band its full width, so at 1024px you get all
-     three step names, a labelled Share and a readable case name. The two headers
-     keep identical heights; they simply stop sharing a y at a width where the
-     panel already floats over the content with a shadow rather than sitting in a
-     continuous band beside it. */
+  /* top: 0 is already below the band, because the band is a sibling of .body
+     rather than a child of it. The overlay therefore cannot cover the band at any
+     width — which is also what fixed the older bug where it hid steps 2 and 3. */
   .body > aside {
     position: absolute;
-    top: var(--bcb-subheader-height);
+    top: 0;
     right: 0;
     bottom: 0;
     width: min(380px, 92vw);

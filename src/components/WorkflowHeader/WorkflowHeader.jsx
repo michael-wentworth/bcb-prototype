@@ -12,21 +12,22 @@ import styles from './WorkflowHeader.module.css';
  *
  * Three grid columns — title, steps, actions — with the two side tracks given
  * equal explicit floors so the stepper's x-position never depends on how long the
- * case is called. Everything degrades on the *band's* width via container
- * queries, because the band is anywhere from the full viewport to 408px narrower
- * than it depending on the copilot.
+ * case is called.
+ *
+ * The band spans the whole app, above the copilot rather than beside it, so its
+ * width is the viewport's. Degradation still keys off the band's own width via
+ * container queries rather than a media query: it is the box that actually
+ * constrains the content, and that keeps the rules honest if the band is ever put
+ * back into a column.
  */
-export default function WorkflowHeader({ copilotCollapsed = false }) {
+export default function WorkflowHeader() {
   const { step, maxStepReached, goToStep } = useAppState();
   // Lifted, because two things start a rename: clicking the title, and the
   // Rename item in the overflow menu.
   const [renaming, setRenaming] = useState(false);
 
   return (
-    <div
-      className={styles.root}
-      data-copilot={copilotCollapsed ? 'collapsed' : 'open'}
-    >
+    <div className={styles.root}>
       <CaseTitle
         renaming={renaming}
         onStartRename={() => setRenaming(true)}

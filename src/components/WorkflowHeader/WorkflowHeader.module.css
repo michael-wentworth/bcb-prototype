@@ -1,5 +1,8 @@
-/* Height is shared with the copilot panel header so the two line up exactly —
-   see --bcb-subheader-height in global.css.
+/* The case-scoped band. Spans the full app width, above the copilot rather than
+   beside it: the case is the outer object and the copilot is a tool used inside
+   it. Height is --bcb-subheader-height, still shared with the copilot panel's own
+   header — they are no longer adjacent, so it is a consistent measure rather than
+   an alignment.
 
    Three tracks: case title, stepper, case actions.
 
@@ -26,16 +29,9 @@
      @container rule that changed this padding would both fail silently — a
      container query cannot style its own container — and oscillate: 924 wide ->
      24px padding -> content 876 -> threshold trips -> 16px padding -> content
-     892 -> un-trips. Anything width-dependent about the padding is applied by
-     attribute selector or media query below, never inside @container. */
+     892 -> un-trips. Never make this width-dependent from inside @container. */
   padding: 0 var(--spacingHorizontalXXL);
   z-index: 2;
-}
-
-/* When the copilot is minimised its 52px tab is absolutely positioned over this
-   band's right edge, which would sit on top of the actions. Reserve the width. */
-.root[data-copilot='collapsed'] {
-  padding-right: calc(var(--spacingHorizontalXXL) + 52px + var(--spacingHorizontalS));
 }
 
 .stepper {
@@ -192,14 +188,14 @@
 }
 
 /* ------------------------------- degradation --------------------------------
-   These key off the BAND's width, not the viewport's, and that distinction is the
-   whole problem. The band is the full viewport, or viewport-408 with the copilot
-   docked, or viewport-372 at mid widths — so a 1400px viewport can mean a band of
-   1400 or 992 depending only on whether a panel is open.
+   Thresholds are the band's own CONTENT width, via container queries. Now that
+   the band spans the app that happens to track the viewport, but the container
+   query is still the honest measure: it describes when the stepper genuinely runs
+   out of room, so the rules survive the band ever being put back in a column.
 
-   The media queries that used to live here got this exactly backwards: they hid
-   the step captions at a 1024px viewport, where the band is a roomy 1024px wide,
-   and showed them at 1200px, where the band is a cramped 828px.
+   Moving the copilot below the band returned 408px to every docked width, which
+   is what buys the case name and the step captions room to coexist: the captions
+   now survive down to a ~1188px viewport instead of needing 1600.
 
    Order of sacrifice, each step buying room for the case name:
      < 1140  the captions go        (stepper ~660 -> ~520)

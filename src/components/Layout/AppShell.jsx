@@ -30,12 +30,16 @@ export default function AppShell({ panelOpen, onTogglePanel }) {
     <div className={styles.shell}>
       <TopBar />
 
+      {/* The band belongs to a case in progress, not to browsing — and it spans
+          the whole app rather than only the content column. The case is the outer
+          thing; the copilot is a tool for working inside it, so the copilot sits
+          below the band alongside the content it acts on. That hierarchy is also
+          worth 408px of band width at every docked size, which is what makes the
+          case name and the step captions fit together. */}
+      {inBuilder ? <WorkflowHeader /> : null}
+
       <div className={styles.body}>
         <main className={styles.workflow}>
-          {/* The stepper belongs to a case in progress, not to browsing. */}
-          {/* The band needs to know, because the collapsed copilot's tab is
-              positioned over its right edge and would sit on the case actions. */}
-          {inBuilder ? <WorkflowHeader copilotCollapsed={!panelOpen} /> : null}
           <div className={`${styles.workspace} scrollArea`} ref={workspaceRef}>
             <div
               className={`${styles.stageContainer} ${inBuilder ? '' : styles.wide}`}
