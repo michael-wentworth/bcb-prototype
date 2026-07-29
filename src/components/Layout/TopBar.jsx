@@ -71,9 +71,13 @@ export default function TopBar({ isDark, onToggleTheme }) {
     <header className={styles.bar}>
       <Toaster toasterId={toasterId} />
 
-      <a className={styles.msLockup} href="#/" onClick={(e) => e.preventDefault()}>
-        <MicrosoftLogo />
-        <span className={styles.msWordmark}>Microsoft</span>
+      <a
+        className={styles.msLink}
+        href="#/"
+        onClick={(e) => e.preventDefault()}
+        aria-label="Microsoft"
+      >
+        <MicrosoftLogo size={21} />
       </a>
 
       <span className={styles.rule} aria-hidden="true" />

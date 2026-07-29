@@ -16,31 +16,25 @@
 
 /* ------------------------------- Microsoft --------------------------------- */
 
-.msLockup {
+/* The lockup owns its own type and proportions — this only handles the link
+   affordance around it. */
+.msLink {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   flex: none;
   padding: 4px 6px 4px 2px;
   border-radius: var(--borderRadiusSmall);
   text-decoration: none;
 }
 
-.msLockup:hover .msWordmark {
+.msLink:hover {
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.msLockup:focus-visible {
+.msLink:focus-visible {
   outline: 2px solid var(--colorStrokeFocus2);
   outline-offset: 1px;
-}
-
-.msWordmark {
-  font-size: 15px;
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: -0.01em;
-  color: var(--colorNeutralForeground1);
-  white-space: nowrap;
 }
 
 .rule {
@@ -256,9 +250,5 @@
 @media (max-width: 780px) {
   .bar {
     padding: 0 var(--spacingHorizontalL);
-  }
-
-  .msWordmark {
-    display: none;
   }
 }

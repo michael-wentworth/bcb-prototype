@@ -1,0 +1,40 @@
+/* One lockup, sized from a single --ms-mark custom property so the mark and the
+   wordmark always keep the official ratio to each other. */
+
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  /* ~0.28 of the mark's width, per the official asset. */
+  gap: calc(var(--ms-mark, 20px) * 0.28);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mark {
+  flex: none;
+  width: var(--ms-mark, 20px);
+  height: var(--ms-mark, 20px);
+  display: block;
+}
+
+.wordmark {
+  /* Cap height ≈ 0.6 of the mark; Segoe UI's cap height is ~0.7 of its em, so
+     the em lands at ~0.85 of the mark. */
+  font-size: calc(var(--ms-mark, 20px) * 0.85);
+  font-weight: var(--fontWeightRegular);
+  letter-spacing: -0.01em;
+  /* The official wordmark grey. */
+  color: #737373;
+}
+
+/* Brand guidance: white wordmark on dark surfaces. The mark itself never
+   changes. */
+:root[data-theme='dark'] .wordmark {
+  color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) .wordmark {
+    color: #ffffff;
+  }
+}
