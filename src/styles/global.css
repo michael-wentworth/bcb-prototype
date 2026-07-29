@@ -1,0 +1,167 @@
+/* ---------------------------------------------------------------------------
+   Global reset + shared primitives.
+   Component styling lives in CSS Modules and reads Fluent 2 design tokens,
+   which FluentProvider publishes to the DOM as CSS custom properties
+   (--colorNeutralBackground1, --spacingHorizontalM, --shadow8, ...).
+   --------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--fontFamilyBase, 'Segoe UI', system-ui, sans-serif);
+  background-color: var(--colorNeutralBackground3, #f5f5f5);
+  color: var(--colorNeutralForeground1, #242424);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Size the app's FluentProvider from here rather than passing it a className.
+   Fluent re-applies the provider's className to the portal nodes it mounts on
+   <body> (so themes cascade into tooltips and popovers) — a height/background
+   rule attached to the provider would therefore be duplicated onto an opaque
+   layer above the app for every portal on screen. Scoping to the direct child
+   of #root keeps portals out of it. */
+#root > .fui-FluentProvider {
+  height: 100%;
+  min-height: 0;
+  background-color: var(--colorNeutralBackground3);
+}
+
+/* Chart + data-viz roles. Emphasis form: one accent hue plus a de-emphasis gray.
+   Validated against the Fluent surfaces this app actually renders on
+   (#ffffff light / #292929 dark) — adjacent CVD separation ΔE 15.4 / 16.3. */
+.vizRoot {
+  --viz-accent: #2a78d6;
+  --viz-accent-soft: rgba(42, 120, 214, 0.12);
+  --viz-context: #8a8886;
+  --viz-context-soft: rgba(138, 136, 134, 0.16);
+  --viz-negative: #d03b3b;
+  --viz-negative-soft: rgba(208, 59, 59, 0.1);
+  --viz-grid: var(--colorNeutralStroke2, #e0e0e0);
+  --viz-axis: var(--colorNeutralStroke1, #d1d1d1);
+  --viz-surface: var(--colorNeutralBackground1, #ffffff);
+  --viz-ink-muted: var(--colorNeutralForeground3, #616161);
+}
+
+.fui-FluentProvider[data-theme='dark'] .vizRoot,
+[data-theme='dark'] .vizRoot {
+  --viz-accent: #3987e5;
+  --viz-accent-soft: rgba(57, 135, 229, 0.18);
+  --viz-context: #a6a6a6;
+  --viz-context-soft: rgba(166, 166, 166, 0.2);
+  --viz-negative: #e66767;
+  --viz-negative-soft: rgba(230, 103, 103, 0.16);
+}
+
+/* Scrollbars tuned to the Fluent surface rather than the OS default. */
+.scrollArea {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--colorNeutralStroke1) transparent;
+}
+
+.scrollArea::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background-color: var(--colorNeutralStroke1);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.scrollArea::-webkit-scrollbar-thumb:hover {
+  background-color: var(--colorNeutralStrokeAccessible);
+  background-clip: content-box;
+}
+
+/* Shared entrance motion. Every use is gated on prefers-reduced-motion below. */
+@keyframes bcbRise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bcbFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bcbPulseField {
+  0% {
+    background-color: var(--colorBrandBackground2);
+    box-shadow: 0 0 0 2px var(--colorBrandStroke2);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 2px transparent;
+  }
+}
+
+@keyframes bcbShimmer {
+  0% {
+    background-position: -320px 0;
+  }
+  100% {
+    background-position: 320px 0;
+  }
+}
+
+@keyframes bcbDot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.28;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes bcbDraw {
+  from {
+    stroke-dashoffset: var(--dash-length, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

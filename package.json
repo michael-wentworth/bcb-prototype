@@ -1,0 +1,22 @@
+{
+  "name": "bcb-prototype",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "FY27 Agentic Business Case Builder — vision prototype",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fluentui/react-components": "^9.54.0",
+    "@fluentui/react-icons": "^2.0.245",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0"
+  }
+}

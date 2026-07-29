@@ -1,0 +1,183 @@
+.root {
+  flex: none;
+  background-color: var(--colorNeutralBackground1);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalXXL);
+  z-index: 2;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  max-width: 1080px;
+}
+
+/* Steps are sized to their own content and the rails take the leftover row
+   space, so the connectors sit in a real gap between one step and the next
+   rather than behind the labels. The first item has no rail, so it must not
+   claim a share of that free space. */
+.item {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.item:first-child {
+  flex: 0 1 auto;
+}
+
+.rail {
+  flex: 1 1 auto;
+  min-width: 16px;
+  height: 2px;
+  margin: 0 10px;
+  border-radius: 1px;
+  background-color: var(--colorNeutralStroke2);
+  transition: background-color var(--durationSlow) var(--curveEasyEase);
+}
+
+.rail[data-filled='true'] {
+  background-color: var(--colorBrandStroke1);
+}
+
+.step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 6px 10px 6px 6px;
+  border: none;
+  border-radius: var(--borderRadiusMedium);
+  background-color: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.step:hover:not(:disabled) {
+  background-color: var(--colorSubtleBackgroundHover);
+}
+
+.step:disabled {
+  cursor: default;
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.marker {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--borderRadiusCircular);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  border: 2px solid var(--colorNeutralStroke2);
+  background-color: var(--colorNeutralBackground1);
+  color: var(--colorNeutralForeground3);
+  transition:
+    background-color var(--durationNormal) var(--curveEasyEase),
+    border-color var(--durationNormal) var(--curveEasyEase),
+    color var(--durationNormal) var(--curveEasyEase);
+}
+
+.labels {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.label {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorNeutralForeground3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.caption {
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- states --- */
+
+.item[data-state='current'] .marker {
+  background-color: var(--colorBrandBackground);
+  border-color: var(--colorBrandBackground);
+  color: var(--colorNeutralForegroundOnBrand);
+  box-shadow: 0 0 0 4px var(--colorBrandBackground2);
+}
+
+.item[data-state='current'] .label {
+  color: var(--colorNeutralForeground1);
+  font-weight: var(--fontWeightSemibold);
+}
+
+.item[data-state='complete'] .marker {
+  background-color: var(--colorBrandBackground2);
+  border-color: var(--colorBrandStroke2);
+  color: var(--colorBrandForeground1);
+}
+
+.item[data-state='complete'] .label {
+  color: var(--colorNeutralForeground2);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1180px) {
+  .caption {
+    display: none;
+  }
+
+  .root {
+    padding-left: var(--spacingHorizontalL);
+    padding-right: var(--spacingHorizontalL);
+  }
+
+  /* Give the space back to the labels before they start ellipsising — a short
+     connector still reads as a connector, a truncated stage name does not. */
+  .rail {
+    min-width: 12px;
+    margin: 0 6px;
+  }
+
+  .step {
+    padding-right: 6px;
+  }
+}
+
+@media (max-width: 820px) {
+  .label {
+    font-size: var(--fontSizeBase200);
+  }
+}

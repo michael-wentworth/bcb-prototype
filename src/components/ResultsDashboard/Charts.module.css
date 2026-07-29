@@ -1,0 +1,264 @@
+.figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalM);
+}
+
+.caption {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalL);
+}
+
+.chartTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.chartSub {
+  margin: 3px 0 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.tableToggle {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: var(--borderRadiusCircular);
+  border: 1px solid var(--colorNeutralStroke2);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+  cursor: pointer;
+}
+
+.tableToggle:hover {
+  background-color: var(--colorNeutralBackground1Hover);
+}
+
+.tableToggle:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.plotWrap {
+  position: relative;
+  width: 100%;
+}
+
+.svg {
+  display: block;
+  overflow: visible;
+}
+
+.svg:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+  border-radius: var(--borderRadiusSmall);
+}
+
+/* -------------------------------- chrome ---------------------------------- */
+
+.grid {
+  stroke: var(--viz-grid);
+  stroke-width: 1;
+}
+
+.baseline {
+  stroke: var(--viz-axis);
+  stroke-width: 1;
+}
+
+.axisLabel,
+.axisLabelRight {
+  fill: var(--viz-ink-muted);
+  font-size: 11px;
+  font-family: var(--fontFamilyBase);
+  font-variant-numeric: tabular-nums;
+}
+
+.axisLabel {
+  text-anchor: middle;
+}
+
+.axisLabelRight {
+  text-anchor: end;
+}
+
+/* --------------------------------- marks ---------------------------------- */
+
+.line {
+  fill: none;
+  stroke: var(--viz-accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.areaAbove {
+  fill: var(--viz-accent);
+  opacity: 0.1;
+  stroke: none;
+}
+
+.areaBelow {
+  fill: var(--viz-negative);
+  opacity: 0.1;
+  stroke: none;
+}
+
+.marker {
+  fill: var(--viz-accent);
+  stroke: var(--viz-surface);
+  stroke-width: 2;
+}
+
+.markerStem {
+  stroke: var(--viz-accent);
+  stroke-width: 1;
+  opacity: 0.45;
+}
+
+.markerLabel {
+  fill: var(--colorNeutralForeground1);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--fontFamilyBase);
+}
+
+.endLabel {
+  fill: var(--colorNeutralForeground1);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--fontFamilyBase);
+  text-anchor: end;
+}
+
+.crosshair {
+  stroke: var(--viz-axis);
+  stroke-width: 1;
+}
+
+.hoverDot {
+  fill: var(--viz-accent);
+  stroke: var(--viz-surface);
+  stroke-width: 2;
+}
+
+/* ---------------------------------- bars ----------------------------------- */
+
+.barAccent {
+  fill: var(--viz-accent);
+}
+
+.barContext {
+  fill: var(--viz-context);
+}
+
+.barLabel {
+  fill: var(--colorNeutralForeground1);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--fontFamilyBase);
+}
+
+.barCaption {
+  fill: var(--viz-ink-muted);
+  font-size: 11px;
+  font-family: var(--fontFamilyBase);
+}
+
+.barValue {
+  fill: var(--colorNeutralForeground1);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--fontFamilyBase);
+}
+
+/* -------------------------------- tooltip ---------------------------------- */
+
+.tooltip {
+  position: absolute;
+  width: 168px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke2);
+  box-shadow: var(--shadow8);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tooltipTitle {
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.tooltipRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalS);
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.tooltipRow strong {
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+/* --------------------------------- table ----------------------------------- */
+
+.tableWrap {
+  overflow-x: auto;
+  border-radius: var(--borderRadiusMedium);
+  border: 1px solid var(--colorNeutralStroke2);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+}
+
+.tableCaption {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground3);
+  background-color: var(--colorNeutralBackground3);
+}
+
+.table th,
+.table td {
+  padding: 6px 12px;
+  text-align: right;
+  border-top: 1px solid var(--colorNeutralStroke2);
+  color: var(--colorNeutralForeground2);
+  white-space: nowrap;
+}
+
+.table thead th {
+  color: var(--colorNeutralForeground3);
+  font-weight: var(--fontWeightSemibold);
+}
+
+.table tbody th {
+  text-align: left;
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorNeutralForeground1);
+}
+
+.table tbody tr[data-breakeven='true'] {
+  background-color: var(--colorBrandBackground2);
+}

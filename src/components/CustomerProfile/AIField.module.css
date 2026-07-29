@@ -1,0 +1,108 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  margin: -10px;
+  border-radius: var(--borderRadiusMedium);
+  min-width: 0;
+}
+
+.populating {
+  animation: bcbPulseField 1300ms var(--curveEasyEase) forwards;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalS);
+  min-height: 20px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground2);
+}
+
+.icon {
+  display: inline-flex;
+  color: var(--colorNeutralForeground4);
+}
+
+.meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.aiTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px 1px 5px;
+  border-radius: var(--borderRadiusCircular);
+  font-size: var(--fontSizeBase100);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.03em;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--colorBrandBackground) 0%, #7a4fd6 100%);
+}
+
+.aiTag svg {
+  width: 11px;
+  height: 11px;
+}
+
+.control {
+  display: flex;
+}
+
+.input {
+  width: 100%;
+}
+
+.sourceLink {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground3);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-style: dotted;
+}
+
+.sourceLink:hover {
+  color: var(--colorBrandForeground1);
+}
+
+.sourceSurface {
+  max-width: 320px;
+  padding: 12px 14px;
+}
+
+.sourceLabel {
+  margin: 0 0 6px;
+  font-size: var(--fontSizeBase100);
+  font-weight: var(--fontWeightSemibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--colorNeutralForeground3);
+}
+
+.sourceQuote {
+  margin: 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--colorBrandStroke2);
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground1);
+}

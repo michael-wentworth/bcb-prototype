@@ -1,0 +1,96 @@
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke2);
+  min-width: 0;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--colorNeutralForeground3);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--colorBrandForeground2);
+}
+
+.label {
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightMedium);
+  letter-spacing: 0.01em;
+}
+
+.explain {
+  display: inline-flex;
+  align-items: center;
+  color: var(--colorNeutralForeground4);
+  cursor: help;
+  border-radius: var(--borderRadiusSmall);
+}
+
+.explain:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.value {
+  /* Proportional figures on purpose — tabular-nums looks loose at display size. */
+  font-size: var(--fontSizeBase600);
+  line-height: 1.15;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+  letter-spacing: -0.01em;
+}
+
+.hero {
+  background: linear-gradient(
+    155deg,
+    var(--colorBrandBackground2) 0%,
+    var(--colorNeutralBackground1) 62%
+  );
+  border-color: var(--colorBrandStroke2);
+}
+
+.hero .value {
+  font-size: 48px;
+  line-height: 1.08;
+  color: var(--colorBrandForeground1);
+}
+
+.hero .labelRow {
+  color: var(--colorNeutralForeground2);
+}
+
+.caption {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.tile[data-tone='positive'] .value {
+  color: var(--colorPaletteGreenForeground1);
+}
+
+.shimmer {
+  height: 44px;
+  border-radius: var(--borderRadiusMedium);
+  background: linear-gradient(
+    90deg,
+    var(--colorNeutralBackground3) 25%,
+    var(--colorNeutralBackground4) 50%,
+    var(--colorNeutralBackground3) 75%
+  );
+  background-size: 320px 100%;
+  animation: bcbShimmer 1.1s linear infinite;
+}
+
+.hero .shimmer {
+  height: 56px;
+}
