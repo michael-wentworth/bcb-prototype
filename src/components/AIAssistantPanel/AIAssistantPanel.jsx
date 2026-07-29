@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Badge, Button, Textarea, Tooltip } from '@fluentui/react-components';
 import { Send24Filled, Sparkle20Filled } from '@fluentui/react-icons';
-import { DEMO_PROMPT, STAGES } from '../../data/mockData.js';
-import { STAGE_SUGGESTIONS } from '../../data/aiScript.js';
+import { DEMO_PROMPT } from '../../data/demoCase.js';
+import { STEPS } from '../../data/referenceData.js';
+import { STEP_SUGGESTIONS } from '../../data/aiScript.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import MessageBlocks from './MessageBlocks.jsx';
 import styles from './AIAssistantPanel.module.css';
 
 export default function AIAssistantPanel() {
-  const { messages, thinking, stage, ask, goToStage } = useAppState();
+  const { messages, thinking, step, ask, goToStep } = useAppState();
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   const pinnedToBottom = useRef(true);
@@ -48,7 +49,7 @@ export default function AIAssistantPanel() {
     (action) => {
       if (!action) return;
       if (action.kind === 'navigate') {
-        goToStage(action.stage);
+        goToStep(action.step);
         return;
       }
       if (action.kind === 'demo') {
@@ -57,7 +58,7 @@ export default function AIAssistantPanel() {
       }
       send(action.label);
     },
-    [goToStage, send],
+    [goToStep, send],
   );
 
   const handleKeyDown = (e) => {
@@ -67,7 +68,7 @@ export default function AIAssistantPanel() {
     }
   };
 
-  const suggestions = STAGE_SUGGESTIONS[stage] || [];
+  const suggestions = STEP_SUGGESTIONS[step] || [];
   const busy = Boolean(thinking);
 
   return (
@@ -79,7 +80,7 @@ export default function AIAssistantPanel() {
         <div className={styles.headerText}>
           <span className={styles.title}>Business case copilot</span>
           <span className={styles.subtitle}>
-            {busy ? thinking.steps[thinking.index] : `Working on ${STAGES[stage].label}`}
+            {busy ? thinking.steps[thinking.index] : `Working on ${STEPS[step].label}`}
           </span>
         </div>
         <Badge appearance="outline" size="small" color="informative">

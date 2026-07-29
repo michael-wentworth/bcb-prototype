@@ -12,7 +12,8 @@ import { useAppState } from '../../state/AppStateContext.jsx';
 import styles from './TopBar.module.css';
 
 export default function TopBar({ isDark, onToggleTheme, panelOpen, onTogglePanel }) {
-  const { profile, reset } = useAppState();
+  const { customer, caseSetup, reset } = useAppState();
+  const caseLabel = caseSetup.name || customer.accountName;
 
   return (
     <header className={styles.bar}>
@@ -30,7 +31,7 @@ export default function TopBar({ isDark, onToggleTheme, panelOpen, onTogglePanel
       </div>
 
       <div className={styles.context}>
-        {profile.companyName ? (
+        {caseLabel ? (
           <>
             {/* A plain rule rather than Fluent's Divider: Divider's root sets
                 flex-grow: 1, which wins over a CSS Module rule on source order
@@ -38,8 +39,8 @@ export default function TopBar({ isDark, onToggleTheme, panelOpen, onTogglePanel
             <span className={styles.divider} aria-hidden="true" />
             <span className={styles.caseLabel}>Active case</span>
             <span className={styles.caseName}>
-              {profile.companyName}
-              {profile.industry ? ` · ${profile.industry}` : ''}
+              {caseLabel}
+              {customer.industry ? ` · ${customer.industry}` : ''}
             </span>
           </>
         ) : null}

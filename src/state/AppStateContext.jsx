@@ -7,14 +7,8 @@ import React, {
   useReducer,
   useRef,
 } from 'react';
-import {
-  DETECTED_VENDORS,
-  DISPLACEMENTS,
-  EXTRACTED_PROFILE,
-  SKU_RECOMMENDATIONS,
-  STAGES,
-  buildBusinessCase,
-} from '../data/mockData.js';
+import { STEPS, bundleById, geographyById, skuById } from '../data/referenceData.js';
+import { buildBusinessCase } from '../data/model.js';
 import {
   AUTHORSHIP,
   NARRATIVE_SECTIONS,
@@ -22,21 +16,42 @@ import {
   afterHumanEdit,
 } from '../data/authoring.js';
 import { applyNarrativeAction } from '../data/aiActions.js';
-import { getStageIntro, resolveResponse } from '../data/aiScript.js';
+import { DEMO_EXTRACTION, EXTRACTION_EVIDENCE } from '../data/demoCase.js';
+import { getStepIntro, resolveResponse } from '../data/aiScript.js';
 
 const AppStateContext = createContext(null);
 
 let messageId = 0;
 const nextId = () => `m${++messageId}`;
+let rowSeq = 0;
+const rowId = (p) => `${p}-${++rowSeq}`;
 
-const emptyProfile = {
-  companyName: '',
+const emptyCustomer = {
+  accountName: '',
+  opportunityId: '',
+  opportunityName: '',
+  notForCustomer: false,
+  tpid: '',
+  closeDate: '',
   industry: '',
-  employeeCount: '',
   geography: '',
-  currentLicensing: '',
-  businessObjectives: '',
+  segment: '',
+  salesMotion: '',
+  numberOfUsers: '',
+  website: '',
+  numberOfDevices: '',
+  bcbRole: '',
+  description: '',
 };
+
+const emptyEnvironment = {
+  existingLicenses: [],
+  competitorProducts: [],
+  securityStack: [],
+  sellerAlias: 'robin@microsoft.com',
+};
+
+const emptyCase = { name: '', analysisPeriod: 3 };
 
 const emptyNarrative = () =>
   NARRATIVE_SECTIONS.reduce(
@@ -44,195 +59,221 @@ const emptyNarrative = () =>
     {},
   );
 
+/** A blank SKU row. Seats default to the customer's user count where known. */
+export const makeSkuRow = (seed = {}, years = 3, users = '') => ({
+  id: rowId('sku'),
+  skuId: '',
+  solutionArea: '',
+  solutionPlay: '',
+  pricePerMonth: '',
+  seats: Array.from({ length: years }, () => users || ''),
+  authorship: AUTHORSHIP.MANUAL,
+  ...seed,
+});
+
+export const makeCompetitorRow = (seed = {}) => ({
+  id: rowId('comp'),
+  softwareSolution: '',
+  currentProduct: '',
+  competitorCost: '',
+  newMicrosoftProduct: '',
+  yearContractEnds: '',
+  authorship: AUTHORSHIP.MANUAL,
+  ...seed,
+});
+
 const initialState = {
-  stage: 0,
-  maxStageReached: 0,
+  step: 0,
+  maxStepReached: 0,
 
-  profile: { ...emptyProfile },
-  /** key -> { confidence, basis, evidence, source, populatedAt } */
+  customer: { ...emptyCustomer },
+  /** key -> { confidence, basis, evidence, source } for AI-populated fields. */
   fieldMeta: {},
-  profilePopulated: false,
-  vendors: [],
+  environment: { ...emptyEnvironment },
+  caseSetup: { ...emptyCase },
 
-  // The recommendation engine's output is present from the start, as it always
-  // has been. What changed is that it is now editable and extendable rather
-  // than the only way through.
-  selectedSkus: SKU_RECOMMENDATIONS.filter((s) => s.recommended).map((s) => s.id),
-  manualSkus: [],
-  includedDisplacements: DISPLACEMENTS.map((d) => d.id),
-  manualDisplacements: [],
+  outcomes: [],
+  skus: [],
+  bundle: { bundleId: '', annualPerUser: '', additionalValue: '' },
+  competitors: { msrpDiscount: '', rows: [] },
+
+  narrative: emptyNarrative(),
 
   /** Per-section provenance: 'empty' | 'ai' | 'assisted' | 'manual'. */
   sectionAuthorship: {
-    profile: AUTHORSHIP.EMPTY,
-    solutions: AUTHORSHIP.AI,
-    displacement: AUTHORSHIP.AI,
+    customer: AUTHORSHIP.EMPTY,
+    outcomes: AUTHORSHIP.EMPTY,
+    skus: AUTHORSHIP.EMPTY,
+    competitors: AUTHORSHIP.EMPTY,
   },
-
-  narrative: emptyNarrative(),
 
   messages: [],
   thinking: null,
   introShown: {},
 
   reportReady: false,
-  highlightedGap: null,
 };
-
-let populateTick = 0;
 
 const setSection = (state, section, next) => ({
   ...state,
   sectionAuthorship: { ...state.sectionAuthorship, [section]: next },
 });
 
+const humanTouch = (state, section) =>
+  setSection(state, section, afterHumanEdit(state.sectionAuthorship[section]));
+
+const aiTouch = (state, section) =>
+  setSection(
+    state,
+    section,
+    afterAiAction(state.sectionAuthorship[section], {
+      fromScratch: state.sectionAuthorship[section] === AUTHORSHIP.EMPTY,
+    }),
+  );
+
 function reducer(state, action) {
   switch (action.type) {
-    case 'SET_STAGE': {
-      const stage = Math.max(0, Math.min(STAGES.length - 1, action.stage));
-      return { ...state, stage, maxStageReached: Math.max(state.maxStageReached, stage) };
+    case 'SET_STEP': {
+      const step = Math.max(0, Math.min(STEPS.length - 1, action.step));
+      return { ...state, step, maxStepReached: Math.max(state.maxStepReached, step) };
     }
 
-    case 'SET_FIELD':
-      return setSection(
+    /* --------------------------- customer form -------------------------- */
+    case 'SET_CUSTOMER': {
+      const next = { ...state.customer, [action.key]: action.value };
+      // Editing an AI-populated field replaces its provenance with your own.
+      const meta = state.fieldMeta[action.key]
+        ? {
+            ...state.fieldMeta,
+            [action.key]: { confidence: 'confirmed', basis: 'Edited by you', source: 'user' },
+          }
+        : state.fieldMeta;
+      return humanTouch({ ...state, customer: next, fieldMeta: meta }, 'customer');
+    }
+
+    case 'SET_ENVIRONMENT':
+      return humanTouch(
+        { ...state, environment: { ...state.environment, [action.key]: action.value } },
+        'customer',
+      );
+
+    case 'SET_CASE_SETUP': {
+      const caseSetup = { ...state.caseSetup, [action.key]: action.value };
+      // Changing the horizon reshapes every SKU row's per-year seat entry.
+      const years = Number(caseSetup.analysisPeriod) || 3;
+      const skus =
+        action.key === 'analysisPeriod'
+          ? state.skus.map((r) => ({
+              ...r,
+              seats: Array.from({ length: years }, (_, i) => r.seats[i] ?? ''),
+            }))
+          : state.skus;
+      return { ...state, caseSetup, skus };
+    }
+
+    /* ----------------------------- outcomes ------------------------------ */
+    case 'TOGGLE_OUTCOME': {
+      const on = state.outcomes.includes(action.id);
+      return humanTouch(
         {
           ...state,
-          profile: { ...state.profile, [action.key]: action.value },
-          fieldMeta: {
-            ...state.fieldMeta,
-            [action.key]: {
-              ...(state.fieldMeta[action.key] || {}),
-              source: 'user',
-              confidence: 'confirmed',
-              basis: 'Edited by you',
-            },
+          outcomes: on
+            ? state.outcomes.filter((o) => o !== action.id)
+            : [...state.outcomes, action.id],
+        },
+        'outcomes',
+      );
+    }
+
+    case 'SET_ALL_OUTCOMES':
+      return humanTouch({ ...state, outcomes: action.ids }, 'outcomes');
+
+    /* ------------------------------- SKUs -------------------------------- */
+    case 'ADD_SKU_ROW':
+      return humanTouch(
+        {
+          ...state,
+          skus: [
+            ...state.skus,
+            makeSkuRow(action.seed, Number(state.caseSetup.analysisPeriod) || 3, action.users),
+          ],
+        },
+        'skus',
+      );
+
+    case 'UPDATE_SKU_ROW':
+      return humanTouch(
+        {
+          ...state,
+          skus: state.skus.map((r) =>
+            r.id === action.id
+              ? { ...r, ...action.patch, authorship: afterHumanEdit(r.authorship) }
+              : r,
+          ),
+        },
+        'skus',
+      );
+
+    case 'UPDATE_SKU_SEATS':
+      return humanTouch(
+        {
+          ...state,
+          skus: state.skus.map((r) =>
+            r.id === action.id
+              ? {
+                  ...r,
+                  seats: r.seats.map((s, i) => (i === action.index ? action.value : s)),
+                  authorship: afterHumanEdit(r.authorship),
+                }
+              : r,
+          ),
+        },
+        'skus',
+      );
+
+    case 'REMOVE_SKU_ROW':
+      return humanTouch({ ...state, skus: state.skus.filter((r) => r.id !== action.id) }, 'skus');
+
+    /* ------------------------------ bundle ------------------------------- */
+    case 'SET_BUNDLE': {
+      const bundle = { ...state.bundle, [action.key]: action.value };
+      // Picking a known bundle prefills its list price; the seller can override.
+      if (action.key === 'bundleId') {
+        const b = bundleById(action.value);
+        if (b) bundle.annualPerUser = b.annualPerUser ? String(b.annualPerUser) : '';
+      }
+      return { ...state, bundle };
+    }
+
+    /* ---------------------------- competitors ---------------------------- */
+    case 'SET_COMPETITOR_DISCOUNT':
+      return { ...state, competitors: { ...state.competitors, msrpDiscount: action.value } };
+
+    case 'ADD_COMPETITOR_ROW':
+      return humanTouch(
+        {
+          ...state,
+          competitors: {
+            ...state.competitors,
+            rows: [...state.competitors.rows, makeCompetitorRow(action.seed)],
           },
         },
-        'profile',
-        afterHumanEdit(state.sectionAuthorship.profile),
+        'competitors',
       );
 
-    case 'POPULATE_FIELD': {
-      const f = action.field;
-      return setSection(
+    case 'REMOVE_COMPETITOR_ROW':
+      return humanTouch(
         {
           ...state,
-          profile: { ...state.profile, [f.key]: f.value },
-          fieldMeta: {
-            ...state.fieldMeta,
-            [f.key]: {
-              confidence: f.confidence,
-              basis: f.basis,
-              evidence: f.evidence,
-              source: 'ai',
-              populatedAt: ++populateTick,
-            },
+          competitors: {
+            ...state.competitors,
+            rows: state.competitors.rows.filter((r) => r.id !== action.id),
           },
         },
-        'profile',
-        afterAiAction(state.sectionAuthorship.profile, {
-          fromScratch: state.sectionAuthorship.profile === AUTHORSHIP.EMPTY,
-        }),
-      );
-    }
-
-    case 'POPULATE_VENDORS':
-      return { ...state, vendors: DETECTED_VENDORS, profilePopulated: true };
-
-    /** The copilot shortlisting solutions — distinct from the seller picking them. */
-    case 'AI_SHORTLIST':
-      return setSection(
-        {
-          ...state,
-          selectedSkus: SKU_RECOMMENDATIONS.filter((s) => s.recommended).map((s) => s.id),
-        },
-        'solutions',
-        afterAiAction(state.sectionAuthorship.solutions, {
-          fromScratch: state.sectionAuthorship.solutions === AUTHORSHIP.EMPTY,
-        }),
+        'competitors',
       );
 
-    case 'AI_DETECT_DISPLACEMENTS':
-      return setSection(
-        { ...state, includedDisplacements: DISPLACEMENTS.map((d) => d.id) },
-        'displacement',
-        afterAiAction(state.sectionAuthorship.displacement, {
-          fromScratch: state.sectionAuthorship.displacement === AUTHORSHIP.EMPTY,
-        }),
-      );
-
-    case 'TOGGLE_SKU': {
-      const on = state.selectedSkus.includes(action.id);
-      return setSection(
-        {
-          ...state,
-          selectedSkus: on
-            ? state.selectedSkus.filter((id) => id !== action.id)
-            : [...state.selectedSkus, action.id],
-        },
-        'solutions',
-        afterHumanEdit(state.sectionAuthorship.solutions),
-      );
-    }
-
-    case 'ADD_MANUAL_SKU': {
-      if (state.manualSkus.some((s) => s.id === action.sku.id)) return state;
-      return setSection(
-        {
-          ...state,
-          manualSkus: [...state.manualSkus, action.sku],
-          selectedSkus: [...state.selectedSkus, action.sku.id],
-        },
-        'solutions',
-        afterHumanEdit(state.sectionAuthorship.solutions),
-      );
-    }
-
-    case 'REMOVE_MANUAL_SKU':
-      return setSection(
-        {
-          ...state,
-          manualSkus: state.manualSkus.filter((s) => s.id !== action.id),
-          selectedSkus: state.selectedSkus.filter((id) => id !== action.id),
-        },
-        'solutions',
-        afterHumanEdit(state.sectionAuthorship.solutions),
-      );
-
-    case 'TOGGLE_DISPLACEMENT': {
-      const on = state.includedDisplacements.includes(action.id);
-      return setSection(
-        {
-          ...state,
-          includedDisplacements: on
-            ? state.includedDisplacements.filter((id) => id !== action.id)
-            : DISPLACEMENTS.filter(
-                (d) => d.id === action.id || state.includedDisplacements.includes(d.id),
-              ).map((d) => d.id),
-        },
-        'displacement',
-        afterHumanEdit(state.sectionAuthorship.displacement),
-      );
-    }
-
-    case 'ADD_MANUAL_DISPLACEMENT':
-      return setSection(
-        { ...state, manualDisplacements: [...state.manualDisplacements, action.row] },
-        'displacement',
-        afterHumanEdit(state.sectionAuthorship.displacement),
-      );
-
-    case 'REMOVE_MANUAL_DISPLACEMENT':
-      return setSection(
-        {
-          ...state,
-          manualDisplacements: state.manualDisplacements.filter((d) => d.id !== action.id),
-        },
-        'displacement',
-        afterHumanEdit(state.sectionAuthorship.displacement),
-      );
-
-    /* --------------------------- narrative ---------------------------- */
+    /* ----------------------------- narrative ----------------------------- */
     case 'SET_NARRATIVE': {
       const current = state.narrative[action.id];
       return {
@@ -242,9 +283,7 @@ function reducer(state, action) {
           [action.id]: {
             ...current,
             text: action.text,
-            authorship: action.text.trim()
-              ? afterHumanEdit(current.authorship)
-              : AUTHORSHIP.EMPTY,
+            authorship: action.text.trim() ? afterHumanEdit(current.authorship) : AUTHORSHIP.EMPTY,
           },
         },
       };
@@ -261,8 +300,6 @@ function reducer(state, action) {
           [action.id]: {
             text: result.text,
             authorship: afterAiAction(current.authorship, { fromScratch: result.fromScratch }),
-            // Snapshot so "revert to my version" is a real undo rather than a
-            // promise the prototype cannot keep.
             snapshot: { text: current.text, authorship: current.authorship },
           },
         },
@@ -274,13 +311,64 @@ function reducer(state, action) {
       if (!current?.snapshot) return state;
       return {
         ...state,
-        narrative: {
-          ...state.narrative,
-          [action.id]: { ...current.snapshot, snapshot: null },
-        },
+        narrative: { ...state.narrative, [action.id]: { ...current.snapshot, snapshot: null } },
       };
     }
 
+    /* -------------------------- AI bulk population ----------------------- */
+    case 'AI_FILL_CUSTOMER': {
+      const meta = { ...state.fieldMeta };
+      Object.keys(action.patch).forEach((key) => {
+        if (EXTRACTION_EVIDENCE[key]) meta[key] = { ...EXTRACTION_EVIDENCE[key], source: 'ai' };
+      });
+      return aiTouch(
+        { ...state, customer: { ...state.customer, ...action.patch }, fieldMeta: meta },
+        'customer',
+      );
+    }
+
+    case 'AI_FILL_ENVIRONMENT':
+      return aiTouch(
+        { ...state, environment: { ...state.environment, ...action.patch } },
+        'customer',
+      );
+
+    case 'AI_FILL_OUTCOMES':
+      return aiTouch({ ...state, outcomes: action.ids }, 'outcomes');
+
+    case 'AI_FILL_BUNDLE':
+      return { ...state, bundle: { ...state.bundle, ...action.patch } };
+
+    case 'AI_FILL_SKUS': {
+      const years = Number(state.caseSetup.analysisPeriod) || 3;
+      const users = state.customer.numberOfUsers;
+      return aiTouch(
+        {
+          ...state,
+          skus: action.rows.map((seed) => ({
+            ...makeSkuRow({}, years, users),
+            ...seed,
+            seats: Array.from({ length: years }, () => users || ''),
+            authorship: AUTHORSHIP.AI,
+          })),
+        },
+        'skus',
+      );
+    }
+
+    case 'AI_FILL_COMPETITORS':
+      return aiTouch(
+        {
+          ...state,
+          competitors: {
+            ...state.competitors,
+            rows: action.rows.map((seed) => makeCompetitorRow({ ...seed, authorship: AUTHORSHIP.AI })),
+          },
+        },
+        'competitors',
+      );
+
+    /* ----------------------------- assistant ----------------------------- */
     case 'ADD_MESSAGE':
       return { ...state, messages: [...state.messages, action.message] };
 
@@ -302,21 +390,17 @@ function reducer(state, action) {
       return { ...state, thinking: null };
 
     case 'MARK_INTRO_SHOWN':
-      return { ...state, introShown: { ...state.introShown, [action.stage]: true } };
+      return { ...state, introShown: { ...state.introShown, [action.step]: true } };
 
     case 'SET_REPORT_READY':
       return { ...state, reportReady: true };
 
-    case 'HIGHLIGHT_GAP':
-      return { ...state, highlightedGap: action.id };
-
     case 'RESET':
-      populateTick = 0;
       return {
         ...initialState,
-        profile: { ...emptyProfile },
-        fieldMeta: {},
-        introShown: {},
+        customer: { ...emptyCustomer },
+        environment: { ...emptyEnvironment },
+        caseSetup: { ...emptyCase },
         narrative: emptyNarrative(),
       };
 
@@ -328,8 +412,6 @@ function reducer(state, action) {
 export function AppStateProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Every scheduled callback registers here so a reset or unmount can cancel
-  // in-flight scripted sequences instead of writing into a stale tree.
   const timers = useRef([]);
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -347,57 +429,77 @@ export function AppStateProvider({ children }) {
 
   useEffect(() => clearTimers, [clearTimers]);
 
+  /* --------------------------- derived values --------------------------- */
+
+  const currency = useMemo(
+    () => geographyById(state.customer.geography)?.currency || 'USD',
+    [state.customer.geography],
+  );
+
+  /** Devices default to 1.2x users when the seller leaves the field blank. */
+  const effectiveDevices = useMemo(() => {
+    const entered = Number(String(state.customer.numberOfDevices).replace(/[^0-9.]/g, ''));
+    if (entered > 0) return Math.round(entered);
+    const users = Number(String(state.customer.numberOfUsers).replace(/[^0-9.]/g, ''));
+    return users > 0 ? Math.round(users * 1.2) : 0;
+  }, [state.customer.numberOfDevices, state.customer.numberOfUsers]);
+
   const businessCase = useMemo(
-    () => buildBusinessCase(state.includedDisplacements, state.manualDisplacements),
-    [state.includedDisplacements, state.manualDisplacements],
+    () =>
+      buildBusinessCase({
+        analysisPeriod: state.caseSetup.analysisPeriod,
+        numberOfUsers: state.customer.numberOfUsers,
+        skus: state.skus,
+        bundle: state.bundle,
+        competitors: state.competitors,
+      }),
+    [
+      state.caseSetup.analysisPeriod,
+      state.customer.numberOfUsers,
+      state.skus,
+      state.bundle,
+      state.competitors,
+    ],
   );
   const businessCaseRef = useRef(businessCase);
   businessCaseRef.current = businessCase;
 
-  const buildContext = useCallback(() => {
-    const s = stateRef.current;
-    return {
-      stage: s.stage,
-      profile: s.profile,
-      profilePopulated: s.profilePopulated,
-      selectedSkus: s.selectedSkus,
-      includedDisplacements: s.includedDisplacements,
-      sectionAuthorship: s.sectionAuthorship,
-      narrative: s.narrative,
+  const buildContext = useCallback(
+    () => ({
+      step: stateRef.current.step,
+      customer: stateRef.current.customer,
+      environment: stateRef.current.environment,
+      caseSetup: stateRef.current.caseSetup,
+      outcomes: stateRef.current.outcomes,
+      skus: stateRef.current.skus,
+      competitors: stateRef.current.competitors,
+      narrative: stateRef.current.narrative,
+      sectionAuthorship: stateRef.current.sectionAuthorship,
       businessCase: businessCaseRef.current,
-    };
-  }, []);
+      currency,
+    }),
+    [currency],
+  );
 
   const pushAssistant = useCallback((blocks, intent) => {
-    dispatch({
-      type: 'ADD_MESSAGE',
-      message: { id: nextId(), role: 'assistant', blocks, intent },
-    });
+    dispatch({ type: 'ADD_MESSAGE', message: { id: nextId(), role: 'assistant', blocks, intent } });
   }, []);
 
-  /** The scripted POPULATE behaviour: fields land one at a time, not all at once. */
+  /** The scripted POPULATE behaviour, now filling the real form fields. */
   const runActions = useCallback(
     (actions) => {
       actions.forEach((action) => {
-        if (action.type === 'populateProfile') {
-          EXTRACTED_PROFILE.forEach((field, i) => {
-            schedule(() => dispatch({ type: 'POPULATE_FIELD', field }), 220 + i * 300);
-          });
-          const after = 220 + EXTRACTED_PROFILE.length * 300 + 260;
-          schedule(() => dispatch({ type: 'POPULATE_VENDORS' }), after);
-          // The copilot fills the downstream sections too, so the AI path really
-          // is "describe it once and get a draft" rather than a partial start.
-          schedule(() => dispatch({ type: 'AI_SHORTLIST' }), after + 200);
-          schedule(() => dispatch({ type: 'AI_DETECT_DISPLACEMENTS' }), after + 400);
+        if (action.type === 'fillCase') {
+          const d = DEMO_EXTRACTION;
+          schedule(() => dispatch({ type: 'AI_FILL_CUSTOMER', patch: d.customer }), 260);
+          schedule(() => dispatch({ type: 'AI_FILL_ENVIRONMENT', patch: d.environment }), 620);
+          schedule(() => dispatch({ type: 'AI_FILL_OUTCOMES', ids: d.outcomes }), 900);
+          schedule(() => dispatch({ type: 'AI_FILL_SKUS', rows: d.skus }), 1200);
+          schedule(() => dispatch({ type: 'AI_FILL_BUNDLE', patch: d.bundle }), 1400);
+          schedule(() => dispatch({ type: 'AI_FILL_COMPETITORS', rows: d.competitors }), 1600);
         }
-        if (action.type === 'aiShortlist') {
-          schedule(() => dispatch({ type: 'AI_SHORTLIST' }), 300);
-        }
-        if (action.type === 'aiDetectDisplacements') {
-          schedule(() => dispatch({ type: 'AI_DETECT_DISPLACEMENTS' }), 300);
-        }
-        if (action.type === 'goToStage') {
-          schedule(() => dispatch({ type: 'SET_STAGE', stage: action.stage }), 400);
+        if (action.type === 'goToStep') {
+          schedule(() => dispatch({ type: 'SET_STEP', step: action.step }), 400);
         }
       });
     },
@@ -417,7 +519,6 @@ export function AppStateProvider({ children }) {
       const response = resolveResponse(trimmed, buildContext());
       dispatch({ type: 'START_THINKING', steps: response.thinking });
 
-      // Walk the thinking steps so the wait reads as work, not as latency.
       const stepGap = response.delay / Math.max(response.thinking.length, 1);
       response.thinking.forEach((_, i) => {
         if (i === 0) return;
@@ -433,34 +534,31 @@ export function AppStateProvider({ children }) {
     [buildContext, pushAssistant, runActions, schedule],
   );
 
-  const goToStage = useCallback((stage) => {
-    dispatch({ type: 'SET_STAGE', stage });
-  }, []);
+  /* ------------------------------- actions ------------------------------ */
 
-  const setField = useCallback((key, value) => {
-    dispatch({ type: 'SET_FIELD', key, value });
-  }, []);
-
-  const toggleSku = useCallback((id) => dispatch({ type: 'TOGGLE_SKU', id }), []);
-  const toggleDisplacement = useCallback((id) => dispatch({ type: 'TOGGLE_DISPLACEMENT', id }), []);
-  const highlightGap = useCallback((id) => dispatch({ type: 'HIGHLIGHT_GAP', id }), []);
-
-  /* ---------------------------- authoring ------------------------------ */
-
-  const addManualSku = useCallback((sku) => dispatch({ type: 'ADD_MANUAL_SKU', sku }), []);
-  const removeManualSku = useCallback((id) => dispatch({ type: 'REMOVE_MANUAL_SKU', id }), []);
-  const addManualDisplacement = useCallback(
-    (row) => dispatch({ type: 'ADD_MANUAL_DISPLACEMENT', row }),
+  const actions = useMemo(
+    () => ({
+      goToStep: (step) => dispatch({ type: 'SET_STEP', step }),
+      setCustomer: (key, value) => dispatch({ type: 'SET_CUSTOMER', key, value }),
+      setEnvironment: (key, value) => dispatch({ type: 'SET_ENVIRONMENT', key, value }),
+      setCaseSetup: (key, value) => dispatch({ type: 'SET_CASE_SETUP', key, value }),
+      toggleOutcome: (id) => dispatch({ type: 'TOGGLE_OUTCOME', id }),
+      setAllOutcomes: (ids) => dispatch({ type: 'SET_ALL_OUTCOMES', ids }),
+      addSkuRow: (seed, users) => dispatch({ type: 'ADD_SKU_ROW', seed, users }),
+      updateSkuRow: (id, patch) => dispatch({ type: 'UPDATE_SKU_ROW', id, patch }),
+      updateSkuSeats: (id, index, value) =>
+        dispatch({ type: 'UPDATE_SKU_SEATS', id, index, value }),
+      removeSkuRow: (id) => dispatch({ type: 'REMOVE_SKU_ROW', id }),
+      setBundle: (key, value) => dispatch({ type: 'SET_BUNDLE', key, value }),
+      setCompetitorDiscount: (value) => dispatch({ type: 'SET_COMPETITOR_DISCOUNT', value }),
+      addCompetitorRow: (seed) => dispatch({ type: 'ADD_COMPETITOR_ROW', seed }),
+      removeCompetitorRow: (id) => dispatch({ type: 'REMOVE_COMPETITOR_ROW', id }),
+      setNarrative: (id, text) => dispatch({ type: 'SET_NARRATIVE', id, text }),
+      revertNarrative: (id) => dispatch({ type: 'REVERT_NARRATIVE', id }),
+    }),
     [],
   );
-  const removeManualDisplacement = useCallback(
-    (id) => dispatch({ type: 'REMOVE_MANUAL_DISPLACEMENT', id }),
-    [],
-  );
-  const setNarrative = useCallback((id, text) => dispatch({ type: 'SET_NARRATIVE', id, text }), []);
-  const revertNarrative = useCallback((id) => dispatch({ type: 'REVERT_NARRATIVE', id }), []);
 
-  /** Section-level AI. Narrates what it did so an in-document action is never silent. */
   const runNarrativeAction = useCallback(
     (id, actionId) => {
       const ctx = buildContext();
@@ -490,37 +588,10 @@ export function AppStateProvider({ children }) {
     [buildContext, pushAssistant, schedule],
   );
 
-  const reset = useCallback(() => {
-    clearTimers();
-    dispatch({ type: 'RESET' });
-  }, [clearTimers]);
-
-  // Proactive stage commentary — the assistant offers context when a stage
-  // opens. It never blocks anything; the workflow is fully usable with the
-  // panel collapsed and this never read.
-  useEffect(() => {
-    if (state.introShown[state.stage]) return;
-
-    const intro = getStageIntro(state.stage, buildContext());
-    if (!intro) return;
-
-    dispatch({ type: 'MARK_INTRO_SHOWN', stage: state.stage });
-    const delay = state.stage === 0 ? 600 : 900;
-    schedule(() => pushAssistant(intro.blocks, intro.intent), delay);
-  }, [state.stage, state.introShown, buildContext, pushAssistant, schedule]);
-
-  // The report "assembling" beat — sells that stage 4 is generated, not static.
-  useEffect(() => {
-    if (state.stage !== 3 || state.reportReady) return;
-    schedule(() => dispatch({ type: 'SET_REPORT_READY' }), 1500);
-  }, [state.stage, state.reportReady, schedule]);
-
-  /** Case-level lineage, for the authorship summary in the header. */
+  /** Case-level lineage across the tracked sections. */
   const authorship = useMemo(() => {
     const levels = [
-      state.sectionAuthorship.profile,
-      state.sectionAuthorship.solutions,
-      state.sectionAuthorship.displacement,
+      ...Object.values(state.sectionAuthorship),
       ...NARRATIVE_SECTIONS.map((s) => state.narrative[s.id].authorship),
     ];
     const counts = { ai: 0, assisted: 0, manual: 0, empty: 0 };
@@ -530,45 +601,38 @@ export function AppStateProvider({ children }) {
     return { ...counts, total: levels.length, aiTouched: counts.ai + counts.assisted };
   }, [state.sectionAuthorship, state.narrative]);
 
+  const reset = useCallback(() => {
+    clearTimers();
+    dispatch({ type: 'RESET' });
+  }, [clearTimers]);
+
+  useEffect(() => {
+    if (state.introShown[state.step]) return;
+    const intro = getStepIntro(state.step, buildContext());
+    if (!intro) return;
+    dispatch({ type: 'MARK_INTRO_SHOWN', step: state.step });
+    schedule(() => pushAssistant(intro.blocks, intro.intent), state.step === 0 ? 600 : 900);
+  }, [state.step, state.introShown, buildContext, pushAssistant, schedule]);
+
+  useEffect(() => {
+    if (state.step !== 2 || state.reportReady) return;
+    schedule(() => dispatch({ type: 'SET_REPORT_READY' }), 1200);
+  }, [state.step, state.reportReady, schedule]);
+
   const value = useMemo(
     () => ({
       ...state,
+      ...actions,
       businessCase,
       authorship,
+      currency,
+      effectiveDevices,
+      skuById,
       ask,
-      goToStage,
-      setField,
-      toggleSku,
-      toggleDisplacement,
-      highlightGap,
-      addManualSku,
-      removeManualSku,
-      addManualDisplacement,
-      removeManualDisplacement,
-      setNarrative,
-      revertNarrative,
       runNarrativeAction,
       reset,
     }),
-    [
-      state,
-      businessCase,
-      authorship,
-      ask,
-      goToStage,
-      setField,
-      toggleSku,
-      toggleDisplacement,
-      highlightGap,
-      addManualSku,
-      removeManualSku,
-      addManualDisplacement,
-      removeManualDisplacement,
-      setNarrative,
-      revertNarrative,
-      runNarrativeAction,
-      reset,
-    ],
+    [state, actions, businessCase, authorship, currency, effectiveDevices, ask, runNarrativeAction, reset],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

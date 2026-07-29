@@ -1,182 +1,144 @@
-# FY27 Agentic Business Case Builder — vision prototype
+# Security BCB — FY27 prototype
 
-> Describe your customer and collaborate with AI to generate a defensible Microsoft business case.
-
-An interactive, presentation-ready front-end prototype of the FY27 vision for **Business Case
-Builder (BCB)** — the solution-selling platform Microsoft sellers and partners use to justify
-investment in Microsoft solutions.
-
-It is built to be shown to stakeholders. There is no backend, no API and no authentication: every
-AI interaction is scripted and every number comes from mock data.
-
-## Running it
+An interactive front-end prototype of Security Business Case Builder. No backend, no API, no
+authentication: every AI interaction is scripted and all data is mock.
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
+npm run build
 ```
 
-```bash
-npm run build    # production bundle in dist/
-npm run preview  # serve the production build
-```
+Requires Node 18+. Best at 1440px or wider. **Restart the dev server after switching git branches** —
+Vite does not reliably survive a whole-tree replacement.
 
-Requires Node 18+.
+---
 
-## The demo script
+## Aligned to the product's forms
 
-The prototype is built around one scripted narrative. The fastest path through it:
+The three steps and their fields follow the shipping product's screens so the two can be compared
+directly.
 
-1. **Stage 1 — Customer Profile.** Click **Example prompt** on the primer card (or *Use the Contoso
-   example* in the assistant panel). This sends:
+**Step 1 — Customer Details**
 
-   > "Contoso has 18,000 employees and currently uses Microsoft 365 E3, CrowdStrike and Okta. They
-   > want to reduce vendor sprawl and improve security operations."
-
-   The assistant works through its reasoning steps, then fills all six profile fields one at a time,
-   each with a confidence badge and a **Show source** popover quoting the evidence it used. It also
-   detects the third-party estate — flagging that two of the four vendors were *inferred*, not
-   stated.
-
-2. **Stage 2 — SKU Selection.** Four recommendations, each with a fit score, the vendors it
-   displaces, and an expandable rationale. A fifth is deliberately **held back**, with the reasoning
-   shown. Try the suggested prompt *"Why are you recommending E5?"*.
-
-3. **Stage 3 — Competitive Displacement.** The current estate mapped onto the Microsoft stack:
-   CrowdStrike → Defender, Okta → Entra, Splunk → Sentinel, Proofpoint → Defender for Office 365.
-   **Toggle any mapping off** and the whole business case recalculates.
-
-4. **Stage 4 — Results & Report.** The executive dashboard: 220% ROI, $2.4M estimated savings,
-   11-month payback, key value drivers, the full benefit and investment ledger, and export actions.
-
-The assistant is available throughout and speaks first when each stage opens.
-
-## AI is an accelerator, not a requirement
-
-The workflow is completable end to end without touching the copilot. Nothing is gated on having
-used it — previously **Continue** stayed disabled until you ran the AI prompt, which made the
-assistant mandatory in practice. That gating is gone from every stage, and the stepper lets you move
-between stages freely.
-
-What you can do by hand:
-
-| Stage | Manual route |
+| Group | Fields |
 |---|---|
-| Customer profile | Type into any field directly; the AI primer is an offer, not a step |
-| Solutions | **Added by you** — pick from a catalogue alongside the copilot's shortlist |
-| Displacement | Enter vendor, product, annual spend and the Microsoft product that replaces it |
-| Results | Write the executive summary, recommendations and risk analysis from scratch |
+| Customer Information | Account Name\*, Opportunity ID\*, Opportunity Name\*, "not for a customer", TPID, Opportunity Close Date, Industry, Geography (Region)\*, Currency, Customer Segment\*, Primary Sales Motion\*, Number of Users\*, Customer Website, Number of Devices, Role of Security BCB\*, Description |
+| Customer Environment | Existing MS Licenses\*, Competitor Products, Current Security Stack\*, Seller Alias |
+| Business Case Setup | Business Case Name\*, Analysis Period (Years)\* |
 
-Hand-entered displacements carry the same weight as detected ones — a manually entered $450K vendor
-moves ROI and the vendor count exactly as an AI-detected one does. A number someone typed is not
-worth less than a number the model inferred.
+**Step 2 — SKU Selection**: the eight security outcomes, repeatable SKU rows (SKU, Solution Area,
+Solution Play, seats per year, price per month), Build from a current bundle, and Competitor
+Products with the MSRP discount and the add-a-product table.
 
-### Section-level AI
+**Step 3 — Customer Report**: metrics, cash-flow chart, spend comparison, authorship lineage, the
+written case, and the benefit/investment ledger.
 
-The copilot is available per section, not only at case creation. Each narrative section has
-**Generate**, and once there is text, **Rewrite**, **Summarize**, **Expand** and **Improve clarity**.
-These are deterministic text operations standing in for a model — *summarize* keeps the first
-sentence of each paragraph, *rewrite* promotes the closing sentence to the front, *clarity* strips
-hedges and wordy constructions. They act on what you actually wrote rather than substituting canned
-prose. **Revert to my version** restores your text exactly.
+### Behaviours carried over from the product
 
-### Authorship transparency
+- **Currency auto-populates from Geography** (UK → GBP, Japan → JPY, and so on)
+- **Number of Devices defaults to 1.2 × users** when left blank, and says so
+- **Seller Alias** is read-only, "from AAD SSO"
+- **Analysis Period drives the seat-year columns** — set 5 years and each SKU row asks for 5 years of
+  seats
+- Competitor products not in the catalogue can be added and are "saved to this customer only"
 
-Every section carries a badge: **AI generated**, **AI assisted**, **Manually authored** or
-**Not started**. The transitions are enforced in one place so the badge can never disagree with the
-content:
+### Deliberate changes
 
-- Editing AI output makes it *AI assisted* — a person is now in the loop
-- The copilot reworking its own draft leaves it *AI generated*
-- The copilot reworking your writing makes it *AI assisted*
-- Reverting restores both the text and the prior badge
+- **Three steps, not four.** Competitor Products lives inside SKU Selection, as it does in the
+  product. The prototype previously had a separate Competitive Displacement step.
+- **Contract timing is enforced.** `Year Contract Ends` is not decoration — a competitor's saving
+  begins the year *after* its contract lapses, and a contract ending past the analysis period
+  contributes nothing and is flagged **Outside horizon**. This is the single most common way a
+  business case overstates savings.
+- **The current Microsoft bundle is not a saving.** If the customer is buying an add-on they keep
+  paying for their existing bundle, so counting it as benefit would inflate every case. It is
+  baseline context and appears in the spend comparison, not the ROI.
+- **Nothing is gated on the assistant.** Next is never disabled and every step is reachable, so the
+  whole workflow is completable by hand.
 
-A case-level lineage summary sits at the top of the Results stage. There is deliberately **no
-separate concept of an "AI case" or a "manual case"** — it is one Business Case either way, and
-authorship is metadata on it rather than a category.
-
-## The three AI behaviours
-
-| Behaviour | Try |
-|---|---|
-| **Populate** | The Contoso prompt above — extracts six fields plus four vendors from one sentence |
-| **Explain** | *"Why are you recommending E5?"* · *"What did you decide not to recommend?"* |
-| **Coach** | *"What data do you still need from me?"* — names the gaps and what each is worth |
-
-Other scripted intents worth demoing: *"How did you calculate the ROI?"*, *"What if the CFO pushes
-back on the savings?"*, *"How will CrowdStrike respond to this?"*, *"Draft an executive summary I
-can send"*, *"How do similar manufacturers license security?"*.
-
-Anything unrecognised falls back to a stage-appropriate reply, so the demo cannot dead-end.
+---
 
 ## How the numbers work
 
-The headline metrics are **not hard-coded**. `src/data/mockData.js` holds a single ledger — the
-displaced third-party contracts, the operational benefits, the incremental Microsoft investment, and
-a benefit-realisation curve across a 36-month horizon. `buildBusinessCase()` derives everything from
-it:
+Everything derives from the two input steps — there are no seeded figures, so an empty form produces
+an empty case rather than a flattering default.
 
-- **ROI 220%** = $7.2M net benefit ÷ $3.27M incremental investment
-- **$2.4M estimated savings** = $7.2M net benefit over 3 years
-- **11-month payback** = the first month cumulative net benefit crosses zero
+```
+investment = Σ (seats per year × price per month × 12)
+benefit    = Σ competitor cost × (1 − MSRP discount), from the year after each contract ends
+           + additional Microsoft products / savings
+ROI        = (benefit − investment) ÷ investment
+payback    = first month cumulative net benefit crosses zero
+```
 
-Because costs start immediately while benefits phase in over a nine-month deployment, payback lands
-in month 11 rather than month 3 — the realisation curve is what puts it there.
+The scripted Contoso example lands at **60% ROI, $819K average annual net, 23-month payback, 4
+vendors displaced** — with Splunk's 2027 contract contributing only one of the three years, which is
+the point of the mechanic.
 
-This is why toggling a displacement in stage 3 flows straight through to stage 4: excluding the
-inferred Proofpoint line moves the case to 183% ROI and $1.99M. The demo can be stress-tested live
-without the numbers contradicting each other.
+---
 
-## Design
+## AI is an accelerator, not a requirement
 
-Microsoft Fluent 2, via `@fluentui/react-components`. Component styling uses **CSS Modules that read
-Fluent design tokens as CSS custom properties** (`var(--colorNeutralBackground1)`,
-`var(--spacingHorizontalM)`, `var(--shadow4)`), which `FluentProvider` publishes to the DOM. One
-consequence worth knowing: Fluent copies the provider's `className` onto the portal nodes it mounts
-for tooltips and popovers, so **never attach layout or background rules to `FluentProvider` via
-`className`** — the app shell is sized from `global.css` via `#root > .fui-FluentProvider` instead.
+The copilot sits in the side panel and can be collapsed entirely. Everything it does is optional:
 
-Both light and dark themes are supported (toggle in the top bar), including a separately-stepped
-chart palette rather than an automatic flip.
+| Behaviour | Try |
+|---|---|
+| **Populate** | The Contoso example — fills all three steps, with confidence and "Show source" per field |
+| **Explain** | *"Why does 'Year Contract Ends' matter?"* · *"How did you calculate the ROI?"* |
+| **Coach** | *"What is still missing from this case?"* — reads the actual form state |
 
-Charts are hand-rolled SVG with no charting dependency. They follow a single-accent *emphasis*
-palette — validated for colour-vision deficiency against the surfaces the app actually renders on —
-plus a zero baseline, direct labels, hover crosshair with tooltip, keyboard navigation, and a
-**View data** table twin so no value is reachable only by hovering.
+Each written section (Executive summary, Recommendations, Risk analysis) can be typed directly or
+generated, then **Rewrite / Summarize / Expand / Improve clarity**. These are deterministic text
+operations on what you actually wrote — summarize keeps each paragraph's first sentence, rewrite
+promotes the closing sentence to the front, clarity strips hedges. **Revert to my version** restores
+your text exactly.
+
+### Authorship
+
+Every section carries **AI generated**, **AI assisted**, **Manually authored** or **Not started**,
+with transitions enforced in one place: editing AI output makes it assisted, the copilot reworking
+its own draft leaves it AI, reverting restores the prior badge. A lineage summary sits on the report.
+There is no separate concept of an "AI case" — it is one Business Case either way.
+
+---
 
 ## Project structure
 
 ```
 src/
-  components/
-    Layout/                  AppShell, TopBar
-    WorkflowHeader/          four-stage progress indicator
-    AIAssistantPanel/        persistent copilot — thread, blocks, composer
-    CustomerProfile/         stage 1, incl. AIField with confidence + provenance
-    SKUSelection/            stage 2, incl. RecommendationCard
-    CompetitiveDisplacement/ stage 3
-    ResultsDashboard/        stage 4, incl. PaybackChart + SpendComparison
-    shared/                  ConfidenceBadge, MetricTile, SectionHeading, StageFooter
   data/
-    mockData.js              profile, SKUs, displacements, financial model
-    aiScript.js              scripted intents, responses and stage commentary
-  state/
-    AppStateContext.jsx      reducer + the scripted orchestration
-  styles/global.css          reset, chart roles, shared keyframes
-  theme.js                   Fluent brand ramp (light + dark)
-  App.jsx
+    referenceData.js  steps, dropdowns, SKU catalog, outcomes, competitor matrix
+    model.js          the calculation, driven entirely by form inputs
+    demoCase.js       the scripted Contoso extraction
+    authoring.js      authorship model and narrative sections
+    aiActions.js      section-level text transformations
+    aiScript.js       scripted intents and step commentary
+  components/
+    CustomerDetails/  step 1
+    SkuSelection/     step 2 (outcomes, SKUs, bundle, competitors)
+    CustomerReport/   step 3
+    Narrative/        authorable prose sections
+    ResultsDashboard/ PaybackChart, SpendComparison (charts only)
+    AIAssistantPanel/ the copilot
+    WorkflowHeader/   three-step stepper
+    Layout/  shared/
+  state/AppStateContext.jsx
 ```
 
-## Notes for demoing
+---
 
-- Best at **1440px or wider**. Below ~1024px the assistant panel floats over the workflow rather
-  than shrinking it; it can be collapsed from the top bar.
-- The reset button (top bar) returns to a clean case mid-presentation.
-- Export buttons in stage 4 raise a toast — no file is produced.
-- All motion respects `prefers-reduced-motion`.
+## Notes
 
-## Related branches
+- **Never attach layout or background rules to `FluentProvider` via `className`** — Fluent copies it
+  onto every tooltip/popover portal node, painting full-viewport layers over the app. The shell is
+  sized from `global.css` via `#root > .fui-FluentProvider`.
+- Fluent's `Switch` renders `input[type="checkbox"]`; scope any bulk checkbox handling.
+- Charts are hand-rolled SVG, colour-vision validated, with a table view so no value is hover-only.
+- Light and dark themes; all motion respects `prefers-reduced-motion`.
 
-- `document-management-style` — an exploration that reframes the experience around the Business Case
-  as a document: a Library replacing the Dashboard, inline title editing, block-based authoring,
-  auto-save, comments, version history and a publish workflow.
+## Branches
+
+- `main` — this prototype
+- `document-management-style` — an earlier exploration reframing the case as a document (Library,
+  block-based authoring, versioning). Preserved, not merged.

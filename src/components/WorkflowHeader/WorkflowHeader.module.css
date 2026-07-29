@@ -2,8 +2,27 @@
   flex: none;
   background-color: var(--colorNeutralBackground1);
   border-bottom: 1px solid var(--colorNeutralStroke2);
-  padding: var(--spacingVerticalM) var(--spacingHorizontalXXL);
+  padding: var(--spacingVerticalS) var(--spacingHorizontalXXL);
   z-index: 2;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalM);
+  max-width: 1080px;
+  margin: 4px auto 0;
+  font-size: var(--fontSizeBase200);
+}
+
+.progressStrong {
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground2);
+}
+
+.progressCount {
+  color: var(--colorNeutralForeground4);
 }
 
 .list {

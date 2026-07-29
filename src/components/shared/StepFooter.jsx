@@ -1,21 +1,29 @@
 import React from 'react';
 import { Button } from '@fluentui/react-components';
 import { ChevronLeft20Regular, ChevronRight20Regular } from '@fluentui/react-icons';
-import { STAGES } from '../../data/mockData.js';
+import { STEPS } from '../../data/referenceData.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
-import styles from './StageFooter.module.css';
+import styles from './StepFooter.module.css';
 
-export default function StageFooter({ nextLabel, nextDisabled, hint, extra }) {
-  const { stage, goToStage } = useAppState();
-  const isLast = stage === STAGES.length - 1;
+/**
+ * Back / Next. Deliberately never disabled — a seller filling the form by hand
+ * must be able to move through the workflow without touching the assistant.
+ */
+export default function StepFooter({ hint, extra }) {
+  const { step, goToStep } = useAppState();
+  const isLast = step === STEPS.length - 1;
 
   return (
     <footer className={styles.footer}>
       <div className={styles.hint}>{hint}</div>
       <div className={styles.buttons}>
         {extra}
-        {stage > 0 ? (
-          <Button appearance="secondary" icon={<ChevronLeft20Regular />} onClick={() => goToStage(stage - 1)}>
+        {step > 0 ? (
+          <Button
+            appearance="secondary"
+            icon={<ChevronLeft20Regular />}
+            onClick={() => goToStep(step - 1)}
+          >
             Back
           </Button>
         ) : null}
@@ -24,10 +32,9 @@ export default function StageFooter({ nextLabel, nextDisabled, hint, extra }) {
             appearance="primary"
             icon={<ChevronRight20Regular />}
             iconPosition="after"
-            disabled={nextDisabled}
-            onClick={() => goToStage(stage + 1)}
+            onClick={() => goToStep(step + 1)}
           >
-            {nextLabel || `Continue to ${STAGES[stage + 1].label}`}
+            Next
           </Button>
         ) : null}
       </div>

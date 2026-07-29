@@ -1,0 +1,170 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalL);
+}
+
+.card {
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  box-shadow: var(--shadow4);
+  animation: bcbRise 320ms var(--curveDecelerateMid) both;
+}
+
+.cardTitle {
+  margin: 0 0 var(--spacingVerticalL);
+  font-size: var(--fontSizeBase500);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacingVerticalXL) var(--spacingHorizontalXL);
+}
+
+.addLink {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorBrandForeground1);
+  cursor: pointer;
+}
+
+.addLink:hover {
+  text-decoration: underline;
+}
+
+.notCustomer {
+  margin: var(--spacingVerticalL) 0;
+}
+
+.textarea {
+  width: 100%;
+}
+
+.textarea textarea {
+  min-height: 72px;
+  font-family: inherit;
+}
+
+/* --------------------------------- role ----------------------------------- */
+
+.roleBlock {
+  margin: var(--spacingVerticalXL) 0;
+}
+
+.roleLabel {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.required {
+  color: var(--colorPaletteRedForeground1);
+}
+
+.roleDetail {
+  margin: 4px 0 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+/* -------------------------------- primer ---------------------------------- */
+
+.primer {
+  display: flex;
+  gap: var(--spacingHorizontalM);
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
+  border-radius: var(--borderRadiusLarge);
+  background: linear-gradient(
+    120deg,
+    var(--colorBrandBackground2) 0%,
+    var(--colorNeutralBackground1) 70%
+  );
+  border: 1px solid var(--colorBrandStroke2);
+  box-shadow: none;
+}
+
+.primerMark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--borderRadiusCircular);
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--colorBrandBackground) 0%, #7a4fd6 100%);
+}
+
+.primerBody {
+  min-width: 0;
+}
+
+.primerTitle {
+  margin: 0 0 4px;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.primerText {
+  margin: 0;
+  max-width: 74ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.primerExample {
+  margin-top: var(--spacingVerticalM);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: var(--borderRadiusMedium);
+  border: 1px dashed var(--colorBrandStroke2);
+  background-color: var(--colorNeutralBackground1);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.primerExample:hover {
+  border-style: solid;
+}
+
+.primerExampleLabel {
+  font-size: var(--fontSizeBase100);
+  font-weight: var(--fontWeightSemibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--colorBrandForeground2);
+}
+
+.primerExampleText {
+  font-size: var(--fontSizeBase300);
+  line-height: 19px;
+  color: var(--colorNeutralForeground1);
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,31 +1,31 @@
 import React from 'react';
 import { Checkmark16Filled } from '@fluentui/react-icons';
-import { STAGES } from '../../data/mockData.js';
+import { STEPS } from '../../data/referenceData.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import styles from './WorkflowHeader.module.css';
 
 export default function WorkflowHeader() {
-  const { stage, maxStageReached, goToStage } = useAppState();
+  const { step, maxStepReached, goToStep } = useAppState();
 
   return (
-    <nav className={styles.root} aria-label="Business case stages">
+    <nav className={styles.root} aria-label="Business case steps">
       <ol className={styles.list}>
-        {STAGES.map((s, i) => {
-          // Visited stages read as complete; every stage stays reachable.
-          // Locking stages ahead assumes a prescribed order, which is exactly
-          // the assumption a manually authored case does not hold to.
-          const state = i < stage || (i <= maxStageReached && i !== stage)
-            ? 'complete'
-            : i === stage
-              ? 'current'
-              : 'upcoming';
+        {STEPS.map((s, i) => {
+          // Visited steps read as complete; every step stays reachable, because
+          // a form filled by hand does not have to be filled in order.
+          const state =
+            i < step || (i <= maxStepReached && i !== step)
+              ? 'complete'
+              : i === step
+                ? 'current'
+                : 'upcoming';
 
           return (
             <li key={s.id} className={styles.item} data-state={state}>
               {i > 0 ? (
                 <span
                   className={styles.rail}
-                  data-filled={i <= stage ? 'true' : 'false'}
+                  data-filled={i <= maxStepReached ? 'true' : 'false'}
                   aria-hidden="true"
                 />
               ) : null}
@@ -33,7 +33,7 @@ export default function WorkflowHeader() {
               <button
                 type="button"
                 className={styles.step}
-                onClick={() => goToStage(i)}
+                onClick={() => goToStep(i)}
                 aria-current={state === 'current' ? 'step' : undefined}
               >
                 <span className={styles.marker} aria-hidden="true">
@@ -45,9 +45,9 @@ export default function WorkflowHeader() {
                 </span>
                 <span className={styles.srOnly}>
                   {state === 'complete'
-                    ? ' — completed'
+                    ? ' — visited'
                     : state === 'current'
-                      ? ' — current stage'
+                      ? ' — current step'
                       : ' — not started'}
                 </span>
               </button>
@@ -55,6 +55,12 @@ export default function WorkflowHeader() {
           );
         })}
       </ol>
+
+      <p className={styles.progress} aria-live="polite">
+        <span className={styles.progressStrong}>
+          Step {step + 1} of {STEPS.length}: {STEPS[step].label}
+        </span>
+      </p>
     </nav>
   );
 }

@@ -5,15 +5,17 @@ import styles from './Charts.module.css';
 const M = { top: 22, right: 20, bottom: 30, left: 62 };
 const PLOT_HEIGHT = 190;
 
-function formatAxisMoney(v) {
-  const sign = v < 0 ? '−' : '';
-  const a = Math.abs(v);
-  if (a === 0) return '$0';
-  if (a >= 1_000_000) {
-    const m = a / 1_000_000;
-    return `${sign}$${(Math.round(m * 10) / 10).toString()}M`;
-  }
-  return `${sign}$${Math.round(a / 1000)}K`;
+function makeAxisFormatter(symbol) {
+  return (v) => {
+    const sign = v < 0 ? '−' : '';
+    const a = Math.abs(v);
+    if (a === 0) return `${symbol}0`;
+    if (a >= 1_000_000) {
+      const m = a / 1_000_000;
+      return `${sign}${symbol}${(Math.round(m * 10) / 10).toString()}M`;
+    }
+    return `${sign}${symbol}${Math.round(a / 1000)}K`;
+  };
 }
 
 function niceTicks(min, max, count = 5) {
@@ -33,11 +35,12 @@ function niceTicks(min, max, count = 5) {
  * One series, so no legend — the title names what is plotted. Fill diverges
  * around zero: investment below the line, return above it.
  */
-export default function PaybackChart({ cashflow, paybackMonths }) {
+export default function PaybackChart({ cashflow, paybackMonths, symbol = 'US$' }) {
   const [wrapRef, width] = useElementWidth(680);
   const [hover, setHover] = useState(null);
   const [showTable, setShowTable] = useState(false);
   const clipId = useId().replace(/:/g, '');
+  const formatAxisMoney = useMemo(() => makeAxisFormatter(symbol), [symbol]);
 
   const innerW = Math.max(120, width - M.left - M.right);
   const innerH = PLOT_HEIGHT;

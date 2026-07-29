@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import useElementWidth from './useElementWidth.js';
-import { formatCurrency } from '../../data/mockData.js';
+import { formatCurrency } from '../../data/model.js';
 import styles from './Charts.module.css';
 
 const BAR_HEIGHT = 22;
@@ -33,9 +33,10 @@ function barPath(x0, y0, w, h, r = RADIUS) {
  * Microsoft state carries the accent, the current state recedes to gray — the
  * comparison is the point, not the identity of two series.
  */
-export default function SpendComparison({ current, future, contractCount }) {
+export default function SpendComparison({ current, future, contractCount, symbol = 'US$' }) {
   const [wrapRef, width] = useElementWidth(620);
   const [showTable, setShowTable] = useState(false);
+  const money = (v, opts) => formatCurrency(v, { symbol, ...opts });
 
   const rows = [
     {
@@ -65,7 +66,7 @@ export default function SpendComparison({ current, future, contractCount }) {
         <div>
           <h3 className={styles.chartTitle}>Annual security spend</h3>
           <p className={styles.chartSub}>
-            {formatCurrency(reduction)} a year comes out of the licensing line alone.
+            {money(reduction)} a year comes out of the licensing line alone.
           </p>
         </div>
         <button type="button" className={styles.tableToggle} onClick={() => setShowTable((v) => !v)}>
@@ -78,7 +79,7 @@ export default function SpendComparison({ current, future, contractCount }) {
           width={width}
           height={height}
           role="img"
-          aria-label={`Annual security spend. Today ${formatCurrency(current)}. With Microsoft ${formatCurrency(future)}.`}
+          aria-label={`Annual security spend. Today ${money(current)}. With Microsoft ${money(future)}.`}
           className={styles.svg}
         >
           {rows.map((row, i) => {
@@ -102,7 +103,7 @@ export default function SpendComparison({ current, future, contractCount }) {
                   dy="0.34em"
                   className={styles.barValue}
                 >
-                  {formatCurrency(row.value)}
+                  {money(row.value)}
                 </text>
               </g>
             );
@@ -124,12 +125,12 @@ export default function SpendComparison({ current, future, contractCount }) {
               {rows.map((row) => (
                 <tr key={row.key}>
                   <th scope="row">{row.label}</th>
-                  <td>{formatCurrency(row.value, { compact: false })}</td>
+                  <td>{money(row.value, { compact: false })}</td>
                 </tr>
               ))}
               <tr>
                 <th scope="row">Reduction</th>
-                <td>{formatCurrency(reduction, { compact: false })}</td>
+                <td>{money(reduction, { compact: false })}</td>
               </tr>
             </tbody>
           </table>
@@ -138,3 +139,4 @@ export default function SpendComparison({ current, future, contractCount }) {
     </figure>
   );
 }
+

@@ -8,7 +8,7 @@
    uses scripted content, because there is nothing to work from.
    --------------------------------------------------------------------------- */
 
-import { formatCurrency, formatPercent } from './mockData.js';
+import { formatCurrency, formatPercent } from './model.js';
 
 /* ------------------------------ text utilities ----------------------------- */
 
@@ -59,32 +59,41 @@ export const actionsForNarrative = (text) =>
 const GENERATED = {
   summary: (ctx) => {
     const c = ctx.businessCase;
-    const company = ctx.profile.companyName || 'The customer';
-    const seats = ctx.profile.employeeCount || '18,000';
-    return `${company} operates ${c.vendorsConsolidated} separate security vendors across ${seats} employees. Endpoint, identity, SIEM and email protection each run on their own contract, console and renewal cycle.
+    const company = ctx.customer?.accountName || 'The customer';
+    const seats = ctx.customer?.numberOfUsers
+      ? Number(ctx.customer.numberOfUsers).toLocaleString('en-US')
+      : 'the estate';
+    const vendors = c.vendorsConsolidated;
 
-Consolidating onto Microsoft 365 E5 brings those capabilities into licensing already in place at the seat level. The incremental investment is ${formatCurrency(
+    return `${company} runs ${vendors || 'several'} third-party security ${
+      vendors === 1 ? 'product' : 'products'
+    } across ${seats} users, each on its own contract, console and renewal cycle.
+
+Consolidating onto Microsoft brings those capabilities into licensing the customer largely already holds. The investment is ${formatCurrency(
       c.investmentTotal,
-    )} over three years against ${formatCurrency(
+    )} over ${c.years} years against ${formatCurrency(
       c.benefitTotal,
-    )} in modelled benefit: a ${formatPercent(c.roi)} return, ${formatCurrency(
+    )} in modelled benefit — a ${formatPercent(c.roi)} return and ${formatCurrency(
       c.annualNetBenefit,
-    )} in average annual net savings, and breakeven in month ${c.paybackMonths}.
+    )} in average annual net saving${
+      c.paybackMonths ? `, with breakeven in month ${c.paybackMonths}` : ''
+    }.
 
-The stronger argument is operational. Four consoles become one correlated incident graph, which is the outcome ${company} asked for.
+The savings are dated rather than assumed: each displacement begins only once that vendor's contract lapses, which is why the return builds across the period rather than landing on day one.
 
-Two inputs remain modelled rather than customer-validated: current security licensing spend and SIEM ingest volume.`;
+Competitor pricing and contract end dates remain the assumptions worth confirming with the customer before this is presented.`;
   },
 
   recommendations: (ctx) => {
-    const company = ctx.profile.companyName || 'the customer';
-    return `**Approve the Microsoft 365 E5 uplift** for all ${
-      ctx.profile.employeeCount || '18,000'
-    } seats at the next Enterprise Agreement true-up. Owner: Procurement. Timing: Q1.
+    const company = ctx.customer?.accountName || 'the customer';
+    const seats = ctx.customer?.numberOfUsers
+      ? Number(ctx.customer.numberOfUsers).toLocaleString('en-US')
+      : 'all';
+    return `**Approve the Microsoft licensing uplift** for ${seats} seats at the next Enterprise Agreement true-up. Owner: Procurement. Timing: Q1.
 
-**Sequence the third-party cutovers to land at contract renewal**, so ${company} never pays twice for the same capability. Owner: Security Operations. Timing: Q2.
+**Sequence each cutover to land at contract renewal**, so ${company} never pays twice for the same capability. Owner: Security Operations. Timing: as each contract lapses.
 
-**Run a 90-day Security Copilot pilot** with the tier-1 SOC team before committing the full allocation. Owner: CISO office. Timing: Q2.`;
+**Confirm competitor spend and contract end dates** before the case goes to committee — they gate every saving in the model. Owner: Account team. Timing: immediately.`;
   },
 
   risks: () => `**Migration overrun.** A large identity and endpoint cutover slipping past the deployment window delays every benefit in the model. Mitigation: phase by business unit and budget a parallel-run period.
