@@ -8,6 +8,10 @@
   flex-direction: column;
   justify-content: center;
   min-width: 0;
+  /* With the stepper gone the title track runs nearly the whole band. Cap it so a
+     long name stops at a readable measure instead of sprawling toward Share; the
+     ellipsis below is still the backstop. */
+  max-width: 60ch;
 }
 
 /* Fixed 32px so the rename Input drops into exactly the box the title vacated —
@@ -96,9 +100,8 @@
 }
 
 /* Costs no horizontal width — it truncates inside the track the name already
-   claims — and no vertical, because the band was already two lines tall for the
-   step captions. That is the trade: the second line stops restating the step and
-   starts telling you which case you are in. */
+   claims — and no vertical, because a 14px name over a 12px meta line is what a
+   60px band fits anyway. */
 .meta {
   padding-left: 6px;
   font-size: var(--fontSizeBase100);

@@ -14,7 +14,10 @@
 
 .cardTitle {
   margin: 0 0 var(--spacingVerticalL);
-  font-size: var(--fontSizeBase500);
+  /* Base400, not Base500. The step's name is now a real 24px h1 above these, and
+     at 20px the card titles would sit only one notch below it — and a notch above
+     the report's own card titles, which were already 16px. */
+  font-size: var(--fontSizeBase400);
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
 }

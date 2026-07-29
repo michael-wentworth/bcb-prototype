@@ -1,0 +1,300 @@
+/* The step rail and the page heading, merged. Centred in the content column and
+   closed by a hairline that spans the column's full width: the rule proves where
+   the column's edges are, which is what makes the centred block read as
+   deliberate rather than as a group sitting off-axis from the left-aligned form
+   beneath it. */
+
+.root {
+  container-type: inline-size;
+  container-name: bcbStepHead;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: var(--spacingVerticalXL);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  margin-bottom: var(--spacingVerticalS);
+}
+
+.rail {
+  width: 100%;
+}
+
+/* ------------------------------- the rail ---------------------------------- */
+
+/* One number holds two type scales on one optical line. Every item's marker sits
+   inside a box of exactly this height, so every marker centre lands at half of it
+   no matter how tall that item's text is — including when the 24px heading wraps
+   to two lines. `align-items: start` is what makes that work; `center` would
+   happen to look right only until something wrapped, then drop the current
+   marker below its siblings. */
+.list {
+  --bcb-rail-line: 40px;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+
+.item {
+  display: flex;
+  align-items: start;
+  /* Content-sized, not `1 1 auto`. In the band the list sat in an `auto` grid
+     track with no slack; in a 1080px column, growing would throw step 1 to the
+     far left and break the centring. */
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* position: relative is required — the clipped sr-only text below is absolute. */
+.step,
+.current {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalS);
+  min-width: 0;
+  padding-inline-end: var(--spacingHorizontalS);
+}
+
+.step {
+  border: none;
+  border-radius: var(--borderRadiusMedium);
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.step:hover {
+  background-color: var(--colorSubtleBackgroundHover);
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+/* tabIndex={-1} keeps this out of the tab order, so the only thing that ever
+   focuses it is the step-change effect — which means any ring here is one nobody
+   asked for. Suppressed unconditionally rather than via :focus-visible, whose
+   modality heuristic draws a ring after a programmatic focus. Screen readers still
+   announce the move; there is no keyboard path that lands here needing an
+   indicator. */
+.heading:focus {
+  outline: none;
+}
+
+.markerCell {
+  flex: none;
+  height: var(--bcb-rail-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fixed rather than shrinkable, so both connectors are always exactly equal —
+   left to shrink they resolved to 31.4px and 33.2px, which reads as two rails of
+   different lengths. Narrow tiers override the basis explicitly instead. */
+.connector {
+  flex: 0 0 36px;
+  margin: 0 var(--spacingHorizontalS);
+  height: var(--bcb-rail-line);
+  display: flex;
+  align-items: center;
+}
+
+.connector::before {
+  content: '';
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--colorNeutralStroke2);
+  transition: background-color var(--durationSlow) var(--curveEasyEase);
+}
+
+.connector[data-filled='true']::before {
+  background-color: var(--colorBrandStroke1);
+}
+
+/* ------------------------------- markers ----------------------------------- */
+
+.marker {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--borderRadiusCircular);
+  border: 2px solid var(--colorNeutralStroke2);
+  background-color: var(--colorNeutralBackground1);
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  transition:
+    background-color var(--durationNormal) var(--curveEasyEase),
+    border-color var(--durationNormal) var(--curveEasyEase),
+    color var(--durationNormal) var(--curveEasyEase);
+}
+
+/* 32px plus a 4px halo is exactly the 40px rail line — the marker growing at the
+   same moment the label jumps to 24px is what makes the size change read as a
+   system rather than as an accident. */
+.item[data-state='current'] .marker {
+  width: 32px;
+  height: 32px;
+  font-size: var(--fontSizeBase300);
+  background-color: var(--colorBrandBackground);
+  border-color: var(--colorBrandBackground);
+  color: var(--colorNeutralForegroundOnBrand);
+  box-shadow: 0 0 0 4px var(--colorBrandBackground2);
+}
+
+.item[data-state='complete'] .marker {
+  background-color: var(--colorBrandBackground2);
+  border-color: var(--colorBrandStroke2);
+  color: var(--colorBrandForeground1);
+}
+
+/* -------------------------------- labels ----------------------------------- */
+
+/* The current step's name, which is the page's only h1. 24px rather than 20px
+   because the card titles beneath it are 20px, and rather than 28px because a
+   2.0x jump against a 14px sibling on the same line reads as a rendering fault. */
+.heading {
+  margin: 0;
+  /* flex: none, because a flex container with overflow:hidden gets an automatic
+     minimum size of 0 — it will shrink and ellipsise even when the rail has
+     hundreds of pixels of slack. Names are hidden outright below 640px rather
+     than squeezed, and the rail's natural width is under that, so nothing here
+     ever needs to shrink. */
+  flex: none;
+  min-height: var(--bcb-rail-line);
+  display: flex;
+  align-items: center;
+  font-size: var(--fontSizeBase600);
+  line-height: var(--lineHeightBase600);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.01em;
+  color: var(--colorNeutralForeground1);
+  white-space: nowrap;
+}
+
+.label {
+  /* See .heading — same reason. This is what was clipping "SKU Selection" to
+     "SKU Selecti" with 495px of unused rail either side of it. The ellipsis rule
+     below stays as a last-resort net only. */
+  flex: none;
+  min-height: var(--bcb-rail-line);
+  display: flex;
+  align-items: center;
+  font-size: var(--fontSizeBase300);
+  line-height: var(--lineHeightBase300);
+  font-weight: var(--fontWeightRegular);
+  color: var(--colorNeutralForeground3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item[data-state='complete'] .label {
+  color: var(--colorNeutralForeground2);
+}
+
+/* --------------------------- lede and actions ------------------------------ */
+
+/* Outside the <ol> on purpose, so nothing in it can ever shift the marker line.
+   620px is tuned to the rail's ~604px so the two read as one silhouette. */
+.lede {
+  margin: var(--spacingVerticalS) 0 0;
+  max-width: min(620px, 100%);
+  font-size: var(--fontSizeBase400);
+  line-height: var(--lineHeightBase400);
+  color: var(--colorNeutralForeground2);
+  text-wrap: balance;
+}
+
+/* Its own centred row rather than pushed to the right of the rail: a right-aligned
+   badge would make the composition asymmetric, and worse, the rail's centring
+   would shift when authorship changes from "Not started" to "Manually authored". */
+.meta {
+  margin-top: var(--spacingVerticalM);
+  display: flex;
+  justify-content: center;
+}
+
+/* Clipped, never display:none — hiding a label with display:none takes the step's
+   name out of the accessibility tree along with it. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------ degradation --------------------------------
+   Keyed to the masthead's own width, which is the box that actually constrains
+   the rail. That stays correct across the copilot being docked at 408, docked at
+   372, floating, or collapsed — none of which a viewport media query can see.
+
+   Nothing in here may touch .root's own padding, margin or width: a container
+   cannot style itself, so the rule would fail silently, and if it did apply it
+   would oscillate. Descendants only.
+   -------------------------------------------------------------------------- */
+
+/* Where you are keeps its name; the steps either side become markers. Their names
+   stay in the accessible name via the clip above, and in the tooltip on hover and
+   on keyboard focus. */
+@container bcbStepHead (max-width: 639px) {
+  .label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .connector {
+    flex-basis: 12px;
+    margin: 0 var(--spacingHorizontalXS);
+  }
+}
+
+@container bcbStepHead (max-width: 419px) {
+  .list {
+    --bcb-rail-line: 32px;
+  }
+
+  .heading {
+    font-size: var(--fontSizeBase500);
+    line-height: var(--lineHeightBase500);
+    /* A page title wraps; it never gets cut off. The fixed-height markerCell is
+       what keeps the markers on one line when it does. */
+    white-space: normal;
+  }
+
+  .item[data-state='current'] .marker {
+    width: 28px;
+    height: 28px;
+    font-size: var(--fontSizeBase200);
+  }
+
+  .connector {
+    flex-basis: 8px;
+  }
+}

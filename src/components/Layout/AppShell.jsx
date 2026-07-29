@@ -33,9 +33,9 @@ export default function AppShell({ panelOpen, onTogglePanel }) {
       {/* The band belongs to a case in progress, not to browsing — and it spans
           the whole app rather than only the content column. The case is the outer
           thing; the copilot is a tool for working inside it, so the copilot sits
-          below the band alongside the content it acts on. That hierarchy is also
-          worth 408px of band width at every docked size, which is what makes the
-          case name and the step captions fit together. */}
+          below the band alongside the content it acts on.
+          The steps are not in here: they live with the page heading they used to
+          duplicate, as shared/StepMasthead.jsx. */}
       {inBuilder ? <WorkflowHeader /> : null}
 
       <div className={styles.body}>

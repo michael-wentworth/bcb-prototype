@@ -26,7 +26,7 @@ import { DEMO_PROMPT } from '../../data/demoCase.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
-import SectionHeading from '../shared/SectionHeading.jsx';
+import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import MultiSelect from '../shared/MultiSelect.jsx';
 import styles from './CustomerDetails.module.css';
@@ -50,9 +50,7 @@ export default function CustomerDetails() {
 
   return (
     <div className={styles.root}>
-      <SectionHeading
-        eyebrow="Step 1 of 3"
-        title="Customer Details"
+      <StepMasthead
         description="Fill this in directly, or describe the customer to the copilot and review what it captures. Nothing downstream waits on the assistant."
         actions={<AuthorshipBadge level={sectionAuthorship.customer} />}
       />
@@ -63,7 +61,7 @@ export default function CustomerDetails() {
             <Sparkle16Filled />
           </span>
           <div className={styles.primerBody}>
-            <h3 className={styles.primerTitle}>Type it in, or have the copilot do it</h3>
+            <h2 className={styles.primerTitle}>Type it in, or have the copilot do it</h2>
             <p className={styles.primerText}>
               Every field below is yours to fill. If you would rather describe the customer in a
               sentence, the copilot will populate the whole case and flag anything it inferred.
@@ -78,7 +76,7 @@ export default function CustomerDetails() {
 
       {/* ------------------------ Customer Information ------------------------ */}
       <Card className={styles.card}>
-        <h3 className={styles.cardTitle}>Customer Information</h3>
+        <h2 className={styles.cardTitle}>Customer Information</h2>
 
         <div className={styles.grid}>
           <FormField label="Account Name" required meta={fieldMeta.accountName}>
@@ -328,7 +326,7 @@ export default function CustomerDetails() {
 
       {/* ------------------------ Customer Environment ------------------------ */}
       <Card className={styles.card}>
-        <h3 className={styles.cardTitle}>Customer Environment</h3>
+        <h2 className={styles.cardTitle}>Customer Environment</h2>
         <div className={styles.grid}>
           <FormField
             label="Existing MS Licenses"
@@ -386,7 +384,7 @@ export default function CustomerDetails() {
 
       {/* ------------------------- Business Case Setup ------------------------ */}
       <Card className={styles.card}>
-        <h3 className={styles.cardTitle}>Business Case Setup</h3>
+        <h2 className={styles.cardTitle}>Business Case Setup</h2>
         <div className={styles.grid}>
           <FormField
             label="Business Case Name"

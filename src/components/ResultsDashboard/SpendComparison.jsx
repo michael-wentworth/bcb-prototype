@@ -64,7 +64,7 @@ export default function SpendComparison({ current, future, contractCount, symbol
     <figure className={`${styles.figure} vizRoot`}>
       <figcaption className={styles.caption}>
         <div>
-          <h3 className={styles.chartTitle}>Annual security spend</h3>
+          <h2 className={styles.chartTitle}>Annual security spend</h2>
           <p className={styles.chartSub}>
             {money(reduction)} a year comes out of the licensing line alone.
           </p>

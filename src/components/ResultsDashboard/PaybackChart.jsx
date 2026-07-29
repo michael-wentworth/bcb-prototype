@@ -89,7 +89,7 @@ export default function PaybackChart({ cashflow, paybackMonths, symbol = 'US$' }
     <figure className={`${styles.figure} vizRoot`}>
       <figcaption className={styles.caption}>
         <div>
-          <h3 className={styles.chartTitle}>Cumulative net benefit</h3>
+          <h2 className={styles.chartTitle}>Cumulative net benefit</h2>
           <p className={styles.chartSub}>
             Investment first, return after. The case crosses zero in month {paybackMonths}.
           </p>

@@ -29,7 +29,7 @@ import { CASE_START_YEAR, formatCurrency } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import FormField from '../shared/FormField.jsx';
-import SectionHeading from '../shared/SectionHeading.jsx';
+import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import styles from './SkuSelection.module.css';
 
@@ -63,9 +63,7 @@ export default function SkuSelection() {
 
   return (
     <div className={styles.root}>
-      <SectionHeading
-        eyebrow="Step 2 of 3"
-        title="SKU Selection"
+      <StepMasthead
         description="What the customer is buying, what they already have, and what it replaces. Enter it yourself, or ask the copilot to propose a starting point."
         actions={<AuthorshipBadge level={sectionAuthorship.skus} />}
       />
@@ -74,9 +72,9 @@ export default function SkuSelection() {
       <Card className={styles.card}>
         <div className={styles.cardHead}>
           <div>
-            <h3 className={styles.cardTitle}>
+            <h2 className={styles.cardTitle}>
               What security outcomes is the customer trying to achieve?
-            </h3>
+            </h2>
             <p className={styles.cardLead}>
               Select the areas where your customer is experiencing the most security challenges.
             </p>
@@ -125,7 +123,7 @@ export default function SkuSelection() {
       <Card className={styles.card}>
         <div className={styles.cardHead}>
           <div>
-            <h3 className={styles.cardTitle}>Select a SKU</h3>
+            <h2 className={styles.cardTitle}>Select a SKU</h2>
             <p className={styles.cardLead}>
               Choose the Microsoft SKU(s) to model, then set the number of seats required per year.
             </p>
@@ -283,7 +281,7 @@ export default function SkuSelection() {
 
       {/* ------------------------- Current bundle ------------------------- */}
       <Card className={styles.card}>
-        <h3 className={styles.cardTitle}>Build from a current bundle</h3>
+        <h2 className={styles.cardTitle}>Build from a current bundle</h2>
         <p className={styles.cardLead}>
           What the customer already pays Microsoft. This offsets the uplift rather than counting as
           new spend.
@@ -385,7 +383,7 @@ function CompetitorProducts({
     <Card className={styles.card}>
       <div className={styles.cardHead}>
         <div>
-          <h3 className={styles.cardTitle}>Competitor Products</h3>
+          <h2 className={styles.cardTitle}>Competitor Products</h2>
           <p className={styles.cardLead}>
             Search for a competitor product or enter one that is not in our database. New
             competitors are saved to this customer account only.

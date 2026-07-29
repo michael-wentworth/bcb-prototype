@@ -22,8 +22,12 @@
    the consuming component's own file while the container is declared next door.
 
    The label is hidden rather than the button unmounted, so the control keeps its
-   identity, its tooltip and its accessible name at every width. */
-@container bcbBand (max-width: 699px) {
+   identity, its tooltip and its accessible name at every width.
+
+   Retuned from 699px: that budget assumed the band also carried a 591px stepper.
+   With only a title and these controls in the row, dropping the label at 699 would
+   fire while a thousand pixels sat empty. */
+@container bcbBand (max-width: 460px) {
   .shareLabel {
     display: none;
   }

@@ -25,7 +25,7 @@ import { formatCurrency, formatPercent } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import MetricTile from '../shared/MetricTile.jsx';
 import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
-import SectionHeading from '../shared/SectionHeading.jsx';
+import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import SharePopover from '../shared/SharePopover.jsx';
 import NarrativeSection from '../Narrative/NarrativeSection.jsx';
@@ -74,12 +74,7 @@ export default function CustomerReport() {
     <div className={styles.root}>
       <Toaster toasterId={toasterId} />
 
-      {/* The case name lives in the step band now, so the report does not title
-          itself with it — that would print it twice, 24px apart. The literal also
-          matches steps 1 and 2, which both use the step's own name. */}
-      <SectionHeading
-        eyebrow="Step 3 of 3"
-        title="Customer Report"
+      <StepMasthead
         description={`${caseSetup.analysisPeriod}-year analysis${
           customer.numberOfUsers ? ` across ${Number(customer.numberOfUsers).toLocaleString('en-US')} users` : ''
         }. Every figure derives from what you entered on the previous two steps.`}
@@ -157,7 +152,7 @@ export default function CustomerReport() {
       {/* ----------------------- Authorship lineage ----------------------- */}
       <Card className={styles.lineageCard}>
         <div className={styles.lineageHead}>
-          <h3 className={styles.cardTitle}>Authorship</h3>
+          <h2 className={styles.cardTitle}>Authorship</h2>
           <span className={styles.lineageSummary}>
             {authorship.aiTouched === 0
               ? 'Entirely authored by you'
@@ -183,7 +178,7 @@ export default function CustomerReport() {
       {/* -------------------------- The narrative -------------------------- */}
       <Card className={styles.narrativeCard}>
         <div className={styles.narrativeHead}>
-          <h3 className={styles.cardTitle}>The written case</h3>
+          <h2 className={styles.cardTitle}>The written case</h2>
           <p className={styles.narrativeLead}>
             Write these yourself, or hand any one of them to the copilot. Mixing the two is the
             normal case, not the exception.
@@ -198,7 +193,7 @@ export default function CustomerReport() {
       <div className={styles.ledgerRow}>
         <Card className={styles.ledgerCard}>
           <div className={styles.ledgerHead}>
-            <h3 className={styles.cardTitle}>Where the benefit comes from</h3>
+            <h2 className={styles.cardTitle}>Where the benefit comes from</h2>
             <span className={styles.ledgerTotal}>{money(c.benefitTotal)}</span>
           </div>
           <ul className={styles.ledger}>
@@ -241,7 +236,7 @@ export default function CustomerReport() {
 
         <Card className={styles.ledgerCard}>
           <div className={styles.ledgerHead}>
-            <h3 className={styles.cardTitle}>Microsoft investment</h3>
+            <h2 className={styles.cardTitle}>Microsoft investment</h2>
             <span className={styles.ledgerTotal}>{money(c.investmentTotal)}</span>
           </div>
           <ul className={styles.ledger}>
@@ -300,7 +295,7 @@ export default function CustomerReport() {
       {/* ---------------------------- Outcomes ---------------------------- */}
       {outcomes.length > 0 ? (
         <Card className={styles.outcomeCard}>
-          <h3 className={styles.cardTitle}>Outcomes this case addresses</h3>
+          <h2 className={styles.cardTitle}>Outcomes this case addresses</h2>
           <ul className={styles.outcomeList}>
             {SECURITY_OUTCOMES.filter((o) => outcomes.includes(o.id)).map((o) => (
               <li key={o.id} className={styles.outcomeItem}>
@@ -319,7 +314,7 @@ export default function CustomerReport() {
 
       <Card className={styles.actionsCard}>
         <div className={styles.actionsText}>
-          <h3 className={styles.cardTitle}>Share the business case</h3>
+          <h2 className={styles.cardTitle}>Share the business case</h2>
           <p className={styles.actionsSub}>
             The deck, the written case and the sharing link all come from the same inputs, so the
             narrative and the numbers cannot drift apart.

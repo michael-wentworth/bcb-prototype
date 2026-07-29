@@ -23,7 +23,9 @@
 
 .cardTitle {
   margin: 0;
-  font-size: var(--fontSizeBase500);
+  /* Base400, to match CustomerReport's card titles now that a 24px h1 sits above
+     them. See the note in CustomerDetails.module.css. */
+  font-size: var(--fontSizeBase400);
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
 }

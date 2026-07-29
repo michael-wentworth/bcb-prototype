@@ -1,24 +1,27 @@
 /* The case-scoped band. Spans the full app width, above the copilot rather than
    beside it: the case is the outer object and the copilot is a tool used inside
-   it. Height is --bcb-subheader-height, still shared with the copilot panel's own
-   header — they are no longer adjacent, so it is a consistent measure rather than
-   an alignment.
+   it. Height is --bcb-subheader-height, shared with the copilot panel's own header
+   and with the collapsed-copilot tab, so all three stay in step.
 
-   Three tracks: case title, stepper, case actions.
+   Two tracks: the case title, and the case actions. The stepper used to hold a
+   third between them; with it gone the track is DELETED rather than left empty —
+   an empty centred track holding a thousand pixels of nothing reads as a component
+   that failed to render. Name at one end and controls at the other, with
+   structural space between, is the ordinary shape of document chrome.
 
-   The side tracks MUST be minmax() with explicit floors, never a bare `1fr`.
-   `1fr` means `minmax(auto, 1fr)`, and an auto minimum resolves to min-content —
-   so a long case name would widen track 1 instead of ellipsising, and slide the
-   stepper to the right. A navigation control whose position depends on the length
-   of an unrelated string is a control people mis-click. Equal numeric floors keep
-   the two tracks symmetric, so the stepper's x never moves when the case is
-   renamed or a different case is opened. */
+   The minmax() floors the side tracks used to carry are gone with it too: they
+   existed to stop a long case name sliding a centred stepper sideways, and there
+   is no longer anything centred between them to protect. */
 .root {
+  /* LOAD-BEARING, despite looking orphaned now that the stepper has left:
+     CaseActions.module.css queries `bcbBand` to drop Share's label. Container
+     names are global rather than module-scoped, so deleting this declaration
+     would silently kill a rule in another file with no error anywhere. */
   container-type: inline-size;
   container-name: bcbBand;
   flex: none;
   display: grid;
-  grid-template-columns: minmax(96px, 1fr) auto minmax(140px, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   column-gap: var(--spacingHorizontalL);
   height: var(--bcb-subheader-height);
@@ -32,204 +35,4 @@
      892 -> un-trips. Never make this width-dependent from inside @container. */
   padding: 0 var(--spacingHorizontalXXL);
   z-index: 2;
-}
-
-.stepper {
-  min-width: 0;
-}
-
-.list {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  min-width: 0;
-  max-width: 100%;
-}
-
-/* Steps are sized to their own content and the rails take the leftover row
-   space, so the connectors sit in a real gap between one step and the next
-   rather than behind the labels. The first item has no rail, so it must not
-   claim a share of that free space. */
-.item {
-  display: flex;
-  align-items: center;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.item:first-child {
-  flex: 0 1 auto;
-}
-
-.rail {
-  flex: 1 1 auto;
-  min-width: 16px;
-  height: 2px;
-  margin: 0 10px;
-  border-radius: 1px;
-  background-color: var(--colorNeutralStroke2);
-  transition: background-color var(--durationSlow) var(--curveEasyEase);
-}
-
-.rail[data-filled='true'] {
-  background-color: var(--colorBrandStroke1);
-}
-
-.step {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--spacingHorizontalS);
-  flex: 0 1 auto;
-  min-width: 0;
-  padding: 6px 10px 6px 6px;
-  border: none;
-  border-radius: var(--borderRadiusMedium);
-  background-color: transparent;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color var(--durationFaster) var(--curveEasyEase);
-}
-
-.step:hover:not(:disabled) {
-  background-color: var(--colorSubtleBackgroundHover);
-}
-
-.step:disabled {
-  cursor: default;
-}
-
-.step:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: 1px;
-}
-
-.marker {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--borderRadiusCircular);
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  border: 2px solid var(--colorNeutralStroke2);
-  background-color: var(--colorNeutralBackground1);
-  color: var(--colorNeutralForeground3);
-  transition:
-    background-color var(--durationNormal) var(--curveEasyEase),
-    border-color var(--durationNormal) var(--curveEasyEase),
-    color var(--durationNormal) var(--curveEasyEase);
-}
-
-.labels {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  line-height: 1.25;
-}
-
-.label {
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightMedium);
-  color: var(--colorNeutralForeground3);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.caption {
-  font-size: var(--fontSizeBase100);
-  color: var(--colorNeutralForeground4);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* --- states --- */
-
-.item[data-state='current'] .marker {
-  background-color: var(--colorBrandBackground);
-  border-color: var(--colorBrandBackground);
-  color: var(--colorNeutralForegroundOnBrand);
-  box-shadow: 0 0 0 4px var(--colorBrandBackground2);
-}
-
-.item[data-state='current'] .label {
-  color: var(--colorNeutralForeground1);
-  font-weight: var(--fontWeightSemibold);
-}
-
-.item[data-state='complete'] .marker {
-  background-color: var(--colorBrandBackground2);
-  border-color: var(--colorBrandStroke2);
-  color: var(--colorBrandForeground1);
-}
-
-.item[data-state='complete'] .label {
-  color: var(--colorNeutralForeground2);
-}
-
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ------------------------------- degradation --------------------------------
-   Thresholds are the band's own CONTENT width, via container queries. Now that
-   the band spans the app that happens to track the viewport, but the container
-   query is still the honest measure: it describes when the stepper genuinely runs
-   out of room, so the rules survive the band ever being put back in a column.
-
-   Moving the copilot below the band returned 408px to every docked width, which
-   is what buys the case name and the step captions room to coexist: the captions
-   now survive down to a ~1188px viewport instead of needing 1600.
-
-   Order of sacrifice, each step buying room for the case name:
-     < 1140  the captions go        (stepper ~660 -> ~520)
-     <  880  all labels but the current step's go   (-> ~310)
-     <  700  Share drops to its icon — see CaseActions.module.css
-     <  580  the labels go entirely, markers only   (-> ~180)
-   ---------------------------------------------------------------------------- */
-
-@container bcbBand (max-width: 1139px) {
-  .caption {
-    display: none;
-  }
-
-  /* Give the space back to the labels before they start ellipsising — a short
-     connector still reads as a connector, a truncated stage name does not. */
-  .rail {
-    min-width: 12px;
-    margin: 0 6px;
-  }
-
-  .step {
-    padding-right: 6px;
-  }
-}
-
-/* Where you are still says its name; the steps either side become markers. */
-@container bcbBand (max-width: 879px) {
-  .item:not([data-state='current']) .labels {
-    display: none;
-  }
-}
-
-@container bcbBand (max-width: 579px) {
-  .labels {
-    display: none;
-  }
 }
