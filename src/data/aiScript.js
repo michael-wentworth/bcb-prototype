@@ -31,18 +31,18 @@ const displacement = (id) => DISPLACEMENTS.find((d) => d.id === id);
 export const STAGE_SUGGESTIONS = [
   [
     { label: 'Use the Contoso example', kind: 'demo' },
+    { label: 'Can I build this without AI?' },
     { label: 'What data do you still need from me?' },
-    { label: 'How do similar manufacturers license security?' },
   ],
   [
+    { label: 'Recommend Microsoft solutions for this customer' },
     { label: 'Why are you recommending E5?' },
-    { label: 'Why Security Copilot for this customer?' },
     { label: 'What did you decide not to recommend?' },
   ],
   [
+    { label: 'Detect the third-party estate and map displacements' },
     { label: 'Explain the consolidation opportunity' },
     { label: 'How defensible is the Splunk displacement?' },
-    { label: 'How will CrowdStrike respond to this?' },
   ],
   [
     { label: 'How did you calculate the ROI?' },
@@ -61,13 +61,13 @@ export function getStageIntro(stageIndex, ctx) {
         blocks: [
           {
             type: 'text',
-            text: "I'm your business case copilot. Describe the customer in your own words — who they are, what they run today, and what they're trying to fix — and I'll build the profile for you.",
+            text: "I'm your business case copilot — here if you want me, out of the way if you don't. Describe the customer and I'll build the profile, or fill it in yourself and carry straight on.",
           },
           {
             type: 'callout',
             tone: 'insight',
-            title: 'You review, I type',
-            text: 'Everything I populate is editable, and every field shows where the value came from and how confident I am.',
+            title: 'Nothing here waits on me',
+            text: 'Every stage is completable by hand. Anything I write is editable and carries a badge showing I wrote it, so you can always tell the two apart.',
           },
         ],
       };
@@ -740,8 +740,73 @@ Two inputs remain modelled rather than customer-validated: current security lice
 
   /* ---------------------------- Meta / help ------------------------- */
   {
+    id: 'MANUAL_REASSURANCE',
+    test: (input) =>
+      has(input, 'without ai', 'no ai', 'myself', 'manually', 'do i have to', 'turn off', 'is ai required'),
+    thinking: ['Confirming what is optional'],
+    delay: 1300,
+    build: () => ({
+      blocks: [
+        {
+          type: 'text',
+          text: 'Nothing here requires me. You can create a case blank or from a template with no prompt, type every field directly, and collapse this panel from the top bar.',
+        },
+        {
+          type: 'bullets',
+          items: [
+            'Sections you write stay marked **Manually authored**.',
+            'If you use me on something you wrote, it becomes **AI assisted** — and “Revert to my version” puts your text back.',
+            'Nothing is gated on having used me: you can advance through every stage and export either way.',
+          ],
+        },
+      ],
+    }),
+  },
+  {
+    id: 'SHORTLIST_SOLUTIONS',
+    test: (input) =>
+      has(input, 'recommend microsoft solutions', 'shortlist', 'suggest solutions', 'which solutions'),
+    thinking: ['Reading the customer profile', 'Matching solutions to stated objectives'],
+    delay: 2100,
+    build: (input, ctx) => ({
+      blocks: [
+        {
+          type: 'text',
+          text: ctx.profilePopulated
+            ? "I've put four solutions forward and held one back. They're on the stage now — toggle any of them off, or add your own alongside them."
+            : "I need a bit of customer profile first — even just the licensing position and headcount. Fill in what you know and ask me again, or describe the customer and I'll do both at once.",
+        },
+        {
+          type: 'callout',
+          tone: 'coach',
+          title: 'These are proposals, not decisions',
+          text: 'Anything I shortlist is marked AI generated. The moment you toggle one, the section becomes AI assisted — your call is recorded as yours.',
+        },
+      ],
+      actions: ctx.profilePopulated ? [{ type: 'aiShortlist' }] : [],
+    }),
+  },
+  {
+    id: 'DETECT_DISPLACEMENTS',
+    test: (input) => has(input, 'detect the third-party', 'detect displacement', 'map displacement'),
+    thinking: ['Scanning the estate signal', 'Mapping onto Microsoft products'],
+    delay: 2100,
+    build: (input, ctx) => ({
+      blocks: [
+        {
+          type: 'text',
+          text: ctx.profilePopulated
+            ? 'Mapped four third-party products onto three Microsoft platforms. Two of them are inferred rather than stated — the confidence badges say which.'
+            : 'I need the customer profile before I can infer an estate. Add what you know first, or enter the displacements by hand on this stage.',
+        },
+      ],
+      actions: ctx.profilePopulated ? [{ type: 'aiDetectDisplacements' }] : [],
+    }),
+  },
+  {
     id: 'CAPABILITIES',
-    test: (input) => has(input, 'what can you do', 'help me', 'how do you work', 'who are you'),
+    test: (input) =>
+      has(input, 'what can you do', 'help me', 'how do you work', 'who are you', 'what can you help'),
     thinking: ['Summarising capabilities'],
     delay: 1300,
     build: () => ({

@@ -51,6 +51,50 @@ The prototype is built around one scripted narrative. The fastest path through i
 
 The assistant is available throughout and speaks first when each stage opens.
 
+## AI is an accelerator, not a requirement
+
+The workflow is completable end to end without touching the copilot. Nothing is gated on having
+used it — previously **Continue** stayed disabled until you ran the AI prompt, which made the
+assistant mandatory in practice. That gating is gone from every stage, and the stepper lets you move
+between stages freely.
+
+What you can do by hand:
+
+| Stage | Manual route |
+|---|---|
+| Customer profile | Type into any field directly; the AI primer is an offer, not a step |
+| Solutions | **Added by you** — pick from a catalogue alongside the copilot's shortlist |
+| Displacement | Enter vendor, product, annual spend and the Microsoft product that replaces it |
+| Results | Write the executive summary, recommendations and risk analysis from scratch |
+
+Hand-entered displacements carry the same weight as detected ones — a manually entered $450K vendor
+moves ROI and the vendor count exactly as an AI-detected one does. A number someone typed is not
+worth less than a number the model inferred.
+
+### Section-level AI
+
+The copilot is available per section, not only at case creation. Each narrative section has
+**Generate**, and once there is text, **Rewrite**, **Summarize**, **Expand** and **Improve clarity**.
+These are deterministic text operations standing in for a model — *summarize* keeps the first
+sentence of each paragraph, *rewrite* promotes the closing sentence to the front, *clarity* strips
+hedges and wordy constructions. They act on what you actually wrote rather than substituting canned
+prose. **Revert to my version** restores your text exactly.
+
+### Authorship transparency
+
+Every section carries a badge: **AI generated**, **AI assisted**, **Manually authored** or
+**Not started**. The transitions are enforced in one place so the badge can never disagree with the
+content:
+
+- Editing AI output makes it *AI assisted* — a person is now in the loop
+- The copilot reworking its own draft leaves it *AI generated*
+- The copilot reworking your writing makes it *AI assisted*
+- Reverting restores both the text and the prior badge
+
+A case-level lineage summary sits at the top of the Results stage. There is deliberately **no
+separate concept of an "AI case" or a "manual case"** — it is one Business Case either way, and
+authorship is metadata on it rather than a category.
+
 ## The three AI behaviours
 
 | Behaviour | Try |

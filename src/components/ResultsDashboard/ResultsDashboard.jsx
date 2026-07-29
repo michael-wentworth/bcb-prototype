@@ -29,16 +29,32 @@ import {
   formatCurrency,
   formatPercent,
 } from '../../data/mockData.js';
+import { NARRATIVE_SECTIONS, TRACKED_SECTIONS } from '../../data/authoring.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import MetricTile from '../shared/MetricTile.jsx';
+import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import SectionHeading from '../shared/SectionHeading.jsx';
 import StageFooter from '../shared/StageFooter.jsx';
+import NarrativeSection from '../Narrative/NarrativeSection.jsx';
 import PaybackChart from './PaybackChart.jsx';
 import SpendComparison from './SpendComparison.jsx';
 import styles from './ResultsDashboard.module.css';
 
 export default function ResultsDashboard() {
-  const { businessCase: c, profile, reportReady, ask } = useAppState();
+  const {
+    businessCase: c,
+    profile,
+    reportReady,
+    authorship,
+    sectionAuthorship,
+    narrative,
+    includedDisplacements,
+    manualDisplacements,
+    ask,
+  } = useAppState();
+
+  const sections = NARRATIVE_SECTIONS;
+  const hasAnalysis = includedDisplacements.length > 0 || manualDisplacements.length > 0;
   const toasterId = useId('bcb-toaster');
   const { dispatchToast } = useToastController(toasterId);
 
@@ -67,6 +83,38 @@ export default function ResultsDashboard() {
           </Badge>
         }
       />
+
+      {/* Case-level lineage: what the copilot touched, what you wrote, at a
+          glance and without a banner interrupting the work. */}
+      <Card className={styles.lineageCard}>
+        <div className={styles.lineageHead}>
+          <h3 className={styles.cardTitle}>Authorship</h3>
+          <span className={styles.lineageSummary}>
+            {authorship.aiTouched === 0
+              ? 'Entirely authored by you'
+              : `${authorship.ai} AI · ${authorship.assisted} assisted · ${authorship.manual} manual`}
+          </span>
+        </div>
+        <ul className={styles.lineageList}>
+          {TRACKED_SECTIONS.map((s) => (
+            <li key={s.id} className={styles.lineageItem}>
+              <span className={styles.lineageLabel}>{s.label}</span>
+              <AuthorshipBadge level={sectionAuthorship[s.id] ?? narrative[s.id]?.authorship} />
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      {!hasAnalysis ? (
+        <Card className={styles.noAnalysis}>
+          <p className={styles.noAnalysisTitle}>The numbers rest on operational benefit alone</p>
+          <p className={styles.noAnalysisText}>
+            No displacements are in the case yet, so the model has nothing retiring to offset the
+            investment. Add mappings in stage 3 — by hand or with the copilot — or present this as a
+            capability case and write the narrative below.
+          </p>
+        </Card>
+      ) : null}
 
       <section className={styles.heroRow} aria-label="Headline metrics">
         <MetricTile
@@ -119,6 +167,21 @@ export default function ResultsDashboard() {
         </Card>
       </div>
 
+      {/* The written case. Every section can be typed directly or generated,
+          and generated text can be reverted to whatever was there before. */}
+      <Card className={styles.narrativeCard}>
+        <div className={styles.narrativeHead}>
+          <h3 className={styles.cardTitle}>The written case</h3>
+          <p className={styles.narrativeLead}>
+            Write these yourself, or hand any one of them to the copilot. Mixing the two is the
+            normal case, not the exception.
+          </p>
+        </div>
+        {sections.map((section) => (
+          <NarrativeSection key={section.id} section={section} />
+        ))}
+      </Card>
+
       <Card className={styles.driversCard}>
         <h3 className={styles.cardTitle}>Key value drivers</h3>
         <ul className={styles.drivers}>
@@ -152,6 +215,22 @@ export default function ResultsDashboard() {
                   <span className={styles.ledgerDetail}>Displaced by {d.to.product}</span>
                 </div>
                 <span className={styles.ledgerValue}>{formatCurrency(d.benefit3yr)}</span>
+              </li>
+            ))}
+            {/* Hand-entered lines sit in the same ledger as detected ones,
+                labelled so a reviewer knows who put them there. */}
+            {c.manualDisplacements.map((d) => (
+              <li key={d.id} className={styles.ledgerItem}>
+                <div className={styles.ledgerMain}>
+                  <span className={styles.ledgerLabel}>
+                    {d.vendor} {d.product}
+                    <em className={styles.oneTime}>added by you</em>
+                  </span>
+                  <span className={styles.ledgerDetail}>Displaced by {d.target}</span>
+                </div>
+                <span className={styles.ledgerValue}>
+                  {formatCurrency(Number(d.annualSpend) * 3)}
+                </span>
               </li>
             ))}
             {OPERATIONAL_BENEFITS.map((b) => (

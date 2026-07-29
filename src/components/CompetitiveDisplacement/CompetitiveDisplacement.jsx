@@ -1,7 +1,9 @@
-import React from 'react';
-import { Badge, Button, Card, Switch } from '@fluentui/react-components';
+import React, { useState } from 'react';
+import { Badge, Button, Card, Dropdown, Input, Option, Switch } from '@fluentui/react-components';
 import {
+  Add16Filled,
   ArrowRight20Filled,
+  Delete16Regular,
   Lightbulb20Filled,
   ShieldCheckmark24Regular,
   Sparkle16Filled,
@@ -9,16 +11,144 @@ import {
 import {
   DISPLACEMENTS,
   MICROSOFT_FAMILIES,
+  MICROSOFT_TARGETS,
   formatCurrency,
 } from '../../data/mockData.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
+import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import ConfidenceBadge from '../shared/ConfidenceBadge.jsx';
 import SectionHeading from '../shared/SectionHeading.jsx';
 import StageFooter from '../shared/StageFooter.jsx';
 import styles from './CompetitiveDisplacement.module.css';
 
+/**
+ * Manual displacement entry.
+ *
+ * Rows entered here are marked as manually authored and carry no confidence
+ * score — the seller stated it, so there is nothing to be confident about.
+ */
+function ManualDisplacementEditor({ rows, onAdd, onRemove }) {
+  const [vendor, setVendor] = useState('');
+  const [product, setProduct] = useState('');
+  const [spend, setSpend] = useState('');
+  const [target, setTarget] = useState(MICROSOFT_TARGETS[0]);
+
+  const canAdd = vendor.trim() && target;
+
+  const submit = () => {
+    if (!canAdd) return;
+    onAdd({
+      id: `manual-${Date.now()}`,
+      vendor: vendor.trim(),
+      product: product.trim(),
+      annualSpend: Number(String(spend).replace(/[^0-9.]/g, '')) || 0,
+      target,
+    });
+    setVendor('');
+    setProduct('');
+    setSpend('');
+  };
+
+  return (
+    <section className={styles.manual}>
+      <div className={styles.groupHead}>
+        <h3 className={styles.groupTitle}>Added by you</h3>
+        <AuthorshipBadge level="manual" />
+      </div>
+
+      {rows.length > 0 ? (
+        <ul className={styles.manualRows}>
+          {rows.map((r) => (
+            <li key={r.id} className={styles.manualRow}>
+              <div className={styles.manualFrom}>
+                <span className={styles.manualVendor}>{r.vendor}</span>
+                {r.product ? <span className={styles.manualProduct}>{r.product}</span> : null}
+                {r.annualSpend > 0 ? (
+                  <span className={styles.manualSpend}>
+                    {formatCurrency(r.annualSpend)} per year
+                  </span>
+                ) : (
+                  <span className={styles.manualNoSpend}>No spend entered</span>
+                )}
+              </div>
+              <ArrowRight20Filled className={styles.manualArrow} aria-hidden="true" />
+              <span className={styles.manualTarget}>{r.target}</span>
+              <Button
+                appearance="subtle"
+                size="small"
+                icon={<Delete16Regular />}
+                aria-label={`Remove ${r.vendor}`}
+                onClick={() => onRemove(r.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className={styles.manualEmpty}>
+          Nothing added by hand yet. Enter a vendor the customer runs today and the Microsoft
+          product that replaces it.
+        </p>
+      )}
+
+      <div className={styles.manualForm}>
+        <Input
+          className={styles.manualField}
+          value={vendor}
+          onChange={(_, d) => setVendor(d.value)}
+          placeholder="Vendor"
+          aria-label="Vendor"
+        />
+        <Input
+          className={styles.manualField}
+          value={product}
+          onChange={(_, d) => setProduct(d.value)}
+          placeholder="Product (optional)"
+          aria-label="Product"
+        />
+        <Input
+          className={styles.manualFieldNarrow}
+          value={spend}
+          onChange={(_, d) => setSpend(d.value)}
+          placeholder="Annual spend"
+          aria-label="Annual spend"
+          contentBefore="$"
+        />
+        <Dropdown
+          className={styles.manualField}
+          value={target}
+          selectedOptions={[target]}
+          onOptionSelect={(_, d) => setTarget(d.optionValue)}
+          aria-label="Replaced by"
+        >
+          {MICROSOFT_TARGETS.map((t) => (
+            <Option key={t} value={t}>
+              {t}
+            </Option>
+          ))}
+        </Dropdown>
+        <Button appearance="secondary" icon={<Add16Filled />} disabled={!canAdd} onClick={submit}>
+          Add mapping
+        </Button>
+      </div>
+      <p className={styles.manualNote}>
+        Manually entered spend feeds the cost comparison. It carries no confidence score — you
+        stated it, so there is nothing to infer.
+      </p>
+    </section>
+  );
+}
+
 export default function CompetitiveDisplacement() {
-  const { includedDisplacements, toggleDisplacement, businessCase, ask } = useAppState();
+  const {
+    includedDisplacements,
+    manualDisplacements,
+    sectionAuthorship,
+    toggleDisplacement,
+    addManualDisplacement,
+    removeManualDisplacement,
+    businessCase,
+    ask,
+  } = useAppState();
 
   const includedCount = includedDisplacements.length;
   const familiesInPlay = new Set(
@@ -30,11 +160,15 @@ export default function CompetitiveDisplacement() {
       <SectionHeading
         eyebrow="Stage 3 of 4"
         title="Competitive displacement"
-        description="Four third-party security products map onto three Microsoft platforms. Toggle any mapping off and the business case recalculates immediately."
+        description="Map what the customer runs today onto the Microsoft products that replace it. The copilot can detect these from the profile, or you can enter them yourself."
         actions={
-          <Badge appearance="tint" color="brand">
-            {includedCount} of {DISPLACEMENTS.length} mappings in the case
-          </Badge>
+          <div className={styles.headActions}>
+            <AuthorshipBadge level={sectionAuthorship.displacement} />
+            <Badge appearance="tint" color={includedCount ? 'brand' : 'informative'}>
+              {includedCount + manualDisplacements.length} mapping
+              {includedCount + manualDisplacements.length === 1 ? '' : 's'} in the case
+            </Badge>
+          </div>
         }
       />
 
@@ -61,7 +195,17 @@ export default function CompetitiveDisplacement() {
         </div>
       </Card>
 
+      <ManualDisplacementEditor
+        rows={manualDisplacements}
+        onAdd={addManualDisplacement}
+        onRemove={removeManualDisplacement}
+      />
+
       <Card className={styles.mapCard}>
+        <div className={styles.groupHead}>
+          <h3 className={styles.groupTitle}>Detected by the copilot</h3>
+          <AuthorshipBadge level="ai" />
+        </div>
         <div className={styles.columns}>
           <div className={styles.colHead}>
             <span className={styles.colTitle}>Current state</span>
@@ -189,11 +333,10 @@ export default function CompetitiveDisplacement() {
       </Card>
 
       <StageFooter
-        nextDisabled={includedCount === 0}
         hint={
-          includedCount === 0
-            ? 'Keep at least one displacement in the case to build the executive summary.'
-            : 'Next: the copilot assembles the executive business case from these inputs.'
+          includedCount + manualDisplacements.length === 0
+            ? 'A case with no displacements still works — it just rests on operational benefit alone.'
+            : 'Next: the results, and the narrative you write around them.'
         }
       />
     </div>

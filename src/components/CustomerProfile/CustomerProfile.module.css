@@ -50,6 +50,27 @@
   grid-column: 1 / -1;
 }
 
+.headActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+}
+
+/* Neutral surface, unlike the AI primer's brand gradient — manual authoring
+   is not a downgrade and should not look like one. */
+.manualPrimer {
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke2);
+  box-shadow: none;
+}
+
+.primerAsk {
+  margin-left: -8px;
+  margin-top: var(--spacingVerticalS);
+}
+
 /* -------------------------------- primer ---------------------------------- */
 
 .primer {

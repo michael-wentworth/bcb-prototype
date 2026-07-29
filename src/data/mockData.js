@@ -576,13 +576,21 @@ const round = (n) => Math.round(n);
 /**
  * Build the full business case from the ledger.
  *
+ * Manually entered displacements count exactly the same as detected ones. A
+ * number the seller typed is not worth less than a number the model inferred —
+ * if anything it is worth more, because someone stands behind it.
+ *
  * @param {string[]} includedDisplacementIds displacements the seller has kept in
+ * @param {Array<{id:string,vendor:string,annualSpend:number}>} manualRows hand-entered mappings
  * @returns {object} totals, per-month cash flow, and the headline metrics
  */
-export function buildBusinessCase(includedDisplacementIds) {
+export function buildBusinessCase(includedDisplacementIds, manualRows = []) {
   const included = DISPLACEMENTS.filter((d) => includedDisplacementIds.includes(d.id));
+  const manual = manualRows.filter((r) => Number(r.annualSpend) > 0);
+  const manualAnnual = manual.reduce((sum, r) => sum + Number(r.annualSpend), 0);
 
-  const displacementBenefit = included.reduce((sum, d) => sum + d.benefit3yr, 0);
+  const displacementBenefit =
+    included.reduce((sum, d) => sum + d.benefit3yr, 0) + manualAnnual * 3;
   const operationalBenefit = OPERATIONAL_BENEFITS.reduce((sum, b) => sum + b.value, 0);
   const benefitTotal = displacementBenefit + operationalBenefit;
 
@@ -617,7 +625,8 @@ export function buildBusinessCase(includedDisplacementIds) {
   const breakeven = cashflow.find((m) => m.cumulative >= 0);
   const paybackMonths = breakeven ? breakeven.month : null;
 
-  const annualThirdPartySpend = included.reduce((s, d) => s + d.from.annualSpend, 0);
+  const annualThirdPartySpend =
+    included.reduce((s, d) => s + d.from.annualSpend, 0) + manualAnnual;
   const annualMicrosoftSpend = runRateCost / (horizon / 12);
 
   return {
@@ -636,8 +645,9 @@ export function buildBusinessCase(includedDisplacementIds) {
     annualThirdPartySpend: round(annualThirdPartySpend),
     annualMicrosoftSpend: round(annualMicrosoftSpend),
     annualLicensingReduction: round(annualThirdPartySpend - annualMicrosoftSpend),
-    vendorsConsolidated: included.length,
+    vendorsConsolidated: included.length + manual.length,
     includedDisplacements: included,
+    manualDisplacements: manual,
   };
 }
 

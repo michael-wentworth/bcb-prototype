@@ -20,6 +20,7 @@ import {
 } from '../../data/mockData.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import AIField from './AIField.jsx';
+import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import ConfidenceBadge from '../shared/ConfidenceBadge.jsx';
 import SectionHeading from '../shared/SectionHeading.jsx';
 import StageFooter from '../shared/StageFooter.jsx';
@@ -41,7 +42,8 @@ const OPTIONS = {
 };
 
 export default function CustomerProfile() {
-  const { profile, fieldMeta, vendors, profilePopulated, setField, ask } = useAppState();
+  const { profile, fieldMeta, vendors, profilePopulated, sectionAuthorship, setField, ask } =
+    useAppState();
 
   const filledCount = Object.values(profile).filter((v) => v && String(v).trim()).length;
   const total = PROFILE_FIELDS.length;
@@ -51,14 +53,18 @@ export default function CustomerProfile() {
       <SectionHeading
         eyebrow="Stage 1 of 4"
         title="Customer profile"
-        description="Describe the customer to the copilot and review what it captures. Every field stays editable, and every value shows where it came from."
+        description="Type the details in directly, or describe the customer to the copilot and review what it captures. Every field stays editable either way, and every value shows where it came from."
         actions={
-          <Badge appearance="tint" color={filledCount === total ? 'success' : 'informative'}>
-            {filledCount} of {total} captured
-          </Badge>
+          <div className={styles.headActions}>
+            <AuthorshipBadge level={sectionAuthorship.profile} />
+            <Badge appearance="tint" color={filledCount === total ? 'success' : 'informative'}>
+              {filledCount} of {total} captured
+            </Badge>
+          </div>
         }
       />
 
+      {/* Offered, never imposed. Nothing downstream is gated on having used it. */}
       {!profilePopulated ? <PrimerCard onUseExample={() => ask(DEMO_PROMPT)} /> : null}
 
       <Card className={styles.card}>
@@ -154,12 +160,13 @@ export default function CustomerProfile() {
         </Card>
       ) : null}
 
+      {/* Advancing is never gated on having used the copilot — a part-filled
+          profile is a legitimate state to move on from. */}
       <StageFooter
-        nextDisabled={!profilePopulated}
         hint={
-          profilePopulated
-            ? 'Profile captured. The copilot will use it to shortlist Microsoft solutions.'
-            : 'Describe the customer in the copilot panel to populate this stage.'
+          filledCount === 0
+            ? 'Fill in what you know, or ask the copilot. You can move on and come back.'
+            : 'Next: choose the Microsoft solutions this case will rest on.'
         }
       />
     </div>
@@ -173,10 +180,11 @@ function PrimerCard({ onUseExample }) {
         <Sparkle16Filled />
       </span>
       <div className={styles.primerBody}>
-        <h3 className={styles.primerTitle}>Start with a sentence, not a form</h3>
+        <h3 className={styles.primerTitle}>Fill this in yourself, or have the copilot do it</h3>
         <p className={styles.primerText}>
-          Tell the copilot who the customer is, what they run today, and what they&rsquo;re trying to
-          fix. It will populate this stage and flag anything it had to infer.
+          Type straight into any field below and carry on — nothing here waits on the assistant. Or
+          describe the customer in a sentence and it will populate the stage, flagging anything it
+          had to infer.
         </p>
         <button type="button" className={styles.primerExample} onClick={onUseExample}>
           <span className={styles.primerExampleLabel}>Example prompt</span>

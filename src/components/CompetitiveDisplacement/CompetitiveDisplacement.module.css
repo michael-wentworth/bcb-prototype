@@ -52,6 +52,164 @@
   margin-top: 4px;
 }
 
+.headActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+}
+
+.aiIcon {
+  color: var(--colorBrandForeground1);
+}
+
+.detectOffer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalXL);
+  flex-wrap: wrap;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke2);
+  box-shadow: none;
+}
+
+.offerTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.offerText {
+  margin: 4px 0 0;
+  max-width: 68ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  margin-bottom: var(--spacingVerticalM);
+}
+
+.groupTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+/* ----------------------------- manual editor ------------------------------- */
+
+.manual {
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke2);
+}
+
+.manualRows {
+  margin: 0 0 var(--spacingVerticalM);
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.manualRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+  padding: 10px 14px;
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground3);
+  border: 1px solid var(--colorNeutralStroke2);
+  animation: bcbRise 260ms var(--curveDecelerateMid) both;
+}
+
+.manualFrom {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.manualVendor {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.manualProduct {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.manualSpend {
+  margin-top: 2px;
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground3);
+}
+
+.manualNoSpend {
+  margin-top: 2px;
+  font-size: var(--fontSizeBase200);
+  font-style: italic;
+  color: var(--colorNeutralForeground4);
+}
+
+.manualArrow {
+  flex: none;
+  color: var(--colorBrandForeground2);
+}
+
+.manualTarget {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorNeutralForeground1);
+}
+
+.manualEmpty {
+  margin: 0 0 var(--spacingVerticalM);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border-radius: var(--borderRadiusMedium);
+  border: 1px dashed var(--colorNeutralStroke2);
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground3);
+}
+
+.manualForm {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  flex-wrap: wrap;
+}
+
+.manualField {
+  min-width: 168px;
+  flex: 1 1 168px;
+}
+
+.manualFieldNarrow {
+  width: 140px;
+  flex: none;
+}
+
+.manualNote {
+  margin: var(--spacingVerticalM) 0 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground4);
+}
+
 /* -------------------------------- map card --------------------------------- */
 
 .mapCard {

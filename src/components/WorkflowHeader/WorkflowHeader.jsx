@@ -11,8 +11,14 @@ export default function WorkflowHeader() {
     <nav className={styles.root} aria-label="Business case stages">
       <ol className={styles.list}>
         {STAGES.map((s, i) => {
-          const state = i < stage ? 'complete' : i === stage ? 'current' : 'upcoming';
-          const reachable = i <= maxStageReached;
+          // Visited stages read as complete; every stage stays reachable.
+          // Locking stages ahead assumes a prescribed order, which is exactly
+          // the assumption a manually authored case does not hold to.
+          const state = i < stage || (i <= maxStageReached && i !== stage)
+            ? 'complete'
+            : i === stage
+              ? 'current'
+              : 'upcoming';
 
           return (
             <li key={s.id} className={styles.item} data-state={state}>
@@ -27,8 +33,7 @@ export default function WorkflowHeader() {
               <button
                 type="button"
                 className={styles.step}
-                onClick={() => reachable && goToStage(i)}
-                disabled={!reachable}
+                onClick={() => goToStage(i)}
                 aria-current={state === 'current' ? 'step' : undefined}
               >
                 <span className={styles.marker} aria-hidden="true">

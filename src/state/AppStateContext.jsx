@@ -20,7 +20,6 @@ import {
   NARRATIVE_SECTIONS,
   afterAiAction,
   afterHumanEdit,
-  templateById,
 } from '../data/authoring.js';
 import { applyNarrativeAction } from '../data/aiActions.js';
 import { getStageIntro, resolveResponse } from '../data/aiScript.js';
@@ -46,15 +45,6 @@ const emptyNarrative = () =>
   );
 
 const initialState = {
-  /* --------------------------- creation ---------------------------- */
-  // The workflow does not begin until a creation mode is chosen. Dropping
-  // users straight into an AI prompt is what made the assistant feel
-  // mandatory; the start screen is the fix.
-  phase: 'start',
-  creationMode: null,
-  templateId: null,
-  caseTitle: 'Untitled business case',
-
   stage: 0,
   maxStageReached: 0,
 
@@ -64,18 +54,19 @@ const initialState = {
   profilePopulated: false,
   vendors: [],
 
-  // Nothing is pre-selected. A blank case is genuinely blank, and the AI
-  // shortlist is something the copilot does, not a default the user inherits.
-  selectedSkus: [],
+  // The recommendation engine's output is present from the start, as it always
+  // has been. What changed is that it is now editable and extendable rather
+  // than the only way through.
+  selectedSkus: SKU_RECOMMENDATIONS.filter((s) => s.recommended).map((s) => s.id),
   manualSkus: [],
-  includedDisplacements: [],
+  includedDisplacements: DISPLACEMENTS.map((d) => d.id),
   manualDisplacements: [],
 
   /** Per-section provenance: 'empty' | 'ai' | 'assisted' | 'manual'. */
   sectionAuthorship: {
     profile: AUTHORSHIP.EMPTY,
-    solutions: AUTHORSHIP.EMPTY,
-    displacement: AUTHORSHIP.EMPTY,
+    solutions: AUTHORSHIP.AI,
+    displacement: AUTHORSHIP.AI,
   },
 
   narrative: emptyNarrative(),
@@ -97,28 +88,6 @@ const setSection = (state, section, next) => ({
 
 function reducer(state, action) {
   switch (action.type) {
-    /* ---------------------------- creation ---------------------------- */
-    case 'START_CASE': {
-      const template = action.templateId ? templateById(action.templateId) : null;
-      return {
-        ...state,
-        phase: 'workflow',
-        creationMode: action.mode,
-        templateId: action.templateId || null,
-        caseTitle:
-          action.title?.trim() ||
-          (template ? template.titleTemplate : 'Untitled business case'),
-        stage: 0,
-        introShown: {},
-      };
-    }
-
-    case 'SET_CASE_TITLE':
-      return { ...state, caseTitle: action.title };
-
-    case 'BACK_TO_START':
-      return { ...initialState, narrative: emptyNarrative(), profile: { ...emptyProfile } };
-
     case 'SET_STAGE': {
       const stage = Math.max(0, Math.min(STAGES.length - 1, action.stage));
       return { ...state, stage, maxStageReached: Math.max(state.maxStageReached, stage) };
@@ -379,8 +348,8 @@ export function AppStateProvider({ children }) {
   useEffect(() => clearTimers, [clearTimers]);
 
   const businessCase = useMemo(
-    () => buildBusinessCase(state.includedDisplacements),
-    [state.includedDisplacements],
+    () => buildBusinessCase(state.includedDisplacements, state.manualDisplacements),
+    [state.includedDisplacements, state.manualDisplacements],
   );
   const businessCaseRef = useRef(businessCase);
   businessCaseRef.current = businessCase;
@@ -393,7 +362,6 @@ export function AppStateProvider({ children }) {
       profilePopulated: s.profilePopulated,
       selectedSkus: s.selectedSkus,
       includedDisplacements: s.includedDisplacements,
-      creationMode: s.creationMode,
       sectionAuthorship: s.sectionAuthorship,
       narrative: s.narrative,
       businessCase: businessCaseRef.current,
@@ -477,26 +445,8 @@ export function AppStateProvider({ children }) {
   const toggleDisplacement = useCallback((id) => dispatch({ type: 'TOGGLE_DISPLACEMENT', id }), []);
   const highlightGap = useCallback((id) => dispatch({ type: 'HIGHLIGHT_GAP', id }), []);
 
-  /* ----------------------- creation & authoring ------------------------ */
+  /* ---------------------------- authoring ------------------------------ */
 
-  const startCase = useCallback(
-    ({ mode, templateId, title, prompt }) => {
-      dispatch({ type: 'START_CASE', mode, templateId, title });
-      // Only the AI path hands work to the copilot. The other two leave the case
-      // alone until the author asks for something.
-      if (mode === 'ai' && prompt?.trim()) {
-        schedule(() => ask(prompt.trim()), 650);
-      }
-    },
-    [ask, schedule],
-  );
-
-  const backToStart = useCallback(() => {
-    clearTimers();
-    dispatch({ type: 'BACK_TO_START' });
-  }, [clearTimers]);
-
-  const setCaseTitle = useCallback((title) => dispatch({ type: 'SET_CASE_TITLE', title }), []);
   const addManualSku = useCallback((sku) => dispatch({ type: 'ADD_MANUAL_SKU', sku }), []);
   const removeManualSku = useCallback((id) => dispatch({ type: 'REMOVE_MANUAL_SKU', id }), []);
   const addManualDisplacement = useCallback(
@@ -545,11 +495,10 @@ export function AppStateProvider({ children }) {
     dispatch({ type: 'RESET' });
   }, [clearTimers]);
 
-  // Proactive stage commentary — the assistant speaks first when a stage opens,
-  // but only once a case exists and only in a tone that matches how it was
-  // created. A blank case gets an offer of help, not a sales pitch for AI.
+  // Proactive stage commentary — the assistant offers context when a stage
+  // opens. It never blocks anything; the workflow is fully usable with the
+  // panel collapsed and this never read.
   useEffect(() => {
-    if (state.phase !== 'workflow') return;
     if (state.introShown[state.stage]) return;
 
     const intro = getStageIntro(state.stage, buildContext());
@@ -558,14 +507,7 @@ export function AppStateProvider({ children }) {
     dispatch({ type: 'MARK_INTRO_SHOWN', stage: state.stage });
     const delay = state.stage === 0 ? 600 : 900;
     schedule(() => pushAssistant(intro.blocks, intro.intent), delay);
-  }, [
-    state.phase,
-    state.stage,
-    state.introShown,
-    buildContext,
-    pushAssistant,
-    schedule,
-  ]);
+  }, [state.stage, state.introShown, buildContext, pushAssistant, schedule]);
 
   // The report "assembling" beat — sells that stage 4 is generated, not static.
   useEffect(() => {
@@ -588,26 +530,17 @@ export function AppStateProvider({ children }) {
     return { ...counts, total: levels.length, aiTouched: counts.ai + counts.assisted };
   }, [state.sectionAuthorship, state.narrative]);
 
-  const template = useMemo(
-    () => (state.templateId ? templateById(state.templateId) : null),
-    [state.templateId],
-  );
-
   const value = useMemo(
     () => ({
       ...state,
       businessCase,
       authorship,
-      template,
       ask,
       goToStage,
       setField,
       toggleSku,
       toggleDisplacement,
       highlightGap,
-      startCase,
-      backToStart,
-      setCaseTitle,
       addManualSku,
       removeManualSku,
       addManualDisplacement,
@@ -621,16 +554,12 @@ export function AppStateProvider({ children }) {
       state,
       businessCase,
       authorship,
-      template,
       ask,
       goToStage,
       setField,
       toggleSku,
       toggleDisplacement,
       highlightGap,
-      startCase,
-      backToStart,
-      setCaseTitle,
       addManualSku,
       removeManualSku,
       addManualDisplacement,
