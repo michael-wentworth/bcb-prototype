@@ -50,22 +50,29 @@ export default function AppShell({ isDark, onToggleTheme, panelOpen, onTogglePan
           </div>
         </main>
 
-        {panelOpen ? (
-          <AIAssistantPanel onCollapse={onTogglePanel} />
-        ) : (
-          /* With the minimize control inside the panel, collapsing it would
-             otherwise leave no way back — this is that way back. */
-          <Tooltip content="Show the copilot" relationship="label" withArrow>
-            <button
-              type="button"
-              className={styles.copilotTab}
-              onClick={onTogglePanel}
-              aria-label="Show the copilot panel"
-            >
-              <Sparkle20Filled aria-hidden="true" />
-            </button>
-          </Tooltip>
-        )}
+        {/* The copilot only works on a case, so it only exists where there is
+            one. On the library and the resource pages it has nothing to act on,
+            and an assistant with no available action is worse than no assistant
+            — it invites a question it cannot answer. Its collapsed tab goes with
+            it, since a way back into something absent is just clutter. */}
+        {inBuilder ? (
+          panelOpen ? (
+            <AIAssistantPanel onCollapse={onTogglePanel} />
+          ) : (
+            /* With the minimize control inside the panel, collapsing it would
+               otherwise leave no way back — this is that way back. */
+            <Tooltip content="Show the copilot" relationship="label" withArrow>
+              <button
+                type="button"
+                className={styles.copilotTab}
+                onClick={onTogglePanel}
+                aria-label="Show the copilot panel"
+              >
+                <Sparkle20Filled aria-hidden="true" />
+              </button>
+            </Tooltip>
+          )
+        ) : null}
       </div>
     </div>
   );
