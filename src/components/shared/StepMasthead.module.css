@@ -164,9 +164,15 @@
 
 /* -------------------------------- labels ----------------------------------- */
 
-/* The current step's name, which is the page's only h1. 24px rather than 20px
-   because the card titles beneath it are 20px, and rather than 28px because a
-   2.0x jump against a 14px sibling on the same line reads as a rendering fault. */
+/* The current step's name, which is the page's only h1.
+   Within the rail, size is redundant: the filled brand marker, its halo and the
+   weight change already say "current" unambiguously. What size is for is the
+   PAGE — the card titles below are 16px semibold, so at 14px this would be
+   smaller than the headings it governs and the page would read as having no title
+   at all.
+   20px is the smallest size that does that job. 24px also worked but made the
+   rail a large word between two small ones, and swung the h1 further across the
+   rail from step to step. */
 .heading {
   margin: 0;
   /* flex: none, because a flex container with overflow:hidden gets an automatic
@@ -178,8 +184,8 @@
   min-height: var(--bcb-rail-line);
   display: flex;
   align-items: center;
-  font-size: var(--fontSizeBase600);
-  line-height: var(--lineHeightBase600);
+  font-size: var(--fontSizeBase500);
+  line-height: var(--lineHeightBase500);
   font-weight: var(--fontWeightSemibold);
   letter-spacing: -0.01em;
   color: var(--colorNeutralForeground1);
@@ -281,8 +287,10 @@
   }
 
   .heading {
-    font-size: var(--fontSizeBase500);
-    line-height: var(--lineHeightBase500);
+    /* One step down from the 20px default — still above the 16px card titles it
+       has to out-rank. */
+    font-size: var(--fontSizeBase400);
+    line-height: var(--lineHeightBase400);
     /* A page title wraps; it never gets cut off. The fixed-height markerCell is
        what keeps the markers on one line when it does. */
     white-space: normal;
