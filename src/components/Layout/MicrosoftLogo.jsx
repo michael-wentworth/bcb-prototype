@@ -10,9 +10,8 @@ import styles from './MicrosoftLogo.module.css';
  * cap height is ~0.6 of the mark's height, and the gap between mark and
  * wordmark is ~0.28 of the mark's width.
  *
- * Brand colours are literals, never theme tokens — the mark must not shift
- * between light and dark mode. The wordmark does: Microsoft's brand guidance
- * uses the grey wordmark on light backgrounds and white on dark.
+ * Brand colours are literals, never theme tokens — the mark is fixed and must
+ * not drift with the app's palette.
  */
 export default function MicrosoftLogo({ size = 20, as: As = 'span', ...rest }) {
   return (

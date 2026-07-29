@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Avatar,
   Button,
-  Input,
   Menu,
   MenuItem,
   MenuList,
@@ -11,27 +10,15 @@ import {
   Toast,
   ToastTitle,
   Toaster,
-  Tooltip,
   useId,
   useToastController,
 } from '@fluentui/react-components';
-import {
-  Add20Filled,
-  ChevronDown12Regular,
-  Dismiss20Regular,
-  Search20Regular,
-  WeatherMoon20Regular,
-  WeatherSunny20Regular,
-} from '@fluentui/react-icons';
+import { Add20Filled, ChevronDown12Regular } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
+import { CURRENT_USER } from '../../data/session.js';
 import MicrosoftLogo from './MicrosoftLogo.jsx';
 import styles from './TopBar.module.css';
 
-/**
- * Global navigation, following the azure.microsoft.com header pattern:
- * Microsoft lockup, a vertical rule, the product name at a larger weight, then
- * regular-weight destinations, with utilities right-aligned.
- */
 /**
  * Primary nav is only the places you *work*. Reference material collapses into
  * one Resources entry, and creating a case is a persistent action rather than a
@@ -47,10 +34,13 @@ const RESOURCES = [
   { id: 'learning', label: 'Learning' },
 ];
 
-export default function TopBar({ isDark, onToggleTheme }) {
+/**
+ * Global navigation, following the azure.microsoft.com header pattern:
+ * Microsoft lockup, a vertical rule, the product name at a larger weight, then
+ * regular-weight destinations, with utilities right-aligned.
+ */
+export default function TopBar() {
   const { view, setView, newCase } = useAppState();
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState('');
 
   const toasterId = useId('nav-toaster');
   const { dispatchToast } = useToastController(toasterId);
@@ -138,52 +128,13 @@ export default function TopBar({ isDark, onToggleTheme }) {
         New business case
       </Button>
 
+      {/* Global search lived here, but it had nothing to search across that the
+          case list does not already filter in place. The one search that earns
+          its keep is on My Cases, scoped to the rows in front of you. */}
       <div className={styles.actions}>
-        {searchOpen ? (
-          <div className={styles.searchWrap}>
-            <Input
-              autoFocus
-              value={query}
-              onChange={(_, d) => setQuery(d.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') setSearchOpen(false);
-              }}
-              placeholder="Search business cases and analyst studies"
-              contentBefore={<Search20Regular />}
-              className={styles.searchInput}
-              aria-label="Search"
-            />
-            <Button
-              appearance="subtle"
-              size="small"
-              icon={<Dismiss20Regular />}
-              onClick={() => setSearchOpen(false)}
-              aria-label="Close search"
-            />
-          </div>
-        ) : (
-          <button type="button" className={styles.searchTrigger} onClick={() => setSearchOpen(true)}>
-            <span className={styles.searchLabel}>Search</span>
-            <Search20Regular aria-hidden="true" />
-          </button>
-        )}
-
-        <Tooltip
-          content={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-          relationship="label"
-          withArrow
-        >
-          <Button
-            appearance="subtle"
-            icon={isDark ? <WeatherSunny20Regular /> : <WeatherMoon20Regular />}
-            onClick={onToggleTheme}
-            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-          />
-        </Tooltip>
-
         <button type="button" className={styles.account} onClick={() => notImplemented('Account')}>
-          <span className={styles.accountName}>Michael Wentworth</span>
-          <Avatar name="Michael Wentworth" size={28} color="colorful" />
+          <span className={styles.accountName}>{CURRENT_USER}</span>
+          <Avatar name={CURRENT_USER} size={28} color="colorful" />
           <ChevronDown12Regular aria-hidden="true" className={styles.accountChevron} />
         </button>
       </div>

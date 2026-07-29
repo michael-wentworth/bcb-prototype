@@ -14,7 +14,7 @@ import styles from './AppShell.module.css';
 
 const STEP_VIEWS = [CustomerDetails, SkuSelection, CustomerReport];
 
-export default function AppShell({ isDark, onToggleTheme, panelOpen, onTogglePanel }) {
+export default function AppShell({ panelOpen, onTogglePanel }) {
   const { view, step } = useAppState();
   const StepView = STEP_VIEWS[step] || CustomerDetails;
   const workspaceRef = useRef(null);
@@ -28,7 +28,7 @@ export default function AppShell({ isDark, onToggleTheme, panelOpen, onTogglePan
 
   return (
     <div className={styles.shell}>
-      <TopBar isDark={isDark} onToggleTheme={onToggleTheme} />
+      <TopBar />
 
       <div className={styles.body}>
         <main className={styles.workflow}>

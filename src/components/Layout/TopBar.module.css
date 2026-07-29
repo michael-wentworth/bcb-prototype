@@ -149,44 +149,6 @@
   gap: var(--spacingHorizontalXS);
 }
 
-.searchTrigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 10px;
-  border: none;
-  border-radius: var(--borderRadiusSmall);
-  background: none;
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--colorNeutralForeground1);
-  cursor: pointer;
-}
-
-.searchTrigger:hover {
-  background-color: var(--colorSubtleBackgroundHover);
-}
-
-.searchTrigger:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: 1px;
-}
-
-/* Wrapped so the label can drop out on narrow viewports, leaving the icon. */
-.searchLabel {
-  display: inline;
-}
-
-.searchWrap {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.searchInput {
-  width: 300px;
-}
-
 .account {
   display: inline-flex;
   align-items: center;
@@ -219,16 +181,18 @@
   color: var(--colorNeutralForeground3);
 }
 
-/* ------------------------------- responsive -------------------------------- */
+/* -------------------------------- responsive --------------------------------
+   Both breakpoints below are set from what the bar actually measures, and both
+   moved outward when global search left the row: fully populated the header now
+   needs 930px, and 820px once the account name drops. Order of sacrifice as the
+   viewport narrows is name first (the avatar still identifies you), then the
+   destinations.
 
-@media (max-width: 1400px) {
-  .searchInput {
-    width: 220px;
-  }
-}
+   The old values — 1240 and 1080 — were tuned around search and are now far too
+   eager; they threw the whole nav away at 1024px, a size people really present at.
+   ---------------------------------------------------------------------------- */
 
-@media (max-width: 1240px) {
-  .searchLabel,
+@media (max-width: 1000px) {
   .accountName {
     display: none;
   }
@@ -241,7 +205,7 @@
 
 /* Below this the destinations would crowd the product name, which matters more.
    Azure collapses to a menu here; the prototype simply drops them. */
-@media (max-width: 1080px) {
+@media (max-width: 900px) {
   .nav {
     display: none;
   }

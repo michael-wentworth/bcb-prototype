@@ -135,7 +135,7 @@ src/
   sized from `global.css` via `#root > .fui-FluentProvider`.
 - Fluent's `Switch` renders `input[type="checkbox"]`; scope any bulk checkbox handling.
 - Charts are hand-rolled SVG, colour-vision validated, with a table view so no value is hover-only.
-- Light and dark themes; all motion respects `prefers-reduced-motion`.
+- Light theme only; all motion respects `prefers-reduced-motion`.
 
 ## Branches
 

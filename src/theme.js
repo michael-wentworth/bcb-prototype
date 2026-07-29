@@ -1,4 +1,4 @@
-import { createLightTheme, createDarkTheme } from '@fluentui/react-components';
+import { createLightTheme } from '@fluentui/react-components';
 
 /**
  * Microsoft brand ramp (Fluent 2 web brand). Kept explicit so the prototype's
@@ -24,11 +24,9 @@ export const brandRamp = {
   160: '#EBF3FC',
 };
 
+/* The prototype is light-only. A dark theme is a second set of surfaces to
+   validate every chart and AI accent against, and it earns nothing in a
+   presentation that will be given on a projector. If it comes back, pair
+   createDarkTheme(brandRamp) with its own viz steps in global.css — the light
+   values there are not safe on a dark surface. */
 export const lightTheme = createLightTheme(brandRamp);
-
-export const darkTheme = {
-  ...createDarkTheme(brandRamp),
-  // Dark-mode brand foregrounds default too dim for the accent-heavy AI surfaces.
-  colorBrandForeground1: brandRamp[110],
-  colorBrandForeground2: brandRamp[120],
-};

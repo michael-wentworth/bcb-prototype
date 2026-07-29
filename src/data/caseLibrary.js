@@ -8,6 +8,7 @@
    --------------------------------------------------------------------------- */
 
 import { buildBusinessCase } from './model.js';
+import { CURRENT_USER } from './session.js';
 
 export const CASE_STATUS = {
   draft: { label: 'Draft', color: 'informative' },
@@ -27,7 +28,7 @@ export const MY_CASES = [
     customer: 'Contoso Ltd.',
     industry: 'Manufacturing',
     status: 'draft',
-    owner: 'Michael Wentworth',
+    owner: CURRENT_USER,
     modified: '2 minutes ago',
     modifiedOrder: 0,
     shared: false,
@@ -68,7 +69,7 @@ export const MY_CASES = [
     customer: 'Northwind Traders',
     industry: 'Retail & Consumer Goods',
     status: 'in-review',
-    owner: 'Michael Wentworth',
+    owner: CURRENT_USER,
     modified: 'Yesterday',
     modifiedOrder: 1,
     shared: false,

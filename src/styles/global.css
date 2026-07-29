@@ -46,8 +46,9 @@ body {
 }
 
 /* Chart + data-viz roles. Emphasis form: one accent hue plus a de-emphasis gray.
-   Validated against the Fluent surfaces this app actually renders on
-   (#ffffff light / #292929 dark) — adjacent CVD separation ΔE 15.4 / 16.3. */
+   Validated against the Fluent surface this app renders on (#ffffff) — adjacent
+   CVD separation ΔE 15.4. These steps are chosen for a light surface and are not
+   safe on a dark one; a dark theme would need its own set, re-validated. */
 .vizRoot {
   --viz-accent: #2a78d6;
   --viz-accent-soft: rgba(42, 120, 214, 0.12);
@@ -59,16 +60,6 @@ body {
   --viz-axis: var(--colorNeutralStroke1, #d1d1d1);
   --viz-surface: var(--colorNeutralBackground1, #ffffff);
   --viz-ink-muted: var(--colorNeutralForeground3, #616161);
-}
-
-.fui-FluentProvider[data-theme='dark'] .vizRoot,
-[data-theme='dark'] .vizRoot {
-  --viz-accent: #3987e5;
-  --viz-accent-soft: rgba(57, 135, 229, 0.18);
-  --viz-context: #a6a6a6;
-  --viz-context-soft: rgba(166, 166, 166, 0.2);
-  --viz-negative: #e66767;
-  --viz-negative-soft: rgba(230, 103, 103, 0.16);
 }
 
 /* Scrollbars tuned to the Fluent surface rather than the OS default. */

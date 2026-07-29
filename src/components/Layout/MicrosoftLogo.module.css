@@ -30,18 +30,8 @@
      Semibold at normal tracking lands at 4.98:1; this pulls it back toward the
      real proportion without looking cramped. */
   letter-spacing: -0.025em;
-  /* The official wordmark grey. */
+  /* The official wordmark grey, which is the correct treatment on the light
+     surfaces this app uses. Brand guidance switches it to white on dark
+     backgrounds — restore that rule alongside any future dark theme. */
   color: #737373;
-}
-
-/* Brand guidance: white wordmark on dark surfaces. The mark itself never
-   changes. */
-:root[data-theme='dark'] .wordmark {
-  color: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme='light'])) .wordmark {
-    color: #ffffff;
-  }
 }
