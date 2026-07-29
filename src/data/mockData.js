@@ -299,6 +299,60 @@ export const SKU_RECOMMENDATIONS = [
   },
 ];
 
+/**
+ * Solutions a seller can add by hand, without the copilot shortlisting them.
+ * Manual additions carry no fit score — a score implies an analysis that did
+ * not happen, and inventing one would undermine the ones that are real.
+ */
+export const SKU_CATALOG = [
+  {
+    id: 'intune',
+    name: 'Microsoft Intune Suite',
+    category: 'Endpoint management',
+    summary: 'Unified endpoint management, remote help and endpoint privilege management.',
+    seats: 'Per seat',
+  },
+  {
+    id: 'purview',
+    name: 'Microsoft Purview',
+    category: 'Data security & governance',
+    summary: 'Information protection, insider risk management and compliance evidence.',
+    seats: 'Per seat',
+  },
+  {
+    id: 'defendercloud',
+    name: 'Microsoft Defender for Cloud',
+    category: 'Cloud workload protection',
+    summary: 'Posture management and workload protection across Azure, AWS and GCP.',
+    seats: 'Consumption',
+  },
+  {
+    id: 'entrap1',
+    name: 'Microsoft Entra ID P1',
+    category: 'Identity & access',
+    summary: 'Conditional access and self-service password reset without the P2 governance tier.',
+    seats: 'Per seat',
+  },
+  {
+    id: 'priva',
+    name: 'Microsoft Priva',
+    category: 'Privacy management',
+    summary: 'Privacy risk management and subject rights request automation.',
+    seats: 'Per seat',
+  },
+];
+
+/** Microsoft products a manually entered displacement can map onto. */
+export const MICROSOFT_TARGETS = [
+  'Microsoft Defender for Endpoint',
+  'Microsoft Defender for Office 365',
+  'Microsoft Entra ID P2',
+  'Microsoft Sentinel',
+  'Microsoft Purview',
+  'Microsoft Intune',
+  'Microsoft Defender for Cloud',
+];
+
 /* ------------------------------- Stage 3 --------------------------------- */
 
 /**

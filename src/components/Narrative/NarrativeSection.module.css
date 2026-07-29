@@ -1,0 +1,89 @@
+.section {
+  padding: var(--spacingVerticalM) 0;
+}
+
+.section + .section {
+  margin-top: var(--spacingVerticalM);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  min-height: 30px;
+  margin-bottom: var(--spacingVerticalS);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.aiIcon {
+  color: var(--colorBrandForeground1);
+}
+
+/* Neutral, not brand-tinted: an empty section is an invitation to author,
+   not an advertisement for the copilot. */
+.empty {
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL) var(--spacingVerticalL);
+  border-radius: var(--borderRadiusMedium);
+  border: 1px dashed var(--colorNeutralStroke2);
+  background-color: var(--colorNeutralBackground2);
+}
+
+.emptyLead {
+  margin: 0 0 var(--spacingVerticalM);
+  max-width: 72ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.emptyActions {
+  display: flex;
+  gap: var(--spacingHorizontalS);
+  flex-wrap: wrap;
+}
+
+.prose {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--borderRadiusMedium);
+  background-color: transparent;
+  font-family: inherit;
+  font-size: var(--fontSizeBase300);
+  line-height: 22px;
+  color: var(--colorNeutralForeground1);
+  resize: none;
+  overflow: hidden;
+  transition:
+    background-color var(--durationFaster) var(--curveEasyEase),
+    border-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.prose::placeholder {
+  color: var(--colorNeutralForeground4);
+}
+
+.prose:hover {
+  border-color: var(--colorNeutralStroke2);
+}
+
+.prose:focus {
+  outline: none;
+  background-color: var(--colorNeutralBackground1);
+  border-color: var(--colorBrandStroke1);
+}
