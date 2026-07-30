@@ -325,15 +325,28 @@ const INTENTS = [
           },
           {
             type: 'text',
-            text: `${money(c.netBenefit)} ÷ ${money(c.investmentTotal)} = ${formatPercent(c.roi)}. Of the benefit, ${money(c.competitorTotal)} is competitor spend that stops and ${money(c.additionalTotal)} is additional products and savings. The existing Microsoft bundle is not counted — the customer keeps paying it.`,
+            // hasInputs is true with competitor rows and no SKUs, so the division
+            // has to be branched: at zero investment the model returns a null ROI
+            // and this would otherwise read "US$500,000 ÷ US$0 = —", stating a
+            // division that never happened.
+            text:
+              c.investmentTotal > 0
+                ? `${money(c.netBenefit)} ÷ ${money(c.investmentTotal)} = ${formatPercent(c.roi)}. Of the benefit, ${money(c.competitorTotal)} is competitor spend that stops and ${money(c.additionalTotal)} is additional products and savings. The existing Microsoft bundle is not counted — the customer keeps paying it.`
+                : `There is no Microsoft investment in this case yet, so there is no return to divide — add the SKUs and their pricing on step 2. The benefit side already stands at ${money(c.benefitTotal)}: ${money(c.competitorTotal)} of competitor spend that stops and ${money(c.additionalTotal)} of additional products and savings.`,
           },
           {
             type: 'callout',
             tone: 'insight',
-            title: c.paybackMonths ? `Why payback is month ${c.paybackMonths}` : 'This case does not break even',
+            title: c.paybackMonths
+              ? `Why payback is month ${c.paybackMonths}`
+              : c.investmentTotal > 0
+                ? 'This case does not break even'
+                : 'Nothing to pay back yet',
             text: c.paybackMonths
               ? 'Costs start immediately, but each competitor saving only begins once its contract lapses. That staggering is what sets the payback month.'
-              : 'Within the current horizon the investment is never recovered. Either the analysis period is too short for the contract end dates, or the SKU pricing needs revisiting.',
+              : c.investmentTotal > 0
+                ? 'Within the current horizon the investment is never recovered. Either the analysis period is too short for the contract end dates, or the SKU pricing needs revisiting.'
+                : 'Payback measures how long an investment takes to return. With nothing on the Microsoft side of the ledger there is no period to measure.',
           },
         ],
       };

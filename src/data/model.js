@@ -176,5 +176,10 @@ function trimZeros(s) {
 
 export function formatPercent(ratio) {
   if (ratio == null || Number.isNaN(ratio)) return '—';
-  return `${Math.round(ratio * 100)}%`;
+  const pct = Math.round(ratio * 100);
+  // Same U+2212 minus formatCurrency uses. Left to the default number formatting
+  // this returns an ASCII hyphen, so a negative case rendered "−US$1.29M ÷
+  // US$1.94M = -67%" — two different minus glyphs in one sentence, and the two
+  // sit side by side on the report's metric tiles.
+  return `${pct < 0 ? '−' : ''}${Math.abs(pct)}%`;
 }
