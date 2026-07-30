@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Avatar,
-  Button,
   Menu,
   MenuItem,
   MenuList,
@@ -13,7 +12,7 @@ import {
   useId,
   useToastController,
 } from '@fluentui/react-components';
-import { Add20Filled, ChevronDown12Regular } from '@fluentui/react-icons';
+import { ChevronDown12Regular } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import { CURRENT_USER } from '../../data/session.js';
 import MicrosoftLogo from './MicrosoftLogo.jsx';
@@ -21,8 +20,9 @@ import styles from './TopBar.module.css';
 
 /**
  * Primary nav is only the places you *work*. Reference material collapses into
- * one Resources entry, and creating a case is a persistent action rather than a
- * destination — it used to be reachable only through the marketing page.
+ * one Resources entry. Creating a case is not here: it is an action, and a row of
+ * navigation links is a poor place for a verb — every destination carries its own
+ * create button on the page itself.
  */
 const NAV_ITEMS = [
   { id: 'myCases', label: 'My Cases' },
@@ -124,13 +124,14 @@ export default function TopBar() {
         </ul>
       </nav>
 
-      <Button appearance="primary" icon={<Add20Filled />} onClick={newCase} className={styles.cta}>
-        New business case
-      </Button>
-
-      {/* Global search lived here, but it had nothing to search across that the
-          case list does not already filter in place. The one search that earns
-          its keep is on My Cases, scoped to the rows in front of you. */}
+      {/* Neither a global search nor a create button lives here any more.
+          Search had nothing to look across that the case list does not already
+          filter in place. Create was inherited from azure.microsoft.com, whose
+          filled top-right CTA is an acquisition button for anonymous visitors —
+          it disappears the moment Azure becomes a signed-in tool at
+          portal.azure.com, where that slot turns into search, settings and
+          account. No signed-in Microsoft product puts a create action there, and
+          every destination in this app already carries its own. */}
       <button type="button" className={styles.account} onClick={() => notImplemented('Account')}>
         <span className={styles.accountName}>{CURRENT_USER}</span>
         <Avatar name={CURRENT_USER} size={28} color="colorful" />

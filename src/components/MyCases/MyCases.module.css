@@ -6,9 +6,13 @@
   gap: var(--spacingVerticalL);
 }
 
+/* flex-start, not flex-end: bottom-aligning was tolerable for a large button but
+   parks a medium one level with the subtitle's baseline, well below the heading it
+   belongs to. Aligned to the top, it sits in line with the title — the geometry
+   SharePoint uses for its own create button. */
 .header {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--spacingHorizontalXL);
 }

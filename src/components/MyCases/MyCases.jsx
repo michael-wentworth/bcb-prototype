@@ -46,6 +46,10 @@ export default function MyCases() {
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState('modified');
 
+  // "No cases at all" is a different state from "this filter matches nothing",
+  // and only the first one hands the screen over to the empty state's hero.
+  const hasAnyCases = MY_CASES.length > 0;
+
   const counts = useMemo(
     () => ({
       all: MY_CASES.length,
@@ -87,9 +91,22 @@ export default function MyCases() {
             Every business case you own or have been shared on — drafts through published.
           </p>
         </div>
-        <Button appearance="primary" size="large" icon={<Add20Filled />} onClick={newCase}>
-          New business case
-        </Button>
+        {/* Default size, not large. Fluent publishes no guidance for choosing
+            large, and nothing ties button size to page-level versus chrome-level
+            scope — so the only thing large was carrying was emphasis it did not
+            need. Medium also matches the 32px search box and sort control
+            directly beneath it, so the right edge reads as one column.
+
+            Stands down when there are no cases at all: the empty state runs its
+            own hero button, and two filled primaries on one screen is the thing
+            this whole arrangement exists to avoid. A filter that matches nothing
+            is NOT that case — the list still has cases, so the header keeps its
+            button and the empty state shows none. */}
+        {hasAnyCases ? (
+          <Button appearance="primary" icon={<Add20Filled />} onClick={newCase}>
+            New business case
+          </Button>
+        ) : null}
       </header>
 
       <div className={styles.toolbar}>

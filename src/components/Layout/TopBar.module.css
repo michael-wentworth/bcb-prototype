@@ -124,11 +124,6 @@
   vertical-align: middle;
 }
 
-.cta {
-  flex: none;
-  margin-left: var(--spacingHorizontalS);
-}
-
 .navLinkActive::after {
   content: '';
   position: absolute;
