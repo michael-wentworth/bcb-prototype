@@ -134,7 +134,7 @@ const INTENTS = [
         },
         {
           type: 'actions',
-          items: [{ label: 'Go to SKU Selection', kind: 'navigate', step: 1 }],
+          items: [{ label: 'Go to recommendations', kind: 'navigate', step: 1 }],
         },
       ],
       actions: [{ type: 'fillCase' }],

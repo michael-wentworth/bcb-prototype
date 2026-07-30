@@ -1,17 +1,22 @@
 /* ---------------------------------------------------------------------------
    Reference data for the Security BCB forms.
 
-   Field names and groupings follow the shipping product's Customer Details and
-   SKU Selection screens so the prototype can be compared against it directly.
+   Field names and groupings follow the shipping product's first two screens so
+   the prototype can be compared against it directly.
    Everything here is mock lookup data — there is no service behind it.
    --------------------------------------------------------------------------- */
 
 /* ----------------------------- Workflow steps ------------------------------ */
 
 export const STEPS = [
-  { id: 'customer', label: 'Customer Details', caption: 'Who the case is for' },
-  { id: 'sku', label: 'SKU Selection', caption: 'What is being sold and displaced' },
-  { id: 'report', label: 'Customer Report', caption: 'The case you present' },
+  // Current state, then future state, then what it is worth — the arc a business
+  // case actually makes. Step 2 is "Recommendations" rather than "AI
+  // recommendations": the copilot can propose a starting point, but the SKU and
+  // competitor tables are filled in by hand, and the label should not claim
+  // otherwise.
+  { id: 'customer', label: 'Customer environment', caption: 'Current state' },
+  { id: 'sku', label: 'Recommendations', caption: 'Future state' },
+  { id: 'report', label: 'Business case report', caption: 'Value & justification' },
 ];
 
 /* -------------------------- Customer Information --------------------------- */
