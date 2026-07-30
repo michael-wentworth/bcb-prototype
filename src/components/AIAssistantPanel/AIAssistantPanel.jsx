@@ -98,7 +98,12 @@ export default function AIAssistantPanel({ onCollapse }) {
       </header>
 
       <div className={`${styles.thread} scrollArea`} ref={scrollRef} onScroll={handleScroll}>
-        {messages.length === 0 && !busy ? <EmptyState onUseExample={() => send(DEMO_PROMPT)} /> : null}
+        {/* No empty state. The intro message is scheduled 600ms after mount, so an
+            empty-thread placeholder could only ever flash: it rendered centred in the
+            panel, was replaced by the intro before it could be read, and looked like a
+            different component failing rather than a message arriving. A blank thread
+            for those 600ms is correct — the header, chips and composer are all still
+            there, so the panel reads as awaiting its first message. */}
 
         {messages.map((message) =>
           message.role === 'user' ? (
@@ -190,20 +195,3 @@ function Thinking({ steps, index }) {
   );
 }
 
-function EmptyState({ onUseExample }) {
-  return (
-    <div className={styles.empty}>
-      <span className={styles.emptyMark} aria-hidden="true">
-        <Sparkle20Filled />
-      </span>
-      <p className={styles.emptyTitle}>Describe your customer</p>
-      <p className={styles.emptyText}>
-        Tell me who they are, what they run today, and what they&rsquo;re trying to fix. I&rsquo;ll
-        build the profile, recommend solutions, and assemble the business case with you.
-      </p>
-      <button type="button" className={styles.emptyExample} onClick={onUseExample}>
-        <span className={styles.emptyExampleText}>{DEMO_PROMPT}</span>
-      </button>
-    </div>
-  );
-}

@@ -29,8 +29,7 @@
 }
 
 .avatar,
-.assistantAvatar,
-.emptyMark {
+.assistantAvatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -149,68 +148,6 @@
 .thinkingText {
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground2);
-}
-
-/* ------------------------------ empty state -------------------------------- */
-
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding: var(--spacingVerticalL) 2px;
-}
-
-.emptyMark {
-  width: 36px;
-  height: 36px;
-  margin-bottom: 2px;
-}
-
-.emptyTitle {
-  margin: 0;
-  font-size: var(--fontSizeBase400);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
-.emptyText {
-  margin: 0;
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
-  color: var(--colorNeutralForeground2);
-}
-
-.emptyExample {
-  margin-top: 6px;
-  width: 100%;
-  text-align: left;
-  padding: 11px 13px;
-  border-radius: var(--borderRadiusMedium);
-  border: 1px dashed var(--colorBrandStroke2);
-  background-color: var(--colorBrandBackground2);
-  cursor: pointer;
-  font-family: inherit;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: background-color var(--durationFaster) var(--curveEasyEase);
-}
-
-.emptyExample:hover {
-  background-color: var(--colorBrandBackground2Hover, var(--colorBrandBackground2));
-  border-style: solid;
-}
-
-.emptyExample:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: 1px;
-}
-
-.emptyExampleText {
-  font-size: var(--fontSizeBase200);
-  line-height: 17px;
-  color: var(--colorNeutralForeground1);
 }
 
 /* ------------------------------ suggestions -------------------------------- */
