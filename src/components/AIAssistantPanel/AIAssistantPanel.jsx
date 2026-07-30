@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Badge, Button, Textarea, Tooltip } from '@fluentui/react-components';
+import { Button, Textarea, Tooltip } from '@fluentui/react-components';
 import {
   PanelRightContract20Regular,
-  Send24Filled,
+  Send20Filled,
   Sparkle20Filled,
 } from '@fluentui/react-icons';
 import { DEMO_PROMPT } from '../../data/demoCase.js';
@@ -91,9 +91,6 @@ export default function AIAssistantPanel({ onCollapse }) {
                 : 'Open a case and I can help with it'}
           </span>
         </div>
-        <Badge appearance="outline" size="small" color="informative">
-          Preview
-        </Badge>
         {/* The minimize control belongs to the panel, not the app chrome. */}
         <Tooltip content="Minimize the copilot" relationship="label" withArrow>
           <Button
@@ -149,6 +146,10 @@ export default function AIAssistantPanel({ onCollapse }) {
         </div>
       ) : null}
 
+      {/* Send sits inside the field, bottom-right, the way every Copilot composer
+          does it. A separate button beside a 62px-tall field leaves a block of
+          dead space above it and reads as two unrelated controls; inside, the
+          field and its action are one object. */}
       <div className={styles.composer}>
         <Textarea
           className={styles.textarea}
@@ -163,7 +164,8 @@ export default function AIAssistantPanel({ onCollapse }) {
         <Tooltip content="Send" relationship="label" withArrow>
           <Button
             appearance="primary"
-            icon={<Send24Filled />}
+            shape="circular"
+            icon={<Send20Filled />}
             className={styles.send}
             disabled={busy || !draft.trim()}
             onClick={() => send()}

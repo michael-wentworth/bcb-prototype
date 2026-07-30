@@ -292,18 +292,24 @@
 
 /* -------------------------------- composer --------------------------------- */
 
+/* The field and its send button are one object, so the button is positioned
+   inside rather than set beside it. */
 .composer {
+  position: relative;
   flex: none;
-  display: flex;
-  align-items: flex-end;
-  gap: var(--spacingHorizontalS);
   padding: var(--spacingVerticalM) var(--spacingHorizontalL) 0;
   background-color: var(--colorNeutralBackground1);
 }
 
 .textarea {
-  flex: 1;
+  width: 100%;
   min-width: 0;
+}
+
+/* Room for the button, so a long draft never runs underneath it. Targets the
+   inner element because Fluent wraps the real <textarea> in a span. */
+.textarea > textarea {
+  padding-right: 44px;
 }
 
 .textarea textarea {
@@ -313,11 +319,19 @@
   font-size: var(--fontSizeBase300);
 }
 
+/* Genuinely square. The previous rule set min-width, which lost to Fluent's own
+   Button style and left it 32x36 — visibly a rectangle. width wins where
+   min-width did not, and !important is not needed because this is more specific
+   than the base slot. */
 .send {
-  flex: none;
-  height: 36px;
-  min-width: 36px;
-  border-radius: var(--borderRadiusMedium);
+  position: absolute;
+  right: calc(var(--spacingHorizontalL) + 8px);
+  bottom: 8px;
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+  height: 32px;
+  padding: 0;
 }
 
 .disclaimer {
