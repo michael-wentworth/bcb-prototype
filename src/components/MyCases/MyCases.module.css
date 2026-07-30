@@ -120,13 +120,6 @@
   pointer-events: none;
 }
 
-.rowAction {
-  position: relative;
-  z-index: 2;
-  flex: none;
-  margin-left: auto;
-}
-
 .rowMain {
   flex: 1;
   min-width: 0;

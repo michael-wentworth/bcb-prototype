@@ -15,7 +15,6 @@ import {
 import {
   Add20Filled,
   ArrowSortDown20Regular,
-  Open20Regular,
   Person20Regular,
   Search20Regular,
   Sparkle16Filled,
@@ -213,6 +212,11 @@ function CaseRow({ entry, onOpen, codesInView = [] }) {
 
   return (
     <li className={styles.row}>
+      {/* The whole row is the open control — one button, stretched over the card,
+          carrying the accessible name. There is deliberately no visible "Open"
+          button as well: it fired this same handler, so every row cost two tab
+          stops to reach the same place. Clickability is carried by the shadow
+          lift on hover and the pointer cursor, as in any file list. */}
       <button type="button" className={styles.rowHit} onClick={onOpen}>
         <span className={styles.srOnly}>Open {entry.title}</span>
       </button>
@@ -260,12 +264,6 @@ function CaseRow({ entry, onOpen, codesInView = [] }) {
         <Avatar name={entry.owner} size={24} color="colorful" />
         <span className={styles.ownerText}>{entry.owner}</span>
         <span className={styles.modified}>{entry.modified}</span>
-      </div>
-
-      <div className={styles.rowAction}>
-        <Button appearance="subtle" icon={<Open20Regular />} onClick={onOpen}>
-          Open
-        </Button>
       </div>
     </li>
   );
