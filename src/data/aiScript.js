@@ -38,7 +38,18 @@ export const STEP_SUGGESTIONS = [
   ],
 ];
 
-/* ------------------------------- Step intros ------------------------------- */
+/* ------------------------------- Step intros -------------------------------
+
+   ONE text block per step, and nothing else. An intro fires before the seller
+   has typed anything, so it is the worst possible moment to spend their
+   attention on advice about a field they have not reached yet.
+
+   Coaching that used to sit here as extra callouts now lives in STEP_SUGGESTIONS
+   above — the contract-year warning and the displacement mapping are both a chip
+   away, on the step they belong to, and they arrive when the seller asks rather
+   than as a wall to read past. Move a field between steps and it is tempting to
+   drag its callout along with it; put the coaching in a chip instead, or this
+   grows back to three paragraphs. */
 
 export function getStepIntro(stepIndex) {
   switch (stepIndex) {
@@ -48,19 +59,7 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: "I am the Security business case copilot. This step is the estate as it stands today — who the customer is, what they already pay Microsoft, and what they pay everyone else. Describe them in a sentence and I will populate all of it.",
-          },
-          {
-            type: 'callout',
-            tone: 'insight',
-            title: 'Every field shows its source',
-            text: 'Every field I populate carries what it was drawn from, so you can check the ones that move the numbers before this reaches a customer.',
-          },
-          {
-            type: 'callout',
-            tone: 'coach',
-            title: 'Year contract ends is the field people skip',
-            text: 'A competitor contract running past the analysis period contributes nothing — the customer is still paying for it. Getting those years right, here, is what stops a case overstating savings.',
+            text: 'I am the Security business case copilot. Describe the customer in a sentence — who they are, their size, and what they run today — and I will fill in this step.',
           },
         ],
       };
@@ -70,13 +69,7 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: 'This step is the proposal: the outcomes you are selling against, the Microsoft SKUs and seats that serve them, and which current vendor each one takes out.',
-          },
-          {
-            type: 'callout',
-            tone: 'coach',
-            title: 'The mapping is what makes it a displacement',
-            text: 'The competitor costs and contract dates already came across from step 1. What this step adds is the Microsoft product against each of them — without that column it is a price comparison, not a displacement.',
+            text: 'This step is the proposal: the outcomes you are selling against, the Microsoft SKUs that serve them, and which current vendor each one displaces.',
           },
         ],
       };
@@ -88,13 +81,10 @@ export function getStepIntro(stepIndex) {
             type: 'text',
             text: 'Everything here derives from the two input steps. Change a seat count or a contract year and this recalculates immediately.',
           },
-          {
-            type: 'actions',
-            items: [
-              { label: 'How did you calculate the ROI?', kind: 'prompt' },
-              { label: 'What is still missing from this case?', kind: 'prompt' },
-            ],
-          },
+          /* No actions block here. The two it used to carry — the ROI question and
+             the what-is-missing question — are the first two entries of
+             STEP_SUGGESTIONS[2], so they rendered twice on one screen: as buttons
+             inside the message and as chips above the composer. */
         ],
       };
     default:
