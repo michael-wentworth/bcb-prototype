@@ -28,6 +28,12 @@
   background-color: var(--colorNeutralBackground3);
 }
 
+/* The landing page paints its own bands edge to edge. */
+.flush {
+  padding: 0;
+  background-color: var(--colorNeutralBackground1);
+}
+
 .stageContainer {
   max-width: 1080px;
   margin: 0 auto;

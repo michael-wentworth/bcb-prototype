@@ -1,0 +1,471 @@
+/* ---------------------------------------------------------------------------
+   The landing page.
+
+   ONE GRID. Bands run the full width and change colour; `.grid` is the only thing
+   that sets a measure and a left edge, and every band uses it. Nothing on this
+   page is indented differently from anything else — that was the whole problem
+   with the previous version, which had four competing left edges.
+   --------------------------------------------------------------------------- */
+
+.root {
+  --bcb-landing-measure: 1160px;
+  background-color: var(--colorNeutralBackground1);
+}
+
+.grid {
+  max-width: var(--bcb-landing-measure);
+  margin: 0 auto;
+  padding-inline: var(--spacingHorizontalXXL);
+}
+
+/* ---------------------------------- hero ----------------------------------- */
+
+.hero {
+  padding: 72px 0 64px;
+  background-color: var(--colorNeutralBackground1);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+
+.hero .grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  align-items: center;
+  gap: var(--spacingHorizontalXXXL);
+}
+
+.heroText {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 var(--spacingVerticalS);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--colorBrandForeground1);
+}
+
+.title {
+  margin: 0;
+  font-size: 44px;
+  line-height: 52px;
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.02em;
+  color: var(--colorNeutralForeground1);
+  text-wrap: balance;
+}
+
+.lede {
+  margin: var(--spacingVerticalL) 0 0;
+  max-width: 46ch;
+  font-size: var(--fontSizeBase400);
+  line-height: 24px;
+  color: var(--colorNeutralForeground2);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+  margin-top: var(--spacingVerticalXXL);
+}
+
+/* Sits on a plain white surface with nothing else filled anywhere near it. The
+   old page put this on a saturated multicolour field, which is what drowned it. */
+.cta {
+  flex: none;
+}
+
+/* --------------------------------- the video ------------------------------- */
+
+.video {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusXLarge);
+  background: none;
+  overflow: hidden;
+  cursor: pointer;
+  font-family: inherit;
+  transition: box-shadow var(--durationNormal) var(--curveEasyEase);
+}
+
+.video:hover {
+  box-shadow: var(--shadow8);
+}
+
+.video:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
+/* The signature gradient, contained and at low saturation. It sits behind an
+   image area, never behind type. */
+.videoArt {
+  display: block;
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(120% 90% at 12% 18%, rgba(126, 217, 87, 0.55) 0%, rgba(126, 217, 87, 0) 55%),
+    radial-gradient(110% 100% at 88% 12%, rgba(255, 205, 70, 0.5) 0%, rgba(255, 205, 70, 0) 55%),
+    radial-gradient(120% 110% at 70% 92%, rgba(64, 168, 240, 0.55) 0%, rgba(64, 168, 240, 0) 60%),
+    linear-gradient(135deg, #eaf5ff 0%, #f3fbf0 50%, #fff8e6 100%);
+}
+
+.playMark {
+  position: absolute;
+  top: calc(50% - 26px);
+  left: calc(50% - 26px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorNeutralBackground1);
+  color: var(--colorBrandForeground1);
+  box-shadow: var(--shadow8);
+}
+
+.videoMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalM);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  background-color: var(--colorNeutralBackground1);
+  border-top: 1px solid var(--colorNeutralStroke2);
+  text-align: left;
+}
+
+.videoTitle {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.videoDuration {
+  flex: none;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+/* ---------------------------------- bands ---------------------------------- */
+
+.band {
+  padding: 64px 0;
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+
+.band:nth-of-type(even) {
+  background-color: var(--colorNeutralBackground2);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalXXL);
+  flex-wrap: wrap;
+}
+
+.kicker {
+  margin: 0 0 var(--spacingVerticalXS);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--colorBrandForeground1);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--fontSizeHero700);
+  line-height: 36px;
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.01em;
+  color: var(--colorNeutralForeground1);
+}
+
+.sectionLede {
+  margin: var(--spacingVerticalS) 0 0;
+  max-width: 52ch;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground2);
+}
+
+/* --------------------------------- pillars --------------------------------- */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalXS);
+}
+
+.tab {
+  padding: 7px 14px;
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorNeutralBackground1);
+  color: var(--colorNeutralForeground2);
+  font-family: inherit;
+  font-size: var(--fontSizeBase300);
+  cursor: pointer;
+  transition:
+    background-color var(--durationFaster) var(--curveEasyEase),
+    border-color var(--durationFaster) var(--curveEasyEase),
+    color var(--durationFaster) var(--curveEasyEase);
+}
+
+.tab:hover {
+  background-color: var(--colorSubtleBackgroundHover);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.tabOn {
+  background-color: var(--colorBrandBackground);
+  border-color: var(--colorBrandBackground);
+  color: var(--colorNeutralForegroundOnBrand);
+}
+
+.tabOn:hover {
+  background-color: var(--colorBrandBackgroundHover);
+}
+
+.pillarLead {
+  margin: var(--spacingVerticalXXL) 0 0;
+  max-width: 62ch;
+  font-size: var(--fontSizeBase400);
+  line-height: 24px;
+  color: var(--colorNeutralForeground1);
+}
+
+.statPanel {
+  margin-top: var(--spacingVerticalL);
+  padding: 40px;
+  border-radius: var(--borderRadiusXLarge);
+  border: 1px solid var(--colorNeutralStroke2);
+  background:
+    radial-gradient(90% 120% at 4% 8%, rgba(126, 217, 87, 0.22) 0%, rgba(126, 217, 87, 0) 60%),
+    radial-gradient(80% 120% at 96% 10%, rgba(255, 205, 70, 0.26) 0%, rgba(255, 205, 70, 0) 60%),
+    radial-gradient(100% 130% at 80% 96%, rgba(64, 168, 240, 0.24) 0%, rgba(64, 168, 240, 0) 62%),
+    var(--colorNeutralBackground1);
+  animation: bcbFade 300ms var(--curveEasyEase) both;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px 56px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalL);
+  min-width: 0;
+}
+
+.statFigure {
+  flex: none;
+  width: 64px;
+  font-size: 34px;
+  line-height: 1;
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.02em;
+  color: var(--colorBrandForeground1);
+}
+
+.statLabel {
+  min-width: 0;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+/* Ring and figure share a 64px column so both stat kinds start their label at the
+   same x — the alignment rule applies inside components too. */
+.ring {
+  position: relative;
+  flex: none;
+  width: 64px;
+  height: 64px;
+}
+
+.ring svg {
+  width: 64px;
+  height: 64px;
+  transform: rotate(-90deg);
+}
+
+.ringTrack,
+.ringFill {
+  fill: none;
+  stroke-width: 6;
+}
+
+.ringTrack {
+  stroke: var(--colorNeutralStroke2);
+}
+
+.ringFill {
+  stroke: var(--colorBrandForeground1);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--durationSlower) var(--curveEasyEase);
+}
+
+.ringValue {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.source {
+  margin: var(--spacingVerticalL) 0 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+/* -------------------------------- what's new -------------------------------- */
+
+.updates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacingHorizontalXXXL);
+  margin-top: var(--spacingVerticalXXL);
+}
+
+.period {
+  margin: 0 0 var(--spacingVerticalM);
+  padding-bottom: var(--spacingVerticalS);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalL);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalM);
+}
+
+/* Fixed width so every entry's text starts on the same x, whatever the tag says. */
+.tag {
+  flex: none;
+  width: 68px;
+  padding: 2px 0;
+  font-size: var(--fontSizeBase100);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--colorNeutralForeground3);
+}
+
+.tag[data-tag='new'] {
+  color: var(--colorBrandForeground1);
+}
+
+.entryBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.entryTitle {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.entryText {
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+/* --------------------------------- feedback --------------------------------- */
+
+.feedback {
+  padding: 56px 0 72px;
+  background-color: var(--colorNeutralBackground2);
+}
+
+.feedbackTitle {
+  margin: 0;
+  font-size: var(--fontSizeHero700);
+  line-height: 36px;
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.01em;
+  color: var(--colorNeutralForeground1);
+}
+
+.feedbackText {
+  margin: var(--spacingVerticalS) 0 var(--spacingVerticalXL);
+  max-width: 52ch;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground2);
+}
+
+.feedbackButton {
+  flex: none;
+}
+
+/* -------------------------------- responsive -------------------------------- */
+
+@media (max-width: 1024px) {
+  .hero .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacingVerticalXXL);
+  }
+
+  .updates,
+  .statGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .title {
+    font-size: 36px;
+    line-height: 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    padding-inline: var(--spacingHorizontalL);
+  }
+
+  .hero {
+    padding: 48px 0 40px;
+  }
+
+  .band {
+    padding: 48px 0;
+  }
+
+  .statPanel {
+    padding: 24px;
+  }
+}

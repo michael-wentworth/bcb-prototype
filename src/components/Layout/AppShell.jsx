@@ -6,6 +6,7 @@ import CustomerDetails from '../CustomerDetails/CustomerDetails.jsx';
 import SkuSelection from '../SkuSelection/SkuSelection.jsx';
 import CustomerReport from '../CustomerReport/CustomerReport.jsx';
 import MyCases from '../MyCases/MyCases.jsx';
+import Landing from '../Landing/Landing.jsx';
 import Placeholder from './Placeholder.jsx';
 import TopBar from './TopBar.jsx';
 import styles from './AppShell.module.css';
@@ -40,19 +41,29 @@ export default function AppShell({ panelOpen, onTogglePanel }) {
 
       <div className={styles.body}>
         <main className={styles.workflow}>
-          <div className={`${styles.workspace} scrollArea`} ref={workspaceRef}>
-            <div
-              className={`${styles.stageContainer} ${inBuilder ? '' : styles.wide}`}
-              key={`${view}-${step}`}
-            >
-              {inBuilder ? (
-                <StepView />
-              ) : view === 'myCases' ? (
-                <MyCases />
-              ) : (
-                <Placeholder view={view} />
-              )}
-            </div>
+          {/* The landing page runs its own full-width bands, so it opts out of
+              the workspace's padding and the centred stage container. It still
+              keeps everything on one measure — its own — which is the point. */}
+          <div
+            className={`${styles.workspace} ${view === 'landing' ? styles.flush : ''} scrollArea`}
+            ref={workspaceRef}
+          >
+            {view === 'landing' ? (
+              <Landing key="landing" />
+            ) : (
+              <div
+                className={`${styles.stageContainer} ${inBuilder ? '' : styles.wide}`}
+                key={`${view}-${step}`}
+              >
+                {inBuilder ? (
+                  <StepView />
+                ) : view === 'myCases' ? (
+                  <MyCases />
+                ) : (
+                  <Placeholder view={view} />
+                )}
+              </div>
+            )}
           </div>
         </main>
 

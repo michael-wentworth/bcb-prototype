@@ -16,8 +16,8 @@ const VIEWS = {
   landing: {
     icon: <ShieldCheckmark20Regular />,
     title: 'Security BCB',
-    lead: 'The product landing page — what Security BCB is, who it is for, and how to get started.',
-    note: 'Out of scope for this build. Its old job of hosting the "Start Security Business Case" button has moved: creating a case is now a persistent action in the nav and on My Cases, so the tool is no longer reached through a marketing page.',
+    lead: 'This destination has no page yet.',
+    note: 'Used only as the fallback for an unrecognised view — the real landing page is components/Landing.',
   },
   studies: {
     icon: <DocumentBulletList20Regular />,
@@ -55,11 +55,6 @@ export default function Placeholder({ view }) {
         <Button appearance="secondary" onClick={() => setView('myCases')}>
           Go to My Cases
         </Button>
-        {view === 'landing' ? (
-          <Button appearance="transparent" onClick={() => openCase(EXAMPLE_CASES[0])}>
-            Open an example case
-          </Button>
-        ) : null}
       </div>
     </div>
   );
