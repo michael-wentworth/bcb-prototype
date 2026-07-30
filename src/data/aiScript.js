@@ -9,7 +9,7 @@
    panel never parses prose to decide what the app should do.
    --------------------------------------------------------------------------- */
 
-import { SECURITY_OUTCOMES, skuById } from './referenceData.js';
+import { SECURITY_OUTCOMES, currencySymbol, skuById } from './referenceData.js';
 import { formatCurrency, formatPercent } from './model.js';
 import { DEMO_EXTRACTION } from './demoCase.js';
 
@@ -43,13 +43,13 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: "I'm the Security BCB advisor. Describe the customer — who they are, their size, and what they run today — and I'll populate the form from it.",
+            text: "I am the Security business case copilot. Describe the customer — who they are, their size, and what they run today — and I will populate the form from it.",
           },
           {
             type: 'callout',
             tone: 'insight',
             title: 'Every field shows its source',
-            text: 'Anything I populate carries what it was inferred from, so you can check the ones that move the numbers before this reaches a customer.',
+            text: 'Every field I populate carries what it was drawn from, so you can check the ones that move the numbers before this reaches a customer.',
           },
         ],
       };
@@ -130,7 +130,7 @@ const INTENTS = [
           type: 'callout',
           tone: 'coach',
           title: 'Two things worth checking',
-          text: 'I inferred the Splunk line from install-base signal rather than anything you said, and I guessed the contract end years. Both change the numbers — correct them on step 2 before this goes out.',
+          text: 'I inferred the Splunk and Proofpoint lines from install-base signal rather than anything you said, and I guessed the contract end years. Both change the numbers — correct them on step 2 before this goes out.',
         },
         {
           type: 'actions',
@@ -166,7 +166,7 @@ const INTENTS = [
         blocks: [
           {
             type: 'text',
-            text: `Your ${selected.length} selected outcome${selected.length === 1 ? '' : 's'} map to these:`,
+            text: `Your ${selected.length} selected outcome${selected.length === 1 ? ' maps' : 's map'} to these:`,
           },
           { type: 'bullets', items: implied.map((n) => `**${n}**`) },
           {
@@ -194,7 +194,7 @@ const INTENTS = [
           type: 'bullets',
           items: [
             'Benefit begins the year **after** the contract ends.',
-            `Your analysis period is **${ctx.caseSetup.analysisPeriod} years**, so anything ending later is excluded and flagged in the table.`,
+            `Your analysis period is **${ctx.caseSetup.analysisPeriod} year${Number(ctx.caseSetup.analysisPeriod) === 1 ? '' : 's'}**, so anything ending later is excluded and flagged in the table.`,
             'This is the single most common way a business case overstates savings.',
           ],
         },
@@ -215,7 +215,7 @@ const INTENTS = [
         {
           type: 'bullets',
           items: [
-            '**Customer-facing pitch** — the report is written for the customer. Internal-only pricing detail stays hidden.',
+            '**Customer-facing pitch** — written for the customer, with internal-only pricing detail hidden.',
             '**Internal planning** — full detail, including discounting and margin commentary.',
             '**Partner enablement** — written for a partner seller taking it to their own customer.',
           ],
@@ -233,16 +233,18 @@ const INTENTS = [
         {
           type: 'text',
           text: ctx.customer.accountName
-            ? 'Added the three products I can see against this account, with estimated annual cost and contract end years. Both are estimates — correct them before this reaches a customer.'
+            ? 'I have added the four products I can see against this account, with estimated annual cost and contract end years. Both figures are estimates — correct them before this reaches a customer.'
             : 'I need an account name and the current security stack before I can infer an estate. Fill those in on step 1, or add the competitor rows here.',
         },
-        {
-          type: 'callout',
-          tone: 'warning',
-          title: 'Estimated, not sourced',
-          text: 'Contract end years in particular are guesses. They gate the entire savings calculation, so they are worth a phone call.',
-        },
-      ],
+        ctx.customer.accountName
+          ? {
+              type: 'callout',
+              tone: 'warning',
+              title: 'Estimated, not sourced',
+              text: 'Contract end years in particular are guesses. They gate the entire savings calculation, so they are worth a phone call.',
+            }
+          : null,
+      ].filter(Boolean),
       actions: ctx.customer.accountName ? [{ type: 'fillCase' }] : [],
     }),
   },
@@ -260,13 +262,13 @@ const INTENTS = [
       if (!ctx.caseSetup.name) gaps.push('**Business Case Name** — the identifier this case is saved under.');
       if (ctx.outcomes.length === 0) gaps.push('**Security outcomes** — what the customer is actually trying to fix.');
       if (ctx.skus.length === 0) gaps.push('**At least one SKU** — there is no investment to return on yet.');
-      if (ctx.skus.some((s) => !s.pricePerMonth)) gaps.push('**Price per month** on one or more SKUs.');
+      if (ctx.skus.some((s) => !s.pricePerMonth)) gaps.push('**Price per month** — missing on one or more SKUs, so those rows add no cost to the model.');
       if ((ctx.competitors.rows || []).length === 0)
         gaps.push('**Competitor products** — without them the case rests on soft benefit alone.');
       const outOfHorizon = ctx.businessCase.competitorLines.filter((l) => !l.displaceable);
       if (outOfHorizon.length > 0)
         gaps.push(
-          `**${outOfHorizon.length} competitor contract${outOfHorizon.length === 1 ? '' : 's'}** ending after your analysis period, contributing nothing.`,
+          `**${outOfHorizon.length} competitor contract${outOfHorizon.length === 1 ? '' : 's'}** — ending too late to contribute a saving inside your analysis period.`,
         );
 
       return {
@@ -274,14 +276,14 @@ const INTENTS = [
           {
             type: 'text',
             text: gaps.length
-              ? 'Here is what would move this case forward, in the order I would fix it:'
-              : 'Nothing structural is missing. The inputs are complete enough to present.',
+              ? 'Here is what would move this case forward, in the order I would fix them:'
+              : 'Nothing structural is missing. You have enough here to present the case.',
           },
           gaps.length ? { type: 'bullets', items: gaps } : null,
           {
             type: 'callout',
             tone: 'coach',
-            title: 'The one that always matters',
+            title: 'The two that always matter',
             text: 'Customer-confirmed competitor spend and contract dates. Everything else in this model is arithmetic; those two are the assumptions a CFO will test.',
           },
         ].filter(Boolean),
@@ -296,13 +298,13 @@ const INTENTS = [
     delay: 2200,
     build: (input, ctx) => {
       const c = ctx.businessCase;
-      const money = (v) => formatCurrency(v);
+      const money = (v) => formatCurrency(v, { symbol: currencySymbol(ctx.currency) });
       if (!c.hasInputs) {
         return {
           blocks: [
             {
               type: 'text',
-              text: 'There is nothing to calculate yet — no SKUs and no competitor products. Add either on step 2 and I will walk you through the arithmetic.',
+              text: 'There is nothing to calculate yet — no SKUs and no competitor products. Add either of those on step 2 and I will walk you through the arithmetic.',
             },
           ],
         };
@@ -316,14 +318,14 @@ const INTENTS = [
           {
             type: 'metrics',
             items: [
-              { label: 'Total benefit', value: money(c.benefitTotal), caption: `${c.years} years` },
-              { label: 'Microsoft investment', value: money(c.investmentTotal), caption: `${c.years} years` },
+              { label: 'Total benefit', value: money(c.benefitTotal), caption: `${c.years} year${c.years === 1 ? '' : 's'}` },
+              { label: 'Microsoft investment', value: money(c.investmentTotal), caption: `${c.years} year${c.years === 1 ? '' : 's'}` },
               { label: 'Net', value: money(c.netBenefit), caption: 'benefit − investment', tone: c.netBenefit >= 0 ? 'positive' : 'neutral' },
             ],
           },
           {
             type: 'text',
-            text: `${money(c.netBenefit)} ÷ ${money(c.investmentTotal)} = ${formatPercent(c.roi)}. Of the benefit, ${money(c.competitorTotal)} is competitor spend that stops and ${money(c.additionalTotal)} is additional products and savings. The existing Microsoft bundle is not counted — they keep paying it.`,
+            text: `${money(c.netBenefit)} ÷ ${money(c.investmentTotal)} = ${formatPercent(c.roi)}. Of the benefit, ${money(c.competitorTotal)} is competitor spend that stops and ${money(c.additionalTotal)} is additional products and savings. The existing Microsoft bundle is not counted — the customer keeps paying it.`,
           },
           {
             type: 'callout',
@@ -361,7 +363,7 @@ const INTENTS = [
             {
               objection: '"This is a licensing exercise dressed up as strategy."',
               response:
-                'Lead with the outcomes the customer selected themselves on step 2, not with the savings. The consolidation is the mechanism; the outcomes are the goal.',
+                'Lead with the outcomes the customer told you they cared about, not with the savings. The consolidation is the mechanism; the outcomes are the goal.',
             },
           ],
         },
@@ -385,7 +387,7 @@ const INTENTS = [
           items: [
             '**Number of Users** — every per-user price multiplies through it.',
             '**Analysis Period** — sets how many years of saving the case can count.',
-            '**Competitor spend** — the largest single benefit line in most cases.',
+            '**Competitor Cost** — the largest single benefit line in most cases.',
             '**Year Contract Ends** — a saving starts only when that contract lapses, so this decides how much of it lands inside the horizon.',
           ],
         },
@@ -405,7 +407,7 @@ const INTENTS = [
           items: [
             '**Populate** — describe the customer and I fill the form, with confidence on each field.',
             '**Explain** — ask why anything is in the case and I show what it was drawn from.',
-            '**Coach** — I name what is missing and what it would be worth to go get it.',
+            '**Coach** — ask what is missing and I name the gaps and what closing them is worth.',
           ],
         },
       ],

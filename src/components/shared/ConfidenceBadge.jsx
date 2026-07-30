@@ -52,7 +52,7 @@ export default function ConfidenceBadge({ level = 'medium', basis, compact = fal
       withArrow
       content={
         <span className={styles.tooltip}>
-          <strong>{meta.label} confidence</strong>
+          <strong>{meta.tone === 'confirmed' ? meta.label : `${meta.label} confidence`}</strong>
           <span>{basis}</span>
         </span>
       }

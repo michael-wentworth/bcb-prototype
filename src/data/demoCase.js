@@ -12,6 +12,21 @@ export const DEMO_PROMPT =
 /** Field-level provenance, shown against each populated field. */
 export const EXTRACTION_EVIDENCE = {
   accountName: { confidence: 'high', basis: 'Stated directly', evidence: '"Contoso has 18,000 employees…"' },
+  opportunityId: {
+    confidence: 'medium',
+    basis: 'Matched to account record',
+    evidence: 'Open security opportunity 7-3F56BL3EVL on the Contoso Ltd. account in MSX',
+  },
+  opportunityName: {
+    confidence: 'medium',
+    basis: 'Matched to account record',
+    evidence: 'Name of the open security opportunity on the Contoso Ltd. account in MSX',
+  },
+  tpid: {
+    confidence: 'high',
+    basis: 'Matched to account record',
+    evidence: 'Top parent ID for Contoso Ltd. in the MSX account taxonomy',
+  },
   numberOfUsers: { confidence: 'high', basis: 'Stated directly', evidence: '"…has 18,000 employees…"' },
   industry: {
     confidence: 'high',
@@ -21,9 +36,9 @@ export const EXTRACTION_EVIDENCE = {
   geography: {
     confidence: 'medium',
     basis: 'Inferred from account footprint',
-    evidence: 'Primary operations recorded across US, Germany and the UK',
+    evidence: 'Primary operations recorded across the US, Germany and the UK',
   },
-  segment: { confidence: 'medium', basis: 'Inferred from seat count', evidence: '18,000 seats sits in the Enterprise band' },
+  segment: { confidence: 'medium', basis: 'Inferred from seat count', evidence: 'A seat count of 18,000 sits in the Enterprise band' },
   salesMotion: {
     confidence: 'medium',
     basis: 'Inferred from stated goals',

@@ -642,7 +642,7 @@ export function AppStateProvider({ children }) {
                   type: 'callout',
                   tone: 'coach',
                   title: 'How to undo this',
-                  text: 'Edit it like any other text, or use “Revert to my version” on the section.',
+                  text: 'Edit it like any other text, or use "Revert to my version" on the section.',
                 },
               ],
               'SECTION_ACTION',

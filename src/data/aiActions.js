@@ -9,6 +9,7 @@
    --------------------------------------------------------------------------- */
 
 import { formatCurrency, formatPercent } from './model.js';
+import { currencySymbol } from './referenceData.js';
 
 /* ------------------------------ text utilities ----------------------------- */
 
@@ -46,7 +47,7 @@ function leadWithOutcome(text) {
 
 export const WRITE_ACTIONS = [
   { id: 'rewrite', label: 'Rewrite' },
-  { id: 'summarize', label: 'Summarize' },
+  { id: 'summarize', label: 'Summarise' },
   { id: 'expand', label: 'Expand' },
   { id: 'clarity', label: 'Improve clarity' },
 ];
@@ -59,24 +60,25 @@ export const actionsForNarrative = (text) =>
 const GENERATED = {
   summary: (ctx) => {
     const c = ctx.businessCase;
+    const money = (v) => formatCurrency(v, { symbol: currencySymbol(ctx.currency) });
     const company = ctx.customer?.accountName || 'The customer';
     const seats = ctx.customer?.numberOfUsers
-      ? Number(ctx.customer.numberOfUsers).toLocaleString('en-US')
+      ? `${Number(String(ctx.customer.numberOfUsers).replace(/[^0-9.]/g, '') || 0).toLocaleString('en-US')} users`
       : 'the estate';
-    const vendors = c.vendorsConsolidated;
+    const vendors = c.competitorLines.length;
 
     return `${company} runs ${vendors || 'several'} third-party security ${
       vendors === 1 ? 'product' : 'products'
-    } across ${seats} users, each on its own contract, console and renewal cycle.
+    } across ${seats}, each on its own contract, console and renewal cycle.
 
 Consolidating onto Microsoft brings those capabilities into licensing the customer largely already holds. The investment is ${formatCurrency(
       c.investmentTotal,
-    )} over ${c.years} years against ${formatCurrency(
+    )} over ${c.years} year${c.years === 1 ? '' : 's'} against ${formatCurrency(
       c.benefitTotal,
     )} in modelled benefit — a ${formatPercent(c.roi)} return and ${formatCurrency(
       c.annualNetBenefit,
-    )} in average annual net saving${
-      c.paybackMonths ? `, with breakeven in month ${c.paybackMonths}` : ''
+    )} in average annual net benefit${
+      c.paybackMonths ? `, with payback in month ${c.paybackMonths}` : ''
     }.
 
 The savings are dated rather than assumed: each displacement begins only once that vendor's contract lapses, which is why the return builds across the period rather than landing on day one.
@@ -87,7 +89,7 @@ Competitor pricing and contract end dates remain the assumptions worth confirmin
   recommendations: (ctx) => {
     const company = ctx.customer?.accountName || 'the customer';
     const seats = ctx.customer?.numberOfUsers
-      ? Number(ctx.customer.numberOfUsers).toLocaleString('en-US')
+      ? Number(String(ctx.customer.numberOfUsers).replace(/[^0-9.]/g, '') || 0).toLocaleString('en-US')
       : 'all';
     return `**Approve the Microsoft licensing uplift** for ${seats} seats at the next Enterprise Agreement true-up. Owner: Procurement. Timing: Q1.
 
@@ -107,9 +109,9 @@ Competitor pricing and contract end dates remain the assumptions worth confirmin
 
 const EXPANSIONS = {
   summary:
-    'The case does not depend on a single line item. Excluding the least-certain displacement still leaves the investment comfortably positive, which is the useful thing to be able to say when the numbers are challenged.',
+    'The case does not depend on a single line item. Excluding the least-certain displacement still leaves the case comfortably positive, which is the useful thing to be able to say when the numbers are challenged.',
   recommendations:
-    '**Confirm the assumptions before committee.** Current security spend and SIEM ingest volume are modelled rather than customer-supplied, and both are cheap to verify. Owner: Account team. Timing: before the next review.',
+    '**Confirm the assumptions before committee** — current security spend and SIEM ingest volume are modelled rather than customer-supplied, and both are cheap to verify. Owner: Account team. Timing: before the next review.',
   risks:
     '**Sponsor turnover.** A case that depends on one executive sponsor is fragile. Mitigation: have the CISO and the CFO co-sign the assumptions before it goes to committee.',
 };
@@ -122,7 +124,7 @@ export function applyNarrativeAction(sectionId, currentText, actionId, ctx) {
   if (actionId === 'generate') {
     const gen = GENERATED[sectionId];
     if (!gen) return null;
-    return { text: gen(ctx), note: 'Drafted it from the analysis.', fromScratch: true };
+    return { text: gen(ctx), note: 'Drafted from the analysis.', fromScratch: true };
   }
 
   const body = String(currentText || '');
@@ -144,13 +146,13 @@ export function applyNarrativeAction(sectionId, currentText, actionId, ctx) {
     case 'expand':
       return {
         text: `${body}\n\n${EXPANSIONS[sectionId] || EXPANSIONS.summary}`,
-        note: 'Added a supporting paragraph at the end.',
+        note: 'Expanded with a supporting paragraph at the end.',
         fromScratch: false,
       };
     case 'clarity':
       return {
         text: tighten(body),
-        note: 'Removed hedges and wordy constructions.',
+        note: 'Tightened by removing hedges and wordy constructions.',
         fromScratch: false,
       };
     default:
