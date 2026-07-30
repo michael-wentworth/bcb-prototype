@@ -51,7 +51,7 @@ export default function CustomerDetails() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="Fill this in directly, or describe the customer to the copilot and review what it captures. Nothing downstream waits on the assistant."
+        description="Who the case is for, and what they run today. The account size and the current security stack drive every number in the report."
         actions={<AuthorshipBadge level={sectionAuthorship.customer} />}
       />
 
@@ -61,10 +61,10 @@ export default function CustomerDetails() {
             <Sparkle16Filled />
           </span>
           <div className={styles.primerBody}>
-            <h2 className={styles.primerTitle}>Type it in, or have the copilot do it</h2>
+            <h2 className={styles.primerTitle}>Describe the customer in a sentence</h2>
             <p className={styles.primerText}>
-              Every field below is yours to fill. If you would rather describe the customer in a
-              sentence, the copilot will populate the whole case and flag anything it inferred.
+              The copilot will populate the whole case from it and show what each field was
+              inferred from.
             </p>
             <button type="button" className={styles.primerExample} onClick={() => ask(DEMO_PROMPT)}>
               <span className={styles.primerExampleLabel}>Example prompt</span>

@@ -66,7 +66,7 @@ export const NARRATIVE_SECTIONS = [
   {
     id: 'summary',
     label: 'Executive summary',
-    lead: 'The paragraph a CFO reads first. Write it yourself, or have the copilot draft it from the analysis.',
+    lead: 'The paragraph a CFO reads first.',
     placeholder: 'Summarise the case in a paragraph…',
   },
   {

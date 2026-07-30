@@ -180,8 +180,8 @@ export default function CustomerReport() {
         <div className={styles.narrativeHead}>
           <h2 className={styles.cardTitle}>The written case</h2>
           <p className={styles.narrativeLead}>
-            Write these yourself, or hand any one of them to the copilot. Mixing the two is the
-            normal case, not the exception.
+            The parts a reader remembers after the numbers have faded. Each section carries a badge
+            showing who wrote it.
           </p>
         </div>
         {NARRATIVE_SECTIONS.map((section) => (
@@ -346,7 +346,7 @@ export default function CustomerReport() {
         </div>
       </Card>
 
-      <StepFooter hint="Ask the copilot to stress-test any number before you present it." />
+      <StepFooter hint="Every figure here traces back to the two input steps — change one and this recalculates." />
     </div>
   );
 }

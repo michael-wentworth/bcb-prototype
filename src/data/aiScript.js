@@ -2,8 +2,8 @@
    Scripted assistant behaviour.
 
    A deterministic keyword matcher dressed as an agent — there is no model here.
-   It demonstrates three behaviours, all optional: POPULATE the form from a
-   sentence, EXPLAIN why something is in the case, and COACH on what is missing.
+   It demonstrates three behaviours: POPULATE the form from a sentence, EXPLAIN
+   why something is in the case, and COACH on what is missing.
 
    `resolveResponse` returns render-ready blocks plus side-effect actions, so the
    panel never parses prose to decide what the app should do.
@@ -18,7 +18,7 @@ import { DEMO_EXTRACTION } from './demoCase.js';
 export const STEP_SUGGESTIONS = [
   [
     { label: 'Use the Contoso example', kind: 'demo' },
-    { label: 'Can I fill this in without AI?' },
+    { label: 'Which fields drive the numbers?' },
     { label: 'What does "Role of Security BCB" change?' },
   ],
   [
@@ -43,13 +43,13 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: "I'm the Security BCB advisor — here if you want me, out of the way if you don't. Fill the form in directly, or describe the customer and I'll populate it.",
+            text: "I'm the Security BCB advisor. Describe the customer — who they are, their size, and what they run today — and I'll populate the form from it.",
           },
           {
             type: 'callout',
             tone: 'insight',
-            title: 'Nothing waits on me',
-            text: 'Every step is completable by hand. Anything I write is editable and carries a badge showing I wrote it.',
+            title: 'Every field shows its source',
+            text: 'Anything I populate carries what it was inferred from, so you can check the ones that move the numbers before this reaches a customer.',
           },
         ],
       };
@@ -234,7 +234,7 @@ const INTENTS = [
           type: 'text',
           text: ctx.customer.accountName
             ? 'Added the three products I can see against this account, with estimated annual cost and contract end years. Both are estimates — correct them before this reaches a customer.'
-            : 'I need an account name and the current security stack before I can infer an estate. Fill those in on step 1, or add the competitor rows by hand here.',
+            : 'I need an account name and the current security stack before I can infer an estate. Fill those in on step 1, or add the competitor rows here.',
         },
         {
           type: 'callout',
@@ -369,22 +369,24 @@ const INTENTS = [
     }),
   },
   {
-    id: 'MANUAL_REASSURANCE',
-    test: (input) => has(input, 'without ai', 'no ai', 'myself', 'manually', 'do i have to', 'fill this in without'),
-    thinking: ['Confirming what is optional'],
+    id: 'DRIVERS',
+    test: (input) =>
+      has(input, 'which fields', 'drive the numbers', 'what matters most', 'which inputs'),
+    thinking: ['Tracing the model back to its inputs'],
     delay: 1300,
     build: () => ({
       blocks: [
         {
           type: 'text',
-          text: 'Nothing here requires me. Every field is typed directly, every SKU and competitor row is added by hand, and Next is never gated on having used me.',
+          text: 'Four inputs move the result more than everything else combined:',
         },
         {
           type: 'bullets',
           items: [
-            'Sections you fill stay marked **Manually authored**.',
-            'If you use me on something you wrote, it becomes **AI assisted** — and you can revert it.',
-            'You can collapse this panel entirely from the top bar.',
+            '**Number of Users** — every per-user price multiplies through it.',
+            '**Analysis Period** — sets how many years of saving the case can count.',
+            '**Competitor spend** — the largest single benefit line in most cases.',
+            '**Year Contract Ends** — a saving starts only when that contract lapses, so this decides how much of it lands inside the horizon.',
           ],
         },
       ],
@@ -397,7 +399,7 @@ const INTENTS = [
     delay: 1300,
     build: () => ({
       blocks: [
-        { type: 'text', text: 'Three things, all optional:' },
+        { type: 'text', text: 'Three things:' },
         {
           type: 'bullets',
           items: [
@@ -418,7 +420,7 @@ const FALLBACKS = [
     blocks: [
       {
         type: 'text',
-        text: 'I can fill this step from a sentence if you want — describe the customer, their size, and what they run today. Or keep typing; nothing here waits on me.',
+        text: 'Describe the customer — their size and what they run today — and I can fill this step from it.',
       },
       { type: 'actions', items: [{ label: 'Use the Contoso example', kind: 'demo' }] },
     ],

@@ -641,8 +641,8 @@ export function AppStateProvider({ children }) {
                 {
                   type: 'callout',
                   tone: 'coach',
-                  title: 'It is yours to change',
-                  text: 'Edit it like any other text, or use “Revert to my version” on the section to undo what I did.',
+                  title: 'How to undo this',
+                  text: 'Edit it like any other text, or use “Revert to my version” on the section.',
                 },
               ],
               'SECTION_ACTION',

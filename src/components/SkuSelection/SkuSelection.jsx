@@ -64,7 +64,7 @@ export default function SkuSelection() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="What the customer is buying, what they already have, and what it replaces. Enter it yourself, or ask the copilot to propose a starting point."
+        description="What the customer is buying, what they already have, and what it replaces. Contract end dates decide how much of each saving lands inside the analysis period."
         actions={<AuthorshipBadge level={sectionAuthorship.skus} />}
       />
 
@@ -135,8 +135,7 @@ export default function SkuSelection() {
 
         {skus.length === 0 ? (
           <p className={styles.empty}>
-            No SKUs yet. Add one below, or ask the copilot to shortlist from the outcomes and the
-            customer profile.
+            No SKUs yet. Add one below to start building the Microsoft side of the case.
           </p>
         ) : null}
 
