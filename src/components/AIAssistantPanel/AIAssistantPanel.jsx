@@ -76,7 +76,7 @@ export default function AIAssistantPanel({ onCollapse }) {
   const busy = Boolean(thinking);
 
   return (
-    <aside className={styles.panel} aria-label="Business case copilot">
+    <aside id="copilot-panel" className={styles.panel} aria-label="Business case copilot">
       <header className={styles.header}>
         <span className={styles.avatar} aria-hidden="true">
           <Sparkle20Filled />

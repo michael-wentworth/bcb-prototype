@@ -11,7 +11,7 @@ import styles from './WorkflowHeader.module.css';
  * again in the page heading below. It now lives with that heading, as
  * shared/StepMasthead.jsx — so this band is about the case and nothing else.
  */
-export default function WorkflowHeader() {
+export default function WorkflowHeader({ panelOpen, onTogglePanel }) {
   // Lifted, because two things start a rename: clicking the title, and the
   // Rename item in the overflow menu.
   const [renaming, setRenaming] = useState(false);
@@ -23,7 +23,11 @@ export default function WorkflowHeader() {
         onStartRename={() => setRenaming(true)}
         onEndRename={() => setRenaming(false)}
       />
-      <CaseActions onRename={() => setRenaming(true)} />
+      <CaseActions
+        onRename={() => setRenaming(true)}
+        panelOpen={panelOpen}
+        onTogglePanel={onTogglePanel}
+      />
     </div>
   );
 }

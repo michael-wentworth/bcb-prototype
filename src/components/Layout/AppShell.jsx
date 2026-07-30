@@ -1,6 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { Tooltip } from '@fluentui/react-components';
-import { Sparkle20Filled } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import WorkflowHeader from '../WorkflowHeader/WorkflowHeader.jsx';
 import AIAssistantPanel from '../AIAssistantPanel/AIAssistantPanel.jsx';
@@ -36,7 +34,9 @@ export default function AppShell({ panelOpen, onTogglePanel }) {
           below the band alongside the content it acts on.
           The steps are not in here: they live with the page heading they used to
           duplicate, as shared/StepMasthead.jsx. */}
-      {inBuilder ? <WorkflowHeader /> : null}
+      {inBuilder ? (
+        <WorkflowHeader panelOpen={panelOpen} onTogglePanel={onTogglePanel} />
+      ) : null}
 
       <div className={styles.body}>
         <main className={styles.workflow}>
@@ -59,26 +59,11 @@ export default function AppShell({ panelOpen, onTogglePanel }) {
         {/* The copilot only works on a case, so it only exists where there is
             one. On the library and the resource pages it has nothing to act on,
             and an assistant with no available action is worse than no assistant
-            — it invites a question it cannot answer. Its collapsed tab goes with
-            it, since a way back into something absent is just clutter. */}
-        {inBuilder ? (
-          panelOpen ? (
-            <AIAssistantPanel onCollapse={onTogglePanel} />
-          ) : (
-            /* With the minimize control inside the panel, collapsing it would
-               otherwise leave no way back — this is that way back. */
-            <Tooltip content="Show the copilot" relationship="label" withArrow>
-              <button
-                type="button"
-                className={styles.copilotTab}
-                onClick={onTogglePanel}
-                aria-label="Show the copilot panel"
-              >
-                <Sparkle20Filled aria-hidden="true" />
-              </button>
-            </Tooltip>
-          )
-        ) : null}
+            — it invites a question it cannot answer.
+            There is no collapsed-state tab any more: the way back is a Copilot
+            toggle that lives in the case band whether the panel is open or shut,
+            so nothing has to be discovered after the fact. */}
+        {inBuilder && panelOpen ? <AIAssistantPanel onCollapse={onTogglePanel} /> : null}
       </div>
     </div>
   );

@@ -13,40 +13,6 @@
   min-height: 0;
 }
 
-/* The collapsed-copilot tab. Sits at the top-right of the content area — the
-   corner the panel itself occupies — so it reads as the panel tucked away rather
-   than a stray floating button. Because the band is now above this box rather
-   than beside it, the tab can no longer cover the case actions, and the band
-   needs no reserve for it. White against the grey workspace also makes it more
-   findable than it was blending into the band. */
-.copilotTab {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: var(--bcb-subheader-height);
-  border: none;
-  border-left: 1px solid var(--colorNeutralStroke2);
-  border-bottom: 1px solid var(--colorNeutralStroke2);
-  background-color: var(--colorNeutralBackground1);
-  color: var(--colorBrandForeground1);
-  cursor: pointer;
-  transition: background-color var(--durationFaster) var(--curveEasyEase);
-}
-
-.copilotTab:hover {
-  background-color: var(--colorBrandBackground2);
-}
-
-.copilotTab:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: -2px;
-}
-
 .workflow {
   flex: 1;
   display: flex;

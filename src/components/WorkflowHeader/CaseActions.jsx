@@ -17,6 +17,7 @@ import {
   ToastBody,
   ToastTitle,
   Toaster,
+  ToggleButton,
   Tooltip,
   useId,
   useToastController,
@@ -29,6 +30,8 @@ import {
   Rename20Regular,
   Settings20Regular,
   Share20Regular,
+  Sparkle20Filled,
+  Sparkle20Regular,
   SlideText20Regular,
 } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
@@ -38,12 +41,12 @@ import styles from './CaseActions.module.css';
 /**
  * Everything that acts on the case rather than on a step.
  *
- * Only two controls are ever visible — Share and one overflow. That is not
- * restraint for its own sake: the band's arithmetic has room for about 140px here
- * at its narrowest, and because the grid's side tracks are symmetric, a third
- * labelled button would come out of the case name twice over.
+ * Three controls: the copilot toggle, Share, and one overflow. The toggle is here
+ * rather than floating over the content because it has to be findable when the
+ * panel is SHUT — a control that only exists once you have collapsed something is
+ * one you must already know about to look for.
  */
-export default function CaseActions({ onRename }) {
+export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
   const { setView, goToStep, reset } = useAppState();
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -61,6 +64,27 @@ export default function CaseActions({ onRename }) {
   return (
     <div className={styles.root} role="group" aria-label="Case actions">
       <Toaster toasterId={toasterId} />
+
+      {/* Present whether the panel is open or shut — it only changes state.
+          The old control existed solely in the collapsed state, which meant you
+          had to already know it was there to find it. */}
+      <Tooltip
+        content={panelOpen ? 'Hide the copilot' : 'Show the copilot'}
+        relationship="label"
+        withArrow
+      >
+        <ToggleButton
+          appearance="subtle"
+          checked={!!panelOpen}
+          onClick={onTogglePanel}
+          icon={panelOpen ? <Sparkle20Filled /> : <Sparkle20Regular />}
+          className={styles.copilot}
+          aria-label={panelOpen ? 'Hide the copilot panel' : 'Show the copilot panel'}
+          aria-controls="copilot-panel"
+        >
+          <span className={styles.copilotLabel}>Copilot</span>
+        </ToggleButton>
+      </Tooltip>
 
       <SharePopover onNameIt={onRename}>
         <Button appearance="secondary" icon={<Share20Regular />} className={styles.share}>

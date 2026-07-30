@@ -1,3 +1,25 @@
+/* The copilot toggle leads the cluster, then Share, then the overflow — tool,
+   then case actions, then everything else. A slightly wider gap after it marks
+   that boundary without spending a divider. */
+.copilot {
+  flex: none;
+  margin-inline-end: var(--spacingHorizontalS);
+  color: var(--colorBrandForeground1);
+}
+
+.copilotLabel {
+  white-space: nowrap;
+}
+
+/* Its own breakpoint, narrower than Share's 460px: a sparkle is far less
+   self-explanatory than a share glyph, so Copilot keeps its word the longest.
+   Below this the tooltip and aria-label still carry it. */
+@container bcbBand (max-width: 380px) {
+  .copilotLabel {
+    display: none;
+  }
+}
+
 .root {
   display: flex;
   align-items: center;
