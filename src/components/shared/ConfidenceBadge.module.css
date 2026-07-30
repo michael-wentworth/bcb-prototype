@@ -9,7 +9,7 @@
   font-weight: var(--fontWeightMedium);
   white-space: nowrap;
   border: 1px solid transparent;
-  cursor: default;
+  cursor: inherit;
 }
 
 .compact {
@@ -52,9 +52,55 @@
   border-color: var(--colorBrandStroke2);
 }
 
-.tooltip {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-width: 260px;
+/* The trigger is a bare button so the pill inside keeps its own shape; all the
+   button contributes is hit area, hover intent, focus and keyboard activation. */
+.trigger {
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: var(--borderRadiusCircular);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
+/* A hairline lift on hover, so the pill reads as something you can ask about
+   rather than a static label. */
+.trigger:hover .badge {
+  filter: brightness(0.97);
+}
+
+.surface {
+  max-width: 300px;
+  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
+}
+
+.surfaceHead {
+  margin: 0;
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.basis {
+  margin: 4px 0 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+/* The quoted words the value actually came from — italic and rule-marked so it
+   reads as evidence rather than as more explanation. */
+.evidence {
+  margin: var(--spacingVerticalS) 0 0;
+  padding-left: var(--spacingHorizontalS);
+  border-left: 2px solid var(--colorBrandStroke2);
+  font-size: var(--fontSizeBase200);
+  font-style: italic;
+  line-height: 17px;
+  color: var(--colorNeutralForeground2);
 }

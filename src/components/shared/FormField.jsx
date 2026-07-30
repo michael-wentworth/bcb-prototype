@@ -1,15 +1,13 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
 import ConfidenceBadge from './ConfidenceBadge.jsx';
 import styles from './FormField.module.css';
 
 /**
  * One labelled form field.
  *
- * When the copilot populated it, the field flashes once and then keeps a
- * provenance affordance — the badge says how confident, the "Show source"
- * popover says what the value was drawn from. Editing it clears that and marks
- * the value as yours.
+ * When the copilot populated it, the field flashes once and then keeps a single
+ * provenance pill: who supplied the value, how confident, and — on hover, click
+ * or focus — what it was drawn from. Editing it marks the value as yours.
  */
 export default function FormField({
   label,
@@ -47,7 +45,13 @@ export default function FormField({
         </label>
         {meta ? (
           <span className={styles.meta}>
-            <ConfidenceBadge level={meta.confidence} basis={meta.basis} compact />
+            <ConfidenceBadge
+              level={meta.confidence}
+              basis={meta.basis}
+              evidence={meta.evidence}
+              ai={meta.source === 'ai'}
+              compact
+            />
           </span>
         ) : null}
       </div>
@@ -56,20 +60,6 @@ export default function FormField({
       {typeof children === 'function' ? children(id) : children}
 
       {help ? <p className={styles.help}>{help}</p> : null}
-
-      {meta?.evidence ? (
-        <Popover withArrow positioning="below-start">
-          <PopoverTrigger disableButtonEnhancement>
-            <button type="button" className={styles.sourceLink}>
-              Show source
-            </button>
-          </PopoverTrigger>
-          <PopoverSurface className={styles.sourceSurface}>
-            <p className={styles.sourceLabel}>{meta.basis}</p>
-            <p className={styles.sourceQuote}>{meta.evidence}</p>
-          </PopoverSurface>
-        </Popover>
-      ) : null}
     </div>
   );
 }
