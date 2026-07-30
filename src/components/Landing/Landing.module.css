@@ -1,15 +1,30 @@
 /* ---------------------------------------------------------------------------
-   The landing page.
+   Landing page.
 
-   ONE GRID. Bands run the full width and change colour; `.grid` is the only thing
-   that sets a measure and a left edge, and every band uses it. Nothing on this
-   page is indented differently from anything else — that was the whole problem
-   with the previous version, which had four competing left edges.
+   A SIMPLIFIED report, not the report. Headline, four figures, two charts, one
+   honest caveat. An earlier version put the real ledger here — six columns,
+   dollar-exact — which is an audit document rather than a front door. The detail
+   lives one click away in the tool; this page's job is to make someone want to
+   open it.
+
+   Two rules hold the layout together:
+
+   1. NO HERO. A masthead strip names the product and gets out of the way so the
+      result owns the fold. Eyebrow / big headline / lede / button-pair /
+      picture-on-the-right is the silhouette this page has been rejected for.
+   2. ONE GRID, ONE LEFT EDGE. Bands run full width and change colour; nothing
+      inside one is indented differently from anything else. Four competing left
+      edges is what "no clear structure" meant.
+
+   Colour is used where it carries meaning — the return, the net benefit, the
+   bars — and nowhere else. The old gradient is gone: a saturated field behind
+   type is what was drowning the call to action.
    --------------------------------------------------------------------------- */
 
 .root {
   --bcb-landing-measure: 1160px;
-  background-color: var(--colorNeutralBackground1);
+  --bcb-landing-prose: 64ch;
+  background-color: var(--colorNeutralBackground2);
 }
 
 .grid {
@@ -18,153 +33,15 @@
   padding-inline: var(--spacingHorizontalXXL);
 }
 
-/* ---------------------------------- hero ----------------------------------- */
+/* --------------------------------- masthead -------------------------------- */
 
-.hero {
-  padding: 72px 0 64px;
+.masthead {
   background-color: var(--colorNeutralBackground1);
   border-bottom: 1px solid var(--colorNeutralStroke2);
+  padding: var(--spacingVerticalXL) 0;
 }
 
-.hero .grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
-  align-items: center;
-  gap: var(--spacingHorizontalXXXL);
-}
-
-.heroText {
-  min-width: 0;
-}
-
-.eyebrow {
-  margin: 0 0 var(--spacingVerticalS);
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--colorBrandForeground1);
-}
-
-.title {
-  margin: 0;
-  font-size: 44px;
-  line-height: 52px;
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: -0.02em;
-  color: var(--colorNeutralForeground1);
-  text-wrap: balance;
-}
-
-.lede {
-  margin: var(--spacingVerticalL) 0 0;
-  max-width: 46ch;
-  font-size: var(--fontSizeBase400);
-  line-height: 24px;
-  color: var(--colorNeutralForeground2);
-}
-
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacingHorizontalM);
-  margin-top: var(--spacingVerticalXXL);
-}
-
-/* Sits on a plain white surface with nothing else filled anywhere near it. The
-   old page put this on a saturated multicolour field, which is what drowned it. */
-.cta {
-  flex: none;
-}
-
-/* --------------------------------- the video ------------------------------- */
-
-.video {
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 1px solid var(--colorNeutralStroke2);
-  border-radius: var(--borderRadiusXLarge);
-  background: none;
-  overflow: hidden;
-  cursor: pointer;
-  font-family: inherit;
-  transition: box-shadow var(--durationNormal) var(--curveEasyEase);
-}
-
-.video:hover {
-  box-shadow: var(--shadow8);
-}
-
-.video:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: 2px;
-}
-
-/* The signature gradient, contained and at low saturation. It sits behind an
-   image area, never behind type. */
-.videoArt {
-  display: block;
-  aspect-ratio: 16 / 9;
-  background:
-    radial-gradient(120% 90% at 12% 18%, rgba(126, 217, 87, 0.55) 0%, rgba(126, 217, 87, 0) 55%),
-    radial-gradient(110% 100% at 88% 12%, rgba(255, 205, 70, 0.5) 0%, rgba(255, 205, 70, 0) 55%),
-    radial-gradient(120% 110% at 70% 92%, rgba(64, 168, 240, 0.55) 0%, rgba(64, 168, 240, 0) 60%),
-    linear-gradient(135deg, #eaf5ff 0%, #f3fbf0 50%, #fff8e6 100%);
-}
-
-.playMark {
-  position: absolute;
-  top: calc(50% - 26px);
-  left: calc(50% - 26px);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--borderRadiusCircular);
-  background-color: var(--colorNeutralBackground1);
-  color: var(--colorBrandForeground1);
-  box-shadow: var(--shadow8);
-}
-
-.videoMeta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacingHorizontalM);
-  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
-  background-color: var(--colorNeutralBackground1);
-  border-top: 1px solid var(--colorNeutralStroke2);
-  text-align: left;
-}
-
-.videoTitle {
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
-.videoDuration {
-  flex: none;
-  font-size: var(--fontSizeBase200);
-  color: var(--colorNeutralForeground3);
-}
-
-/* ---------------------------------- bands ---------------------------------- */
-
-.band {
-  padding: 64px 0;
-  border-bottom: 1px solid var(--colorNeutralStroke2);
-}
-
-.band:nth-of-type(even) {
-  background-color: var(--colorNeutralBackground2);
-}
-
-.sectionHead {
+.mastheadRow {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -172,376 +49,606 @@
   flex-wrap: wrap;
 }
 
-.kicker {
-  margin: 0 0 var(--spacingVerticalXS);
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--colorBrandForeground1);
-}
-
-.sectionTitle {
+/* Close to body scale on purpose. This names the product; it does not sell it. */
+.wordmark {
   margin: 0;
-  font-size: var(--fontSizeHero700);
-  line-height: 36px;
+  font-size: 26px;
+  line-height: 32px;
   font-weight: var(--fontWeightSemibold);
   letter-spacing: -0.01em;
   color: var(--colorNeutralForeground1);
 }
 
-.sectionLede {
-  margin: var(--spacingVerticalS) 0 0;
-  max-width: 52ch;
+.mastheadLine {
+  margin: 3px 0 0;
+  max-width: var(--bcb-landing-prose);
   font-size: var(--fontSizeBase300);
+  line-height: 20px;
   color: var(--colorNeutralForeground2);
 }
 
-/* --------------------------------- pillars --------------------------------- */
-
-.tabs {
+.mastheadActions {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacingHorizontalXS);
+  align-items: center;
+  gap: var(--spacingHorizontalL);
+  flex: none;
 }
 
-.tab {
-  padding: 7px 14px;
-  border: 1px solid var(--colorNeutralStroke2);
-  border-radius: var(--borderRadiusCircular);
-  background-color: var(--colorNeutralBackground1);
-  color: var(--colorNeutralForeground2);
+.textLink,
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 0;
   font-family: inherit;
   font-size: var(--fontSizeBase300);
+  color: var(--colorBrandForegroundLink);
   cursor: pointer;
-  transition:
-    background-color var(--durationFaster) var(--curveEasyEase),
-    border-color var(--durationFaster) var(--curveEasyEase),
-    color var(--durationFaster) var(--curveEasyEase);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-.tab:hover {
-  background-color: var(--colorSubtleBackgroundHover);
+.textLink:hover,
+.inlineLink:hover {
+  color: var(--colorBrandForegroundLinkHover);
 }
 
-.tab:focus-visible {
+.textLink:focus-visible,
+.inlineLink:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+  border-radius: var(--borderRadiusSmall);
+}
+
+/* ---------------------------------- result --------------------------------- */
+
+.resultBand {
+  background-color: var(--colorNeutralBackground1);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  padding: 36px 0 44px;
+}
+
+.badge {
+  display: inline-block;
+  margin: 0 0 var(--spacingVerticalM);
+  padding: 3px 9px;
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorBrandBackground2);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--colorBrandForeground2);
+}
+
+.headline {
+  margin: 0;
+  max-width: 30ch;
+  font-size: 46px;
+  line-height: 54px;
+  font-weight: var(--fontWeightRegular);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--colorNeutralForeground1);
+}
+
+.headline strong {
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorBrandForeground1);
+}
+
+.subhead {
+  margin: var(--spacingVerticalS) 0 0;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground3);
+}
+
+/* Figures on the left, the curve that explains them on the right. */
+.resultLayout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: var(--spacingHorizontalXXL);
+  align-items: start;
+  margin-top: var(--spacingVerticalXL);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacingHorizontalM);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
+  border-radius: var(--borderRadiusMedium);
+  border: 1px solid transparent;
+}
+
+.kpiLabel {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.kpiValue {
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Colour carries the reading: brand for the headline ratio, green when the case
+   stands up, red when the scenario control breaks it, neutral for facts that
+   are neither good nor bad. */
+.kpi_brand {
+  background-color: var(--colorBrandBackground2);
+  border-color: var(--colorBrandStroke2);
+}
+
+.kpi_brand .kpiValue {
+  color: var(--colorBrandForeground1);
+}
+
+.kpi_good {
+  background-color: var(--colorPaletteGreenBackground1);
+  border-color: var(--colorPaletteGreenBorder1);
+}
+
+.kpi_good .kpiValue {
+  color: var(--colorPaletteGreenForeground1);
+}
+
+.kpi_bad {
+  background-color: var(--colorPaletteRedBackground1);
+  border-color: var(--colorPaletteRedBorder1);
+}
+
+.kpi_bad .kpiValue {
+  color: var(--colorPaletteRedForeground1);
+}
+
+.kpi_plain {
+  background-color: var(--colorNeutralBackground3);
+  border-color: var(--colorNeutralStroke2);
+}
+
+.kpi_plain .kpiValue {
+  color: var(--colorNeutralForeground1);
+}
+
+.chartCard {
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  min-width: 0;
+}
+
+.chartTitle {
+  margin: 0 0 var(--spacingVerticalS);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--colorNeutralForeground3);
+}
+
+/* --------------------------------- control --------------------------------- */
+
+.control {
+  margin-top: var(--spacingVerticalXL);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground2);
+}
+
+.controlLabel {
+  display: block;
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground2);
+}
+
+.segments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--spacingVerticalS);
+}
+
+.segment {
+  padding: 6px 12px;
+  border-radius: var(--borderRadiusMedium);
+  border: 1px solid var(--colorNeutralStroke1);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground1);
+  cursor: pointer;
+  transition: background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.segment:hover {
+  background-color: var(--colorNeutralBackground1Hover);
+}
+
+.segment:focus-visible {
   outline: 2px solid var(--colorStrokeFocus2);
   outline-offset: 1px;
 }
 
-.tabOn {
+.segmentOn,
+.segmentOn:hover {
   background-color: var(--colorBrandBackground);
   border-color: var(--colorBrandBackground);
   color: var(--colorNeutralForegroundOnBrand);
 }
 
-.tabOn:hover {
-  background-color: var(--colorBrandBackgroundHover);
-}
-
-.pillarLead {
-  margin: var(--spacingVerticalXXL) 0 0;
-  max-width: 62ch;
-  font-size: var(--fontSizeBase400);
-  line-height: 24px;
-  color: var(--colorNeutralForeground1);
-}
-
-.statPanel {
-  margin-top: var(--spacingVerticalL);
-  padding: 40px;
-  border-radius: var(--borderRadiusXLarge);
-  border: 1px solid var(--colorNeutralStroke2);
-  background:
-    radial-gradient(90% 120% at 4% 8%, rgba(126, 217, 87, 0.22) 0%, rgba(126, 217, 87, 0) 60%),
-    radial-gradient(80% 120% at 96% 10%, rgba(255, 205, 70, 0.26) 0%, rgba(255, 205, 70, 0) 60%),
-    radial-gradient(100% 130% at 80% 96%, rgba(64, 168, 240, 0.24) 0%, rgba(64, 168, 240, 0) 62%),
-    var(--colorNeutralBackground1);
-  animation: bcbFade 300ms var(--curveEasyEase) both;
-}
-
-/* Figures left, quotes right. The hairline between them is the only divider in
-   the panel — the stat rows separate themselves with their own rules. */
-.panelInner {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
-  gap: 48px;
-}
-
-.panelInner > .quotes {
-  padding-left: 48px;
-  border-left: 1px solid var(--colorNeutralStroke2);
-  margin-left: -24px;
-}
-
-/* The pillar with no quotes runs its figures two across instead, so the panel
-   keeps its proportions rather than leaving half of it empty. */
-.figuresOnly {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.figuresOnly .stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 56px;
-}
-
-.stats {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.stat {
-  display: flex;
-  align-items: baseline;
-  gap: var(--spacingHorizontalL);
-  padding: var(--spacingVerticalL) 0;
-  border-bottom: 1px solid var(--colorNeutralStroke2);
-}
-
-.stat:first-child {
-  padding-top: 0;
-}
-
-/* The last rule in each column would otherwise draw a line to nothing. */
-.stat:last-child,
-.figuresOnly .stat:nth-last-child(-n + 2) {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-/* Fixed width so every label starts on the same x whatever the figure reads. */
-.statFigure {
-  flex: none;
-  width: 88px;
-  font-size: 34px;
-  line-height: 1;
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: -0.02em;
-  color: var(--colorBrandForeground1);
-}
-
-.statLabel {
-  min-width: 0;
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
+.controlNote {
+  margin: var(--spacingVerticalS) 0 0;
+  max-width: var(--bcb-landing-prose);
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
   color: var(--colorNeutralForeground2);
 }
 
-/* ---------------------------------- quotes ---------------------------------- */
+/* ---------------------------------- bands ---------------------------------- */
 
-.quotes {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacingVerticalXXL);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.quote {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacingVerticalS);
-}
-
-/* Left-aligned, unlike the live site, which centres them. Centred prose inside a
-   left-aligned page is a second alignment to explain, and ragged on both edges is
-   harder to read at this length. */
-.quoteText {
-  position: relative;
-  margin: 0;
-  padding-left: var(--spacingHorizontalL);
-  border-left: 2px solid var(--colorBrandStroke2);
-  font-size: var(--fontSizeBase300);
-  line-height: 21px;
-  color: var(--colorNeutralForeground1);
-}
-
-.quoteBy {
-  margin: 0;
-  padding-left: calc(var(--spacingHorizontalL) + 2px);
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground3);
-}
-
-/* -------------------------------- citations --------------------------------- */
-
-.cite {
-  margin-left: 2px;
-  font-size: 10px;
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorBrandForeground1);
-}
-
-.sources {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: var(--spacingVerticalL) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.sourceItem {
-  display: flex;
-  gap: var(--spacingHorizontalS);
-  font-size: var(--fontSizeBase200);
-  color: var(--colorNeutralForeground3);
-}
-
-.sourceNum {
-  flex: none;
-  width: 12px;
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorBrandForeground1);
-}
-
-/* -------------------------------- what's new -------------------------------- */
-
-.updates {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacingHorizontalXXXL);
-  margin-top: var(--spacingVerticalXXL);
-}
-
-.period {
-  margin: 0 0 var(--spacingVerticalM);
-  padding-bottom: var(--spacingVerticalS);
+.band {
+  padding: 52px 0;
+  background-color: var(--colorNeutralBackground1);
   border-bottom: 1px solid var(--colorNeutralStroke2);
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
 }
 
-.entries {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacingVerticalL);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.entry {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacingHorizontalM);
-}
-
-/* Fixed width so every entry's text starts on the same x, whatever the tag says. */
-.tag {
-  flex: none;
-  width: 68px;
-  padding: 2px 0;
-  font-size: var(--fontSizeBase100);
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--colorNeutralForeground3);
-}
-
-.tag[data-tag='new'] {
-  color: var(--colorBrandForeground1);
-}
-
-.entryBody {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.entryTitle {
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
-.entryText {
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
-  color: var(--colorNeutralForeground2);
-}
-
-/* --------------------------------- feedback --------------------------------- */
-
-.feedback {
-  padding: 56px 0 72px;
+.bandTint {
   background-color: var(--colorNeutralBackground2);
 }
 
-.feedbackTitle {
+.bandLast {
+  border-bottom: none;
+}
+
+.sectionTitle {
   margin: 0;
-  font-size: var(--fontSizeHero700);
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--colorNeutralForeground1);
+}
+
+.sectionLede {
+  margin: var(--spacingVerticalS) 0 var(--spacingVerticalXL);
+  max-width: var(--bcb-landing-prose);
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+/* ------------------------------- what changes ------------------------------ */
+
+.changeLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--spacingHorizontalXXL);
+  align-items: start;
+}
+
+.vendors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalM);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each row is one displacement: what goes, what it costs, what replaces it. */
+.vendor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground1);
+}
+
+.vendorTop {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.vendorName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.vendorCost {
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorPaletteRedForeground1);
+}
+
+/* A CSS arrow rather than an icon import — it is pure ornament between two
+   labels that already carry the meaning, and it is aria-hidden. */
+.vendorArrow {
+  width: 18px;
+  height: 8px;
+  position: relative;
+}
+
+.vendorArrow::before {
+  content: '';
+  position: absolute;
+  inset: 3px 0 auto 0;
+  height: 2px;
+  background-color: var(--colorNeutralStroke1);
+}
+
+.vendorArrow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--colorNeutralStroke1);
+  border-right: 2px solid var(--colorNeutralStroke1);
+  transform: rotate(45deg);
+}
+
+.vendorTo {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorBrandForeground1);
+  min-width: 0;
+}
+
+/* -------------------------------- why timing ------------------------------- */
+
+.years {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalM);
+  margin: 0 0 var(--spacingVerticalXXL);
+  padding: 0;
+  list-style: none;
+  max-width: 760px;
+}
+
+.year {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 110px;
+  gap: var(--spacingHorizontalL);
+  align-items: center;
+}
+
+.yearLabel {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.yearTrack {
+  height: 20px;
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorNeutralBackground4);
+  overflow: hidden;
+}
+
+.yearFill {
+  display: block;
+  height: 100%;
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorBrandBackground);
+}
+
+.yearValue {
+  font-size: var(--fontSizeBase300);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground2);
+}
+
+.demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: var(--spacingHorizontalXXL);
+  align-items: center;
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+.demoTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.demoBody {
+  margin: var(--spacingVerticalS) 0 var(--spacingVerticalL);
+  max-width: var(--bcb-landing-prose);
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.demoToggle {
+  padding: 7px 14px;
+  border-radius: var(--borderRadiusMedium);
+  border: 1px solid var(--colorNeutralStroke1);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground1);
+  cursor: pointer;
+}
+
+.demoToggle:hover {
+  background-color: var(--colorNeutralBackground1Hover);
+}
+
+.demoToggle:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.demoFigure {
+  text-align: right;
+}
+
+.demoValue {
+  display: block;
+  font-size: 54px;
+  line-height: 58px;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--colorPaletteGreenForeground1);
+  transition: color var(--durationNormal) var(--curveEasyEase);
+}
+
+.demoValueBad {
+  color: var(--colorPaletteRedForeground1);
+}
+
+.demoCaption {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--fontSizeBase200);
+  line-height: 16px;
+  color: var(--colorNeutralForeground3);
+}
+
+/* ---------------------------------- close ---------------------------------- */
+
+.evidence {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacingHorizontalXL);
+  margin: 0 0 var(--spacingVerticalM);
+  padding: 0;
+  list-style: none;
+}
+
+.evidenceItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: var(--spacingHorizontalL);
+  border-left: 3px solid var(--colorBrandStroke1);
+}
+
+.evidenceValue {
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--colorBrandForeground1);
+}
+
+.evidenceLabel {
+  font-size: var(--fontSizeBase300);
+  line-height: 18px;
+  color: var(--colorNeutralForeground2);
+}
+
+.evidenceNote {
+  margin: 0 0 var(--spacingVerticalXXL);
+  max-width: var(--bcb-landing-prose);
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground3);
+}
+
+.close {
+  padding-top: var(--spacingVerticalXXL);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+
+.closeTitle {
+  margin: 0;
+  font-size: 28px;
   line-height: 36px;
   font-weight: var(--fontWeightSemibold);
   letter-spacing: -0.01em;
   color: var(--colorNeutralForeground1);
 }
 
-.feedbackText {
-  margin: var(--spacingVerticalS) 0 var(--spacingVerticalXL);
-  max-width: 52ch;
+.closeText {
+  margin: var(--spacingVerticalS) 0 var(--spacingVerticalL);
+  max-width: var(--bcb-landing-prose);
   font-size: var(--fontSizeBase300);
+  line-height: 20px;
   color: var(--colorNeutralForeground2);
 }
 
-.feedbackButton {
-  flex: none;
-}
+/* -------------------------------- responsive ------------------------------- */
 
-/* -------------------------------- responsive -------------------------------- */
-
-@media (max-width: 1024px) {
-  .hero .grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--spacingVerticalXXL);
+@media (max-width: 1080px) {
+  .resultLayout,
+  .changeLayout {
+    grid-template-columns: 1fr;
+    gap: var(--spacingVerticalXL);
   }
 
-  .updates,
-  .panelInner,
-  .figuresOnly .stats {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .panelInner > .quotes {
-    padding-left: 0;
-    margin-left: 0;
-    border-left: none;
-    border-top: 1px solid var(--colorNeutralStroke2);
-    padding-top: var(--spacingVerticalXXL);
-  }
-
-  .figuresOnly .stat:nth-last-child(2) {
-    border-bottom: 1px solid var(--colorNeutralStroke2);
-  }
-
-  .title {
-    font-size: 36px;
-    line-height: 44px;
+  .kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 640px) {
-  .grid {
-    padding-inline: var(--spacingHorizontalL);
+@media (max-width: 860px) {
+  .headline {
+    font-size: 34px;
+    line-height: 40px;
   }
 
-  .hero {
-    padding: 48px 0 40px;
+  .kpis,
+  .evidence {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .band {
-    padding: 48px 0;
+  .demo {
+    grid-template-columns: 1fr;
+    gap: var(--spacingVerticalL);
   }
 
-  .statPanel {
-    padding: 24px;
+  .demoFigure {
+    text-align: left;
+  }
+
+  .vendor {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .vendorArrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demoValue,
+  .segment {
+    transition: none;
   }
 }

@@ -1,209 +1,334 @@
 import React, { useState } from 'react';
 import { Button } from '@fluentui/react-components';
-import { Add20Filled, Play20Filled } from '@fluentui/react-icons';
+import { Add20Filled, ArrowRight16Regular } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
-import { PILLARS, SOURCES, UPDATES } from '../../data/landing.js';
+import { MY_CASES } from '../../data/caseLibrary.js';
+import { PILLARS } from '../../data/landing.js';
+import PaybackChart from '../ResultsDashboard/PaybackChart.jsx';
+import SpendComparison from '../ResultsDashboard/SpendComparison.jsx';
+import { CASE, LEDGER, SCENARIOS, EXCLUDED, money, pct } from '../../data/landingCase.js';
 import styles from './Landing.module.css';
 
 /**
- * The product landing page.
+ * The landing page.
  *
- * The whole design is one rule: every piece of content starts at the same left
- * edge. Bands run full width and change colour, but nothing inside them is ever
- * indented differently from anything else — that is what the previous page was
- * missing, with the nav, the hero, the section tabs and the body copy each
- * starting somewhere else.
+ * It shows one finished business case — Contoso, the same case that ships in the
+ * tool — as a SIMPLIFIED report: headline, three figures, two charts. Not the
+ * report itself. An earlier attempt put the actual ledger on the page, six
+ * columns and dollar-exact, and that is an audit document rather than a front
+ * door; the detail belongs behind "open this case in the tool", which is one
+ * click away throughout.
  *
- * The gradient stays, because it is the product's signature, but it is contained
- * inside two panels rather than washed behind the headline. A saturated field
- * behind text is what was drowning the call to action.
+ * Two rules hold the layout together:
+ *
+ * 1. NO HERO. A masthead strip names the product and gets out of the way so the
+ *    result owns the fold. The eyebrow / big headline / lede / button-pair /
+ *    picture-on-the-right arrangement is the silhouette this page has already
+ *    been rejected for twice.
+ * 2. ONE GRID, ONE LEFT EDGE. Bands run full width and change colour; nothing
+ *    inside one is ever indented differently from anything else.
+ *
+ * Every figure comes from the real engine via landingCase.js. Charts are the two
+ * the tool already draws, so the page previews the product rather than
+ * illustrating it.
  */
 export default function Landing() {
-  const { newCase } = useAppState();
-  const [pillar, setPillar] = useState(PILLARS[0].id);
-  const active = PILLARS.find((p) => p.id === pillar) || PILLARS[0];
+  const { newCase, openCase } = useAppState();
+  const contoso = MY_CASES.find((c) => c.id === 'case-contoso');
+  const open = () => openCase(contoso);
 
   return (
     <div className={styles.root}>
-      {/* ---------------------------------- hero --------------------------- */}
-      <section className={styles.hero}>
-        <div className={styles.grid}>
-          <div className={styles.heroText}>
-            <p className={styles.eyebrow}>Microsoft Security for Enterprise</p>
-            <h1 className={styles.title}>Security Business Case Builder</h1>
-            <p className={styles.lede}>
-              Turn Forrester research into a defensible ROI case for a named customer. Model the
-              licences, the vendors being displaced and the timing, and leave with the report and
-              the deck.
-            </p>
-            <div className={styles.heroActions}>
-              {/* The only filled button above the fold, on a plain surface, with
-                  nothing competing for the same attention. */}
-              <Button
-                appearance="primary"
-                size="large"
-                icon={<Add20Filled />}
-                onClick={newCase}
-                className={styles.cta}
-              >
-                Start a business case
-              </Button>
-              <Button appearance="subtle" size="large" icon={<Play20Filled />}>
-                Watch the introduction
-              </Button>
-            </div>
-          </div>
-
-          <div className={styles.heroMedia}>
-            <button type="button" className={styles.video} aria-label="Play the introduction video">
-              <span className={styles.videoArt} aria-hidden="true" />
-              <span className={styles.playMark} aria-hidden="true">
-                <Play20Filled />
-              </span>
-              <span className={styles.videoMeta}>
-                <span className={styles.videoTitle}>Build a case in minutes</span>
-                <span className={styles.videoDuration}>2:45</span>
-              </span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* -------------------------------- pillars -------------------------- */}
-      <section className={styles.band}>
-        <div className={styles.grid}>
-          <div className={styles.sectionHead}>
-            <div>
-              <p className={styles.kicker}>Business value pillars</p>
-              <h2 className={styles.sectionTitle}>Securely adopt AI with Microsoft Security</h2>
-              <p className={styles.sectionLede}>
-                Every calculation in the tool rolls up to one of these three.
-              </p>
-            </div>
-
-            <div className={styles.tabs} role="tablist" aria-label="Business value pillars">
-              {PILLARS.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={p.id === pillar}
-                  className={`${styles.tab} ${p.id === pillar ? styles.tabOn : ''}`}
-                  onClick={() => setPillar(p.id)}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <p className={styles.pillarLead}>{active.lead}</p>
-
-          {/* The gradient lives here — contained, behind figures rather than
-              behind type, and never behind a control.
-              Two shapes from one component: with quotes the figures take the left
-              column and the quotes the right; without them the figures run two
-              across. Nothing else about the panel changes. */}
-          <div className={styles.statPanel} key={active.id}>
-            <div
-              className={`${styles.panelInner} ${active.quotes.length ? '' : styles.figuresOnly}`}
-            >
-              <ul className={styles.stats}>
-                {active.stats.map((s) => (
-                  <li key={s.label} className={styles.stat}>
-                    <span className={styles.statFigure}>{s.value}</span>
-                    <span className={styles.statLabel}>
-                      {s.label}
-                      <Cite n={s.source} />
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {active.quotes.length ? (
-                <ul className={styles.quotes}>
-                  {active.quotes.map((q) => (
-                    <li key={q.attribution} className={styles.quote}>
-                      <blockquote className={styles.quoteText}>
-                        {q.text}
-                        <Cite n={q.source} />
-                      </blockquote>
-                      <p className={styles.quoteBy}>{q.attribution}</p>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          </div>
-
-          <ol className={styles.sources}>
-            {SOURCES.map((s, i) => (
-              <li key={s} className={styles.sourceItem}>
-                <span className={styles.sourceNum}>{i + 1}</span>
-                {s}
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* ------------------------------- what's new ------------------------ */}
-      <section className={styles.band}>
-        <div className={styles.grid}>
-          <div className={styles.sectionHead}>
-            <div>
-              <p className={styles.kicker}>What&rsquo;s new</p>
-              <h2 className={styles.sectionTitle}>Latest updates</h2>
-            </div>
-          </div>
-
-          <div className={styles.updates}>
-            {UPDATES.map((group) => (
-              <div key={group.period} className={styles.updateGroup}>
-                <h3 className={styles.period}>{group.period}</h3>
-                <ul className={styles.entries}>
-                  {group.entries.map((e) => (
-                    <li key={e.title} className={styles.entry}>
-                      <span className={styles.tag} data-tag={e.tag.toLowerCase()}>
-                        {e.tag}
-                      </span>
-                      <span className={styles.entryBody}>
-                        <span className={styles.entryTitle}>{e.title}</span>
-                        <span className={styles.entryText}>{e.text}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* -------------------------------- feedback ------------------------- */}
-      <section className={styles.feedback}>
-        <div className={styles.grid}>
-          {/* Left-aligned like everything else. A centred closing band would be a
-              second alignment to explain. */}
-          <h2 className={styles.feedbackTitle}>Have feedback?</h2>
-          <p className={styles.feedbackText}>
-            Tell us how to improve the experience, or the cases it produces.
-          </p>
-          <Button appearance="secondary" className={styles.feedbackButton}>
-            Submit feedback
-          </Button>
-        </div>
-      </section>
+      <Masthead onStart={newCase} onOpen={open} />
+      <Result onOpen={open} />
+      <WhatChanges />
+      <WhyTiming />
+      <Close onStart={newCase} />
     </div>
   );
 }
 
-/** A superscript source marker, tied to the SOURCES list under the panel. */
-function Cite({ n }) {
-  if (!n) return null;
+/* --------------------------------- masthead -------------------------------- */
+
+function Masthead({ onStart, onOpen }) {
   return (
-    <sup className={styles.cite} aria-label={`Source ${n}`}>
-      {n}
-    </sup>
+    <header className={styles.masthead}>
+      <div className={styles.grid}>
+        <div className={styles.mastheadRow}>
+          <div>
+            <h1 className={styles.wordmark}>Security Business Case Builder</h1>
+            <p className={styles.mastheadLine}>
+              Work out what a customer saves by moving their security vendors onto Microsoft.
+            </p>
+          </div>
+          <div className={styles.mastheadActions}>
+            <Button appearance="primary" icon={<Add20Filled />} onClick={onStart}>
+              Build your own case
+            </Button>
+            <button type="button" className={styles.textLink} onClick={onOpen}>
+              See the full report
+              <ArrowRight16Regular aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ---------------------------------- result --------------------------------- */
+
+/**
+ * The fold: the answer, three figures, and the curve that explains them. The
+ * scenario control sits with the figures it moves — the claim "payback is month
+ * 23" has to be demonstrable where it is made, not five screens down.
+ */
+function Result({ onOpen }) {
+  const [id, setId] = useState(SCENARIOS[0].id);
+  const active = SCENARIOS.find((s) => s.id === id) || SCENARIOS[0];
+  const positive = active.annualNetBenefit >= 0;
+
+  return (
+    <section className={styles.resultBand}>
+      <div className={styles.grid}>
+        <p className={styles.badge}>Worked example · Contoso Ltd. · figures in USD</p>
+
+        <h2 className={styles.headline}>
+          {positive ? (
+            <>
+              Contoso could save <strong>{money(active.annualNetBenefit)}</strong> a year
+            </>
+          ) : (
+            <>
+              On these dates Contoso is{' '}
+              <strong>{money(Math.abs(active.annualNetBenefit))}</strong> a year worse off
+            </>
+          )}
+        </h2>
+        <p className={styles.subhead}>
+          18,000 users · Manufacturing · {CASE.years}-year analysis
+        </p>
+
+        <div className={styles.resultLayout}>
+          <ul className={styles.kpis}>
+            <Kpi tone="brand" label="Return on investment" value={pct(active.roi)} />
+            <Kpi
+              tone={positive ? 'good' : 'bad'}
+              label="Net benefit a year"
+              value={money(active.annualNetBenefit)}
+            />
+            <Kpi
+              tone="plain"
+              label="Payback"
+              value={active.paybackMonths ? `${active.paybackMonths} mo` : 'Never'}
+            />
+            <Kpi
+              tone="plain"
+              label="Vendors retired"
+              value={`${active.vendorsConsolidated} of ${CASE.vendorCount}`}
+            />
+          </ul>
+
+          <div className={styles.chartCard}>
+            <PaybackChart
+              cashflow={CASE.cashflow}
+              paybackMonths={CASE.paybackMonths}
+              symbol="$"
+            />
+          </div>
+        </div>
+
+        <div className={styles.control}>
+          <span className={styles.controlLabel} id="timing-label">
+            Try moving the contract end dates
+          </span>
+          <div className={styles.segments} role="group" aria-labelledby="timing-label">
+            {SCENARIOS.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                className={`${styles.segment} ${s.id === id ? styles.segmentOn : ''}`}
+                aria-pressed={s.id === id}
+                onClick={() => setId(s.id)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+          <p className={styles.controlNote}>
+            {active.note}{' '}
+            <button type="button" className={styles.inlineLink} onClick={onOpen}>
+              Open the full report
+            </button>
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Kpi({ label, value, tone }) {
+  return (
+    <li className={`${styles.kpi} ${styles[`kpi_${tone}`]}`}>
+      <span className={styles.kpiLabel}>{label}</span>
+      <span className={styles.kpiValue}>{value}</span>
+    </li>
+  );
+}
+
+/* ------------------------------- what changes ------------------------------ */
+
+/**
+ * The consolidation, as a picture rather than a table. Four vendor contracts on
+ * one side, Microsoft on the other, and what the swap does to annual spend.
+ */
+function WhatChanges() {
+  return (
+    <section className={styles.band}>
+      <div className={styles.grid}>
+        <h2 className={styles.sectionTitle}>Four vendors out, one platform in</h2>
+        <p className={styles.sectionLede}>
+          The saving is spend that stops, not spend that is estimated.
+        </p>
+
+        <div className={styles.changeLayout}>
+          <ul className={styles.vendors}>
+            {LEDGER.map((l) => (
+              <li key={l.id} className={styles.vendor}>
+                <span className={styles.vendorTop}>
+                  <span className={styles.vendorName}>{l.product}</span>
+                  <span className={styles.vendorCost}>{money(l.annualCost)}/yr</span>
+                </span>
+                <span className={styles.vendorArrow} aria-hidden="true" />
+                <span className={styles.vendorTo}>{l.replacedBy}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className={styles.chartCard}>
+              <SpendComparison
+              current={CASE.todayAnnualSpend ?? 0}
+              future={CASE.futureAnnualSpend ?? 0}
+              contractCount={CASE.vendorCount}
+              symbol="$"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- why timing ------------------------------- */
+
+/**
+ * The credibility beat, kept to one idea and one graphic: nothing is saved in
+ * year one, because on day one every contract is still running.
+ */
+function WhyTiming() {
+  const [inflated, setInflated] = useState(false);
+  const peak = Math.max(...CASE.competitorByYear);
+
+  return (
+    <section className={`${styles.band} ${styles.bandTint}`}>
+      <div className={styles.grid}>
+        <h2 className={styles.sectionTitle}>Year one saves nothing</h2>
+        <p className={styles.sectionLede}>
+          A vendor cannot be switched off mid-contract, so savings begin the year after one lapses.
+          That is why payback lands at month{' '}
+          {CASE.paybackMonths} rather than immediately — and why
+          this case can be checked.
+        </p>
+
+        <ol className={styles.years}>
+          {CASE.competitorByYear.map((v, i) => (
+            <li key={i} className={styles.year}>
+              <span className={styles.yearLabel}>{CASE.startYear + i}</span>
+              <span className={styles.yearTrack}>
+                <span
+                  className={styles.yearFill}
+                  style={{ width: v ? `${(v / peak) * 100}%` : '0%' }}
+                />
+              </span>
+              <span className={styles.yearValue}>{v ? money(v) : 'nothing'}</span>
+            </li>
+          ))}
+        </ol>
+
+        <div className={styles.demo}>
+          <div>
+            <p className={styles.demoTitle}>And what it refuses to count</p>
+            <p className={styles.demoBody}>
+              Contoso already pays {money(EXCLUDED.annual)} a year for {EXCLUDED.bundleName} and
+              will keep paying it. Count that as a saving, as a spreadsheet built to flatter would,
+              and the same case reports a return ten times larger.
+            </p>
+            <button
+              type="button"
+              className={styles.demoToggle}
+              aria-pressed={inflated}
+              onClick={() => setInflated((v) => !v)}
+            >
+              {inflated ? 'Show the honest figure' : 'Count the existing licences as a saving'}
+            </button>
+          </div>
+          <div className={styles.demoFigure}>
+            <span className={`${styles.demoValue} ${inflated ? styles.demoValueBad : ''}`}>
+              {pct(inflated ? EXCLUDED.inflatedRoi : EXCLUDED.honestRoi)}
+            </span>
+            <span className={styles.demoCaption}>
+              {inflated ? 'What an inflated case looks like' : 'Counting only spend that stops'}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- close ---------------------------------- */
+
+/** Three figures of independent research, then the ask. */
+const EVIDENCE = (() => {
+  const seen = new Set();
+  return PILLARS.flatMap((p) => p.stats)
+    .filter((s) => {
+      const k = s.label.toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .slice(0, 3);
+})();
+
+function Close({ onStart }) {
+  return (
+    <section className={`${styles.band} ${styles.bandLast}`}>
+      <div className={styles.grid}>
+        <ul className={styles.evidence}>
+          {EVIDENCE.map((s) => (
+            <li key={s.label} className={styles.evidenceItem}>
+              <span className={styles.evidenceValue}>{s.value}</span>
+              <span className={styles.evidenceLabel}>{s.label}</span>
+            </li>
+          ))}
+        </ul>
+        <p className={styles.evidenceNote}>
+          Forrester Total Economic Impact™ studies, commissioned by Microsoft. Your case is built
+          from your customer&rsquo;s own contracts, not from these.
+        </p>
+
+        <div className={styles.close}>
+          <h2 className={styles.closeTitle}>Build the same thing for your customer</h2>
+          <p className={styles.closeText}>
+            Their seats, their vendors, their contract dates — about ten minutes, and the copilot
+            fills most of it from a sentence.
+          </p>
+          <Button appearance="primary" size="large" icon={<Add20Filled />} onClick={onStart}>
+            Build your own case
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }
