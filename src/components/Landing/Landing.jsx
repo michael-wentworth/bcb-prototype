@@ -192,11 +192,18 @@ function WhatChanges() {
         </p>
 
         <div className={styles.changeLayout}>
+          {/* Category, not brand. This page is public marketing, so naming a
+              competitor beside an invented price would be Microsoft publishing a
+              pricing claim about someone else's product. Inside the tool the seller
+              enters the real vendor for their own deal, which is their statement
+              about their own customer rather than ours. The argument here is about
+              categories of spend and contract timing, and loses nothing without
+              the brand. */}
           <ul className={styles.vendors}>
             {LEDGER.map((l) => (
               <li key={l.id} className={styles.vendor}>
                 <span className={styles.vendorTop}>
-                  <span className={styles.vendorName}>{l.product}</span>
+                  <span className={styles.vendorName}>{l.category}</span>
                   <span className={styles.vendorCost}>{money(l.annualCost)}/yr</span>
                 </span>
                 <span className={styles.vendorArrow} aria-hidden="true" />

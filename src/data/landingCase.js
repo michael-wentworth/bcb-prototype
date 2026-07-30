@@ -114,8 +114,21 @@ export const INVESTMENT = input.skus.map((row) => {
  * only ever look good proves nothing about the tool that produced it.
  */
 const shifted = (rows) => rows.map((r) => ({ ...r, yearContractEnds: '2028' }));
-const splunkEarly = (rows) =>
-  rows.map((r) => (r.currentProduct.startsWith('Splunk') ? { ...r, yearContractEnds: '2026' } : r));
+
+/**
+ * Pull whichever contract runs longest back to the first year. Selected by date
+ * rather than by product name so the scenario keeps working if the seeded case
+ * changes, and so no competitor brand is referenced to build it.
+ */
+const renewEarly = (rows) => {
+  const latest = Math.max(...rows.map((r) => Number(r.yearContractEnds) || 0));
+  let done = false;
+  return rows.map((r) => {
+    if (done || Number(r.yearContractEnds) !== latest) return r;
+    done = true;
+    return { ...r, yearContractEnds: String(CASE_START_YEAR) };
+  });
+};
 
 const scenario = (id, label, note, rows) => {
   const r = compute(rows);
@@ -139,14 +152,14 @@ export const SCENARIOS = [
   scenario(
     'actual',
     'As it stands',
-    'Three contracts lapse during 2026; Splunk runs a year longer.',
+    'Three contracts lapse during 2026; the fourth runs a year longer.',
     input.competitors.rows,
   ),
   scenario(
     'early',
-    'Splunk renews early',
-    'Move one contract end from 2027 to 2026 and a year of SIEM spend becomes displaceable.',
-    splunkEarly(input.competitors.rows),
+    'The longest contract ends sooner',
+    'Bring that renewal forward a year and another year of spend becomes displaceable.',
+    renewEarly(input.competitors.rows),
   ),
   scenario(
     'late',
