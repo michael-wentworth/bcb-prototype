@@ -81,7 +81,7 @@ Consolidating onto Microsoft brings those capabilities into licensing the custom
       c.paybackMonths ? `, with payback in month ${c.paybackMonths}` : ''
     }.
 
-The savings are dated rather than assumed: each displacement begins only once that vendor's contract lapses, which is why the return builds across the period rather than landing on day one.
+Each displacement begins only once that vendor's contract lapses, which is why the return builds across the period rather than landing on day one.
 
 Competitor pricing and contract end dates remain the assumptions worth confirming with the customer before this is presented.`;
   },
@@ -109,7 +109,7 @@ Competitor pricing and contract end dates remain the assumptions worth confirmin
 
 const EXPANSIONS = {
   summary:
-    'The case does not depend on a single line item. Excluding the least-certain displacement still leaves the case comfortably positive, which is the useful thing to be able to say when the numbers are challenged.',
+    'The case does not depend on a single line item. Excluding the least-certain displacement still leaves the case comfortably positive.',
   recommendations:
     '**Confirm the assumptions before committee** — current security spend and SIEM ingest volume are modelled rather than customer-supplied, and both are cheap to verify. Owner: Account team. Timing: before the next review.',
   risks:
@@ -146,7 +146,7 @@ export function applyNarrativeAction(sectionId, currentText, actionId, ctx) {
     case 'expand':
       return {
         text: `${body}\n\n${EXPANSIONS[sectionId] || EXPANSIONS.summary}`,
-        note: 'Expanded with a supporting paragraph at the end.',
+        note: 'Expanded with a supporting paragraph.',
         fromScratch: false,
       };
     case 'clarity':

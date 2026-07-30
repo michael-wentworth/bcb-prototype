@@ -59,7 +59,7 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: 'I am the Security business case copilot. Describe the customer in a sentence — who they are, their size, and what they run today — and I will fill in this step.',
+            text: 'Describe the customer in a sentence — who they are, their size, and what they run today — and I will fill in this step.',
           },
         ],
       };
@@ -69,7 +69,7 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: 'This step is the proposal: the outcomes you are selling against, the Microsoft SKUs that serve them, and which current vendor each one displaces.',
+            text: 'Select the outcomes and I will map them to SKUs.',
           },
         ],
       };
@@ -79,7 +79,7 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: 'Everything here derives from the two input steps. Change a seat count or a contract year and this recalculates immediately.',
+            text: 'Change a seat count or a contract year and this recalculates immediately.',
           },
           /* No actions block here. The two it used to carry — the ROI question and
              the what-is-missing question — are the first two entries of
@@ -116,7 +116,7 @@ const INTENTS = [
       blocks: [
         {
           type: 'text',
-          text: "I filled the whole case in — customer details, outcomes, SKUs and competitor products. Everything landed in the same fields you would have typed into, so it is all editable.",
+          text: "I filled the whole case in — customer details, outcomes, SKUs and competitor products.",
         },
         {
           type: 'fields',
@@ -188,7 +188,7 @@ const INTENTS = [
             type: 'callout',
             tone: 'coach',
             title: 'Seats and price are still yours',
-            text: 'I can tell you which SKUs fit the outcomes. I cannot tell you what the customer negotiated — enter the seats per year and the price you expect to land.',
+            text: 'I cannot tell you what the customer negotiated — enter the seats per year and the price you expect to land.',
           },
         ],
       };
@@ -212,7 +212,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'Nothing to displace yet. Competitor products are captured on step 1, in Competitive environment — add them there with a cost and a contract end year, and they arrive here ready to map.',
+              text: 'Nothing to displace yet. Competitor products are captured on step 1, in Competitive environment — add them there with a cost and a contract end year.',
             },
             {
               type: 'actions',
@@ -275,7 +275,7 @@ const INTENTS = [
       blocks: [
         {
           type: 'text',
-          text: 'Because savings only start when the old contract actually stops. A competitor product whose contract runs past your analysis period contributes nothing to the case — the customer is still paying for it.',
+          text: 'Because savings only start when the old contract actually stops.',
         },
         {
           type: 'bullets',
@@ -302,7 +302,7 @@ const INTENTS = [
         {
           type: 'bullets',
           items: [
-            '**Customer-facing pitch** — written for the customer, with internal-only pricing detail hidden.',
+            '**Customer-facing pitch** — internal-only pricing detail hidden.',
             '**Internal planning** — full detail, including discounting and margin commentary.',
             '**Partner enablement** — written for a partner seller taking it to their own customer.',
           ],
@@ -320,7 +320,7 @@ const INTENTS = [
         {
           type: 'text',
           text: ctx.customer.accountName
-            ? 'I have added the four products I can see against this account to Competitive environment, with estimated annual cost and contract end years. Both figures are estimates — correct them here before this reaches a customer. You map each one to its Microsoft replacement on step 2.'
+            ? 'I have added the four products I can see against this account to Competitive environment, with estimated annual cost and contract end years. Correct them here before this reaches a customer. You map each one to its Microsoft replacement on step 2.'
             : 'I need an account name and the current security stack before I can infer an estate. Fill those in above, or add the competitor rows by hand.',
         },
         ctx.customer.accountName
@@ -371,8 +371,8 @@ const INTENTS = [
           {
             type: 'text',
             text: gaps.length
-              ? 'Here is what would move this case forward, in the order I would fix them:'
-              : 'Nothing structural is missing. You have enough here to present the case.',
+              ? 'Fix these in this order:'
+              : 'Nothing structural is missing.',
           },
           gaps.length ? { type: 'bullets', items: gaps } : null,
           {
@@ -399,7 +399,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'There is nothing to calculate yet — no SKUs and no competitor products. Capture the competitor estate on step 1 or the SKUs on step 2, and I will walk you through the arithmetic.',
+              text: 'There is nothing to calculate yet — no SKUs and no competitor products. Capture the competitor estate on step 1 or the SKUs on step 2.',
             },
           ],
         };
@@ -408,7 +408,7 @@ const INTENTS = [
         blocks: [
           {
             type: 'text',
-            text: `${c.years}-year nominal, no discount rate. It is a substitution model: the benefit is mostly spend that stops.`,
+            text: `${c.years}-year nominal, no discount rate.`,
           },
           {
             type: 'metrics',
@@ -438,10 +438,10 @@ const INTENTS = [
                 ? 'This case does not break even'
                 : 'Nothing to pay back yet',
             text: c.paybackMonths
-              ? 'Costs start immediately, but each competitor saving only begins once its contract lapses. That staggering is what sets the payback month.'
+              ? 'Costs start immediately, but each competitor saving only begins once its contract lapses.'
               : c.investmentTotal > 0
-                ? 'Within the current horizon the investment is never recovered. Either the analysis period is too short for the contract end dates, or the SKU pricing needs revisiting.'
-                : 'Payback measures how long an investment takes to return. With nothing on the Microsoft side of the ledger there is no period to measure.',
+                ? 'Not within the current horizon. Either the analysis period is too short for the contract end dates, or the SKU pricing needs revisiting.'
+                : 'With nothing on the Microsoft side of the ledger there is no period to measure.',
           },
         ],
       };
@@ -454,7 +454,7 @@ const INTENTS = [
     delay: 2000,
     build: () => ({
       blocks: [
-        { type: 'text', text: 'Three you should expect, and what I would say to each:' },
+        { type: 'text', text: 'Three you should expect:' },
         {
           type: 'objections',
           items: [
@@ -466,7 +466,7 @@ const INTENTS = [
             {
               objection: '"Defender is not as good as our best-of-breed tool."',
               response:
-                'Move from feature parity to operational outcome. The case is not that one control wins; it is that correlated signal across the estate closes incidents faster. Offer a proof of concept on one business unit.',
+                'The case is not that one control wins; it is that correlated signal across the estate closes incidents faster. Offer a proof of concept on one business unit.',
             },
             {
               objection: '"This is a licensing exercise dressed up as strategy."',
@@ -539,7 +539,7 @@ const FALLBACKS = [
     blocks: [
       {
         type: 'text',
-        text: 'On this step I can map outcomes to SKUs, explain why a SKU belongs in the recommendation, or read back what each competitor product is being replaced with.',
+        text: 'Try one of these:',
       },
       {
         type: 'actions',
@@ -554,7 +554,7 @@ const FALLBACKS = [
     blocks: [
       {
         type: 'text',
-        text: 'From here I can walk through the maths, stress-test the numbers, or draft any section of the written case.',
+        text: 'I can draft any section of the written case.',
       },
       {
         type: 'actions',
