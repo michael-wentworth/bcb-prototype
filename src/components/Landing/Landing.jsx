@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@fluentui/react-components';
 import { Add20Filled, Play20Filled } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
-import { METRICS_SOURCE, PILLARS, UPDATES } from '../../data/landing.js';
+import { PILLARS, SOURCES, UPDATES } from '../../data/landing.js';
 import styles from './Landing.module.css';
 
 /**
@@ -100,23 +100,50 @@ export default function Landing() {
           <p className={styles.pillarLead}>{active.lead}</p>
 
           {/* The gradient lives here — contained, behind figures rather than
-              behind type, and never behind a control. */}
+              behind type, and never behind a control.
+              Two shapes from one component: with quotes the figures take the left
+              column and the quotes the right; without them the figures run two
+              across. Nothing else about the panel changes. */}
           <div className={styles.statPanel} key={active.id}>
-            <div className={styles.statGrid}>
-              {active.stats.map((s) => (
-                <div key={s.label} className={styles.stat}>
-                  {s.kind === 'ring' ? (
-                    <Ring value={s.value} />
-                  ) : (
+            <div
+              className={`${styles.panelInner} ${active.quotes.length ? '' : styles.figuresOnly}`}
+            >
+              <ul className={styles.stats}>
+                {active.stats.map((s) => (
+                  <li key={s.label} className={styles.stat}>
                     <span className={styles.statFigure}>{s.value}</span>
-                  )}
-                  <span className={styles.statLabel}>{s.label}</span>
-                </div>
-              ))}
+                    <span className={styles.statLabel}>
+                      {s.label}
+                      <Cite n={s.source} />
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {active.quotes.length ? (
+                <ul className={styles.quotes}>
+                  {active.quotes.map((q) => (
+                    <li key={q.attribution} className={styles.quote}>
+                      <blockquote className={styles.quoteText}>
+                        {q.text}
+                        <Cite n={q.source} />
+                      </blockquote>
+                      <p className={styles.quoteBy}>{q.attribution}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
           </div>
 
-          <p className={styles.source}>{METRICS_SOURCE}</p>
+          <ol className={styles.sources}>
+            {SOURCES.map((s, i) => (
+              <li key={s} className={styles.sourceItem}>
+                <span className={styles.sourceNum}>{i + 1}</span>
+                {s}
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -171,27 +198,12 @@ export default function Landing() {
   );
 }
 
-/** A percentage as a ring. Hand-drawn so it needs no charting dependency. */
-function Ring({ value }) {
-  const pct = Math.max(0, Math.min(100, parseInt(value, 10) || 0));
-  const r = 26;
-  const circumference = 2 * Math.PI * r;
+/** A superscript source marker, tied to the SOURCES list under the panel. */
+function Cite({ n }) {
+  if (!n) return null;
   return (
-    <span className={styles.ring}>
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <circle className={styles.ringTrack} cx="32" cy="32" r={r} />
-        <circle
-          className={styles.ringFill}
-          cx="32"
-          cy="32"
-          r={r}
-          style={{
-            strokeDasharray: circumference,
-            strokeDashoffset: circumference * (1 - pct / 100),
-          }}
-        />
-      </svg>
-      <span className={styles.ringValue}>{value}</span>
-    </span>
+    <sup className={styles.cite} aria-label={`Source ${n}`}>
+      {n}
+    </sup>
   );
 }

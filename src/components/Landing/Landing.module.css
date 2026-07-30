@@ -260,22 +260,63 @@
   animation: bcbFade 300ms var(--curveEasyEase) both;
 }
 
-.statGrid {
+/* Figures left, quotes right. The hairline between them is the only divider in
+   the panel — the stat rows separate themselves with their own rules. */
+.panelInner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+  gap: 48px;
+}
+
+.panelInner > .quotes {
+  padding-left: 48px;
+  border-left: 1px solid var(--colorNeutralStroke2);
+  margin-left: -24px;
+}
+
+/* The pillar with no quotes runs its figures two across instead, so the panel
+   keeps its proportions rather than leaving half of it empty. */
+.figuresOnly {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.figuresOnly .stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 36px 56px;
+  gap: 0 56px;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .stat {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--spacingHorizontalL);
-  min-width: 0;
+  padding: var(--spacingVerticalL) 0;
+  border-bottom: 1px solid var(--colorNeutralStroke2);
 }
 
+.stat:first-child {
+  padding-top: 0;
+}
+
+/* The last rule in each column would otherwise draw a line to nothing. */
+.stat:last-child,
+.figuresOnly .stat:nth-last-child(-n + 2) {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Fixed width so every label starts on the same x whatever the figure reads. */
 .statFigure {
   flex: none;
-  width: 64px;
+  width: 88px;
   font-size: 34px;
   line-height: 1;
   font-weight: var(--fontWeightSemibold);
@@ -290,52 +331,74 @@
   color: var(--colorNeutralForeground2);
 }
 
-/* Ring and figure share a 64px column so both stat kinds start their label at the
-   same x — the alignment rule applies inside components too. */
-.ring {
-  position: relative;
-  flex: none;
-  width: 64px;
-  height: 64px;
-}
+/* ---------------------------------- quotes ---------------------------------- */
 
-.ring svg {
-  width: 64px;
-  height: 64px;
-  transform: rotate(-90deg);
-}
-
-.ringTrack,
-.ringFill {
-  fill: none;
-  stroke-width: 6;
-}
-
-.ringTrack {
-  stroke: var(--colorNeutralStroke2);
-}
-
-.ringFill {
-  stroke: var(--colorBrandForeground1);
-  stroke-linecap: round;
-  transition: stroke-dashoffset var(--durationSlower) var(--curveEasyEase);
-}
-
-.ringValue {
-  position: absolute;
-  inset: 0;
+.quotes {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: var(--spacingVerticalXXL);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+}
+
+/* Left-aligned, unlike the live site, which centres them. Centred prose inside a
+   left-aligned page is a second alignment to explain, and ragged on both edges is
+   harder to read at this length. */
+.quoteText {
+  position: relative;
+  margin: 0;
+  padding-left: var(--spacingHorizontalL);
+  border-left: 2px solid var(--colorBrandStroke2);
   font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
+  line-height: 21px;
   color: var(--colorNeutralForeground1);
 }
 
-.source {
+.quoteBy {
+  margin: 0;
+  padding-left: calc(var(--spacingHorizontalL) + 2px);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground3);
+}
+
+/* -------------------------------- citations --------------------------------- */
+
+.cite {
+  margin-left: 2px;
+  font-size: 10px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorBrandForeground1);
+}
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   margin: var(--spacingVerticalL) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sourceItem {
+  display: flex;
+  gap: var(--spacingHorizontalS);
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
+}
+
+.sourceNum {
+  flex: none;
+  width: 12px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorBrandForeground1);
 }
 
 /* -------------------------------- what's new -------------------------------- */
@@ -442,8 +505,21 @@
   }
 
   .updates,
-  .statGrid {
+  .panelInner,
+  .figuresOnly .stats {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panelInner > .quotes {
+    padding-left: 0;
+    margin-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--colorNeutralStroke2);
+    padding-top: var(--spacingVerticalXXL);
+  }
+
+  .figuresOnly .stat:nth-last-child(2) {
+    border-bottom: 1px solid var(--colorNeutralStroke2);
   }
 
   .title {
