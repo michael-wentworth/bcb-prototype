@@ -185,9 +185,8 @@
   letter-spacing: -0.01em;
 }
 
-/* Colour carries the reading: brand for the headline ratio, green when the case
-   stands up, red when the scenario control breaks it, neutral for facts that
-   are neither good nor bad. */
+/* Colour carries the reading: brand for the headline ratio, green for the net
+   benefit, neutral for facts that are neither good nor bad. */
 .kpi_brand {
   background-color: var(--colorBrandBackground2);
   border-color: var(--colorBrandStroke2);
@@ -232,75 +231,6 @@
   min-width: 0;
 }
 
-.chartTitle {
-  margin: 0 0 var(--spacingVerticalS);
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--colorNeutralForeground3);
-}
-
-/* --------------------------------- control --------------------------------- */
-
-.control {
-  margin-top: var(--spacingVerticalXL);
-  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
-  border: 1px solid var(--colorNeutralStroke2);
-  border-radius: var(--borderRadiusMedium);
-  background-color: var(--colorNeutralBackground2);
-}
-
-.controlLabel {
-  display: block;
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground2);
-}
-
-.segments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: var(--spacingVerticalS);
-}
-
-.segment {
-  padding: 6px 12px;
-  border-radius: var(--borderRadiusMedium);
-  border: 1px solid var(--colorNeutralStroke1);
-  background-color: var(--colorNeutralBackground1);
-  font-family: inherit;
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground1);
-  cursor: pointer;
-  transition: background-color var(--durationFaster) var(--curveEasyEase);
-}
-
-.segment:hover {
-  background-color: var(--colorNeutralBackground1Hover);
-}
-
-.segment:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: 1px;
-}
-
-.segmentOn,
-.segmentOn:hover {
-  background-color: var(--colorBrandBackground);
-  border-color: var(--colorBrandBackground);
-  color: var(--colorNeutralForegroundOnBrand);
-}
-
-.controlNote {
-  margin: var(--spacingVerticalS) 0 0;
-  max-width: var(--bcb-landing-prose);
-  font-size: var(--fontSizeBase200);
-  line-height: 18px;
-  color: var(--colorNeutralForeground2);
-}
-
 /* ---------------------------------- bands ---------------------------------- */
 
 .band {
@@ -315,6 +245,14 @@
 
 .bandLast {
   border-bottom: none;
+}
+
+.foot {
+  margin: var(--spacingVerticalL) 0 0;
+  max-width: var(--bcb-landing-prose);
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
 }
 
 .sectionTitle {
@@ -465,77 +403,51 @@
   color: var(--colorNeutralForeground2);
 }
 
-.demo {
+.factsTitle {
+  margin: 0 0 var(--spacingVerticalM);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--colorNeutralForeground3);
+}
+
+/* Two figures the tool refuses to report, stated rather than demonstrated
+   through a control. Each pairs the number with why it is not the answer, so
+   neither can be read as a claim on its own. */
+.facts {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacingHorizontalXXL);
-  align-items: center;
-  padding: var(--spacingVerticalXL) var(--spacingHorizontalXL);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacingHorizontalL);
+  align-items: baseline;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
   border: 1px solid var(--colorNeutralStroke2);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
 }
 
-.demoTitle {
-  margin: 0;
-  font-size: var(--fontSizeBase400);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
-.demoBody {
-  margin: var(--spacingVerticalS) 0 var(--spacingVerticalL);
-  max-width: var(--bcb-landing-prose);
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
-  color: var(--colorNeutralForeground2);
-}
-
-.demoToggle {
-  padding: 7px 14px;
-  border-radius: var(--borderRadiusMedium);
-  border: 1px solid var(--colorNeutralStroke1);
-  background-color: var(--colorNeutralBackground1);
-  font-family: inherit;
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground1);
-  cursor: pointer;
-}
-
-.demoToggle:hover {
-  background-color: var(--colorNeutralBackground1Hover);
-}
-
-.demoToggle:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: 1px;
-}
-
-.demoFigure {
-  text-align: right;
-}
-
-.demoValue {
-  display: block;
-  font-size: 54px;
-  line-height: 58px;
+.factValue {
+  font-size: 34px;
+  line-height: 38px;
   font-weight: var(--fontWeightSemibold);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
-  color: var(--colorPaletteGreenForeground1);
-  transition: color var(--durationNormal) var(--curveEasyEase);
-}
-
-.demoValueBad {
   color: var(--colorPaletteRedForeground1);
 }
 
-.demoCaption {
-  display: block;
-  margin-top: 4px;
-  font-size: var(--fontSizeBase200);
-  line-height: 16px;
-  color: var(--colorNeutralForeground3);
+.factText {
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
 }
 
 /* ---------------------------------- close ---------------------------------- */
@@ -627,13 +539,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .demo {
+  .facts {
     grid-template-columns: 1fr;
     gap: var(--spacingVerticalL);
-  }
-
-  .demoFigure {
-    text-align: left;
   }
 
   .vendor {
@@ -646,9 +554,3 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .demoValue,
-  .segment {
-    transition: none;
-  }
-}

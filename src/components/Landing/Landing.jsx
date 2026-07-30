@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@fluentui/react-components';
 import { Add20Filled, ArrowRight16Regular } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
@@ -6,7 +6,7 @@ import { MY_CASES } from '../../data/caseLibrary.js';
 import { PILLARS } from '../../data/landing.js';
 import PaybackChart from '../ResultsDashboard/PaybackChart.jsx';
 import SpendComparison from '../ResultsDashboard/SpendComparison.jsx';
-import { CASE, LEDGER, SCENARIOS, EXCLUDED, money, pct } from '../../data/landingCase.js';
+import { CASE, LEDGER, STRESS, EXCLUDED, money, pct } from '../../data/landingCase.js';
 import styles from './Landing.module.css';
 
 /**
@@ -79,31 +79,19 @@ function Masthead({ onStart, onOpen }) {
 /* ---------------------------------- result --------------------------------- */
 
 /**
- * The fold: the answer, three figures, and the curve that explains them. The
- * scenario control sits with the figures it moves — the claim "payback is month
- * 23" has to be demonstrable where it is made, not five screens down.
+ * The fold: the answer, four figures, and the curve that explains them. Static —
+ * a landing page that asks a stranger to operate a control before they know what
+ * the product is reads as odd, so what the control used to demonstrate is stated
+ * under "What it will not do" instead.
  */
 function Result({ onOpen }) {
-  const [id, setId] = useState(SCENARIOS[0].id);
-  const active = SCENARIOS.find((s) => s.id === id) || SCENARIOS[0];
-  const positive = active.annualNetBenefit >= 0;
-
   return (
     <section className={styles.resultBand}>
       <div className={styles.grid}>
         <p className={styles.badge}>Worked example · Contoso Ltd. · figures in USD</p>
 
         <h2 className={styles.headline}>
-          {positive ? (
-            <>
-              Contoso could save <strong>{money(active.annualNetBenefit)}</strong> a year
-            </>
-          ) : (
-            <>
-              On these dates Contoso is{' '}
-              <strong>{money(Math.abs(active.annualNetBenefit))}</strong> a year worse off
-            </>
-          )}
+          Contoso could save <strong>{money(CASE.annualNetBenefit)}</strong> a year
         </h2>
         <p className={styles.subhead}>
           18,000 users · Manufacturing · {CASE.years}-year analysis
@@ -111,21 +99,13 @@ function Result({ onOpen }) {
 
         <div className={styles.resultLayout}>
           <ul className={styles.kpis}>
-            <Kpi tone="brand" label="Return on investment" value={pct(active.roi)} />
-            <Kpi
-              tone={positive ? 'good' : 'bad'}
-              label="Net benefit a year"
-              value={money(active.annualNetBenefit)}
-            />
-            <Kpi
-              tone="plain"
-              label="Payback"
-              value={active.paybackMonths ? `${active.paybackMonths} mo` : 'Never'}
-            />
+            <Kpi tone="brand" label="Return on investment" value={pct(CASE.roi)} />
+            <Kpi tone="good" label="Net benefit a year" value={money(CASE.annualNetBenefit)} />
+            <Kpi tone="plain" label="Payback" value={`${CASE.paybackMonths} months`} />
             <Kpi
               tone="plain"
               label="Vendors retired"
-              value={`${active.vendorsConsolidated} of ${CASE.vendorCount}`}
+              value={`${CASE.vendorsConsolidated} of ${CASE.vendorCount}`}
             />
           </ul>
 
@@ -138,30 +118,12 @@ function Result({ onOpen }) {
           </div>
         </div>
 
-        <div className={styles.control}>
-          <span className={styles.controlLabel} id="timing-label">
-            Try moving the contract end dates
-          </span>
-          <div className={styles.segments} role="group" aria-labelledby="timing-label">
-            {SCENARIOS.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                className={`${styles.segment} ${s.id === id ? styles.segmentOn : ''}`}
-                aria-pressed={s.id === id}
-                onClick={() => setId(s.id)}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-          <p className={styles.controlNote}>
-            {active.note}{' '}
-            <button type="button" className={styles.inlineLink} onClick={onOpen}>
-              Open the full report
-            </button>
-          </p>
-        </div>
+        <p className={styles.foot}>
+          Three contracts lapse during {CASE.startYear}; the fourth runs a year longer.{' '}
+          <button type="button" className={styles.inlineLink} onClick={onOpen}>
+            See the full report
+          </button>
+        </p>
       </div>
     </section>
   );
@@ -213,7 +175,7 @@ function WhatChanges() {
           </ul>
 
           <div className={styles.chartCard}>
-              <SpendComparison
+            <SpendComparison
               current={CASE.todayAnnualSpend ?? 0}
               future={CASE.futureAnnualSpend ?? 0}
               contractCount={CASE.vendorCount}
@@ -233,7 +195,6 @@ function WhatChanges() {
  * year one, because on day one every contract is still running.
  */
 function WhyTiming() {
-  const [inflated, setInflated] = useState(false);
   const peak = Math.max(...CASE.competitorByYear);
 
   return (
@@ -262,32 +223,29 @@ function WhyTiming() {
           ))}
         </ol>
 
-        <div className={styles.demo}>
-          <div>
-            <p className={styles.demoTitle}>And what it refuses to count</p>
-            <p className={styles.demoBody}>
-              Contoso already pays {money(EXCLUDED.annual)} a year for {EXCLUDED.bundleName} and
-              will keep paying it. Count that as a saving, as a spreadsheet built to flatter would,
-              and the same case reports a return ten times larger.
-            </p>
-            <button
-              type="button"
-              className={styles.demoToggle}
-              aria-pressed={inflated}
-              onClick={() => setInflated((v) => !v)}
-            >
-              {inflated ? 'Show the honest figure' : 'Count the existing licences as a saving'}
-            </button>
-          </div>
-          <div className={styles.demoFigure}>
-            <span className={`${styles.demoValue} ${inflated ? styles.demoValueBad : ''}`}>
-              {pct(inflated ? EXCLUDED.inflatedRoi : EXCLUDED.honestRoi)}
+        {/* Both of these were interactive controls. They are stated instead: a
+            landing page that asks a stranger to operate widgets before they know
+            what the product is reads as odd, and neither argument needs a click
+            to land. */}
+        <p className={styles.factsTitle}>What it will not do</p>
+        <ul className={styles.facts}>
+          <li className={styles.fact}>
+            <span className={styles.factValue}>{pct(EXCLUDED.inflatedRoi)}</span>
+            <span className={styles.factText}>
+              What this case would report if the {money(EXCLUDED.annual)} a year Contoso already
+              spends on {EXCLUDED.bundleName} were counted as a saving. It is not — that spend
+              continues either way.
             </span>
-            <span className={styles.demoCaption}>
-              {inflated ? 'What an inflated case looks like' : 'Counting only spend that stops'}
+          </li>
+          <li className={styles.fact}>
+            <span className={styles.factValue}>{pct(STRESS.roi)}</span>
+            <span className={styles.factText}>
+              What the same case reports if no contract lapses before {STRESS.year}. Nothing can be
+              switched off, so there is nothing to save — and the tool says so rather than finding
+              a saving anyway.
             </span>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     </section>
   );

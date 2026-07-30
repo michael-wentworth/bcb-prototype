@@ -113,61 +113,30 @@ export const INVESTMENT = input.skus.map((row) => {
  * case goes negative and reports no payback at all. A worked example that can
  * only ever look good proves nothing about the tool that produced it.
  */
-const shifted = (rows) => rows.map((r) => ({ ...r, yearContractEnds: '2028' }));
-
 /**
- * Pull whichever contract runs longest back to the first year. Selected by date
- * rather than by product name so the scenario keeps working if the seeded case
- * changes, and so no competitor brand is referenced to build it.
+ * What the same case reports when no contract lapses inside the horizon.
+ *
+ * This used to drive an interactive control on the page. It is now a stated
+ * fact, because a landing page asking a stranger to operate a widget before
+ * they know what the product is reads as odd — but the point it made is worth
+ * keeping. A tool that can only ever produce a flattering answer proves nothing
+ * about the answer it produced, and this one will report a case that fails.
+ *
+ * The last analysis year is used as the end date: benefit starts the year AFTER
+ * a contract lapses, so one ending then is already outside the horizon.
  */
-const renewEarly = (rows) => {
-  const latest = Math.max(...rows.map((r) => Number(r.yearContractEnds) || 0));
-  let done = false;
-  return rows.map((r) => {
-    if (done || Number(r.yearContractEnds) !== latest) return r;
-    done = true;
-    return { ...r, yearContractEnds: String(CASE_START_YEAR) };
-  });
-};
+const stressYear = String(CASE_START_YEAR + base.years - 1);
+const stressed = compute(
+  input.competitors.rows.map((r) => ({ ...r, yearContractEnds: stressYear })),
+);
 
-const scenario = (id, label, note, rows) => {
-  const r = compute(rows);
-  return {
-    id,
-    label,
-    note,
-    roi: r.roi,
-    paybackMonths: r.paybackMonths,
-    annualNetBenefit: r.annualNetBenefit,
-    benefitTotal: r.benefitTotal,
-    competitorByYear: r.competitorByYear,
-    // Moves with the scenario. Pushed to 2028 nothing is displaceable inside the
-    // horizon, so this drops to 0 — a tile still reading "4 of 4" beside a
-    // negative return would be the page contradicting itself in one glance.
-    vendorsConsolidated: r.vendorsConsolidated,
-  };
+export const STRESS = {
+  year: stressYear,
+  roi: stressed.roi,
+  paybackMonths: stressed.paybackMonths,
+  annualNetBenefit: stressed.annualNetBenefit,
+  vendorsConsolidated: stressed.vendorsConsolidated,
 };
-
-export const SCENARIOS = [
-  scenario(
-    'actual',
-    'As it stands',
-    'Three contracts lapse during 2026; the fourth runs a year longer.',
-    input.competitors.rows,
-  ),
-  scenario(
-    'early',
-    'The longest contract ends sooner',
-    'Bring that renewal forward a year and another year of spend becomes displaceable.',
-    renewEarly(input.competitors.rows),
-  ),
-  scenario(
-    'late',
-    'Every contract runs to 2028',
-    'Nothing can be switched off inside the analysis period, so there is nothing to save.',
-    shifted(input.competitors.rows),
-  ),
-];
 
 /* --------------------------- what is not counted --------------------------- */
 
