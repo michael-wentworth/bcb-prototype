@@ -7,7 +7,9 @@ import {
   ShieldCheckmark20Regular,
 } from '@fluentui/react-icons';
 import { EXAMPLE_CASES, caseMetrics } from '../../data/caseLibrary.js';
-import { currencySymbol, geographyById } from '../../data/referenceData.js';
+import { currencySymbolFor, geographyById } from '../../data/referenceData.js';
+
+const currencyOf = (e) => geographyById(e.input.customer.geography)?.currency || 'USD';
 import { formatCurrency, formatPercent } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import styles from './Placeholder.module.css';
@@ -81,9 +83,7 @@ function ExampleCases() {
       <div className={styles.grid}>
         {EXAMPLE_CASES.map((entry) => {
           const m = caseMetrics(entry);
-          const symbol = currencySymbol(
-            geographyById(entry.input.customer.geography)?.currency || 'USD',
-          );
+          const symbol = currencySymbolFor(currencyOf(entry), EXAMPLE_CASES.map(currencyOf));
           return (
             <Card key={entry.id} className={styles.card}>
               <button type="button" className={styles.cardHit} onClick={() => openCase(entry)}>

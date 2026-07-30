@@ -356,12 +356,48 @@ export const COMPETITOR_MATRIX = [
 
 /* --------------------------------- Currency -------------------------------- */
 
+/* Bare symbols. Every figure inside one business case is in one currency, and the
+   code is stated once per context — in the case band, on step 1's Currency field
+   and in the report's assumptions — so repeating "US$" on every number is noise a
+   reader has to look past. */
 export const CURRENCY_SYMBOLS = {
+  USD: '$',
+  GBP: '£',
+  EUR: '€',
+  JPY: '¥',
+  AUD: '$',
+  CAD: '$',
+};
+
+/* The qualified forms, used only where disambiguation is genuinely required. */
+export const CURRENCY_SYMBOLS_QUALIFIED = {
   USD: 'US$',
   GBP: '£',
   EUR: '€',
   JPY: '¥',
   AUD: 'A$',
+  CAD: 'CA$',
 };
 
-export const currencySymbol = (code) => CURRENCY_SYMBOLS[code] || 'US$';
+/** Currencies that share the dollar sign, and so can collide with each other. */
+const DOLLARS = new Set(['USD', 'AUD', 'CAD', 'NZD', 'SGD', 'HKD']);
+
+export const currencySymbol = (code) => CURRENCY_SYMBOLS[code] || '$';
+
+/**
+ * The symbol to use for `code` given every currency visible alongside it.
+ *
+ * A lone dollar currency needs no qualifier; two of them side by side do. Pound
+ * and euro never need one — they cannot be confused with anything. So a list of
+ * USD, GBP and EUR cases renders $, £, € and stays quiet, while adding an
+ * Australian case promotes only the dollar figures to US$ and A$.
+ *
+ * Derived from what is actually on screen rather than hard-coded, so it stays
+ * correct as the data changes.
+ */
+export const currencySymbolFor = (code, codesInView = []) => {
+  const dollars = new Set(codesInView.filter((c) => DOLLARS.has(c)));
+  return dollars.size > 1 && DOLLARS.has(code)
+    ? CURRENCY_SYMBOLS_QUALIFIED[code] || currencySymbol(code)
+    : currencySymbol(code);
+};

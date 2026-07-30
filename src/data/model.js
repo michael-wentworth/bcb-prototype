@@ -155,7 +155,7 @@ export function buildBusinessCase({
 
 /* ------------------------------- Formatters -------------------------------- */
 
-export function formatCurrency(value, { compact = true, symbol = 'US$' } = {}) {
+export function formatCurrency(value, { compact = true, symbol = '$' } = {}) {
   if (value == null || Number.isNaN(value)) return '—';
   const abs = Math.abs(value);
   const sign = value < 0 ? '−' : '';

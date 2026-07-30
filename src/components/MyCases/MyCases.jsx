@@ -21,10 +21,14 @@ import {
   Sparkle16Filled,
 } from '@fluentui/react-icons';
 import { CASE_STATUS, EXAMPLE_CASES, MY_CASES, caseMetrics } from '../../data/caseLibrary.js';
-import { currencySymbol, geographyById } from '../../data/referenceData.js';
+import { currencySymbolFor, geographyById } from '../../data/referenceData.js';
 import { formatCurrency, formatPercent } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import styles from './MyCases.module.css';
+
+/* A qualified symbol is only needed when two dollar currencies are on screen
+   together — the list below mixes USD, GBP and EUR, which never collide. */
+const currencyOf = (e) => geographyById(e.input.customer.geography)?.currency || 'USD';
 
 const TABS = [
   { id: 'all', label: 'All' },
@@ -154,7 +158,12 @@ export default function MyCases() {
       ) : (
         <ul className={styles.list}>
           {visible.map((entry) => (
-            <CaseRow key={entry.id} entry={entry} onOpen={() => openCase(entry)} />
+            <CaseRow
+              key={entry.id}
+              entry={entry}
+              codesInView={visible.map(currencyOf)}
+              onOpen={() => openCase(entry)}
+            />
           ))}
         </ul>
       )}
@@ -171,11 +180,9 @@ export default function MyCases() {
           </Button>
         </div>
         <div className={styles.exampleGrid}>
-          {EXAMPLE_CASES.slice(0, 3).map((entry) => {
+          {EXAMPLE_CASES.slice(0, 3).map((entry, _i, shown) => {
             const m = caseMetrics(entry);
-            const symbol = currencySymbol(
-              geographyById(entry.input.customer.geography)?.currency || 'USD',
-            );
+            const symbol = currencySymbolFor(currencyOf(entry), shown.map(currencyOf));
             return (
               <button
                 key={entry.id}
@@ -201,10 +208,10 @@ export default function MyCases() {
 
 /* -------------------------------------------------------------------------- */
 
-function CaseRow({ entry, onOpen }) {
+function CaseRow({ entry, onOpen, codesInView = [] }) {
   const m = caseMetrics(entry);
   const status = CASE_STATUS[entry.status] || CASE_STATUS.draft;
-  const symbol = currencySymbol(geographyById(entry.input.customer.geography)?.currency || 'USD');
+  const symbol = currencySymbolFor(currencyOf(entry), codesInView);
 
   return (
     <li className={styles.row}>

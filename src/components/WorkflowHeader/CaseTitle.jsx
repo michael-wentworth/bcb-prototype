@@ -18,7 +18,7 @@ import styles from './CaseTitle.module.css';
  * and writing on every keystroke makes those headings flicker letter by letter.
  */
 export default function CaseTitle({ renaming, onStartRename, onEndRename }) {
-  const { caseSetup, customer, activeCaseStatus, setCaseSetup } = useAppState();
+  const { caseSetup, customer, activeCaseStatus, currency, setCaseSetup } = useAppState();
   const name = caseSetup.name || '';
   const [draft, setDraft] = useState(name);
   const inputRef = useRef(null);
@@ -38,9 +38,12 @@ export default function CaseTitle({ renaming, onStartRename, onEndRename }) {
 
   // Read-only here on purpose: changing the analysis period rebuilds every SKU
   // row's seat schedule, so it belongs on step 1 beside the table it reshapes.
+  // The currency code is stated here, once, so every figure on every step can be
+  // written with a bare symbol instead of repeating "US$" on each one.
   const meta = [
     customer.accountName,
     caseSetup.analysisPeriod ? `${caseSetup.analysisPeriod}-year` : '',
+    currency,
     CASE_STATUS[activeCaseStatus]?.label,
   ]
     .filter(Boolean)
