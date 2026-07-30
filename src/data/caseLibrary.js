@@ -12,7 +12,6 @@ import { CURRENT_USER } from './session.js';
 
 export const CASE_STATUS = {
   draft: { label: 'Draft', color: 'informative' },
-  'in-review': { label: 'In review', color: 'warning' },
   published: { label: 'Published', color: 'success' },
 };
 
@@ -68,7 +67,7 @@ export const MY_CASES = [
     title: 'Northwind Traders — Endpoint Displacement',
     customer: 'Northwind Traders',
     industry: 'Retail & consumer goods',
-    status: 'in-review',
+    status: 'draft',
     owner: CURRENT_USER,
     modified: 'Yesterday',
     modifiedOrder: 1,

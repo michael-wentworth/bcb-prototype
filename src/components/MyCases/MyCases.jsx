@@ -33,7 +33,6 @@ const currencyOf = (e) => geographyById(e.input.customer.geography)?.currency ||
 const TABS = [
   { id: 'all', label: 'All' },
   { id: 'draft', label: 'Drafts' },
-  { id: 'in-review', label: 'In review' },
   { id: 'published', label: 'Published' },
   { id: 'shared', label: 'Shared with me' },
 ];
@@ -58,7 +57,6 @@ export default function MyCases() {
     () => ({
       all: MY_CASES.length,
       draft: MY_CASES.filter((c) => c.status === 'draft').length,
-      'in-review': MY_CASES.filter((c) => c.status === 'in-review').length,
       published: MY_CASES.filter((c) => c.status === 'published').length,
       shared: MY_CASES.filter((c) => c.shared).length,
     }),
