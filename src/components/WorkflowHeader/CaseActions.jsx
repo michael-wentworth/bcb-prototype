@@ -23,7 +23,6 @@ import {
   useToastController,
 } from '@fluentui/react-components';
 import {
-  ArrowLeft20Regular,
   ArrowReset20Regular,
   DocumentPdf20Regular,
   MoreHorizontal20Regular,
@@ -47,7 +46,7 @@ import styles from './CaseActions.module.css';
  * one you must already know about to look for.
  */
 export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
-  const { setView, goToStep, reset } = useAppState();
+  const { goToStep, reset } = useAppState();
   const [confirmReset, setConfirmReset] = useState(false);
 
   const toasterId = useId('case-actions-toaster');
@@ -134,12 +133,6 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
 
             <MenuDivider />
 
-            {/* The builder had no in-context way out — the only exit was the
-                global nav item, which is a destination rather than "leave this
-                case". */}
-            <MenuItem icon={<ArrowLeft20Regular />} onClick={() => setView('myCases')}>
-              Back to My cases
-            </MenuItem>
             <MenuItem icon={<ArrowReset20Regular />} onClick={() => setConfirmReset(true)}>
               Start over
             </MenuItem>

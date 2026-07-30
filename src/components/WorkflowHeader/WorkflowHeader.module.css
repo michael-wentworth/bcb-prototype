@@ -21,7 +21,7 @@
   container-name: bcbBand;
   flex: none;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   column-gap: var(--spacingHorizontalL);
   height: var(--bcb-subheader-height);
@@ -35,4 +35,11 @@
      892 -> un-trips. Never make this width-dependent from inside @container. */
   padding: 0 var(--spacingHorizontalXXL);
   z-index: 2;
+}
+
+/* Pulled left by its own padding so the arrow's glyph, not its hit area, lines up
+   with the band's edge — otherwise it reads as indented from everything below. */
+.back {
+  flex: none;
+  margin-left: calc(var(--spacingHorizontalS) * -1);
 }
