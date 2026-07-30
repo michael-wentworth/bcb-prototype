@@ -24,7 +24,7 @@ export const STEP_SUGGESTIONS = [
   [
     { label: 'Which SKUs match the outcomes I selected?' },
     { label: 'Detect the competitor products in this estate' },
-    { label: 'Why does "Year Contract Ends" matter?' },
+    { label: 'Why does "Year contract ends" matter?' },
   ],
   [
     { label: 'How did you calculate the ROI?' },
@@ -64,7 +64,7 @@ export function getStepIntro(stepIndex) {
           {
             type: 'callout',
             tone: 'coach',
-            title: 'Year Contract Ends is the field people skip',
+            title: 'Year contract ends is the field people skip',
             text: 'A competitor contract running past the analysis period contributes nothing — the customer is still paying for it. Getting those years right is what stops a case overstating savings.',
           },
         ],
@@ -258,8 +258,8 @@ const INTENTS = [
     delay: 1900,
     build: (input, ctx) => {
       const gaps = [];
-      if (!ctx.customer.numberOfUsers) gaps.push('**Number of Users** — nothing can be priced without it.');
-      if (!ctx.caseSetup.name) gaps.push('**Business Case Name** — the identifier this case is saved under.');
+      if (!ctx.customer.numberOfUsers) gaps.push('**Number of users** — nothing can be priced without it.');
+      if (!ctx.caseSetup.name) gaps.push('**Business case name** — the identifier this case is saved under.');
       if (ctx.outcomes.length === 0) gaps.push('**Security outcomes** — what the customer is actually trying to fix.');
       if (ctx.skus.length === 0) gaps.push('**At least one SKU** — there is no investment to return on yet.');
       if (ctx.skus.some((s) => !s.pricePerMonth)) gaps.push('**Price per month** — missing on one or more SKUs, so those rows add no cost to the model.');
@@ -320,7 +320,7 @@ const INTENTS = [
             items: [
               { label: 'Total benefit', value: money(c.benefitTotal), caption: `${c.years} year${c.years === 1 ? '' : 's'}` },
               { label: 'Microsoft investment', value: money(c.investmentTotal), caption: `${c.years} year${c.years === 1 ? '' : 's'}` },
-              { label: 'Net', value: money(c.netBenefit), caption: 'benefit − investment', tone: c.netBenefit >= 0 ? 'positive' : 'neutral' },
+              { label: 'Net', value: money(c.netBenefit), caption: 'Benefit − investment', tone: c.netBenefit >= 0 ? 'positive' : 'neutral' },
             ],
           },
           {
@@ -366,7 +366,7 @@ const INTENTS = [
             {
               objection: '"Your savings assume we actually turn the incumbent off."',
               response:
-                'Correct, and that is what the Year Contract Ends field is for. Every saving in this case is dated to a contract lapse rather than assumed on day one — show them the table.',
+                'Correct, and that is what the Year contract ends field is for. Every saving in this case is dated to a contract lapse rather than assumed on day one — show them the table.',
             },
             {
               objection: '"Defender is not as good as our best-of-breed tool."',
@@ -398,10 +398,10 @@ const INTENTS = [
         {
           type: 'bullets',
           items: [
-            '**Number of Users** — every per-user price multiplies through it.',
-            '**Analysis Period** — sets how many years of saving the case can count.',
-            '**Competitor Cost** — the largest single benefit line in most cases.',
-            '**Year Contract Ends** — a saving starts only when that contract lapses, so this decides how much of it lands inside the horizon.',
+            '**Number of users** — every per-user price multiplies through it.',
+            '**Analysis period** — sets how many years of saving the case can count.',
+            '**Competitor cost** — the largest single benefit line in most cases.',
+            '**Year contract ends** — a saving starts only when that contract lapses, so this decides how much of it lands inside the horizon.',
           ],
         },
       ],
@@ -450,7 +450,7 @@ const FALLBACKS = [
         type: 'actions',
         items: [
           { label: 'Which SKUs match the outcomes I selected?', kind: 'prompt' },
-          { label: 'Why does "Year Contract Ends" matter?', kind: 'prompt' },
+          { label: 'Why does "Year contract ends" matter?', kind: 'prompt' },
         ],
       },
     ],

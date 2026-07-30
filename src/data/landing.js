@@ -64,7 +64,7 @@ export const PILLARS = [
       },
       {
         text: 'We went from five engineers managing IAM (identity and access management) tools to just one. Microsoft Entra Suite unified our stack and freed up resources for higher-value work.',
-        attribution: 'Chief Financial Officer and VP of strategy, technology',
+        attribution: 'Chief financial officer and VP of strategy, technology',
         source: 2,
       },
     ],
@@ -95,7 +95,7 @@ export const PILLARS = [
     quotes: [
       {
         text: 'eDiscovery work previously took a total of 40 hours per week across legal, audit, and security teams. Now it takes 15 hours per week (a 63% reduction) … with a “single pane of glass” view of compliance.',
-        attribution: 'VP of IT and Cybersecurity, information services',
+        attribution: 'VP of IT and cybersecurity, information services',
         source: 2,
       },
       {

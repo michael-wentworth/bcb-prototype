@@ -50,10 +50,10 @@ export default function CustomerDetails() {
 
       {/* ------------------------ Customer Information ------------------------ */}
       <Card className={styles.card}>
-        <h2 className={styles.cardTitle}>Customer Information</h2>
+        <h2 className={styles.cardTitle}>Customer information</h2>
 
         <div className={styles.grid}>
-          <FormField label="Account Name" required meta={fieldMeta.accountName}>
+          <FormField label="Account name" required meta={fieldMeta.accountName}>
             {(id) => (
               <>
                 <Input
@@ -89,7 +89,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Opportunity Name" required meta={fieldMeta.opportunityName}>
+          <FormField label="Opportunity name" required meta={fieldMeta.opportunityName}>
             {(id) => (
               <>
                 <Input
@@ -128,7 +128,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Opportunity Close Date">
+          <FormField label="Opportunity close date">
             {(id) => (
               <Input
                 id={id}
@@ -160,7 +160,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Geography (Region)" required meta={fieldMeta.geography}>
+          <FormField label="Geography (region)" required meta={fieldMeta.geography}>
             {(id) => (
               <Dropdown
                 id={id}
@@ -182,7 +182,7 @@ export default function CustomerDetails() {
             {(id) => <Input id={id} value={customer.geography ? currency : '—'} disabled />}
           </FormField>
 
-          <FormField label="Customer Segment" required meta={fieldMeta.segment}>
+          <FormField label="Customer segment" required meta={fieldMeta.segment}>
             {(id) => (
               <Dropdown
                 id={id}
@@ -200,7 +200,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Primary Sales Motion" required meta={fieldMeta.salesMotion}>
+          <FormField label="Primary sales motion" required meta={fieldMeta.salesMotion}>
             {(id) => (
               <Dropdown
                 id={id}
@@ -219,7 +219,7 @@ export default function CustomerDetails() {
           </FormField>
 
           <FormField
-            label="Number of Users"
+            label="Number of users"
             required
             help="Used for pricing and benefit calculations"
             meta={fieldMeta.numberOfUsers}
@@ -234,7 +234,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Customer Website" span={false}>
+          <FormField label="Customer website" span={false}>
             {(id) => (
               <Input
                 id={id}
@@ -246,7 +246,7 @@ export default function CustomerDetails() {
           </FormField>
 
           <FormField
-            label="Number of Devices"
+            label="Number of devices"
             help={
               effectiveDevices > 0 && !customer.numberOfDevices
                 ? `Defaults to 1.2 × users — ${effectiveDevices.toLocaleString('en-US')} devices`
@@ -299,10 +299,10 @@ export default function CustomerDetails() {
 
       {/* ------------------------ Customer Environment ------------------------ */}
       <Card className={styles.card}>
-        <h2 className={styles.cardTitle}>Customer Environment</h2>
+        <h2 className={styles.cardTitle}>Customer environment</h2>
         <div className={styles.grid}>
           <FormField
-            label="Existing MS Licenses"
+            label="Existing MS licenses"
             required
             help="Drives SKU recommendations and upsell logic"
           >
@@ -318,7 +318,7 @@ export default function CustomerDetails() {
           </FormField>
 
           <FormField
-            label="Competitor Products"
+            label="Competitor products"
             help="Drives competitive displacement scenarios and TCO comparison (optional)"
           >
             {(id) => (
@@ -334,7 +334,7 @@ export default function CustomerDetails() {
           </FormField>
 
           <FormField
-            label="Current Security Stack"
+            label="Current security stack"
             required
             help="Drives competitive displacement recommendations"
           >
@@ -349,7 +349,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Seller Alias">
+          <FormField label="Seller alias">
             {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
           </FormField>
         </div>
@@ -357,10 +357,10 @@ export default function CustomerDetails() {
 
       {/* ------------------------- Business Case Setup ------------------------ */}
       <Card className={styles.card}>
-        <h2 className={styles.cardTitle}>Business Case Setup</h2>
+        <h2 className={styles.cardTitle}>Business case setup</h2>
         <div className={styles.grid}>
           <FormField
-            label="Business Case Name"
+            label="Business case name"
             required
             help="Up to 100 characters."
           >
@@ -376,7 +376,7 @@ export default function CustomerDetails() {
           </FormField>
 
           <FormField
-            label="Analysis Period (Years)"
+            label="Analysis period (years)"
             required
             help="Determines the horizon for cost, benefit, ROI and reporting — and how many years of seats you enter per SKU"
           >

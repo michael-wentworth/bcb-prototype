@@ -138,7 +138,7 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
                 global nav item, which is a destination rather than "leave this
                 case". */}
             <MenuItem icon={<ArrowLeft20Regular />} onClick={() => setView('myCases')}>
-              Back to My Cases
+              Back to My cases
             </MenuItem>
             <MenuItem icon={<ArrowReset20Regular />} onClick={() => setConfirmReset(true)}>
               Start over

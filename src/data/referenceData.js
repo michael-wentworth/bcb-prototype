@@ -23,15 +23,15 @@ export const STEPS = [
 
 export const INDUSTRIES = [
   'Manufacturing',
-  'Financial Services',
-  'Healthcare & Life Sciences',
-  'Retail & Consumer Goods',
-  'Energy & Resources',
-  'Public Sector',
-  'Professional Services',
+  'Financial services',
+  'Healthcare & life sciences',
+  'Retail & consumer goods',
+  'Energy & resources',
+  'Public sector',
+  'Professional services',
   'Telecommunications',
   'Education',
-  'Transportation & Logistics',
+  'Transportation & logistics',
 ];
 
 /** Geography drives Currency — the product auto-populates it, so we do too. */
@@ -52,17 +52,17 @@ export const geographyById = (id) => GEOGRAPHIES.find((g) => g.id === id);
 export const CUSTOMER_SEGMENTS = [
   'Enterprise',
   'Corporate',
-  'Small, Medium & Corporate',
-  'Public Sector',
+  'Small, medium & corporate',
+  'Public sector',
   'Education',
-  'Small & Medium Business',
+  'Small & medium business',
 ];
 
 export const SALES_MOTIONS = [
   'New workload / greenfield',
   'Upsell to existing estate',
   'Competitive displacement',
-  'Renewal / true-up',
+  'Renewal / True-up',
   'Consolidation',
 ];
 
@@ -99,13 +99,13 @@ export const EXISTING_MS_LICENSES = [
   'Enterprise Mobility + Security E3',
   'Enterprise Mobility + Security E5',
   'Microsoft 365 E5 Security',
-  'None / not standardised',
+  'None / Not standardised',
 ];
 
 export const SECURITY_STACK_CATEGORIES = [
   'Endpoint protection (EDR/EPP)',
   'Identity & access management',
-  'SIEM / security analytics',
+  'SIEM / Security analytics',
   'Email & collaboration security',
   'Cloud security posture (CSPM)',
   'Data loss prevention',
@@ -121,8 +121,8 @@ export const COMPETITOR_CATALOG = [
   { name: 'SentinelOne Singularity', category: 'Endpoint protection (EDR/EPP)' },
   { name: 'Okta Workforce Identity', category: 'Identity & access management' },
   { name: 'Ping Identity', category: 'Identity & access management' },
-  { name: 'Splunk Enterprise Security', category: 'SIEM / security analytics' },
-  { name: 'IBM QRadar', category: 'SIEM / security analytics' },
+  { name: 'Splunk Enterprise Security', category: 'SIEM / Security analytics' },
+  { name: 'IBM QRadar', category: 'SIEM / Security analytics' },
   { name: 'Proofpoint Email Protection', category: 'Email & collaboration security' },
   { name: 'Mimecast', category: 'Email & collaboration security' },
   { name: 'Wiz', category: 'Cloud security posture (CSPM)' },
@@ -143,51 +143,51 @@ export const COMPETITOR_CATALOG = [
 export const SECURITY_OUTCOMES = [
   {
     id: 'identity',
-    label: 'Identity and Access Management Protection',
+    label: 'Identity and access management protection',
     detail:
       'Prevent unauthorized access and reduce identity-based breaches by enforcing Zero Trust principles.',
     implies: ['entra-p2'],
   },
   {
     id: 'threat',
-    label: 'Threat Detection & Response (SOC/SIEM/XDR)',
+    label: 'Threat detection & response (SOC/SIEM/XDR)',
     detail: 'Detect and respond to threats faster while improving SOC efficiency.',
     implies: ['defender-xdr', 'sentinel'],
   },
   {
     id: 'data',
-    label: 'Data Security and Compliance',
+    label: 'Data security and compliance',
     detail: 'Protect sensitive data and reduce risk of data leaks or compliance violations.',
     implies: ['purview'],
   },
   {
     id: 'endpoint',
-    label: 'End Point and Device Security',
+    label: 'End point and device security',
     detail: 'Reduce endpoint compromise and improve device visibility and control.',
     implies: ['defender-endpoint', 'intune'],
   },
   {
     id: 'cloud',
-    label: 'Cloud & Application Security',
+    label: 'Cloud & application security',
     detail: 'Secure cloud workloads and applications while reducing misconfiguration risk.',
     implies: ['defender-cloud'],
   },
   {
     id: 'ai-security',
-    label: 'AI-Powered Security (Security Copilot)',
+    label: 'AI-powered security (Security Copilot)',
     detail:
       'Increase security team productivity and reduce time to detect and respond using AI.',
     implies: ['security-copilot'],
   },
   {
     id: 'consolidation',
-    label: 'Reduce Cost and Vendor Consolidation',
+    label: 'Reduce cost and vendor consolidation',
     detail: 'Replace multiple tools and point solutions with a unified platform solution.',
     implies: ['m365-e5'],
   },
   {
     id: 'agents',
-    label: 'Security and AI Agents Control Plane (Agent 365)',
+    label: 'Security and AI agents control plane (Agent 365)',
     detail:
       'Secure and govern AI agents while improving automation, visibility, and control across agent-driven workflows.',
     implies: ['agent-365'],
@@ -329,28 +329,28 @@ export const bundleById = (id) => MS_BUNDLES.find((b) => b.id === id);
 
 /** Software solution categories used when mapping a competitor product. */
 export const SOFTWARE_SOLUTIONS = [
-  'Endpoint Protection',
-  'Identity & Access',
+  'Endpoint protection',
+  'Identity & access',
   'SIEM / SOC',
-  'Email Security',
-  'Cloud Security',
-  'Data Loss Prevention',
-  'Privileged Access',
+  'Email security',
+  'Cloud security',
+  'Data loss prevention',
+  'Privileged access',
   'Network / SASE',
-  'Vulnerability Management',
+  'Vulnerability management',
 ];
 
 /** Suggested Microsoft replacement per software solution, for the matrix view. */
 export const COMPETITOR_MATRIX = [
-  { solution: 'Endpoint Protection', competitors: 'CrowdStrike, SentinelOne, Trellix', microsoft: 'Microsoft Defender for Endpoint P2' },
-  { solution: 'Identity & Access', competitors: 'Okta, Ping Identity, ForgeRock', microsoft: 'Microsoft Entra ID P2' },
+  { solution: 'Endpoint protection', competitors: 'CrowdStrike, SentinelOne, Trellix', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { solution: 'Identity & access', competitors: 'Okta, Ping Identity, ForgeRock', microsoft: 'Microsoft Entra ID P2' },
   { solution: 'SIEM / SOC', competitors: 'Splunk, QRadar, Chronicle', microsoft: 'Microsoft Sentinel' },
-  { solution: 'Email Security', competitors: 'Proofpoint, Mimecast, Abnormal', microsoft: 'Microsoft Defender for Office 365 P2' },
-  { solution: 'Cloud Security', competitors: 'Wiz, Prisma Cloud, Orca', microsoft: 'Microsoft Defender for Cloud' },
-  { solution: 'Data Loss Prevention', competitors: 'Symantec DLP, Forcepoint', microsoft: 'Microsoft Purview' },
-  { solution: 'Privileged Access', competitors: 'CyberArk, Delinea', microsoft: 'Microsoft Entra Suite' },
+  { solution: 'Email security', competitors: 'Proofpoint, Mimecast, Abnormal', microsoft: 'Microsoft Defender for Office 365 P2' },
+  { solution: 'Cloud security', competitors: 'Wiz, Prisma Cloud, Orca', microsoft: 'Microsoft Defender for Cloud' },
+  { solution: 'Data loss prevention', competitors: 'Symantec DLP, Forcepoint', microsoft: 'Microsoft Purview' },
+  { solution: 'Privileged access', competitors: 'CyberArk, Delinea', microsoft: 'Microsoft Entra Suite' },
   { solution: 'Network / SASE', competitors: 'Zscaler, Netskope', microsoft: 'Microsoft Entra Internet Access' },
-  { solution: 'Vulnerability Management', competitors: 'Tenable, Qualys, Rapid7', microsoft: 'Microsoft Defender Vulnerability Management' },
+  { solution: 'Vulnerability management', competitors: 'Tenable, Qualys, Rapid7', microsoft: 'Microsoft Defender Vulnerability Management' },
 ];
 
 /* --------------------------------- Currency -------------------------------- */

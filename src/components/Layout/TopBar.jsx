@@ -25,12 +25,12 @@ import styles from './TopBar.module.css';
  * create button on the page itself.
  */
 const NAV_ITEMS = [
-  { id: 'myCases', label: 'My Cases' },
-  { id: 'examples', label: 'Example Cases' },
+  { id: 'myCases', label: 'My cases' },
+  { id: 'examples', label: 'Example cases' },
 ];
 
 const RESOURCES = [
-  { id: 'studies', label: 'Analyst Studies' },
+  { id: 'studies', label: 'Analyst studies' },
   { id: 'learning', label: 'Learning' },
 ];
 

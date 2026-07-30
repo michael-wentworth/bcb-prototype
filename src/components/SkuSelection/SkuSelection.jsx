@@ -151,7 +151,7 @@ export default function SkuSelection() {
               </FormField>
 
               <div className={styles.skuMeta}>
-                <FormField label="Solution Area">
+                <FormField label="Solution area">
                   {(id) => (
                     <Dropdown
                       id={id}
@@ -168,7 +168,7 @@ export default function SkuSelection() {
                     </Dropdown>
                   )}
                 </FormField>
-                <FormField label="Solution Play">
+                <FormField label="Solution play">
                   {(id) => (
                     <Dropdown
                       id={id}
@@ -254,7 +254,7 @@ export default function SkuSelection() {
           new spend.
         </p>
         <div className={styles.bundleGrid}>
-          <FormField label="Choose your customer's current Microsoft Bundle">
+          <FormField label="Choose your customer's current Microsoft bundle">
             {(id) => (
               <Dropdown
                 id={id}
@@ -348,7 +348,7 @@ function CompetitorProducts({
     <Card className={styles.card}>
       <div className={styles.cardHead}>
         <div>
-          <h2 className={styles.cardTitle}>Competitor Products</h2>
+          <h2 className={styles.cardTitle}>Competitor products</h2>
           <p className={styles.cardLead}>
             Search for a competitor product or enter one that is not in our database. New
             competitors are saved to this customer account only.
@@ -377,7 +377,7 @@ function CompetitorProducts({
       <p className={styles.subHead}>Add a competitor product</p>
 
       <div className={styles.compForm}>
-        <FormField label="Software Solution">
+        <FormField label="Software solution">
           {(id) => (
             <Dropdown
               id={id}
@@ -394,7 +394,7 @@ function CompetitorProducts({
             </Dropdown>
           )}
         </FormField>
-        <FormField label="Current Product">
+        <FormField label="Current product">
           {(id) => (
             <Input
               id={id}
@@ -404,7 +404,7 @@ function CompetitorProducts({
             />
           )}
         </FormField>
-        <FormField label="Competitor Cost" help="Annual, at MSRP">
+        <FormField label="Competitor cost" help="Annual, at MSRP">
           {(id) => (
             <Input
               id={id}
@@ -415,7 +415,7 @@ function CompetitorProducts({
             />
           )}
         </FormField>
-        <FormField label="New Microsoft Product">
+        <FormField label="New Microsoft product">
           {(id) => (
             <Input
               id={id}
@@ -425,7 +425,7 @@ function CompetitorProducts({
             />
           )}
         </FormField>
-        <FormField label="Year Contract Ends" help="Savings start the year after">
+        <FormField label="Year contract ends" help="Savings start the year after">
           {(id) => (
             <Input
               id={id}
@@ -465,13 +465,13 @@ function CompetitorProducts({
         <table className={styles.table}>
           <thead>
             <tr>
-              <th scope="col">Software Solution</th>
-              <th scope="col">Current Product</th>
+              <th scope="col">Software solution</th>
+              <th scope="col">Current product</th>
               <th scope="col" className={styles.numeric}>
-                Competitor Cost
+                Competitor cost
               </th>
-              <th scope="col">New Microsoft Product</th>
-              <th scope="col">Year Contract Ends</th>
+              <th scope="col">New Microsoft product</th>
+              <th scope="col">Year contract ends</th>
               <th scope="col">In horizon</th>
               <th scope="col" aria-label="Actions" />
             </tr>
@@ -539,7 +539,7 @@ function CompetitorProducts({
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th scope="col">Software Solution</th>
+                      <th scope="col">Software solution</th>
                       <th scope="col">Common competitors</th>
                       <th scope="col">Microsoft product</th>
                     </tr>

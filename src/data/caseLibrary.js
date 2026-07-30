@@ -55,10 +55,10 @@ export const MY_CASES = [
       competitors: {
         msrpDiscount: '',
         rows: [
-          { id: 'c1r1', softwareSolution: 'Endpoint Protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '1350000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
-          { id: 'c1r2', softwareSolution: 'Identity & Access', currentProduct: 'Okta Workforce Identity', competitorCost: '720000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
+          { id: 'c1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '1350000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
+          { id: 'c1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '720000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
           { id: 'c1r3', softwareSolution: 'SIEM / SOC', currentProduct: 'Splunk Enterprise Security', competitorCost: '980000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2027' },
-          { id: 'c1r4', softwareSolution: 'Email Security', currentProduct: 'Proofpoint Email Protection', competitorCost: '410000', newMicrosoftProduct: 'Microsoft Defender for Office 365 P2', yearContractEnds: '2026' },
+          { id: 'c1r4', softwareSolution: 'Email security', currentProduct: 'Proofpoint Email Protection', competitorCost: '410000', newMicrosoftProduct: 'Microsoft Defender for Office 365 P2', yearContractEnds: '2026' },
         ],
       },
     },
@@ -67,7 +67,7 @@ export const MY_CASES = [
     id: 'case-northwind',
     title: 'Northwind Traders — Endpoint Displacement',
     customer: 'Northwind Traders',
-    industry: 'Retail & Consumer Goods',
+    industry: 'Retail & consumer goods',
     status: 'in-review',
     owner: CURRENT_USER,
     modified: 'Yesterday',
@@ -78,7 +78,7 @@ export const MY_CASES = [
         accountName: 'Northwind Traders',
         opportunityId: '7-9KD22XR1PQ',
         opportunityName: 'Northwind Endpoint Modernisation',
-        industry: 'Retail & Consumer Goods',
+        industry: 'Retail & consumer goods',
         geography: 'uk',
         segment: 'Corporate',
         salesMotion: 'Competitive displacement',
@@ -95,7 +95,7 @@ export const MY_CASES = [
       competitors: {
         msrpDiscount: '15',
         rows: [
-          { id: 'c2r1', softwareSolution: 'Endpoint Protection', currentProduct: 'SentinelOne Singularity', competitorCost: '640000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
+          { id: 'c2r1', softwareSolution: 'Endpoint protection', currentProduct: 'SentinelOne Singularity', competitorCost: '640000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
           { id: 'c2r2', softwareSolution: 'SIEM / SOC', currentProduct: 'IBM QRadar', competitorCost: '520000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
         ],
       },
@@ -105,7 +105,7 @@ export const MY_CASES = [
     id: 'case-litware',
     title: 'Litware — Identity Consolidation',
     customer: 'Litware Inc.',
-    industry: 'Energy & Resources',
+    industry: 'Energy & resources',
     status: 'published',
     owner: 'Dana Whitfield',
     modified: '6 days ago',
@@ -116,7 +116,7 @@ export const MY_CASES = [
         accountName: 'Litware Inc.',
         opportunityId: '7-2LM88BQ4ZT',
         opportunityName: 'Litware Zero Trust Identity',
-        industry: 'Energy & Resources',
+        industry: 'Energy & resources',
         geography: 'weu',
         segment: 'Enterprise',
         salesMotion: 'Upsell to existing estate',
@@ -132,8 +132,8 @@ export const MY_CASES = [
       competitors: {
         msrpDiscount: '10',
         rows: [
-          { id: 'c3r1', softwareSolution: 'Identity & Access', currentProduct: 'Okta Workforce Identity', competitorCost: '1180000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
-          { id: 'c3r2', softwareSolution: 'Privileged Access', currentProduct: 'CyberArk', competitorCost: '460000', newMicrosoftProduct: 'Microsoft Entra Suite', yearContractEnds: '2027' },
+          { id: 'c3r1', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1180000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
+          { id: 'c3r2', softwareSolution: 'Privileged access', currentProduct: 'CyberArk', competitorCost: '460000', newMicrosoftProduct: 'Microsoft Entra Suite', yearContractEnds: '2027' },
         ],
       },
     },
@@ -153,7 +153,7 @@ export const EXAMPLE_CASES = [
     id: 'ex-fabrikam',
     title: 'Fabrikam — Full Security Estate Consolidation',
     customer: 'Fabrikam Financial',
-    industry: 'Financial Services',
+    industry: 'Financial services',
     status: 'published',
     owner: 'Microsoft',
     modified: 'Curated example',
@@ -162,7 +162,7 @@ export const EXAMPLE_CASES = [
     input: {
       customer: {
         accountName: 'Fabrikam Financial',
-        industry: 'Financial Services',
+        industry: 'Financial services',
         geography: 'northam',
         segment: 'Enterprise',
         salesMotion: 'Consolidation',
@@ -179,10 +179,10 @@ export const EXAMPLE_CASES = [
       competitors: {
         msrpDiscount: '20',
         rows: [
-          { id: 'e1r1', softwareSolution: 'Endpoint Protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '2900000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
-          { id: 'e1r2', softwareSolution: 'Identity & Access', currentProduct: 'Okta Workforce Identity', competitorCost: '1600000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
+          { id: 'e1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '2900000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
+          { id: 'e1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1600000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
           { id: 'e1r3', softwareSolution: 'SIEM / SOC', currentProduct: 'Splunk Enterprise Security', competitorCost: '2100000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
-          { id: 'e1r4', softwareSolution: 'Data Loss Prevention', currentProduct: 'Symantec DLP', competitorCost: '780000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2027' },
+          { id: 'e1r4', softwareSolution: 'Data loss prevention', currentProduct: 'Symantec DLP', competitorCost: '780000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2027' },
         ],
       },
     },
@@ -191,7 +191,7 @@ export const EXAMPLE_CASES = [
     id: 'ex-tailspin',
     title: 'Tailspin Toys — SOC Modernisation',
     customer: 'Tailspin Toys',
-    industry: 'Retail & Consumer Goods',
+    industry: 'Retail & consumer goods',
     status: 'published',
     owner: 'Microsoft',
     modified: 'Curated example',
@@ -201,7 +201,7 @@ export const EXAMPLE_CASES = [
     input: {
       customer: {
         accountName: 'Tailspin Toys',
-        industry: 'Retail & Consumer Goods',
+        industry: 'Retail & consumer goods',
         geography: 'anz',
         segment: 'Corporate',
         salesMotion: 'New workload / greenfield',
@@ -227,7 +227,7 @@ export const EXAMPLE_CASES = [
     id: 'ex-woodgrove',
     title: 'Woodgrove Bank — Compliance-Driven Investment',
     customer: 'Woodgrove Bank',
-    industry: 'Financial Services',
+    industry: 'Financial services',
     status: 'published',
     owner: 'Microsoft',
     modified: 'Curated example',
@@ -237,7 +237,7 @@ export const EXAMPLE_CASES = [
     input: {
       customer: {
         accountName: 'Woodgrove Bank',
-        industry: 'Financial Services',
+        industry: 'Financial services',
         geography: 'uk',
         segment: 'Enterprise',
         salesMotion: 'Upsell to existing estate',
@@ -254,8 +254,8 @@ export const EXAMPLE_CASES = [
       competitors: {
         msrpDiscount: '10',
         rows: [
-          { id: 'e3r1', softwareSolution: 'Data Loss Prevention', currentProduct: 'Symantec DLP', competitorCost: '1450000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2026' },
-          { id: 'e3r2', softwareSolution: 'Identity & Access', currentProduct: 'Ping Identity', competitorCost: '890000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2027' },
+          { id: 'e3r1', softwareSolution: 'Data loss prevention', currentProduct: 'Symantec DLP', competitorCost: '1450000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2026' },
+          { id: 'e3r2', softwareSolution: 'Identity & access', currentProduct: 'Ping Identity', competitorCost: '890000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2027' },
         ],
       },
     },

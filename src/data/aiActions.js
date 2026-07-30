@@ -93,7 +93,7 @@ Competitor pricing and contract end dates remain the assumptions worth confirmin
       : 'all';
     return `**Approve the Microsoft licensing uplift** for ${seats} seats at the next Enterprise Agreement true-up. Owner: Procurement. Timing: Q1.
 
-**Sequence each cutover to land at contract renewal**, so ${company} never pays twice for the same capability. Owner: Security Operations. Timing: as each contract lapses.
+**Sequence each cutover to land at contract renewal**, so ${company} never pays twice for the same capability. Owner: Security operations. Timing: as each contract lapses.
 
 **Confirm competitor spend and contract end dates** before the case goes to committee — they gate every saving in the model. Owner: Account team. Timing: immediately.`;
   },

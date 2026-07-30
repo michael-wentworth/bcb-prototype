@@ -86,7 +86,7 @@ export default function MyCases() {
     <div className={styles.root}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>My Cases</h1>
+          <h1 className={styles.title}>My cases</h1>
         </div>
         {/* Default size, not large. Fluent publishes no guidance for choosing
             large, and nothing ties button size to page-level versus chrome-level

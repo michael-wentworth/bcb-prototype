@@ -93,7 +93,7 @@ export default function CustomerReport() {
         <MetricTile
           label="Estimated savings"
           value={money(c.annualNetBenefit)}
-          caption="average net, per year"
+          caption="Average net, per year"
           icon={<MoneyHand20Regular />}
           loading={!reportReady}
           explain={`${money(c.netBenefit)} of net benefit across the ${c.years}-year horizon.`}
@@ -101,7 +101,7 @@ export default function CustomerReport() {
         <MetricTile
           label="Payback period"
           value={c.paybackMonths ? `${c.paybackMonths} month${c.paybackMonths === 1 ? '' : 's'}` : '—'}
-          caption={c.paybackMonths ? undefined : 'does not break even in horizon'}
+          caption={c.paybackMonths ? undefined : 'Does not break even in horizon'}
           icon={<Timer20Regular />}
           loading={!reportReady}
           explain="Competitor savings only begin once each contract lapses, which is what moves payback out."

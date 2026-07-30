@@ -20,7 +20,7 @@ const VIEWS = {
   },
   studies: {
     icon: <DocumentBulletList20Regular />,
-    title: 'Analyst Studies',
+    title: 'Analyst studies',
     lead: 'Third-party research you can cite directly into a business case.',
   },
   learning: {
@@ -49,7 +49,7 @@ export default function Placeholder({ view }) {
           New business case
         </Button>
         <Button appearance="secondary" onClick={() => setView('myCases')}>
-          Go to My Cases
+          Go to My cases
         </Button>
       </div>
     </div>
@@ -67,7 +67,7 @@ function ExampleCases() {
     <div className={styles.examplesRoot}>
       <header className={styles.examplesHeader}>
         <div>
-          <h1 className={styles.title}>Example Cases</h1>
+          <h1 className={styles.title}>Example cases</h1>
           <p className={styles.lead}>
             Finished business cases built for Microsoft customers. Open one to see how it is put
             together — the inputs, the assumptions and the narrative are all readable.

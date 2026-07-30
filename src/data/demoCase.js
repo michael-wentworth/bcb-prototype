@@ -98,14 +98,14 @@ export const DEMO_EXTRACTION = {
    */
   competitors: [
     {
-      softwareSolution: 'Endpoint Protection',
+      softwareSolution: 'Endpoint protection',
       currentProduct: 'CrowdStrike Falcon',
       competitorCost: '1350000',
       newMicrosoftProduct: 'Microsoft Defender for Endpoint P2',
       yearContractEnds: '2026',
     },
     {
-      softwareSolution: 'Identity & Access',
+      softwareSolution: 'Identity & access',
       currentProduct: 'Okta Workforce Identity',
       competitorCost: '720000',
       newMicrosoftProduct: 'Microsoft Entra ID P2',
@@ -119,7 +119,7 @@ export const DEMO_EXTRACTION = {
       yearContractEnds: '2027',
     },
     {
-      softwareSolution: 'Email Security',
+      softwareSolution: 'Email security',
       currentProduct: 'Proofpoint Email Protection',
       competitorCost: '410000',
       newMicrosoftProduct: 'Microsoft Defender for Office 365 P2',
