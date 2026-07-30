@@ -6,14 +6,13 @@ import {
   Sparkle20Filled,
 } from '@fluentui/react-icons';
 import { DEMO_PROMPT } from '../../data/demoCase.js';
-import { STEPS } from '../../data/referenceData.js';
 import { STEP_SUGGESTIONS } from '../../data/aiScript.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import MessageBlocks from './MessageBlocks.jsx';
 import styles from './AIAssistantPanel.module.css';
 
 export default function AIAssistantPanel({ onCollapse }) {
-  const { messages, thinking, step, view, ask, goToStep } = useAppState();
+  const { messages, thinking, step, ask, goToStep } = useAppState();
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   const pinnedToBottom = useRef(true);
@@ -81,16 +80,10 @@ export default function AIAssistantPanel({ onCollapse }) {
         <span className={styles.avatar} aria-hidden="true">
           <Sparkle20Filled />
         </span>
-        <div className={styles.headerText}>
-          <span className={styles.title}>Business case copilot</span>
-          <span className={styles.subtitle}>
-            {busy
-              ? thinking.steps[thinking.index]
-              : view === 'builder'
-                ? `Working on ${STEPS[step].label}`
-                : 'Open a case and I can help with it'}
-          </span>
-        </div>
+        {/* Title only. The step name was already the page's heading a few hundred
+            pixels to the left, and the busy state this line also carried is shown
+            inline in the thread with its own animated dots. */}
+        <span className={styles.title}>Business case copilot</span>
         {/* The minimize control belongs to the panel, not the app chrome. */}
         <Tooltip content="Minimize the copilot" relationship="label" withArrow>
           <Button
