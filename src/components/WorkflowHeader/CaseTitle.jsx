@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Input, Tooltip } from '@fluentui/react-components';
+import { Input } from '@fluentui/react-components';
 import { Edit16Regular } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import { CASE_STATUS } from '../../data/caseLibrary.js';
@@ -78,17 +78,15 @@ export default function CaseTitle({ renaming, onStartRename, onEndRename }) {
             }}
           />
         ) : (
-          <Tooltip content={name || 'Name this business case'} relationship="label" withArrow>
-            <button type="button" className={styles.titleButton} onClick={onStartRename}>
-              {/* An unnamed case gets a dashed rule rather than a confident
-                  title, so it reads as an empty field and not as a case someone
-                  genuinely called "Untitled business case". */}
-              <span className={styles.titleText} data-empty={name ? undefined : 'true'}>
-                {name || 'Untitled business case'}
-              </span>
-              <Edit16Regular className={styles.pencil} aria-hidden="true" />
-            </button>
-          </Tooltip>
+          <button type="button" className={styles.titleButton} onClick={onStartRename}>
+            {/* An unnamed case gets a dashed rule rather than a confident
+                title, so it reads as an empty field and not as a case someone
+                genuinely called "Untitled business case". */}
+            <span className={styles.titleText} data-empty={name ? undefined : 'true'}>
+              {name || 'Untitled business case'}
+            </span>
+            <Edit16Regular className={styles.pencil} aria-hidden="true" />
+          </button>
         )}
       </div>
 

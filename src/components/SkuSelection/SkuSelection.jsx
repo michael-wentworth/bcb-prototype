@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Badge,
   Button,
   Card,
   Checkbox,
@@ -62,7 +61,7 @@ export default function SkuSelection() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="What the customer is buying, what they already have, and what it replaces. Contract end dates decide how much of each saving lands inside the analysis period."
+        description="Contract end dates decide how much of each saving lands inside the analysis period."
       />
 
       {/* ---------------------------- Outcomes ---------------------------- */}
@@ -72,9 +71,6 @@ export default function SkuSelection() {
             <h2 className={styles.cardTitle}>
               What security outcomes is the customer trying to achieve?
             </h2>
-            <p className={styles.cardLead}>
-              Select the areas where your customer is experiencing the most security challenges.
-            </p>
           </div>
           <Checkbox
             checked={allSelected}
@@ -102,18 +98,6 @@ export default function SkuSelection() {
             </label>
           ))}
         </div>
-
-        {outcomes.length > 0 ? (
-          <Button
-            size="small"
-            appearance="transparent"
-            className={styles.askLink}
-            icon={<Sparkle16Filled className={styles.aiIcon} />}
-            onClick={() => ask('Which SKUs match the outcomes I selected?')}
-          >
-            Ask which SKUs match these outcomes
-          </Button>
-        ) : null}
       </Card>
 
       {/* ------------------------------ SKUs ------------------------------ */}
@@ -121,20 +105,8 @@ export default function SkuSelection() {
         <div className={styles.cardHead}>
           <div>
             <h2 className={styles.cardTitle}>Select a SKU</h2>
-            <p className={styles.cardLead}>
-              Choose the Microsoft SKU(s) to model, then set the number of seats required per year.
-            </p>
           </div>
-          <Badge appearance="tint" color={skus.length ? 'brand' : 'informative'}>
-            {skus.length} SKU{skus.length === 1 ? '' : 's'}
-          </Badge>
         </div>
-
-        {skus.length === 0 ? (
-          <p className={styles.empty}>
-            No SKUs yet. Add one below to start building the Microsoft side of the case.
-          </p>
-        ) : null}
 
         {skus.map((row, rowIndex) => {
           const catalog = skuById(row.skuId);
@@ -342,7 +314,7 @@ export default function SkuSelection() {
         onAsk={ask}
       />
 
-      <StepFooter hint="Next: the report you present, built from exactly what is above." />
+      <StepFooter />
     </div>
   );
 }
@@ -403,9 +375,6 @@ function CompetitorProducts({
       </div>
 
       <p className={styles.subHead}>Add a competitor product</p>
-      <p className={styles.cardLead}>
-        Pick a Microsoft software solution and describe the competitor product being replaced.
-      </p>
 
       <div className={styles.compForm}>
         <FormField label="Software Solution">

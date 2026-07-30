@@ -3,7 +3,6 @@ import { Tooltip } from '@fluentui/react-components';
 import {
   CheckmarkCircle20Filled,
   Circle16Regular,
-  Info16Regular,
   Warning20Filled,
 } from '@fluentui/react-icons';
 import styles from './ConfidenceBadge.module.css';
@@ -38,9 +37,8 @@ export default function ConfidenceBadge({ level = 'medium', basis, compact = fal
     >
       <Icon className={styles.icon} aria-hidden="true" />
       <span className={styles.text}>
-        {compact ? meta.label : `Confidence: ${meta.label}`}
+        {meta.label}
       </span>
-      {basis && !compact ? <Info16Regular className={styles.info} aria-hidden="true" /> : null}
     </span>
   );
 

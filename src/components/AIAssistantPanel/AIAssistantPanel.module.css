@@ -207,14 +207,6 @@
   outline-offset: 1px;
 }
 
-.emptyExampleLabel {
-  font-size: var(--fontSizeBase100);
-  font-weight: var(--fontWeightSemibold);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--colorBrandForeground2);
-}
-
 .emptyExampleText {
   font-size: var(--fontSizeBase200);
   line-height: 17px;
@@ -228,16 +220,6 @@
   padding: var(--spacingVerticalS) var(--spacingHorizontalL) 0;
   background-color: var(--colorNeutralBackground1);
   border-top: 1px solid var(--colorNeutralStroke2);
-}
-
-.suggestionsLabel {
-  display: block;
-  margin: 6px 0 6px;
-  font-size: var(--fontSizeBase100);
-  font-weight: var(--fontWeightSemibold);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--colorNeutralForeground4);
 }
 
 .suggestionList {

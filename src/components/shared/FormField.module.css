@@ -40,23 +40,6 @@
   gap: 5px;
 }
 
-.aiTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 1px 7px 1px 5px;
-  border-radius: var(--borderRadiusCircular);
-  font-size: var(--fontSizeBase100);
-  font-weight: var(--fontWeightSemibold);
-  color: #ffffff;
-  background: linear-gradient(135deg, var(--colorBrandBackground) 0%, #7a4fd6 100%);
-}
-
-.aiTag svg {
-  width: 11px;
-  height: 11px;
-}
-
 .help {
   margin: 0;
   font-size: var(--fontSizeBase200);

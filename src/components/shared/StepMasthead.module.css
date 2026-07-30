@@ -213,7 +213,7 @@
   color: var(--colorNeutralForeground2);
 }
 
-/* --------------------------- lede and actions ------------------------------ */
+/* ----------------------------------- lede ---------------------------------- */
 
 /* Outside the <ol> on purpose, so nothing in it can ever shift the marker line.
    620px is tuned to the rail's ~604px so the two read as one silhouette. */
@@ -224,15 +224,6 @@
   line-height: var(--lineHeightBase400);
   color: var(--colorNeutralForeground2);
   text-wrap: balance;
-}
-
-/* Its own centred row rather than pushed to the right of the rail: a right-aligned
-   badge would make the composition asymmetric, and worse, the rail's centring
-   would shift when authorship changes from "Not started" to "Manually authored". */
-.meta {
-  margin-top: var(--spacingVerticalM);
-  display: flex;
-  justify-content: center;
 }
 
 /* Clipped, never display:none — hiding a label with display:none takes the step's

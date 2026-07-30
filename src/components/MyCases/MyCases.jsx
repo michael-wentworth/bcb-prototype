@@ -87,9 +87,6 @@ export default function MyCases() {
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>My Cases</h1>
-          <p className={styles.subtitle}>
-            Every business case you own or have been shared on — drafts through published.
-          </p>
         </div>
         {/* Default size, not large. Fluent publishes no guidance for choosing
             large, and nothing ties button size to page-level versus chrome-level
@@ -168,9 +165,6 @@ export default function MyCases() {
         <div className={styles.examplesHead}>
           <div>
             <h2 className={styles.examplesTitle}>Example cases</h2>
-            <p className={styles.examplesLead}>
-              Finished cases published by Microsoft. Open one to see how it is put together.
-            </p>
           </div>
           <Button appearance="secondary" onClick={() => setView('examples')}>
             See all examples

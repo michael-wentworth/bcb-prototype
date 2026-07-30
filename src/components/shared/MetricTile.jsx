@@ -13,14 +13,12 @@ export default function MetricTile({
   caption,
   icon,
   hero = false,
-  tone = 'neutral',
   explain,
   loading = false,
 }) {
   return (
     <div
       className={`${styles.tile} ${hero ? styles.hero : ''} ${loading ? styles.loading : ''}`}
-      data-tone={tone}
     >
       <div className={styles.labelRow}>
         {icon ? <span className={styles.icon}>{icon}</span> : null}

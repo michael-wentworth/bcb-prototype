@@ -101,7 +101,7 @@ export default function CustomerReport() {
         <MetricTile
           label="Payback period"
           value={c.paybackMonths ? `${c.paybackMonths} month${c.paybackMonths === 1 ? '' : 's'}` : '—'}
-          caption={c.paybackMonths ? 'cumulative benefit crosses zero' : 'does not break even in horizon'}
+          caption={c.paybackMonths ? undefined : 'does not break even in horizon'}
           icon={<Timer20Regular />}
           loading={!reportReady}
           explain="Competitor savings only begin once each contract lapses, which is what moves payback out."
@@ -109,7 +109,6 @@ export default function CustomerReport() {
         <MetricTile
           label="Vendors displaced"
           value={String(c.vendorsConsolidated)}
-          caption="within the analysis period"
           icon={<Layer20Regular />}
           loading={!reportReady}
           explain="Competitor contracts that lapse inside the horizon. Later contracts are excluded."
@@ -255,9 +254,6 @@ export default function CustomerReport() {
           <ul className={styles.outcomeList}>
             {SECURITY_OUTCOMES.filter((o) => outcomes.includes(o.id)).map((o) => (
               <li key={o.id} className={styles.outcomeItem}>
-                <span className={styles.check} aria-hidden="true">
-                  ✓
-                </span>
                 <div>
                   <span className={styles.outcomeLabel}>{o.label}</span>
                   <p className={styles.outcomeDetail}>{o.detail}</p>
@@ -271,10 +267,6 @@ export default function CustomerReport() {
       <Card className={styles.actionsCard}>
         <div className={styles.actionsText}>
           <h2 className={styles.cardTitle}>Share the business case</h2>
-          <p className={styles.actionsSub}>
-            The deck, the written case and the sharing link all come from the same inputs, so the
-            narrative and the numbers cannot drift apart.
-          </p>
         </div>
         <div className={styles.actionButtons}>
           <Button
@@ -302,7 +294,7 @@ export default function CustomerReport() {
         </div>
       </Card>
 
-      <StepFooter hint="Every figure here traces back to the two input steps — change one and this recalculates." />
+      <StepFooter />
     </div>
   );
 }

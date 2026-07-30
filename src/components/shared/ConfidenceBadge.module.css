@@ -28,13 +28,6 @@
   height: 12px;
 }
 
-.info {
-  width: 12px;
-  height: 12px;
-  opacity: 0.6;
-  margin-left: 1px;
-}
-
 .high {
   background-color: var(--colorPaletteGreenBackground1);
   color: var(--colorPaletteGreenForeground1);

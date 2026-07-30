@@ -19,25 +19,6 @@ export const AUTHORSHIP = {
   EMPTY: 'empty',
 };
 
-export const AUTHORSHIP_META = {
-  ai: {
-    label: 'AI generated',
-    description: 'Written by the copilot and not edited since.',
-  },
-  assisted: {
-    label: 'AI assisted',
-    description: 'A person and the copilot both worked on this.',
-  },
-  manual: {
-    label: 'Manually authored',
-    description: 'Written by a person. The copilot has not touched it.',
-  },
-  empty: {
-    label: 'Not started',
-    description: 'Nothing here yet.',
-  },
-};
-
 /** Editing AI output makes it collaborative; editing your own work changes nothing. */
 export function afterHumanEdit(current) {
   if (current === AUTHORSHIP.AI) return AUTHORSHIP.ASSISTED;
@@ -84,13 +65,3 @@ export const NARRATIVE_SECTIONS = [
 ];
 
 export const narrativeById = (id) => NARRATIVE_SECTIONS.find((s) => s.id === id);
-
-/** Sections that carry authorship, for the case-level lineage summary. */
-export const TRACKED_SECTIONS = [
-  { id: 'profile', label: 'Customer profile' },
-  { id: 'solutions', label: 'Solution shortlist' },
-  { id: 'displacement', label: 'Competitive displacement' },
-  { id: 'summary', label: 'Executive summary' },
-  { id: 'recommendations', label: 'Recommendations' },
-  { id: 'risks', label: 'Risk analysis' },
-];

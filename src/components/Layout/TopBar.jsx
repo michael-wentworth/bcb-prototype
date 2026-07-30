@@ -40,7 +40,7 @@ const RESOURCES = [
  * regular-weight destinations, with utilities right-aligned.
  */
 export default function TopBar() {
-  const { view, setView, newCase } = useAppState();
+  const { view, setView } = useAppState();
 
   const toasterId = useId('nav-toaster');
   const { dispatchToast } = useToastController(toasterId);
@@ -78,7 +78,6 @@ export default function TopBar() {
         type="button"
         className={styles.product}
         onClick={() => setView('landing')}
-        title="Security BCB home"
       >
         Security BCB
       </button>

@@ -1,6 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
-import { Sparkle16Filled } from '@fluentui/react-icons';
 import ConfidenceBadge from './ConfidenceBadge.jsx';
 import styles from './FormField.module.css';
 
@@ -48,12 +47,6 @@ export default function FormField({
         </label>
         {meta ? (
           <span className={styles.meta}>
-            {meta.source === 'ai' ? (
-              <span className={styles.aiTag} title="Populated by the copilot">
-                <Sparkle16Filled aria-hidden="true" />
-                AI
-              </span>
-            ) : null}
             <ConfidenceBadge level={meta.confidence} basis={meta.basis} compact />
           </span>
         ) : null}

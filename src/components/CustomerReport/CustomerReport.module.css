@@ -21,7 +21,6 @@
 
 .heroRow > * {
   animation: bcbRise 360ms var(--curveDecelerateMid) both;
-  box-shadow: var(--shadow4);
 }
 
 .noInputs {
@@ -60,7 +59,6 @@
   padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
-  box-shadow: var(--shadow4);
   min-width: 0;
 }
 
@@ -71,7 +69,6 @@
   padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
-  box-shadow: var(--shadow4);
 }
 
 .narrativeHead {
@@ -99,7 +96,6 @@
   padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
-  box-shadow: var(--shadow4);
   min-width: 0;
 }
 
@@ -231,7 +227,6 @@
   padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
-  box-shadow: var(--shadow4);
 }
 
 .outcomeList {
@@ -247,20 +242,6 @@
   display: flex;
   gap: var(--spacingHorizontalS);
   align-items: flex-start;
-}
-
-.check {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  margin-top: 1px;
-  border-radius: var(--borderRadiusCircular);
-  color: var(--colorPaletteGreenForeground1);
-  background-color: var(--colorPaletteGreenBackground1);
-  font-weight: var(--fontWeightSemibold);
 }
 
 .outcomeLabel {
@@ -297,14 +278,6 @@
 
 .actionsText {
   min-width: 0;
-}
-
-.actionsSub {
-  margin: 4px 0 0;
-  max-width: 62ch;
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
-  color: var(--colorNeutralForeground2);
 }
 
 .actionButtons {

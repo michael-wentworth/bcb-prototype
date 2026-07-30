@@ -654,19 +654,6 @@ export function AppStateProvider({ children }) {
     [buildContext, pushAssistant, schedule],
   );
 
-  /** Case-level lineage across the tracked sections. */
-  const authorship = useMemo(() => {
-    const levels = [
-      ...Object.values(state.sectionAuthorship),
-      ...NARRATIVE_SECTIONS.map((s) => state.narrative[s.id].authorship),
-    ];
-    const counts = { ai: 0, assisted: 0, manual: 0, empty: 0 };
-    levels.forEach((l) => {
-      counts[l || AUTHORSHIP.EMPTY] += 1;
-    });
-    return { ...counts, total: levels.length, aiTouched: counts.ai + counts.assisted };
-  }, [state.sectionAuthorship, state.narrative]);
-
   const reset = useCallback(() => {
     clearTimers();
     dispatch({ type: 'RESET' });
@@ -693,7 +680,6 @@ export function AppStateProvider({ children }) {
       ...state,
       ...actions,
       businessCase,
-      authorship,
       currency,
       effectiveDevices,
       skuById,
@@ -701,7 +687,7 @@ export function AppStateProvider({ children }) {
       runNarrativeAction,
       reset,
     }),
-    [state, actions, businessCase, authorship, currency, effectiveDevices, ask, runNarrativeAction, reset],
+    [state, actions, businessCase, currency, effectiveDevices, ask, runNarrativeAction, reset],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

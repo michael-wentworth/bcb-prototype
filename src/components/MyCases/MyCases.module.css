@@ -26,13 +26,6 @@
   color: var(--colorNeutralForeground1);
 }
 
-.subtitle {
-  margin: 6px 0 0;
-  max-width: 66ch;
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground2);
-}
-
 /* -------------------------------- toolbar ---------------------------------- */
 
 .toolbar {
@@ -285,13 +278,6 @@
   font-size: var(--fontSizeBase500);
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
-}
-
-.examplesLead {
-  margin: 4px 0 0;
-  max-width: 70ch;
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground3);
 }
 
 .exampleGrid {

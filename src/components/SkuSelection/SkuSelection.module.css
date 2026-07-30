@@ -8,7 +8,6 @@
   padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
-  box-shadow: var(--shadow4);
   animation: bcbRise 320ms var(--curveDecelerateMid) both;
 }
 
@@ -45,22 +44,8 @@
   color: var(--colorNeutralForeground1);
 }
 
-.empty {
-  margin: 0 0 var(--spacingVerticalM);
-  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
-  border-radius: var(--borderRadiusMedium);
-  border: 1px dashed var(--colorNeutralStroke2);
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground3);
-}
-
 .aiIcon {
   color: var(--colorBrandForeground1);
-}
-
-.askLink {
-  margin-left: -8px;
-  margin-top: var(--spacingVerticalM);
 }
 
 .rowActions {

@@ -30,18 +30,6 @@
   color: var(--colorNeutralForeground2);
 }
 
-.note {
-  margin: var(--spacingVerticalXL) 0 0;
-  padding: 12px 16px;
-  border-radius: var(--borderRadiusMedium);
-  background-color: var(--colorNeutralBackground1);
-  border: 1px solid var(--colorNeutralStroke2);
-  font-size: var(--fontSizeBase200);
-  line-height: 18px;
-  color: var(--colorNeutralForeground3);
-  text-align: left;
-}
-
 .actions {
   display: flex;
   justify-content: center;
@@ -74,10 +62,6 @@
 
 .examplesHeader .lead {
   max-width: 74ch;
-}
-
-.eyebrow {
-  margin-bottom: var(--spacingVerticalXS);
 }
 
 .grid {

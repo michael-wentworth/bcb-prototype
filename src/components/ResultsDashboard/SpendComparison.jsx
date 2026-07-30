@@ -49,7 +49,6 @@ export default function SpendComparison({ current, future, contractCount, symbol
     {
       key: 'future',
       label: 'With Microsoft',
-      caption: 'incremental run-rate',
       value: future,
       tone: 'accent',
     },
@@ -90,9 +89,11 @@ export default function SpendComparison({ current, future, contractCount, symbol
                 <text x={0} y={y0 + BAR_HEIGHT / 2 - 4} className={styles.barLabel}>
                   {row.label}
                 </text>
-                <text x={0} y={y0 + BAR_HEIGHT / 2 + 11} className={styles.barCaption}>
-                  {row.caption}
-                </text>
+                {row.caption ? (
+                  <text x={0} y={y0 + BAR_HEIGHT / 2 + 11} className={styles.barCaption}>
+                    {row.caption}
+                  </text>
+                ) : null}
                 <path
                   d={barPath(LABEL_W, y0, w, BAR_HEIGHT)}
                   className={row.tone === 'accent' ? styles.barAccent : styles.barContext}

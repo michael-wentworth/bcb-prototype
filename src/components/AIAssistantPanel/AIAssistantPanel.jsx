@@ -122,8 +122,7 @@ export default function AIAssistantPanel({ onCollapse }) {
 
       {suggestions.length > 0 ? (
         <div className={styles.suggestions}>
-          <span className={styles.suggestionsLabel}>Suggested</span>
-          <div className={styles.suggestionList}>
+          <div className={styles.suggestionList} role="group" aria-label="Suggested prompts">
             {suggestions.map((s) => (
               <button
                 key={s.label}
@@ -203,7 +202,6 @@ function EmptyState({ onUseExample }) {
         build the profile, recommend solutions, and assemble the business case with you.
       </p>
       <button type="button" className={styles.emptyExample} onClick={onUseExample}>
-        <span className={styles.emptyExampleLabel}>Try this</span>
         <span className={styles.emptyExampleText}>{DEMO_PROMPT}</span>
       </button>
     </div>

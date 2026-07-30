@@ -10,7 +10,7 @@ import {
   RadioGroup,
   Textarea,
 } from '@fluentui/react-components';
-import { Search20Regular, Sparkle16Filled } from '@fluentui/react-icons';
+import { Search20Regular } from '@fluentui/react-icons';
 import {
   ANALYSIS_PERIODS,
   BCB_ROLES,
@@ -22,7 +22,6 @@ import {
   SALES_MOTIONS,
   SECURITY_STACK_CATEGORIES,
 } from '../../data/referenceData.js';
-import { DEMO_PROMPT } from '../../data/demoCase.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
@@ -41,35 +40,13 @@ export default function CustomerDetails() {
     setCustomer,
     setEnvironment,
     setCaseSetup,
-    ask,
   } = useAppState();
-
-  const anyFilled = Object.values(customer).some((v) => v && v !== false);
 
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="Who the case is for, and what they run today. The account size and the current security stack drive every number in the report."
+        description="The account size and the current security stack drive every number in the report."
       />
-
-      {!anyFilled ? (
-        <Card className={styles.primer}>
-          <span className={styles.primerMark} aria-hidden="true">
-            <Sparkle16Filled />
-          </span>
-          <div className={styles.primerBody}>
-            <h2 className={styles.primerTitle}>Describe the customer in a sentence</h2>
-            <p className={styles.primerText}>
-              The copilot will populate the whole case from it and show what each field was
-              inferred from.
-            </p>
-            <button type="button" className={styles.primerExample} onClick={() => ask(DEMO_PROMPT)}>
-              <span className={styles.primerExampleLabel}>Example prompt</span>
-              <span className={styles.primerExampleText}>&ldquo;{DEMO_PROMPT}&rdquo;</span>
-            </button>
-          </div>
-        </Card>
-      ) : null}
 
       {/* ------------------------ Customer Information ------------------------ */}
       <Card className={styles.card}>
@@ -201,7 +178,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Currency" help="Auto-populated from Geography">
+          <FormField label="Currency">
             {(id) => <Input id={id} value={customer.geography ? currency : '—'} disabled />}
           </FormField>
 
@@ -281,7 +258,6 @@ export default function CustomerDetails() {
                 id={id}
                 value={customer.numberOfDevices}
                 onChange={(_, d) => setCustomer('numberOfDevices', d.value)}
-                placeholder="Defaults to 1.2 × users if left blank"
               />
             )}
           </FormField>
@@ -373,7 +349,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Seller Alias" help="Auto-populated from your authenticated profile (AAD SSO)">
+          <FormField label="Seller Alias">
             {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
           </FormField>
         </div>
@@ -386,7 +362,7 @@ export default function CustomerDetails() {
           <FormField
             label="Business Case Name"
             required
-            help="Primary identifier for this business case. Up to 100 characters."
+            help="Up to 100 characters."
           >
             {(id) => (
               <Input

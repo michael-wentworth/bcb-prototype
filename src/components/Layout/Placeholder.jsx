@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, Button, Card } from '@fluentui/react-components';
+import { Button, Card } from '@fluentui/react-components';
 import {
   Add20Filled,
   BookOpen20Regular,
@@ -17,19 +17,16 @@ const VIEWS = {
     icon: <ShieldCheckmark20Regular />,
     title: 'Security BCB',
     lead: 'This destination has no page yet.',
-    note: 'Used only as the fallback for an unrecognised view — the real landing page is components/Landing.',
   },
   studies: {
     icon: <DocumentBulletList20Regular />,
     title: 'Analyst Studies',
     lead: 'Third-party research you can cite directly into a business case.',
-    note: 'Reachable from Resources in the nav. Studies also surface inside the report as supporting evidence, which is where they do the most work.',
   },
   learning: {
     icon: <BookOpen20Regular />,
     title: 'Learning',
     lead: 'Enablement for sellers and partners building business cases.',
-    note: 'Reachable from Resources in the nav. Out of scope for this build.',
   },
 };
 
@@ -47,7 +44,6 @@ export default function Placeholder({ view }) {
       </span>
       <h1 className={styles.title}>{meta.title}</h1>
       <p className={styles.lead}>{meta.lead}</p>
-      <p className={styles.note}>{meta.note}</p>
       <div className={styles.actions}>
         <Button appearance="primary" icon={<Add20Filled />} onClick={newCase}>
           New business case
@@ -71,9 +67,6 @@ function ExampleCases() {
     <div className={styles.examplesRoot}>
       <header className={styles.examplesHeader}>
         <div>
-          <Badge appearance="tint" color="brand" className={styles.eyebrow}>
-            Curated by Microsoft
-          </Badge>
           <h1 className={styles.title}>Example Cases</h1>
           <p className={styles.lead}>
             Finished business cases built for Microsoft customers. Open one to see how it is put

@@ -17,7 +17,7 @@ import styles from './StepMasthead.module.css';
  * STEPS[step] and the position from step, so a caller cannot state either a second
  * time — the merge is enforced by the signature rather than by convention.
  */
-export default function StepMasthead({ description, actions }) {
+export default function StepMasthead({ description }) {
   const { step, maxStepReached, goToStep } = useAppState();
   const descId = useId();
   const headingRef = useRef(null);
@@ -124,8 +124,6 @@ export default function StepMasthead({ description, actions }) {
           {description}
         </p>
       ) : null}
-
-      {actions ? <div className={styles.meta}>{actions}</div> : null}
     </header>
   );
 }
