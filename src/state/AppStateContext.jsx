@@ -324,6 +324,25 @@ function reducer(state, action) {
         'competitors',
       );
 
+    // The competitor row is captured on step 1 and mapped to its Microsoft
+    // replacement on step 2, so the same row is edited from two screens. One
+    // patch action serves both, exactly as UPDATE_SKU_ROW does for the SKU table.
+    case 'UPDATE_COMPETITOR_ROW':
+      return humanTouch(
+        {
+          ...state,
+          competitors: {
+            ...state.competitors,
+            rows: state.competitors.rows.map((r) =>
+              r.id === action.id
+                ? { ...r, ...action.patch, authorship: afterHumanEdit(r.authorship) }
+                : r,
+            ),
+          },
+        },
+        'competitors',
+      );
+
     case 'REMOVE_COMPETITOR_ROW':
       return humanTouch(
         {
@@ -618,6 +637,7 @@ export function AppStateProvider({ children }) {
       setBundle: (key, value) => dispatch({ type: 'SET_BUNDLE', key, value }),
       setCompetitorDiscount: (value) => dispatch({ type: 'SET_COMPETITOR_DISCOUNT', value }),
       addCompetitorRow: (seed) => dispatch({ type: 'ADD_COMPETITOR_ROW', seed }),
+      updateCompetitorRow: (id, patch) => dispatch({ type: 'UPDATE_COMPETITOR_ROW', id, patch }),
       removeCompetitorRow: (id) => dispatch({ type: 'REMOVE_COMPETITOR_ROW', id }),
       setNarrative: (id, text) => dispatch({ type: 'SET_NARRATIVE', id, text }),
       revertNarrative: (id) => dispatch({ type: 'REVERT_NARRATIVE', id }),

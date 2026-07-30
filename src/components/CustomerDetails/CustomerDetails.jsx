@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Card,
   Checkbox,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
   Dropdown,
   Input,
   Option,
@@ -10,18 +15,22 @@ import {
   RadioGroup,
   Textarea,
 } from '@fluentui/react-components';
-import { Search20Regular } from '@fluentui/react-icons';
+import { Add16Filled, Delete16Regular, Search20Regular, Sparkle16Filled } from '@fluentui/react-icons';
 import {
   ANALYSIS_PERIODS,
   BCB_ROLES,
-  COMPETITOR_CATALOG,
+  COMPETITOR_MATRIX,
   CUSTOMER_SEGMENTS,
   EXISTING_MS_LICENSES,
   GEOGRAPHIES,
   INDUSTRIES,
+  MS_BUNDLES,
   SALES_MOTIONS,
   SECURITY_STACK_CATEGORIES,
+  SOFTWARE_SOLUTIONS,
+  currencySymbol,
 } from '../../data/referenceData.js';
+import { CASE_START_YEAR, formatCurrency } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
@@ -29,23 +38,42 @@ import StepFooter from '../shared/StepFooter.jsx';
 import MultiSelect from '../shared/MultiSelect.jsx';
 import styles from './CustomerDetails.module.css';
 
+/**
+ * Step 1 — the customer's estate as it is today.
+ *
+ * Everything about the *current* state is captured here and only here: what the
+ * customer already buys from Microsoft, and what they buy from everyone else.
+ * Step 2 proposes the future against it, so nothing on this step asks what the
+ * customer should move to — the "new Microsoft product" mapping lives there.
+ */
 export default function CustomerDetails() {
   const {
     customer,
     fieldMeta,
     environment,
     caseSetup,
+    bundle,
+    competitors,
+    businessCase,
     currency,
     effectiveDevices,
     setCustomer,
     setEnvironment,
     setCaseSetup,
+    setBundle,
+    setCompetitorDiscount,
+    addCompetitorRow,
+    removeCompetitorRow,
+    ask,
   } = useAppState();
+
+  const symbol = currencySymbol(currency);
+  const years = Number(caseSetup.analysisPeriod) || 3;
 
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="The account size and the current security stack drive every number in the report."
+        description="What the customer runs today — their Microsoft footprint and the competitor products in the estate. Every number in the report is measured against it."
       />
 
       {/* ------------------------ Customer Information ------------------------ */}
@@ -140,7 +168,12 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <div />
+          {/* Seller alias sits with the other engagement facts. It used to close the
+              old "Customer environment" card, which no longer exists — and it is
+              about the seller, not about anything the customer runs. */}
+          <FormField label="Seller alias">
+            {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
+          </FormField>
 
           <FormField label="Industry" meta={fieldMeta.industry}>
             {(id) => (
@@ -297,9 +330,16 @@ export default function CustomerDetails() {
         </FormField>
       </Card>
 
-      {/* ------------------------ Customer Environment ------------------------ */}
+      {/* ------------------------ Microsoft environment ----------------------- */}
       <Card className={styles.card}>
-        <h2 className={styles.cardTitle}>Customer environment</h2>
+        <div className={styles.cardHead}>
+          <h2 className={styles.cardTitle}>Microsoft environment</h2>
+          <p className={styles.cardLead}>
+            What the customer already owns and already pays Microsoft. This offsets the uplift in
+            step 2 rather than counting as new spend.
+          </p>
+        </div>
+
         <div className={styles.grid}>
           <FormField
             label="Existing MS licenses"
@@ -317,43 +357,67 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField
-            label="Competitor products"
-            help="Drives competitive displacement scenarios and TCO comparison (optional)"
-          >
+          <FormField label="Current Microsoft bundle">
             {(id) => (
-              <MultiSelect
+              <Dropdown
                 id={id}
-                options={COMPETITOR_CATALOG.map((c) => c.name)}
-                selected={environment.competitorProducts}
-                onChange={(v) => setEnvironment('competitorProducts', v)}
-                placeholder="Search competitor product"
-                allowCustom
+                placeholder="Select"
+                value={MS_BUNDLES.find((b) => b.id === bundle.bundleId)?.name || ''}
+                selectedOptions={bundle.bundleId ? [bundle.bundleId] : []}
+                onOptionSelect={(_, d) => setBundle('bundleId', d.optionValue)}
+              >
+                {MS_BUNDLES.map((b) => (
+                  <Option key={b.id} value={b.id} text={b.name}>
+                    {b.name}
+                  </Option>
+                ))}
+              </Dropdown>
+            )}
+          </FormField>
+
+          <FormField label="Annual license price" help={`Per-user cost, ${currency}`}>
+            {(id) => (
+              <Input
+                id={id}
+                value={bundle.annualPerUser}
+                onChange={(_, d) => setBundle('annualPerUser', d.value)}
+                placeholder="0"
+                contentBefore={symbol}
               />
             )}
           </FormField>
 
           <FormField
-            label="Current security stack"
-            required
-            help="Drives competitive displacement recommendations"
+            label="Do you own any additional Microsoft products or have any licensing savings from Microsoft?"
+            help="Enter total annual value of extra products / savings"
+            span
           >
             {(id) => (
-              <MultiSelect
+              <Input
                 id={id}
-                options={SECURITY_STACK_CATEGORIES}
-                selected={environment.securityStack}
-                onChange={(v) => setEnvironment('securityStack', v)}
-                placeholder="Search security stack category"
+                value={bundle.additionalValue}
+                onChange={(_, d) => setBundle('additionalValue', d.value)}
+                placeholder="0"
+                contentBefore={symbol}
               />
             )}
-          </FormField>
-
-          <FormField label="Seller alias">
-            {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
           </FormField>
         </div>
       </Card>
+
+      {/* ----------------------- Competitive environment ---------------------- */}
+      <CompetitiveEnvironment
+        environment={environment}
+        competitors={competitors}
+        symbol={symbol}
+        years={years}
+        businessCase={businessCase}
+        onEnvironment={setEnvironment}
+        onDiscount={setCompetitorDiscount}
+        onAdd={addCompetitorRow}
+        onRemove={removeCompetitorRow}
+        onAsk={ask}
+      />
 
       {/* ------------------------- Business Case Setup ------------------------ */}
       <Card className={styles.card}>
@@ -401,5 +465,269 @@ export default function CustomerDetails() {
 
       <StepFooter hint="Fill in what you know — you can move between steps freely and come back." />
     </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The third-party half of the estate: which categories the customer buys
+ * outside Microsoft, what they pay, and when each contract lapses.
+ *
+ * Capture only. Which Microsoft product replaces each of these is a decision,
+ * not an observation, so it is made on step 2 — this table has no "new
+ * Microsoft product" column.
+ */
+function CompetitiveEnvironment({
+  environment,
+  competitors,
+  symbol,
+  years,
+  businessCase,
+  onEnvironment,
+  onDiscount,
+  onAdd,
+  onRemove,
+  onAsk,
+}) {
+  const blank = {
+    softwareSolution: '',
+    currentProduct: '',
+    competitorCost: '',
+    yearContractEnds: '',
+  };
+  const [draft, setDraft] = useState(blank);
+  const [matrixOpen, setMatrixOpen] = useState(false);
+
+  const canAdd = draft.currentProduct.trim() && draft.competitorCost;
+  const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
+
+  return (
+    <Card className={styles.card}>
+      <div className={styles.cardHead}>
+        <h2 className={styles.cardTitle}>Competitive environment</h2>
+        <p className={styles.cardLead}>
+          What the customer buys outside Microsoft today. Search for a competitor product or enter
+          one that is not in our database — new competitors are saved to this customer account
+          only.
+        </p>
+      </div>
+
+      <div className={styles.grid}>
+        <FormField
+          label="Current security stack"
+          required
+          help="Drives competitive displacement recommendations"
+        >
+          {(id) => (
+            <MultiSelect
+              id={id}
+              options={SECURITY_STACK_CATEGORIES}
+              selected={environment.securityStack}
+              onChange={(v) => onEnvironment('securityStack', v)}
+              placeholder="Search security stack category"
+            />
+          )}
+        </FormField>
+
+        <FormField
+          label="What discount from competitor retail pricing (MSRP) does your customer receive?"
+          help="0 – 100 %"
+        >
+          {(id) => (
+            <Input
+              id={id}
+              value={competitors.msrpDiscount}
+              onChange={(_, d) => onDiscount(d.value)}
+              placeholder="0"
+              contentAfter="%"
+              className={styles.discountInput}
+            />
+          )}
+        </FormField>
+      </div>
+
+      <p className={styles.subHead}>Add a competitor product</p>
+
+      <div className={styles.compForm}>
+        <FormField label="Software solution">
+          {(id) => (
+            <Dropdown
+              id={id}
+              placeholder="Select"
+              value={draft.softwareSolution}
+              selectedOptions={draft.softwareSolution ? [draft.softwareSolution] : []}
+              onOptionSelect={(_, d) => setDraft({ ...draft, softwareSolution: d.optionValue })}
+            >
+              {SOFTWARE_SOLUTIONS.map((s) => (
+                <Option key={s} value={s}>
+                  {s}
+                </Option>
+              ))}
+            </Dropdown>
+          )}
+        </FormField>
+        <FormField label="Current product">
+          {(id) => (
+            <Input
+              id={id}
+              value={draft.currentProduct}
+              onChange={(_, d) => setDraft({ ...draft, currentProduct: d.value })}
+              placeholder="e.g. CrowdStrike"
+            />
+          )}
+        </FormField>
+        <FormField label="Competitor cost" help="Annual, at MSRP">
+          {(id) => (
+            <Input
+              id={id}
+              value={draft.competitorCost}
+              onChange={(_, d) => setDraft({ ...draft, competitorCost: d.value })}
+              placeholder="0"
+              contentBefore={symbol}
+            />
+          )}
+        </FormField>
+        <FormField label="Year contract ends" help="Savings start the year after">
+          {(id) => (
+            <Input
+              id={id}
+              value={draft.yearContractEnds}
+              onChange={(_, d) => setDraft({ ...draft, yearContractEnds: d.value })}
+              placeholder={String(CASE_START_YEAR)}
+            />
+          )}
+        </FormField>
+      </div>
+
+      <div className={styles.rowActions}>
+        <Button
+          appearance="primary"
+          icon={<Add16Filled />}
+          disabled={!canAdd}
+          onClick={() => {
+            onAdd(draft);
+            setDraft(blank);
+          }}
+        >
+          Add
+        </Button>
+        <Button appearance="secondary" onClick={() => setMatrixOpen(true)}>
+          View competitor matrix
+        </Button>
+        <Button
+          appearance="transparent"
+          icon={<Sparkle16Filled className={styles.aiIcon} />}
+          onClick={() => onAsk('Detect the competitor products in this estate')}
+        >
+          Detect with AI
+        </Button>
+      </div>
+
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th scope="col">Software solution</th>
+              <th scope="col">Current product</th>
+              {/* At MSRP, before the discount above. Step 2 reports the same rows
+                  net of that discount, which is the figure the model uses. */}
+              <th scope="col" className={styles.numeric}>
+                Competitor cost (MSRP)
+              </th>
+              <th scope="col">Year contract ends</th>
+              <th scope="col">In horizon</th>
+              <th scope="col" aria-label="Actions" />
+            </tr>
+          </thead>
+          <tbody>
+            {competitors.rows.length === 0 ? (
+              <tr>
+                <td colSpan={6} className={styles.tableEmpty}>
+                  No competitor products added yet.
+                </td>
+              </tr>
+            ) : (
+              competitors.rows.map((r) => {
+                const line = lineFor(r.id);
+                return (
+                  <tr key={r.id}>
+                    <td>{r.softwareSolution || '—'}</td>
+                    <td>
+                      <span className={styles.cellMain}>{r.currentProduct}</span>
+                    </td>
+                    <td className={styles.numeric}>
+                      {formatCurrency(Number(r.competitorCost), { symbol })}
+                    </td>
+                    <td>{r.yearContractEnds || '—'}</td>
+                    <td>
+                      {line?.displaceable ? (
+                        <span className={styles.inHorizon}>
+                          {line.yearsOfBenefit} of {years} yrs
+                        </span>
+                      ) : (
+                        <span className={styles.outHorizon}>Outside horizon</span>
+                      )}
+                    </td>
+                    <td>
+                      <Button
+                        appearance="subtle"
+                        size="small"
+                        icon={<Delete16Regular />}
+                        aria-label={`Remove ${r.currentProduct}`}
+                        onClick={() => onRemove(r.id)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {competitors.rows.length > 0 ? (
+        <p className={styles.tableNote}>
+          You will map each of these to a Microsoft product in step 2.
+        </p>
+      ) : null}
+
+      {competitors.rows.some((r) => !lineFor(r.id)?.displaceable) ? (
+        <p className={styles.horizonNote}>
+          A contract ending after the analysis period contributes nothing to this case — the
+          customer is still paying for it. Extend the analysis period or correct the end year.
+        </p>
+      ) : null}
+
+      <Dialog open={matrixOpen} onOpenChange={(_, d) => setMatrixOpen(d.open)}>
+        <DialogSurface className={styles.matrixSurface}>
+          <DialogBody>
+            <DialogTitle>Competitor matrix</DialogTitle>
+            <DialogContent>
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th scope="col">Software solution</th>
+                      <th scope="col">Common competitors</th>
+                      <th scope="col">Microsoft product</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {COMPETITOR_MATRIX.map((m) => (
+                      <tr key={m.solution}>
+                        <td>{m.solution}</td>
+                        <td>{m.competitors}</td>
+                        <td>{m.microsoft}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </DialogContent>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+    </Card>
   );
 }

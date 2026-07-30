@@ -15,16 +15,21 @@ import { DEMO_EXTRACTION } from './demoCase.js';
 
 /* --------------------------- Suggested prompts ---------------------------- */
 
+// Each step offers only what that step can actually answer. Step 1 holds the
+// whole current estate now — the Microsoft bundle and the competitor contracts —
+// so estate detection and the contract-year question belong to it, and step 2 is
+// left with the proposal: which SKUs fit, and what they displace.
 export const STEP_SUGGESTIONS = [
   [
     { label: 'Use the Contoso example', kind: 'demo' },
+    { label: 'Detect the competitor products in this estate' },
+    { label: 'Why does "Year contract ends" matter?' },
     { label: 'Which fields drive the numbers?' },
-    { label: 'What does "Role of Security BCB" change?' },
   ],
   [
     { label: 'Which SKUs match the outcomes I selected?' },
-    { label: 'Detect the competitor products in this estate' },
-    { label: 'Why does "Year contract ends" matter?' },
+    { label: 'Why is this the right recommendation?' },
+    { label: 'What are we displacing, and what is it worth?' },
   ],
   [
     { label: 'How did you calculate the ROI?' },
@@ -43,13 +48,19 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: "I am the Security business case copilot. Describe the customer — who they are, their size, and what they run today — and I will populate the form from it.",
+            text: "I am the Security business case copilot. This step is the estate as it stands today — who the customer is, what they already pay Microsoft, and what they pay everyone else. Describe them in a sentence and I will populate all of it.",
           },
           {
             type: 'callout',
             tone: 'insight',
             title: 'Every field shows its source',
             text: 'Every field I populate carries what it was drawn from, so you can check the ones that move the numbers before this reaches a customer.',
+          },
+          {
+            type: 'callout',
+            tone: 'coach',
+            title: 'Year contract ends is the field people skip',
+            text: 'A competitor contract running past the analysis period contributes nothing — the customer is still paying for it. Getting those years right, here, is what stops a case overstating savings.',
           },
         ],
       };
@@ -59,13 +70,13 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: 'This step is what the numbers are built from: the outcomes you are selling against, the SKUs and seats, what the customer already pays Microsoft, and what is being displaced.',
+            text: 'This step is the proposal: the outcomes you are selling against, the Microsoft SKUs and seats that serve them, and which current vendor each one takes out.',
           },
           {
             type: 'callout',
             tone: 'coach',
-            title: 'Year contract ends is the field people skip',
-            text: 'A competitor contract running past the analysis period contributes nothing — the customer is still paying for it. Getting those years right is what stops a case overstating savings.',
+            title: 'The mapping is what makes it a displacement',
+            text: 'The competitor costs and contract dates already came across from step 1. What this step adds is the Microsoft product against each of them — without that column it is a price comparison, not a displacement.',
           },
         ],
       };
@@ -130,11 +141,11 @@ const INTENTS = [
           type: 'callout',
           tone: 'coach',
           title: 'Two things worth checking',
-          text: 'I inferred the Splunk and Proofpoint lines from install-base signal rather than anything you said, and I guessed the contract end years. Both change the numbers — correct them on step 2 before this goes out.',
+          text: 'I inferred the Splunk and Proofpoint lines from install-base signal rather than anything you said, and I guessed the contract end years. Both change the numbers — correct them in Competitive environment on this step before this goes out.',
         },
         {
           type: 'actions',
-          items: [{ label: 'Go to recommendations', kind: 'navigate', step: 1 }],
+          items: [{ label: 'Go to the recommended solution', kind: 'navigate', step: 1 }],
         },
       ],
       actions: [{ type: 'fillCase' }],
@@ -144,7 +155,21 @@ const INTENTS = [
   /* ----------------------------- EXPLAIN ---------------------------- */
   {
     id: 'OUTCOMES_TO_SKUS',
-    test: (input) => has(input, 'which sku', 'match the outcome', 'suggest sku', 'shortlist'),
+    // "Why this recommendation" on step 2 asks through this same intent, so the
+    // phrasings that card's button uses have to match here as well.
+    test: (input) =>
+      has(
+        input,
+        'which sku',
+        'match the outcome',
+        'suggest sku',
+        'shortlist',
+        'right recommendation',
+        'why this recommendation',
+        'why these sku',
+        'explain the fit',
+        'why this solution',
+      ),
     thinking: ['Mapping outcomes to SKUs'],
     delay: 1800,
     build: (input, ctx) => {
@@ -176,6 +201,78 @@ const INTENTS = [
             text: 'I can tell you which SKUs fit the outcomes. I cannot tell you what the customer negotiated — enter the seats per year and the price you expect to land.',
           },
         ],
+      };
+    },
+  },
+  {
+    id: 'DISPLACEMENT_MAP',
+    // Step 2 pairs each competitor captured on step 1 with the Microsoft product
+    // that replaces it. This reads that mapping back; the money question behind
+    // it belongs to EXPLAIN_ROI.
+    test: (input) =>
+      has(input, 'displac', 'what are we replacing', 'what does this replace', 'which vendor'),
+    thinking: ['Reading the competitor rows', 'Checking what each one maps to'],
+    delay: 1800,
+    build: (input, ctx) => {
+      const rows = ctx.competitors.rows || [];
+      const money = (v) => formatCurrency(v, { symbol: currencySymbol(ctx.currency) });
+
+      if (rows.length === 0) {
+        return {
+          blocks: [
+            {
+              type: 'text',
+              text: 'Nothing to displace yet. Competitor products are captured on step 1, in Competitive environment — add them there with a cost and a contract end year, and they arrive here ready to map.',
+            },
+            {
+              type: 'actions',
+              items: [{ label: 'Go to the customer environment', kind: 'navigate', step: 0 }],
+            },
+          ],
+        };
+      }
+
+      const lines = ctx.businessCase.competitorLines;
+      const mapped = lines.filter((l) => l.newMicrosoftProduct);
+      const unmapped = lines.length - mapped.length;
+      const mappedSpend = mapped.reduce((sum, l) => sum + l.annualCost, 0);
+      const late = mapped.filter((l) => !l.displaceable).length;
+
+      return {
+        blocks: [
+          {
+            type: 'text',
+            text:
+              mapped.length === 0
+                ? `None of the ${rows.length} competitor product${rows.length === 1 ? '' : 's'} on this case has a Microsoft product against it yet — that mapping is what turns ${money(ctx.businessCase.annualThirdPartySpend)} of annual spend into a displacement story.`
+                : `${mapped.length} of ${rows.length} competitor product${rows.length === 1 ? '' : 's'} ${mapped.length === 1 ? 'is' : 'are'} mapped to a Microsoft replacement, covering ${money(mappedSpend)} of annual competitor spend.`,
+          },
+          mapped.length
+            ? {
+                type: 'bullets',
+                items: mapped.map(
+                  (l) =>
+                    `**${l.currentProduct || l.softwareSolution || 'Unnamed product'}** → ${l.newMicrosoftProduct}`,
+                ),
+              }
+            : null,
+          unmapped > 0
+            ? {
+                type: 'callout',
+                tone: 'warning',
+                title: `${unmapped} row${unmapped === 1 ? ' has' : 's have'} no Microsoft product against ${unmapped === 1 ? 'it' : 'them'}`,
+                text: 'The spend still counts as a saving, but the case cannot say what takes their place. Set the replacement on each row.',
+              }
+            : null,
+          late > 0
+            ? {
+                type: 'callout',
+                tone: 'coach',
+                title: `${late} of those contract${late === 1 ? '' : 's'} ${late === 1 ? 'ends' : 'end'} outside the horizon`,
+                text: 'They are mapped, but they return nothing inside the analysis period — the customer is still paying the incumbent. Lengthen the period or expect the question.',
+              }
+            : null,
+        ].filter(Boolean),
       };
     },
   },
@@ -233,8 +330,8 @@ const INTENTS = [
         {
           type: 'text',
           text: ctx.customer.accountName
-            ? 'I have added the four products I can see against this account, with estimated annual cost and contract end years. Both figures are estimates — correct them before this reaches a customer.'
-            : 'I need an account name and the current security stack before I can infer an estate. Fill those in on step 1, or add the competitor rows here.',
+            ? 'I have added the four products I can see against this account to Competitive environment, with estimated annual cost and contract end years. Both figures are estimates — correct them here before this reaches a customer. You map each one to its Microsoft replacement on step 2.'
+            : 'I need an account name and the current security stack before I can infer an estate. Fill those in above, or add the competitor rows by hand.',
         },
         ctx.customer.accountName
           ? {
@@ -263,8 +360,16 @@ const INTENTS = [
       if (ctx.outcomes.length === 0) gaps.push('**Security outcomes** — what the customer is actually trying to fix.');
       if (ctx.skus.length === 0) gaps.push('**At least one SKU** — there is no investment to return on yet.');
       if (ctx.skus.some((s) => !s.pricePerMonth)) gaps.push('**Price per month** — missing on one or more SKUs, so those rows add no cost to the model.');
-      if ((ctx.competitors.rows || []).length === 0)
-        gaps.push('**Competitor products** — without them the case rests on soft benefit alone.');
+      const rows = ctx.competitors.rows || [];
+      if (rows.length === 0)
+        gaps.push(
+          '**Competitor products** — captured on step 1; without them the case rests on soft benefit alone.',
+        );
+      const unmapped = rows.filter((r) => !r.newMicrosoftProduct).length;
+      if (unmapped > 0)
+        gaps.push(
+          `**${unmapped} unmapped competitor row${unmapped === 1 ? '' : 's'}** — no Microsoft product named against ${unmapped === 1 ? 'it' : 'them'} on step 2, so the report cannot say what replaces what.`,
+        );
       const outOfHorizon = ctx.businessCase.competitorLines.filter((l) => !l.displaceable);
       if (outOfHorizon.length > 0)
         gaps.push(
@@ -304,7 +409,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'There is nothing to calculate yet — no SKUs and no competitor products. Add either of those on step 2 and I will walk you through the arithmetic.',
+              text: 'There is nothing to calculate yet — no SKUs and no competitor products. Capture the competitor estate on step 1 or the SKUs on step 2, and I will walk you through the arithmetic.',
             },
           ],
         };
@@ -435,7 +540,7 @@ const FALLBACKS = [
     blocks: [
       {
         type: 'text',
-        text: 'Describe the customer — their size and what they run today — and I can fill this step from it.',
+        text: 'Describe the customer — their size, what they run on Microsoft today, and which security vendors they pay — and I can fill this step from it.',
       },
       { type: 'actions', items: [{ label: 'Use the Contoso example', kind: 'demo' }] },
     ],
@@ -444,13 +549,13 @@ const FALLBACKS = [
     blocks: [
       {
         type: 'text',
-        text: 'On this step I can map outcomes to SKUs, explain how contract timing feeds the model, or estimate the competitor estate.',
+        text: 'On this step I can map outcomes to SKUs, explain why a SKU belongs in the recommendation, or read back what each competitor product is being replaced with.',
       },
       {
         type: 'actions',
         items: [
           { label: 'Which SKUs match the outcomes I selected?', kind: 'prompt' },
-          { label: 'Why does "Year contract ends" matter?', kind: 'prompt' },
+          { label: 'What are we displacing, and what is it worth?', kind: 'prompt' },
         ],
       },
     ],

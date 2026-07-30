@@ -10,12 +10,13 @@
 
 export const STEPS = [
   // Current state, then future state, then what it is worth — the arc a business
-  // case actually makes. Step 2 is "Recommendations" rather than "AI
-  // recommendations": the copilot can propose a starting point, but the SKU and
-  // competitor tables are filled in by hand, and the label should not claim
-  // otherwise.
+  // case actually makes. Step 2 is "Recommended solution" rather than "AI
+  // recommendations": the copilot can propose a starting point, but the SKU
+  // table and the displacement mapping are filled in by hand, and the label
+  // should not claim otherwise. It is also singular on purpose — the step
+  // produces one proposal, not a menu of options.
   { id: 'customer', label: 'Customer environment', caption: 'Current state' },
-  { id: 'sku', label: 'Recommendations', caption: 'Future state' },
+  { id: 'sku', label: 'Recommended solution', caption: 'Future state' },
   { id: 'report', label: 'Business case report', caption: 'Value & justification' },
 ];
 
@@ -115,7 +116,7 @@ export const SECURITY_STACK_CATEGORIES = [
   'Security awareness training',
 ];
 
-/** Competitor products the seller can search for on Customer Details. */
+/** Known competitor products and the category each one sits in. */
 export const COMPETITOR_CATALOG = [
   { name: 'CrowdStrike Falcon', category: 'Endpoint protection (EDR/EPP)' },
   { name: 'SentinelOne Singularity', category: 'Endpoint protection (EDR/EPP)' },
@@ -314,7 +315,7 @@ export const MICROSOFT_SKUS = [
 
 export const skuById = (id) => MICROSOFT_SKUS.find((s) => s.id === id);
 
-/** Current Microsoft bundles, for "Build from a current bundle". */
+/** What the customer already pays Microsoft — part of the current estate. */
 export const MS_BUNDLES = [
   { id: 'none', name: 'No current Microsoft bundle', annualPerUser: 0 },
   { id: 'o365-e1', name: 'Office 365 E1', annualPerUser: 96 },

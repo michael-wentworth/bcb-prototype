@@ -72,8 +72,9 @@ export default function CustomerReport() {
         <Card className={styles.noInputs}>
           <p className={styles.noInputsTitle}>Nothing to calculate yet</p>
           <p className={styles.noInputsText}>
-            Add at least one SKU or competitor product on <strong>Recommendations</strong> and the
-            numbers here will fill in. You can still write the narrative below in the meantime.
+            Add a competitor product on <strong>Customer environment</strong>, or a SKU on{' '}
+            <strong>Recommended solution</strong>, and the numbers here will fill in. You can still
+            write the narrative below in the meantime.
           </p>
         </Card>
       ) : null}

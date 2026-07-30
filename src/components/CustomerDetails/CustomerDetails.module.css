@@ -21,6 +21,32 @@
   color: var(--colorNeutralForeground1);
 }
 
+/* A card whose title is followed by a lead paragraph. The title keeps its own
+   rule; only its bottom margin moves out to the wrapper so the two read as one
+   block. */
+.cardHead {
+  margin-bottom: var(--spacingVerticalL);
+}
+
+.cardHead .cardTitle {
+  margin-bottom: 0;
+}
+
+.cardLead {
+  margin: 4px 0 0;
+  max-width: 78ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground3);
+}
+
+.subHead {
+  margin: var(--spacingVerticalXL) 0 var(--spacingVerticalM);
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -79,14 +105,129 @@
   color: var(--colorNeutralForeground3);
 }
 
+/* --------------------------- competitive capture --------------------------- */
+
+.compForm {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacingVerticalL) var(--spacingHorizontalL);
+}
+
+.discountInput {
+  max-width: 160px;
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  flex-wrap: wrap;
+  margin-top: var(--spacingVerticalL);
+}
+
+.aiIcon {
+  color: var(--colorBrandForeground1);
+}
+
+.tableWrap {
+  margin-top: var(--spacingVerticalL);
+  overflow-x: auto;
+  border-radius: var(--borderRadiusMedium);
+  border: 1px solid var(--colorNeutralStroke2);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fontSizeBase300);
+}
+
+.table th,
+.table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  color: var(--colorNeutralForeground2);
+  white-space: nowrap;
+}
+
+.table thead th {
+  background-color: var(--colorNeutralBackground3);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground3);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cellMain {
+  display: block;
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorNeutralForeground1);
+  margin-bottom: 2px;
+}
+
+.tableEmpty {
+  text-align: center;
+  font-style: italic;
+  color: var(--colorNeutralForeground4);
+  padding: var(--spacingVerticalXL) 0;
+}
+
+/* Hands the table off to step 2, where the Microsoft mapping is made. */
+.tableNote {
+  margin: var(--spacingVerticalS) 0 0;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.inHorizon {
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorPaletteGreenForeground1);
+}
+
+.outHorizon {
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorPaletteDarkOrangeForeground1);
+}
+
+.horizonNote {
+  margin: var(--spacingVerticalM) 0 0;
+  padding: 10px 14px;
+  border-radius: var(--borderRadiusMedium);
+  border-left: 3px solid var(--colorPaletteDarkOrangeBorderActive);
+  background-color: var(--colorPaletteDarkOrangeBackground1);
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground2);
+}
+
+.matrixSurface {
+  max-width: 760px;
+}
+
 @media (max-width: 1100px) {
   .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .compForm {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 780px) {
-  .grid {
+  .grid,
+  .compForm {
     grid-template-columns: minmax(0, 1fr);
   }
 }

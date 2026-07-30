@@ -37,13 +37,6 @@
   color: var(--colorNeutralForeground3);
 }
 
-.subHead {
-  margin: var(--spacingVerticalXL) 0 0;
-  font-size: var(--fontSizeBase400);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
 .aiIcon {
   color: var(--colorBrandForeground1);
 }
@@ -54,6 +47,21 @@
   gap: var(--spacingHorizontalS);
   flex-wrap: wrap;
   margin-top: var(--spacingVerticalM);
+}
+
+/* A card that has nothing to show says what is missing and where to supply it,
+   rather than rendering an empty shell. Also used for the "not tied to an
+   outcome" aside, which is the same shape of remark. */
+.emptyNote {
+  margin: var(--spacingVerticalM) 0 0;
+  padding: 10px 14px;
+  border-radius: var(--borderRadiusMedium);
+  border-left: 3px solid var(--colorNeutralStroke1);
+  background-color: var(--colorNeutralBackground2);
+  max-width: 78ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
 }
 
 /* -------------------------------- outcomes --------------------------------- */
@@ -167,32 +175,107 @@
   color: var(--colorNeutralForeground1);
 }
 
-/* --------------------------------- bundle ---------------------------------- */
+/* -------------------------- why this recommendation ------------------------ */
 
-.bundleGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacingVerticalXL) var(--spacingHorizontalXL);
-  margin-top: var(--spacingVerticalL);
+.rationaleList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--borderRadiusMedium);
+  border: 1px solid var(--colorNeutralStroke2);
+  overflow: hidden;
 }
 
-/* ------------------------------- competitors ------------------------------- */
+.rationaleRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--spacingHorizontalXL);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+}
 
-.discountRow {
-  max-width: 520px;
+.rationaleRow:last-child {
+  border-bottom: none;
+}
+
+.rationaleOutcome {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rationaleLabel {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.rationaleDetail {
+  font-size: var(--fontSizeBase200);
+  line-height: 17px;
+  color: var(--colorNeutralForeground3);
+}
+
+.rationaleSkus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.chip {
+  padding: 3px 10px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorBrandBackground2);
+  border: 1px solid var(--colorBrandStroke2);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorBrandForeground2);
+}
+
+/* An outcome with no SKU behind it is a hole in the argument, not a blank cell. */
+.rationaleGap {
+  font-size: var(--fontSizeBase200);
+  line-height: 17px;
+  color: var(--colorPaletteDarkOrangeForeground1);
+}
+
+/* ---------------------------- displacement summary ------------------------- */
+
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacingHorizontalL);
   margin-bottom: var(--spacingVerticalL);
 }
 
-.discountInput {
-  max-width: 160px;
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground2);
+  border: 1px solid var(--colorNeutralStroke2);
 }
 
-.compForm {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--spacingHorizontalL);
-  margin-top: var(--spacingVerticalL);
+.statValue {
+  font-size: var(--fontSizeBase500);
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
 }
+
+.statLabel {
+  font-size: var(--fontSizeBase200);
+  line-height: 17px;
+  color: var(--colorNeutralForeground3);
+}
+
+/* --------------------------------- tables ---------------------------------- */
 
 .tableWrap {
   margin-top: var(--spacingVerticalL);
@@ -239,54 +322,32 @@
   margin-bottom: 2px;
 }
 
-.tableEmpty {
-  text-align: center;
-  font-style: italic;
-  color: var(--colorNeutralForeground4);
-  padding: var(--spacingVerticalXL) 0;
+.cellSub {
+  display: block;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
 }
 
-.inHorizon {
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorPaletteGreenForeground1);
+/* The one editable cell on this table — give the combobox room to show a full
+   SKU name rather than truncating it to the column's natural width. */
+.mapCell {
+  width: 100%;
+  min-width: 280px;
 }
 
-.outHorizon {
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorPaletteDarkOrangeForeground1);
-}
-
-.horizonNote {
-  margin: var(--spacingVerticalM) 0 0;
-  padding: 10px 14px;
-  border-radius: var(--borderRadiusMedium);
-  border-left: 3px solid var(--colorPaletteDarkOrangeBorderActive);
-  background-color: var(--colorPaletteDarkOrangeBackground1);
-  font-size: var(--fontSizeBase200);
-  line-height: 18px;
-  color: var(--colorNeutralForeground2);
+.mapInput {
+  width: 100%;
+  min-width: 260px;
 }
 
 .matrixSurface {
   max-width: 760px;
 }
 
-@media (max-width: 1200px) {
-  .compForm {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 900px) {
   .outcomeGrid,
   .skuMeta,
-  .bundleGrid {
+  .rationaleRow {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .compForm {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

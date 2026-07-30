@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Button,
   Card,
   Checkbox,
+  Combobox,
   Dialog,
   DialogBody,
   DialogContent,
@@ -16,28 +17,32 @@ import { Add16Filled, Delete16Regular, Sparkle16Filled } from '@fluentui/react-i
 import {
   COMPETITOR_MATRIX,
   MICROSOFT_SKUS,
-  MS_BUNDLES,
   SECURITY_OUTCOMES,
-  SOFTWARE_SOLUTIONS,
   SOLUTION_AREAS,
   SOLUTION_PLAYS,
   currencySymbol,
   skuById,
 } from '../../data/referenceData.js';
-import { CASE_START_YEAR, formatCurrency } from '../../data/model.js';
+import { formatCurrency } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import styles from './SkuSelection.module.css';
 
+/**
+ * Step 2 — the proposed future.
+ *
+ * Everything the customer has today is captured on step 1; nothing on this screen
+ * asks for it again. What is left is the recommendation itself: the outcomes it
+ * has to serve, the SKUs that serve them, why those SKUs, and which incumbent
+ * vendor each one displaces.
+ */
 export default function SkuSelection() {
   const {
     outcomes,
     skus,
-    bundle,
     competitors,
-    caseSetup,
     customer,
     currency,
     businessCase,
@@ -47,21 +52,18 @@ export default function SkuSelection() {
     updateSkuRow,
     updateSkuSeats,
     removeSkuRow,
-    setBundle,
-    setCompetitorDiscount,
-    addCompetitorRow,
-    removeCompetitorRow,
+    updateCompetitorRow,
+    goToStep,
     ask,
   } = useAppState();
 
   const symbol = currencySymbol(currency);
-  const years = Number(caseSetup.analysisPeriod) || 3;
   const allSelected = outcomes.length === SECURITY_OUTCOMES.length;
 
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="Contract end dates decide how much of each saving lands inside the analysis period."
+        description="The solution you are proposing: the outcomes it has to serve, the SKUs that serve them, and the vendors each one replaces."
       />
 
       {/* ---------------------------- Outcomes ---------------------------- */}
@@ -104,7 +106,11 @@ export default function SkuSelection() {
       <Card className={styles.card}>
         <div className={styles.cardHead}>
           <div>
-            <h2 className={styles.cardTitle}>Select a SKU</h2>
+            <h2 className={styles.cardTitle}>Recommended Microsoft solution</h2>
+            <p className={styles.cardLead}>
+              The SKUs you are proposing, and the seats and price behind each one. This is the
+              investment side of the case.
+            </p>
           </div>
         </div>
 
@@ -246,71 +252,16 @@ export default function SkuSelection() {
         </div>
       </Card>
 
-      {/* ------------------------- Current bundle ------------------------- */}
-      <Card className={styles.card}>
-        <h2 className={styles.cardTitle}>Build from a current bundle</h2>
-        <p className={styles.cardLead}>
-          What the customer already pays Microsoft. This offsets the uplift rather than counting as
-          new spend.
-        </p>
-        <div className={styles.bundleGrid}>
-          <FormField label="Choose your customer's current Microsoft bundle">
-            {(id) => (
-              <Dropdown
-                id={id}
-                placeholder="Select"
-                value={MS_BUNDLES.find((b) => b.id === bundle.bundleId)?.name || ''}
-                selectedOptions={bundle.bundleId ? [bundle.bundleId] : []}
-                onOptionSelect={(_, d) => setBundle('bundleId', d.optionValue)}
-              >
-                {MS_BUNDLES.map((b) => (
-                  <Option key={b.id} value={b.id} text={b.name}>
-                    {b.name}
-                  </Option>
-                ))}
-              </Dropdown>
-            )}
-          </FormField>
+      {/* -------------------- Why this recommendation --------------------- */}
+      <Rationale outcomes={outcomes} skus={skus} onAsk={ask} />
 
-          <FormField label="Annual license price" help={`Per-user cost, ${currency}`}>
-            {(id) => (
-              <Input
-                id={id}
-                value={bundle.annualPerUser}
-                onChange={(_, d) => setBundle('annualPerUser', d.value)}
-                placeholder="0"
-                contentBefore={symbol}
-              />
-            )}
-          </FormField>
-
-          <FormField
-            label="Do you own any additional Microsoft products or have any licensing savings from Microsoft?"
-            help="Enter total annual value of extra products / savings"
-            span
-          >
-            {(id) => (
-              <Input
-                id={id}
-                value={bundle.additionalValue}
-                onChange={(_, d) => setBundle('additionalValue', d.value)}
-                placeholder="0"
-                contentBefore={symbol}
-              />
-            )}
-          </FormField>
-        </div>
-      </Card>
-
-      {/* ----------------------- Competitor products ---------------------- */}
-      <CompetitorProducts
+      {/* ---------------------- Competitive displacement ------------------ */}
+      <CompetitiveDisplacement
         competitors={competitors}
-        symbol={symbol}
-        years={years}
         businessCase={businessCase}
-        onDiscount={setCompetitorDiscount}
-        onAdd={addCompetitorRow}
-        onRemove={removeCompetitorRow}
+        symbol={symbol}
+        onMap={updateCompetitorRow}
+        onBack={() => goToStep(0)}
         onAsk={ask}
       />
 
@@ -321,214 +272,252 @@ export default function SkuSelection() {
 
 /* -------------------------------------------------------------------------- */
 
-function CompetitorProducts({
-  competitors,
-  symbol,
-  years,
-  businessCase,
-  onDiscount,
-  onAdd,
-  onRemove,
-  onAsk,
-}) {
-  const blank = {
-    softwareSolution: '',
-    currentProduct: '',
-    competitorCost: '',
-    newMicrosoftProduct: '',
-    yearContractEnds: '',
-  };
-  const [draft, setDraft] = useState(blank);
-  const [matrixOpen, setMatrixOpen] = useState(false);
+/**
+ * Why this recommendation — derived, never typed.
+ *
+ * Each selected outcome carries the SKUs it implies. Crossing that against the
+ * SKUs actually chosen gives both halves of the argument: which outcomes the
+ * proposal covers, and which it does not cover yet.
+ */
+function Rationale({ outcomes, skus, onAsk }) {
+  const chosenIds = useMemo(
+    () => Array.from(new Set(skus.map((r) => r.skuId).filter(Boolean))),
+    [skus],
+  );
 
-  const canAdd = draft.currentProduct.trim() && draft.competitorCost;
-  const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
+  const selected = useMemo(
+    () => SECURITY_OUTCOMES.filter((o) => outcomes.includes(o.id)),
+    [outcomes],
+  );
+
+  const lines = useMemo(
+    () =>
+      selected.map((o) => ({
+        ...o,
+        served: o.implies.filter((id) => chosenIds.includes(id)).map(skuById).filter(Boolean),
+        suggested: o.implies.filter((id) => !chosenIds.includes(id)).map(skuById).filter(Boolean),
+      })),
+    [selected, chosenIds],
+  );
+
+  // A SKU nobody asked for still costs money — worth naming rather than hiding.
+  const unattached = useMemo(
+    () =>
+      chosenIds
+        .filter((id) => !selected.some((o) => o.implies.includes(id)))
+        .map(skuById)
+        .filter(Boolean),
+    [chosenIds, selected],
+  );
+
+  const missing =
+    selected.length === 0 && chosenIds.length === 0
+      ? 'Select the security outcomes above, then add the SKUs you are proposing. This card writes itself once both are in.'
+      : selected.length === 0
+        ? 'No security outcomes are selected yet. Pick the outcomes this proposal has to serve and each SKU below will be tied back to one.'
+        : chosenIds.length === 0
+          ? 'No Microsoft SKU has been chosen yet. Add at least one to the recommended solution above and it will be matched to the outcomes you selected.'
+          : null;
 
   return (
     <Card className={styles.card}>
       <div className={styles.cardHead}>
         <div>
-          <h2 className={styles.cardTitle}>Competitor products</h2>
+          <h2 className={styles.cardTitle}>Why this recommendation</h2>
           <p className={styles.cardLead}>
-            Search for a competitor product or enter one that is not in our database. New
-            competitors are saved to this customer account only.
+            Every outcome the customer named, and the products in the proposal that answer it. This
+            is derived from your selections above — there is nothing to fill in here.
           </p>
         </div>
       </div>
 
-      <div className={styles.discountRow}>
-        <FormField
-          label="What discount from competitor retail pricing (MSRP) does your customer receive?"
-          help="0 – 100 %"
-        >
-          {(id) => (
-            <Input
-              id={id}
-              value={competitors.msrpDiscount}
-              onChange={(_, d) => onDiscount(d.value)}
-              placeholder="0"
-              contentAfter="%"
-              className={styles.discountInput}
-            />
-          )}
-        </FormField>
-      </div>
+      {missing ? (
+        <p className={styles.emptyNote}>{missing}</p>
+      ) : (
+        <>
+          <ul className={styles.rationaleList}>
+            {lines.map((line) => (
+              <li key={line.id} className={styles.rationaleRow}>
+                <div className={styles.rationaleOutcome}>
+                  <span className={styles.rationaleLabel}>{line.label}</span>
+                  <span className={styles.rationaleDetail}>{line.detail}</span>
+                </div>
+                <div className={styles.rationaleSkus}>
+                  {line.served.length > 0 ? (
+                    line.served.map((s) => (
+                      <span key={s.id} className={styles.chip}>
+                        {s.name}
+                      </span>
+                    ))
+                  ) : (
+                    <span className={styles.rationaleGap}>
+                      Nothing in the proposal covers this yet
+                      {line.suggested.length > 0
+                        ? ` — ${line.suggested.map((s) => s.name).join(' or ')} would serve it.`
+                        : '.'}
+                    </span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
 
-      <p className={styles.subHead}>Add a competitor product</p>
-
-      <div className={styles.compForm}>
-        <FormField label="Software solution">
-          {(id) => (
-            <Dropdown
-              id={id}
-              placeholder="Select"
-              value={draft.softwareSolution}
-              selectedOptions={draft.softwareSolution ? [draft.softwareSolution] : []}
-              onOptionSelect={(_, d) => setDraft({ ...draft, softwareSolution: d.optionValue })}
-            >
-              {SOFTWARE_SOLUTIONS.map((s) => (
-                <Option key={s} value={s}>
-                  {s}
-                </Option>
-              ))}
-            </Dropdown>
-          )}
-        </FormField>
-        <FormField label="Current product">
-          {(id) => (
-            <Input
-              id={id}
-              value={draft.currentProduct}
-              onChange={(_, d) => setDraft({ ...draft, currentProduct: d.value })}
-              placeholder="e.g. CrowdStrike"
-            />
-          )}
-        </FormField>
-        <FormField label="Competitor cost" help="Annual, at MSRP">
-          {(id) => (
-            <Input
-              id={id}
-              value={draft.competitorCost}
-              onChange={(_, d) => setDraft({ ...draft, competitorCost: d.value })}
-              placeholder="0"
-              contentBefore={symbol}
-            />
-          )}
-        </FormField>
-        <FormField label="New Microsoft product">
-          {(id) => (
-            <Input
-              id={id}
-              value={draft.newMicrosoftProduct}
-              onChange={(_, d) => setDraft({ ...draft, newMicrosoftProduct: d.value })}
-              placeholder="e.g. Defender for Endpoint"
-            />
-          )}
-        </FormField>
-        <FormField label="Year contract ends" help="Savings start the year after">
-          {(id) => (
-            <Input
-              id={id}
-              value={draft.yearContractEnds}
-              onChange={(_, d) => setDraft({ ...draft, yearContractEnds: d.value })}
-              placeholder={String(CASE_START_YEAR)}
-            />
-          )}
-        </FormField>
-      </div>
+          {unattached.length > 0 ? (
+            <p className={styles.emptyNote}>
+              {unattached.map((s) => s.name).join(', ')}{' '}
+              {unattached.length === 1 ? 'is' : 'are'} in the proposal but not tied to any outcome
+              the customer named. Either select the outcome it serves, or be ready to justify it on
+              its own.
+            </p>
+          ) : null}
+        </>
+      )}
 
       <div className={styles.rowActions}>
         <Button
-          appearance="primary"
-          icon={<Add16Filled />}
-          disabled={!canAdd}
-          onClick={() => {
-            onAdd(draft);
-            setDraft(blank);
-          }}
-        >
-          Add
-        </Button>
-        <Button appearance="secondary" onClick={() => setMatrixOpen(true)}>
-          View competitor matrix
-        </Button>
-        <Button
           appearance="transparent"
           icon={<Sparkle16Filled className={styles.aiIcon} />}
-          onClick={() => onAsk('Detect the competitor products in this estate')}
+          onClick={() => onAsk('Explain why these SKUs fit the outcomes I selected')}
         >
-          Detect with AI
+          Explain the fit
         </Button>
       </div>
+    </Card>
+  );
+}
 
-      <div className={styles.tableWrap}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th scope="col">Software solution</th>
-              <th scope="col">Current product</th>
-              <th scope="col" className={styles.numeric}>
-                Competitor cost
-              </th>
-              <th scope="col">New Microsoft product</th>
-              <th scope="col">Year contract ends</th>
-              <th scope="col">In horizon</th>
-              <th scope="col" aria-label="Actions" />
-            </tr>
-          </thead>
-          <tbody>
-            {competitors.rows.length === 0 ? (
-              <tr>
-                <td colSpan={7} className={styles.tableEmpty}>
-                  No competitor products added yet.
-                </td>
-              </tr>
-            ) : (
-              competitors.rows.map((r) => {
-                const line = lineFor(r.id);
-                return (
-                  <tr key={r.id}>
-                    <td>{r.softwareSolution || '—'}</td>
-                    <td>
-                      <span className={styles.cellMain}>{r.currentProduct}</span>
-                    </td>
-                    <td className={styles.numeric}>
-                      {formatCurrency(Number(r.competitorCost), { symbol })}
-                    </td>
-                    <td>{r.newMicrosoftProduct || '—'}</td>
-                    <td>{r.yearContractEnds || '—'}</td>
-                    <td>
-                      {line?.displaceable ? (
-                        <span className={styles.inHorizon}>
-                          {line.yearsOfBenefit} of {years} yrs
-                        </span>
-                      ) : (
-                        <span className={styles.outHorizon}>Outside horizon</span>
-                      )}
-                    </td>
-                    <td>
-                      <Button
-                        appearance="subtle"
-                        size="small"
-                        icon={<Delete16Regular />}
-                        aria-label={`Remove ${r.currentProduct}`}
-                        onClick={() => onRemove(r.id)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Competitive displacement — one row per competitor captured on step 1.
+ *
+ * The rows themselves are current state and are not editable here; the only
+ * field this screen owns is the Microsoft product each vendor gives way to.
+ */
+function CompetitiveDisplacement({ competitors, businessCase, symbol, onMap, onBack, onAsk }) {
+  const [matrixOpen, setMatrixOpen] = useState(false);
+
+  const rows = competitors.rows || [];
+  const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
+
+  const mapped = rows.filter((r) => (r.newMicrosoftProduct || '').trim());
+  const annualSpend = (r) => lineFor(r.id)?.annualCost ?? (Number(r.competitorCost) || 0);
+  const mappedSpend = mapped.reduce((sum, r) => sum + annualSpend(r), 0);
+  const discounted = Number(competitors.msrpDiscount) > 0;
+
+  return (
+    <Card className={styles.card}>
+      <div className={styles.cardHead}>
+        <div>
+          <h2 className={styles.cardTitle}>Competitive displacement</h2>
+          <p className={styles.cardLead}>
+            What each incumbent vendor gives way to. The products and their costs come from the
+            customer environment you captured on step 1 — the Microsoft replacement is the decision
+            you make here.
+          </p>
+        </div>
       </div>
 
-      {competitors.rows.some((r) => !lineFor(r.id)?.displaceable) ? (
-        <p className={styles.horizonNote}>
-          A contract ending after the analysis period contributes nothing to this case — the
-          customer is still paying for it. Extend the analysis period or correct the end year.
-        </p>
-      ) : null}
+      {rows.length === 0 ? (
+        <>
+          <p className={styles.emptyNote}>
+            No competitor products have been captured for this customer, so there is nothing to
+            displace. Add them to the competitive environment on step 1 and they will appear here
+            ready to map.
+          </p>
+          <div className={styles.rowActions}>
+            <Button appearance="secondary" onClick={onBack}>
+              Go to customer environment
+            </Button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={styles.summaryRow}>
+            <div className={styles.stat}>
+              <span className={styles.statValue}>
+                {mapped.length} of {rows.length}
+              </span>
+              <span className={styles.statLabel}>
+                competitor products mapped to a Microsoft replacement
+              </span>
+            </div>
+            <div className={styles.stat}>
+              <span className={styles.statValue}>{formatCurrency(mappedSpend, { symbol })}</span>
+              <span className={styles.statLabel}>
+                annual competitor spend those mappings carry
+                {discounted ? `, net of the ${competitors.msrpDiscount}% MSRP discount` : ''}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th scope="col">Current product</th>
+                  <th scope="col" className={styles.numeric}>
+                    Annual spend
+                  </th>
+                  <th scope="col">Replaced by</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => {
+                  return (
+                    <tr key={r.id}>
+                      <td>
+                        <span className={styles.cellMain}>{r.currentProduct}</span>
+                        <span className={styles.cellSub}>{r.softwareSolution || '—'}</span>
+                      </td>
+                      <td className={styles.numeric}>
+                        {formatCurrency(annualSpend(r), { symbol })}
+                      </td>
+                      <td className={styles.mapCell}>
+                        <Combobox
+                          freeform
+                          placeholder="Select or type a Microsoft product"
+                          aria-label={`Microsoft product replacing ${r.currentProduct}`}
+                          value={r.newMicrosoftProduct}
+                          selectedOptions={
+                            r.newMicrosoftProduct ? [r.newMicrosoftProduct] : []
+                          }
+                          onOptionSelect={(_, d) =>
+                            onMap(r.id, { newMicrosoftProduct: d.optionText || d.optionValue })
+                          }
+                          onChange={(e) =>
+                            onMap(r.id, { newMicrosoftProduct: e.target.value })
+                          }
+                          className={styles.mapInput}
+                        >
+                          {MICROSOFT_SKUS.map((s) => (
+                            <Option key={s.id} value={s.name}>
+                              {s.name}
+                            </Option>
+                          ))}
+                        </Combobox>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className={styles.rowActions}>
+            <Button appearance="secondary" onClick={() => setMatrixOpen(true)}>
+              View competitor matrix
+            </Button>
+            <Button
+              appearance="transparent"
+              icon={<Sparkle16Filled className={styles.aiIcon} />}
+              onClick={() => onAsk('What are we displacing, and what is it worth?')}
+            >
+              Read back the displacement
+            </Button>
+          </div>
+        </>
+      )}
 
       <Dialog open={matrixOpen} onOpenChange={(_, d) => setMatrixOpen(d.open)}>
         <DialogSurface className={styles.matrixSurface}>
