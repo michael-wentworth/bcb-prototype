@@ -1,11 +1,6 @@
 import React from 'react';
 import {
   Avatar,
-  Menu,
-  MenuItem,
-  MenuList,
-  MenuPopover,
-  MenuTrigger,
   Toast,
   ToastTitle,
   Toaster,
@@ -19,17 +14,16 @@ import MicrosoftLogo from './MicrosoftLogo.jsx';
 import styles from './TopBar.module.css';
 
 /**
- * Primary nav is only the places you *work*. Reference material collapses into
- * one Resources entry. Creating a case is not here: it is an action, and a row of
- * navigation links is a poor place for a verb — every destination carries its own
- * create button on the page itself.
+ * Every destination, named outright. The two reference entries used to sit behind
+ * a Resources menu; a dropdown holding exactly two items spends a click hiding
+ * what it has room to show, and it made the active section ambiguous — landing on
+ * Learning lit up a trigger labelled something else. Creating a case is not here:
+ * it is an action, and a row of navigation links is a poor place for a verb —
+ * every destination carries its own create button on the page itself.
  */
 const NAV_ITEMS = [
   { id: 'myCases', label: 'My cases' },
   { id: 'examples', label: 'Example cases' },
-];
-
-const RESOURCES = [
   { id: 'studies', label: 'Analyst studies' },
   { id: 'learning', label: 'Learning' },
 ];
@@ -96,30 +90,6 @@ export default function TopBar() {
               </button>
             </li>
           ))}
-          <li>
-            <Menu>
-              <MenuTrigger disableButtonEnhancement>
-                <button
-                  type="button"
-                  className={`${styles.navLink} ${
-                    RESOURCES.some((r) => r.id === activeId) ? styles.navLinkActive : ''
-                  }`}
-                >
-                  Resources
-                  <ChevronDown12Regular aria-hidden="true" className={styles.navChevron} />
-                </button>
-              </MenuTrigger>
-              <MenuPopover>
-                <MenuList>
-                  {RESOURCES.map((r) => (
-                    <MenuItem key={r.id} onClick={() => setView(r.id)}>
-                      {r.label}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </MenuPopover>
-            </Menu>
-          </li>
         </ul>
       </nav>
 

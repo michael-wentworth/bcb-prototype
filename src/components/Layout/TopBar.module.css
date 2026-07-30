@@ -118,12 +118,6 @@
   font-weight: var(--fontWeightSemibold);
 }
 
-.navChevron {
-  margin-left: 3px;
-  color: var(--colorNeutralForeground3);
-  vertical-align: middle;
-}
-
 .navLinkActive::after {
   content: '';
   position: absolute;
