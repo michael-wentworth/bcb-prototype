@@ -13,6 +13,52 @@
 
 /* --------------------------------- hero ----------------------------------- */
 
+/* The headline claim. Centred and generous, unlike everything below it — this is
+   the one element on the report meant to be read from across a meeting room, and
+   it is the only place that treatment is earned. */
+.claim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacingVerticalXXL) var(--spacingHorizontalL) var(--spacingVerticalXL);
+}
+
+.claimLead {
+  margin: 0;
+  font-size: var(--fontSizeBase400);
+  line-height: 22px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground2);
+  text-wrap: balance;
+  max-width: 60ch;
+}
+
+.claimValue {
+  margin: var(--spacingVerticalS) 0 0;
+  font-size: 52px;
+  line-height: 60px;
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: -0.02em;
+  color: var(--colorBrandForeground1);
+  font-variant-numeric: tabular-nums;
+}
+
+.claimCaption {
+  margin: var(--spacingVerticalS) 0 0;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground3);
+  max-width: 52ch;
+  text-wrap: balance;
+}
+
+@media (max-width: 780px) {
+  .claimValue {
+    font-size: 38px;
+    line-height: 46px;
+  }
+}
+
 .heroRow {
   display: grid;
   grid-template-columns: 1.35fr 1fr 1fr 1fr;

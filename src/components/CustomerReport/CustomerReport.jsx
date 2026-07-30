@@ -57,6 +57,27 @@ export default function CustomerReport() {
     );
 
   const money = (v) => formatCurrency(v, { symbol });
+  // Full precision, not compact: a headline claim reads as more considered at
+  // $2,457,000 than at $2.46M, and it is the one figure a reader quotes.
+  const exact = (v) => formatCurrency(v, { symbol, compact: false });
+
+  /**
+   * The anchor product for the headline — the SKU carrying the most spend across
+   * the horizon. A case usually has one purchase that makes it, and naming that
+   * is what turns a page of figures into a sentence someone can repeat.
+   */
+  const headlineSku = skus.reduce(
+    (best, row) => {
+      const total = (row.seats || []).reduce(
+        (sum, seat) => sum + (Number(seat) || 0) * (Number(row.pricePerMonth) || 0) * 12,
+        0,
+      );
+      return total > best.total ? { total, name: skuById(row.skuId)?.name } : best;
+    },
+    { total: 0, name: null },
+  ).name;
+
+  const company = customer.accountName?.trim();
 
   return (
     <div className={styles.root}>
@@ -77,6 +98,25 @@ export default function CustomerReport() {
             write the narrative below in the meantime.
           </p>
         </Card>
+      ) : null}
+
+      {/* The claim, before the evidence. The tiles below quantify it; this says
+          what the case is actually asserting, in one sentence a reader can carry
+          into a meeting. Only rendered once there is something to assert. */}
+      {c.hasInputs && reportReady ? (
+        <section className={styles.claim} aria-label="Headline">
+          <p className={styles.claimLead}>
+            {headlineSku ? `With ${headlineSku}, ` : 'With this proposal, '}
+            {company || 'this customer'}
+            {c.netBenefit >= 0 ? ' could save' : ' would spend a further'}
+          </p>
+          <p className={styles.claimValue}>{exact(Math.abs(c.netBenefit))}</p>
+          <p className={styles.claimCaption}>
+            {c.netBenefit >= 0
+              ? `over ${c.years} years, net of the Microsoft investment`
+              : `over ${c.years} years — the investment is not recovered in this horizon`}
+          </p>
+        </section>
       ) : null}
 
       <section className={styles.heroRow} aria-label="Headline metrics">
