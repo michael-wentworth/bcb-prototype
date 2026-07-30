@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Badge,
   Button,
   Card,
   Toast,
@@ -24,7 +23,6 @@ import { SECURITY_OUTCOMES, currencySymbol, skuById } from '../../data/reference
 import { formatCurrency, formatPercent } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import MetricTile from '../shared/MetricTile.jsx';
-import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import SharePopover from '../shared/SharePopover.jsx';
@@ -32,13 +30,6 @@ import NarrativeSection from '../Narrative/NarrativeSection.jsx';
 import PaybackChart from '../ResultsDashboard/PaybackChart.jsx';
 import SpendComparison from '../ResultsDashboard/SpendComparison.jsx';
 import styles from './CustomerReport.module.css';
-
-const TRACKED = [
-  { id: 'customer', label: 'Customer details' },
-  { id: 'outcomes', label: 'Security outcomes' },
-  { id: 'skus', label: 'SKU selection' },
-  { id: 'competitors', label: 'Competitor products' },
-];
 
 export default function CustomerReport() {
   const {
@@ -50,9 +41,6 @@ export default function CustomerReport() {
     bundle,
     competitors,
     currency,
-    authorship,
-    sectionAuthorship,
-    narrative,
     reportReady,
   } = useAppState();
 
@@ -78,11 +66,6 @@ export default function CustomerReport() {
         description={`${caseSetup.analysisPeriod}-year analysis${
           customer.numberOfUsers ? ` across ${Number(customer.numberOfUsers).toLocaleString('en-US')} users` : ''
         }. Every figure derives from what you entered on the previous two steps.`}
-        actions={
-          <Badge appearance="tint" color={reportReady ? 'success' : 'informative'}>
-            {reportReady ? 'Ready to present' : 'Calculating…'}
-          </Badge>
-        }
       />
 
       {!c.hasInputs ? (
@@ -149,39 +132,12 @@ export default function CustomerReport() {
         </div>
       ) : null}
 
-      {/* ----------------------- Authorship lineage ----------------------- */}
-      <Card className={styles.lineageCard}>
-        <div className={styles.lineageHead}>
-          <h2 className={styles.cardTitle}>Authorship</h2>
-          <span className={styles.lineageSummary}>
-            {authorship.aiTouched === 0
-              ? 'Entirely authored by you'
-              : `${authorship.ai} AI · ${authorship.assisted} assisted · ${authorship.manual} manual`}
-          </span>
-        </div>
-        <ul className={styles.lineageList}>
-          {TRACKED.map((s) => (
-            <li key={s.id} className={styles.lineageItem}>
-              <span className={styles.lineageLabel}>{s.label}</span>
-              <AuthorshipBadge level={sectionAuthorship[s.id]} />
-            </li>
-          ))}
-          {NARRATIVE_SECTIONS.map((s) => (
-            <li key={s.id} className={styles.lineageItem}>
-              <span className={styles.lineageLabel}>{s.label}</span>
-              <AuthorshipBadge level={narrative[s.id].authorship} />
-            </li>
-          ))}
-        </ul>
-      </Card>
-
       {/* -------------------------- The narrative -------------------------- */}
       <Card className={styles.narrativeCard}>
         <div className={styles.narrativeHead}>
           <h2 className={styles.cardTitle}>The written case</h2>
           <p className={styles.narrativeLead}>
-            The parts a reader remembers after the numbers have faded. Each section carries a badge
-            showing who wrote it.
+            The parts a reader remembers after the numbers have faded.
           </p>
         </div>
         {NARRATIVE_SECTIONS.map((section) => (

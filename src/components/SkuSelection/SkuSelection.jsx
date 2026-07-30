@@ -27,7 +27,6 @@ import {
 } from '../../data/referenceData.js';
 import { CASE_START_YEAR, formatCurrency } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
-import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
@@ -42,7 +41,6 @@ export default function SkuSelection() {
     caseSetup,
     customer,
     currency,
-    sectionAuthorship,
     businessCase,
     toggleOutcome,
     setAllOutcomes,
@@ -65,7 +63,6 @@ export default function SkuSelection() {
     <div className={styles.root}>
       <StepMasthead
         description="What the customer is buying, what they already have, and what it replaces. Contract end dates decide how much of each saving lands inside the analysis period."
-        actions={<AuthorshipBadge level={sectionAuthorship.skus} />}
       />
 
       {/* ---------------------------- Outcomes ---------------------------- */}
@@ -145,7 +142,6 @@ export default function SkuSelection() {
             <div key={row.id} className={styles.skuRow}>
               <div className={styles.skuHead}>
                 <span className={styles.skuIndex}>SKU {rowIndex + 1}</span>
-                <AuthorshipBadge level={row.authorship} />
                 <Button
                   appearance="subtle"
                   size="small"
@@ -340,7 +336,6 @@ export default function SkuSelection() {
         symbol={symbol}
         years={years}
         businessCase={businessCase}
-        authorship={sectionAuthorship.competitors}
         onDiscount={setCompetitorDiscount}
         onAdd={addCompetitorRow}
         onRemove={removeCompetitorRow}
@@ -359,7 +354,6 @@ function CompetitorProducts({
   symbol,
   years,
   businessCase,
-  authorship,
   onDiscount,
   onAdd,
   onRemove,
@@ -388,7 +382,6 @@ function CompetitorProducts({
             competitors are saved to this customer account only.
           </p>
         </div>
-        <AuthorshipBadge level={authorship} />
       </div>
 
       <div className={styles.discountRow}>
@@ -529,7 +522,6 @@ function CompetitorProducts({
                     <td>{r.softwareSolution || '—'}</td>
                     <td>
                       <span className={styles.cellMain}>{r.currentProduct}</span>
-                      <AuthorshipBadge level={r.authorship} />
                     </td>
                     <td className={styles.numeric}>
                       {formatCurrency(Number(r.competitorCost), { symbol })}

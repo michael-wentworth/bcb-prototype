@@ -25,7 +25,6 @@ import {
 import { DEMO_PROMPT } from '../../data/demoCase.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
-import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import MultiSelect from '../shared/MultiSelect.jsx';
@@ -39,7 +38,6 @@ export default function CustomerDetails() {
     caseSetup,
     currency,
     effectiveDevices,
-    sectionAuthorship,
     setCustomer,
     setEnvironment,
     setCaseSetup,
@@ -52,7 +50,6 @@ export default function CustomerDetails() {
     <div className={styles.root}>
       <StepMasthead
         description="Who the case is for, and what they run today. The account size and the current security stack drive every number in the report."
-        actions={<AuthorshipBadge level={sectionAuthorship.customer} />}
       />
 
       {!anyFilled ? (

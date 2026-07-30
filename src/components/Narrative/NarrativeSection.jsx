@@ -12,7 +12,6 @@ import {
 import { ArrowReset20Regular, Sparkle16Filled, TextT20Regular } from '@fluentui/react-icons';
 import { actionsForNarrative } from '../../data/aiActions.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
-import AuthorshipBadge from '../shared/AuthorshipBadge.jsx';
 import styles from './NarrativeSection.module.css';
 
 /** Grows with its content so a written section never scrolls inside itself. */
@@ -62,7 +61,6 @@ export default function NarrativeSection({ section }) {
     <section className={styles.section} aria-label={section.label}>
       <header className={styles.head}>
         <h3 className={styles.title}>{section.label}</h3>
-        <AuthorshipBadge level={entry.authorship} />
         <div className={styles.tools}>
           <Menu>
             <MenuTrigger disableButtonEnhancement>

@@ -64,52 +64,6 @@
   min-width: 0;
 }
 
-/* ------------------------------- lineage ---------------------------------- */
-
-.lineageCard {
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
-  border-radius: var(--borderRadiusLarge);
-  background-color: var(--colorNeutralBackground1);
-  border: 1px solid var(--colorNeutralStroke2);
-  box-shadow: none;
-}
-
-.lineageHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--spacingHorizontalL);
-  flex-wrap: wrap;
-  margin-bottom: var(--spacingVerticalM);
-}
-
-.lineageSummary {
-  font-size: var(--fontSizeBase200);
-  color: var(--colorNeutralForeground3);
-}
-
-.lineageList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 6px var(--spacingHorizontalXL);
-}
-
-.lineageItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacingHorizontalS);
-  padding: 5px 0;
-  border-bottom: 1px solid var(--colorNeutralStroke2);
-}
-
-.lineageLabel {
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground2);
-}
 
 /* ------------------------------- narrative -------------------------------- */
 
