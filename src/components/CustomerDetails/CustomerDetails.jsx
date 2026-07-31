@@ -472,7 +472,6 @@ export default function CustomerDetails() {
         users={customer.numberOfUsers}
         onUpdate={updateCompetitorRow}
         onRemove={removeCompetitorRow}
-        onAsk={ask}
       />
 
       {/* ------------------------- Business Case Setup ------------------------ */}
@@ -561,7 +560,6 @@ function CompetitiveEnvironment({
   users,
   onUpdate,
   onRemove,
-  onAsk,
 }) {
 
   /**
@@ -638,7 +636,7 @@ function CompetitiveEnvironment({
           appearance="secondary"
           icon={<Add16Filled />}
           onClick={() =>
-            // A blank row, filled in place. The table's cells are already the
+            // A blank product, filled in place. The table's cells are already the
             // editing surface, so a separate four-field form to create a row was
             // the same data entered through a second, longer door. The end year
             // is seeded rather than left empty because the model reads a blank
@@ -646,14 +644,7 @@ function CompetitiveEnvironment({
             onAdd({ yearContractEnds: String(CASE_START_YEAR) })
           }
         >
-          Add a row
-        </Button>
-        <Button
-          appearance="transparent"
-          icon={<Sparkle16Filled className={styles.aiIcon} />}
-          onClick={() => onAsk('Detect the competitor products in this estate')}
-        >
-          Detect with AI
+          Add a new product
         </Button>
       </div>
 

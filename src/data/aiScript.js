@@ -321,7 +321,7 @@ const INTENTS = [
           type: 'text',
           text: ctx.customer.accountName
             ? 'I have added the four products I can see against this account to Competitive environment, with estimated annual cost and contract end years. Correct them here before this reaches a customer. You map each one to its Microsoft replacement on step 2.'
-            : 'I need an account name and the current security stack before I can infer an estate. Fill those in above, or add the competitor rows by hand.',
+            : 'I need an account name before I can infer an estate. Fill that in above, or add the competitor products by hand.',
         },
         ctx.customer.accountName
           ? {
