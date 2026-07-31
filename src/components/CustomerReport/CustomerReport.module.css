@@ -1,7 +1,12 @@
+/* Sections are separated by MORE than the rows inside them (32 vs 20), so the
+   cards read as distinct groups. This was inverted: the gap between cards was
+   16px while the grid inside them used 20px, which meant two fields in the same
+   section sat further apart than two whole sections did — the form read as one
+   undifferentiated wall regardless of how it was grouped. */
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--spacingVerticalL);
+  gap: var(--spacingVerticalXXXL);
 }
 
 .cardTitle {

@@ -1,11 +1,20 @@
+/* Sections are separated by MORE than the rows inside them (32 vs 20), so the
+   cards read as distinct groups. This was inverted: the gap between cards was
+   16px while the grid inside them used 20px, which meant two fields in the same
+   section sat further apart than two whole sections did — the form read as one
+   undifferentiated wall regardless of how it was grouped. */
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--spacingVerticalL);
+  gap: var(--spacingVerticalXXXL);
 }
 
-.card {
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
+/* Doubled class on purpose. Fluent's Card ships its own padding (12px) at
+   single-class specificity, which silently beat the plain .card rule below — the
+   cards have been running at 12px regardless of what this file asked for, which
+   is most of why the form read as cramped. */
+.card.card {
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXXL) var(--spacingVerticalXXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
   animation: bcbRise 320ms var(--curveDecelerateMid) both;
