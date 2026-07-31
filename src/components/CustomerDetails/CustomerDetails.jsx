@@ -26,6 +26,7 @@ import {
   ANALYSIS_PERIODS,
   BCB_ROLES,
   COMPETITOR_CATALOGUE,
+  MICROSOFT_SKUS,
   CUSTOMER_SEGMENTS,
   EXISTING_MS_LICENSES,
   GEOGRAPHIES,
@@ -70,6 +71,7 @@ export default function CustomerDetails() {
     setBundle,
     setCompetitorDiscount,
     addCompetitorRow,
+    ensureSkuRow,
     updateCompetitorRow,
     removeCompetitorRow,
     ask,
@@ -471,6 +473,8 @@ export default function CustomerDetails() {
         onEnvironment={setEnvironment}
         onDiscount={setCompetitorDiscount}
         onAdd={addCompetitorRow}
+        onEnsureSku={ensureSkuRow}
+        users={customer.numberOfUsers}
         onUpdate={updateCompetitorRow}
         onRemove={removeCompetitorRow}
         onAsk={ask}
@@ -559,6 +563,8 @@ function CompetitiveEnvironment({
   onEnvironment,
   onDiscount,
   onAdd,
+  onEnsureSku,
+  users,
   onUpdate,
   onRemove,
   onAsk,
@@ -580,7 +586,17 @@ function CompetitiveEnvironment({
    * year", so an empty field hides an assumption that is doing real work. On
    * screen the seller can see it and change it.
    */
-  const addFromCatalogue = (c) =>
+  /**
+   * Adding a competitor also proposes the Microsoft product that replaces it.
+   *
+   * The catalogue knows the answer, and step 2 now only offers products the
+   * case actually buys — so leaving the recommendation empty stranded the
+   * seller: they had said what the customer runs, and the displacement control
+   * was disabled with nothing to pick. Proposing the SKU and the mapping
+   * together makes the chain complete on arrival, and every part of it is
+   * editable: change the SKU, change the mapping, or delete either.
+   */
+  const addFromCatalogue = (c) => {
     onAdd({
       // Records that identity came from the catalogue, which is what makes the
       // name and category read-only below. Rows the seller or the copilot
@@ -589,12 +605,24 @@ function CompetitiveEnvironment({
       softwareSolution: c.solution,
       currentProduct: c.product,
       competitorCost: String(c.annualCost),
-      // Deliberately NOT seeding newMicrosoftProduct, even though the catalogue
-      // knows a sensible answer. Step 2 counts mapped rows and exists to make
-      // that call; arriving pre-mapped would mean the seller never meets the
-      // decision, and a displacement nobody chose is a price comparison.
+      newMicrosoftProduct: c.microsoft,
       yearContractEnds: String(CASE_START_YEAR),
     });
+
+    const sku = MICROSOFT_SKUS.find((m) => m.name === c.microsoft);
+    if (!sku) return;
+    onEnsureSku(
+      {
+        skuId: sku.id,
+        solutionArea: sku.solutionArea,
+        solutionPlay: sku.solutionPlay,
+        // Same convention as picking a SKU by hand on step 2: seed list price,
+        // which the seller replaces with what they expect to land.
+        pricePerMonth: String(sku.listPrice ?? ''),
+      },
+      users,
+    );
+  };
   const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
 
   return (

@@ -374,8 +374,8 @@ export const COMPETITOR_MATRIX = [
   { solution: 'Cloud security', competitors: 'Wiz, Prisma Cloud, Orca', microsoft: 'Microsoft Defender for Cloud' },
   { solution: 'Data loss prevention', competitors: 'Symantec DLP, Forcepoint', microsoft: 'Microsoft Purview' },
   { solution: 'Privileged access', competitors: 'CyberArk, Delinea', microsoft: 'Microsoft Entra Suite' },
-  { solution: 'Network / SASE', competitors: 'Zscaler, Netskope', microsoft: 'Microsoft Entra Internet Access' },
-  { solution: 'Vulnerability management', competitors: 'Tenable, Qualys, Rapid7', microsoft: 'Microsoft Defender Vulnerability Management' },
+  { solution: 'Network / SASE', competitors: 'Zscaler, Netskope', microsoft: 'Microsoft Entra Suite' },
+  { solution: 'Vulnerability management', competitors: 'Tenable, Qualys, Rapid7', microsoft: 'Microsoft Defender for Endpoint P2' },
 ];
 
 /**
@@ -437,16 +437,16 @@ export const COMPETITOR_CATALOGUE = [
   { id: 'cp41', solution: 'Privileged access', product: 'Delinea Secret Server', annualCost: 310000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
   { id: 'cp42', solution: 'Privileged access', product: 'BeyondTrust Password Safe', annualCost: 380000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
   { id: 'cp43', solution: 'Privileged access', product: 'One Identity Safeguard', annualCost: 290000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
-  { id: 'cp44', solution: 'Network / SASE', product: 'Zscaler Internet Access', annualCost: 950000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
-  { id: 'cp45', solution: 'Network / SASE', product: 'Netskope Intelligent SSE', annualCost: 720000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
-  { id: 'cp46', solution: 'Network / SASE', product: 'Palo Alto Prisma Access', annualCost: 810000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
-  { id: 'cp47', solution: 'Network / SASE', product: 'Cato Networks SASE', annualCost: 480000, licenseType: 'Monthly', microsoft: 'Microsoft Entra Internet Access' },
-  { id: 'cp48', solution: 'Network / SASE', product: 'Cloudflare One', annualCost: 360000, licenseType: 'Monthly', microsoft: 'Microsoft Entra Internet Access' },
-  { id: 'cp49', solution: 'Network / SASE', product: 'Fortinet FortiSASE', annualCost: 430000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
-  { id: 'cp50', solution: 'Vulnerability management', product: 'Tenable One', annualCost: 340000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
-  { id: 'cp51', solution: 'Vulnerability management', product: 'Qualys VMDR', annualCost: 290000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
-  { id: 'cp52', solution: 'Vulnerability management', product: 'Rapid7 InsightVM', annualCost: 260000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
-  { id: 'cp53', solution: 'Vulnerability management', product: 'Tanium Risk', annualCost: 520000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
+  { id: 'cp44', solution: 'Network / SASE', product: 'Zscaler Internet Access', annualCost: 950000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp45', solution: 'Network / SASE', product: 'Netskope Intelligent SSE', annualCost: 720000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp46', solution: 'Network / SASE', product: 'Palo Alto Prisma Access', annualCost: 810000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp47', solution: 'Network / SASE', product: 'Cato Networks SASE', annualCost: 480000, licenseType: 'Monthly', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp48', solution: 'Network / SASE', product: 'Cloudflare One', annualCost: 360000, licenseType: 'Monthly', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp49', solution: 'Network / SASE', product: 'Fortinet FortiSASE', annualCost: 430000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp50', solution: 'Vulnerability management', product: 'Tenable One', annualCost: 340000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp51', solution: 'Vulnerability management', product: 'Qualys VMDR', annualCost: 290000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp52', solution: 'Vulnerability management', product: 'Rapid7 InsightVM', annualCost: 260000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp53', solution: 'Vulnerability management', product: 'Tanium Risk', annualCost: 520000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
 ];
 
 /** Distinct capabilities in the catalogue, in the order sellers meet them. */

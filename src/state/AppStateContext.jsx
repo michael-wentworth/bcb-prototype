@@ -251,6 +251,27 @@ function reducer(state, action) {
       return humanTouch({ ...state, outcomes: action.ids }, 'outcomes');
 
     /* ------------------------------- SKUs -------------------------------- */
+    /* Add this SKU unless the case already has it.
+       Selecting several competitors at once fires one of these per competitor,
+       and two of them routinely resolve to the same Microsoft product — pick
+       CrowdStrike and Trellix and both want Defender for Endpoint P2. The
+       component cannot dedupe that: React has not re-rendered between the
+       calls, so its view of state.skus is stale for every call after the first.
+       Deduping here is the only place that sees the truth. */
+    case 'ENSURE_SKU_ROW': {
+      if (state.skus.some((r) => r.skuId === action.seed.skuId)) return state;
+      return humanTouch(
+        {
+          ...state,
+          skus: [
+            ...state.skus,
+            makeSkuRow(action.seed, Number(state.caseSetup.analysisPeriod) || 3, action.users),
+          ],
+        },
+        'skus',
+      );
+    }
+
     case 'ADD_SKU_ROW':
       return humanTouch(
         {
@@ -629,6 +650,7 @@ export function AppStateProvider({ children }) {
       toggleOutcome: (id) => dispatch({ type: 'TOGGLE_OUTCOME', id }),
       setAllOutcomes: (ids) => dispatch({ type: 'SET_ALL_OUTCOMES', ids }),
       addSkuRow: (seed, users) => dispatch({ type: 'ADD_SKU_ROW', seed, users }),
+      ensureSkuRow: (seed, users) => dispatch({ type: 'ENSURE_SKU_ROW', seed, users }),
       updateSkuRow: (id, patch) => dispatch({ type: 'UPDATE_SKU_ROW', id, patch }),
       updateSkuSeats: (id, index, value) =>
         dispatch({ type: 'UPDATE_SKU_SEATS', id, index, value }),
