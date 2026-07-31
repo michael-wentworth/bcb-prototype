@@ -30,14 +30,18 @@ export default function CaseTitle({ renaming, onStartRename, onEndRename }) {
 
   const commit = () => {
     const next = draft.trim();
-    // An empty name is never written from here. Clearing it is step 1's job,
-    // where the field is labelled required and the consequence is visible.
+    // An empty name is never written. This is now the ONLY place a case is
+    // named — step 1's duplicate field is gone — so committing a blank here
+    // would leave a case with no way back to a name except retyping one. A
+    // cleared field simply restores what was there; the placeholder above
+    // already reads "Untitled business case" until a real name is set.
     if (next && next !== name) setCaseSetup('name', next);
     onEndRename();
   };
 
-  // Read-only here on purpose: changing the analysis period rebuilds every SKU
-  // row's seat schedule, so it belongs on step 1 beside the table it reshapes.
+  // The period is read-only here on purpose: changing it rebuilds every SKU
+  // row's seat schedule, so it is edited on step 1 under "About this case",
+  // beside the tables it reshapes. Shown here because it scopes every figure.
   // The currency code is stated here, once, so every figure on every step can be
   // written with a bare symbol instead of repeating "US$" on each one.
   const meta = [

@@ -84,6 +84,62 @@ export default function CustomerDetails() {
         description="What the customer runs today — their Microsoft footprint and the competitor products in the estate. Every number in the report is measured against it."
       />
 
+      {/* --------------------------- About this case -------------------------- */}
+      {/* Two decisions about the CASE rather than observations about the customer:
+          how long a horizon every figure is computed over, and who the report is
+          written for. They frame everything below them, so they come first — and
+          they are not filed under "Customer information", because they are not
+          customer information.
+
+          The case NAME is deliberately absent. It is renamed from the band above,
+          where it is already displayed, the way a document is named from its title
+          bar rather than from a field inside it. */}
+      <Card className={styles.card}>
+        <h2 className={styles.cardTitle}>About this case</h2>
+        <div className={styles.grid}>
+          <FormField
+            label="Analysis period (years)"
+            help="Determines the horizon for cost, benefit, ROI and reporting — and how many years of seats you enter per SKU"
+          >
+            {(id) => (
+              <Dropdown
+                id={id}
+                placeholder="Select number of years"
+                value={caseSetup.analysisPeriod ? `${caseSetup.analysisPeriod} years` : ''}
+                selectedOptions={[String(caseSetup.analysisPeriod)]}
+                onOptionSelect={(_, d) => setCaseSetup('analysisPeriod', Number(d.optionValue))}
+              >
+                {ANALYSIS_PERIODS.map((y) => (
+                  <Option key={y} value={String(y)} text={`${y} years`}>
+                    {y} {y === 1 ? 'year' : 'years'}
+                  </Option>
+                ))}
+              </Dropdown>
+            )}
+          </FormField>
+        </div>
+
+        <div className={styles.roleBlock}>
+          <span className={styles.roleLabel}>
+            Role of Security BCB
+          </span>
+          <RadioGroup
+            layout="horizontal"
+            value={customer.bcbRole}
+            onChange={(_, d) => setCustomer('bcbRole', d.value)}
+          >
+            {BCB_ROLES.map((r) => (
+              <Radio key={r.id} value={r.id} label={r.label} />
+            ))}
+          </RadioGroup>
+          {customer.bcbRole ? (
+            <p className={styles.roleDetail}>
+              {BCB_ROLES.find((r) => r.id === customer.bcbRole)?.detail}
+            </p>
+          ) : null}
+        </div>
+      </Card>
+
       {/* ------------------------ Customer Information ------------------------ */}
       <Card className={styles.card}>
         <h2 className={styles.cardTitle}>Customer information</h2>
@@ -211,25 +267,6 @@ export default function CustomerDetails() {
 
         </div>
 
-        <div className={styles.roleBlock}>
-          <span className={styles.roleLabel}>
-            Role of Security BCB
-          </span>
-          <RadioGroup
-            layout="horizontal"
-            value={customer.bcbRole}
-            onChange={(_, d) => setCustomer('bcbRole', d.value)}
-          >
-            {BCB_ROLES.map((r) => (
-              <Radio key={r.id} value={r.id} label={r.label} />
-            ))}
-          </RadioGroup>
-          {customer.bcbRole ? (
-            <p className={styles.roleDetail}>
-              {BCB_ROLES.find((r) => r.id === customer.bcbRole)?.detail}
-            </p>
-          ) : null}
-        </div>
 
         <FormField label="Description" meta={fieldMeta.description}>
           {(id) => (
@@ -440,48 +477,6 @@ export default function CustomerDetails() {
       />
 
       {/* ------------------------- Business Case Setup ------------------------ */}
-      <Card className={styles.card}>
-        <h2 className={styles.cardTitle}>Business case setup</h2>
-        <div className={styles.grid}>
-          <FormField
-            label="Business case name"
-            required
-            help="Up to 100 characters."
-          >
-            {(id) => (
-              <Input
-                id={id}
-                value={caseSetup.name}
-                maxLength={100}
-                onChange={(_, d) => setCaseSetup('name', d.value)}
-                placeholder="Enter business case name"
-              />
-            )}
-          </FormField>
-
-          <FormField
-            label="Analysis period (years)"
-            required
-            help="Determines the horizon for cost, benefit, ROI and reporting — and how many years of seats you enter per SKU"
-          >
-            {(id) => (
-              <Dropdown
-                id={id}
-                placeholder="Select number of years"
-                value={caseSetup.analysisPeriod ? `${caseSetup.analysisPeriod} years` : ''}
-                selectedOptions={[String(caseSetup.analysisPeriod)]}
-                onOptionSelect={(_, d) => setCaseSetup('analysisPeriod', Number(d.optionValue))}
-              >
-                {ANALYSIS_PERIODS.map((y) => (
-                  <Option key={y} value={String(y)} text={`${y} years`}>
-                    {y} {y === 1 ? 'year' : 'years'}
-                  </Option>
-                ))}
-              </Dropdown>
-            )}
-          </FormField>
-        </div>
-      </Card>
 
       <StepFooter hint="Fill in what you know — you can move between steps freely and come back." />
     </div>
