@@ -58,21 +58,25 @@
   flex-wrap: wrap;
 }
 
-/* Close to body scale on purpose. This names the product; it does not sell it. */
+/* The largest text on the page, and the first thing read. It was 26px, which
+   put the product name below the section titles at 28px and less than half the
+   case headline at 46px — so a stranger's eye landed on "Contoso could save
+   $819K" before anything had said what this is. The scale now descends:
+   40 product name, 32 the case it is demonstrating, 28 sections. */
 .wordmark {
   margin: 0;
-  font-size: 26px;
-  line-height: 32px;
+  font-size: 40px;
+  line-height: 46px;
   font-weight: var(--fontWeightSemibold);
   letter-spacing: -0.01em;
   color: var(--colorNeutralForeground1);
 }
 
 .mastheadLine {
-  margin: 3px 0 0;
+  margin: var(--spacingVerticalXS) 0 0;
   max-width: var(--bcb-landing-prose);
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
+  font-size: var(--fontSizeBase400);
+  line-height: 22px;
   color: var(--colorNeutralForeground2);
 }
 
@@ -132,11 +136,14 @@
   color: var(--colorBrandForeground2);
 }
 
+/* Subordinate to the product name now. It is still the biggest thing in the
+   report band and still the argument — it just no longer outranks the thing
+   the page is for. */
 .headline {
   margin: 0;
-  max-width: 30ch;
-  font-size: 46px;
-  line-height: 54px;
+  max-width: 34ch;
+  font-size: 32px;
+  line-height: 40px;
   font-weight: var(--fontWeightRegular);
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -458,9 +465,14 @@
 }
 
 @media (max-width: 860px) {
+  .wordmark {
+    font-size: 30px;
+    line-height: 36px;
+  }
+
   .headline {
-    font-size: 34px;
-    line-height: 40px;
+    font-size: 26px;
+    line-height: 32px;
   }
 
   .kpis,
