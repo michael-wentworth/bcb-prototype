@@ -338,3 +338,11 @@
 .cellYear input {
   font-variant-numeric: tabular-nums;
 }
+
+/* A catalogue row's identity, shown as text. Padded to match the height of the
+   inputs beside it so a mixed table does not look ragged. */
+.cellFixed {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  vertical-align: middle;
+}

@@ -587,6 +587,10 @@ function CompetitiveEnvironment({
    */
   const addFromCatalogue = (c) =>
     onAdd({
+      // Records that identity came from the catalogue, which is what makes the
+      // name and category read-only below. Rows the seller or the copilot
+      // created carry no catalogueId and stay fully editable.
+      catalogueId: c.id,
       softwareSolution: c.solution,
       currentProduct: c.product,
       competitorCost: String(c.annualCost),
@@ -744,34 +748,53 @@ function CompetitiveEnvironment({
                 const line = lineFor(r.id);
                 return (
                   <tr key={r.id}>
-                    <td>
-                      <Dropdown
-                        size="small"
-                        className={styles.cellSolution}
-                        placeholder="—"
-                        aria-label={`Software solution for ${r.currentProduct}`}
-                        value={r.softwareSolution}
-                        selectedOptions={r.softwareSolution ? [r.softwareSolution] : []}
-                        onOptionSelect={(_, d) =>
-                          onUpdate(r.id, { softwareSolution: d.optionValue })
-                        }
-                      >
-                        {SOFTWARE_SOLUTIONS.map((sol) => (
-                          <Option key={sol} value={sol}>
-                            {sol}
-                          </Option>
-                        ))}
-                      </Dropdown>
-                    </td>
-                    <td>
-                      <Input
-                        size="small"
-                        className={styles.cellProduct}
-                        aria-label="Competitor product name"
-                        value={r.currentProduct}
-                        onChange={(_, d) => onUpdate(r.id, { currentProduct: d.value })}
-                      />
-                    </td>
+                    {/* Identity — what is being displaced — versus the two
+                        contract facts beside it. A catalogue row already answered
+                        identity when the seller picked it from the list, so it
+                        reads as text; editing it in place could only turn a
+                        correct row into a wrong one. Rows the seller typed, or
+                        the copilot inferred, stay editable because in those the
+                        seller IS the source. */}
+                    {r.catalogueId ? (
+                      <>
+                        <td className={styles.cellFixed}>{r.softwareSolution || '—'}</td>
+                        <td className={styles.cellFixed}>
+                          <span className={styles.cellMain}>{r.currentProduct}</span>
+                          <span className={styles.cellSub}>From the catalogue</span>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td>
+                          <Dropdown
+                            size="small"
+                            className={styles.cellSolution}
+                            placeholder="—"
+                            aria-label={`Software solution for ${r.currentProduct}`}
+                            value={r.softwareSolution}
+                            selectedOptions={r.softwareSolution ? [r.softwareSolution] : []}
+                            onOptionSelect={(_, d) =>
+                              onUpdate(r.id, { softwareSolution: d.optionValue })
+                            }
+                          >
+                            {SOFTWARE_SOLUTIONS.map((sol) => (
+                              <Option key={sol} value={sol}>
+                                {sol}
+                              </Option>
+                            ))}
+                          </Dropdown>
+                        </td>
+                        <td>
+                          <Input
+                            size="small"
+                            className={styles.cellProduct}
+                            aria-label="Competitor product name"
+                            value={r.currentProduct}
+                            onChange={(_, d) => onUpdate(r.id, { currentProduct: d.value })}
+                          />
+                        </td>
+                      </>
+                    )}
                     <td className={styles.numeric}>
                       <Input
                         size="small"
@@ -820,8 +843,9 @@ function CompetitiveEnvironment({
 
       {competitors.rows.length > 0 ? (
         <p className={styles.tableNote}>
-          Costs from the catalogue are indicative — replace them with what the customer actually
-          pays, and set each contract end year. You will map these to Microsoft products in step 2.
+          Catalogue costs are indicative — replace them with what the customer actually pays, and
+          set each contract end year. To change a catalogue product itself, remove the row and add
+          the right one. You will map these to Microsoft products in step 2.
         </p>
       ) : null}
 
