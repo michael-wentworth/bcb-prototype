@@ -138,6 +138,36 @@ export const STRESS = {
   vendorsConsolidated: stressed.vendorsConsolidated,
 };
 
+/* ------------------------------ steady state ------------------------------- */
+
+/**
+ * What the case runs at once every contract has lapsed.
+ *
+ * The headline ROI is a blended figure over the whole horizon, and the first
+ * year drags it down hard because nothing can be switched off yet. The final
+ * year is the rate the customer actually lives with afterwards, and it is the
+ * more useful number for anyone deciding whether to start — so the page states
+ * both rather than only the one that flatters least.
+ */
+const lastYear = base.years - 1;
+export const STEADY = {
+  saves: base.competitorByYear[lastYear],
+  costs: base.microsoftByYear[lastYear],
+  net: base.competitorByYear[lastYear] - base.microsoftByYear[lastYear],
+  ratio:
+    base.microsoftByYear[lastYear] > 0
+      ? (base.competitorByYear[lastYear] - base.microsoftByYear[lastYear]) /
+        base.microsoftByYear[lastYear]
+      : null,
+};
+
+/** The Microsoft side as one destination: what is bought, and what it costs a year. */
+export const CONSOLIDATION = {
+  products: INVESTMENT.map((s) => s.name),
+  annualCost: Math.round(base.investmentTotal / base.years),
+  vendorCount: LEDGER.length,
+};
+
 /* --------------------------- what is not counted --------------------------- */
 
 /**

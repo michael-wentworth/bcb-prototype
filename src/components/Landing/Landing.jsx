@@ -6,7 +6,16 @@ import { MY_CASES } from '../../data/caseLibrary.js';
 import { PILLARS } from '../../data/landing.js';
 import PaybackChart from '../ResultsDashboard/PaybackChart.jsx';
 import SpendComparison from '../ResultsDashboard/SpendComparison.jsx';
-import { CASE, LEDGER, STRESS, EXCLUDED, money, pct } from '../../data/landingCase.js';
+import {
+  CASE,
+  CONSOLIDATION,
+  LEDGER,
+  STEADY,
+  STRESS,
+  EXCLUDED,
+  money,
+  pct,
+} from '../../data/landingCase.js';
 import styles from './Landing.module.css';
 
 /**
@@ -101,12 +110,6 @@ function Result({ onOpen }) {
           <ul className={styles.kpis}>
             <Kpi tone="brand" label="Return on investment" value={pct(CASE.roi)} />
             <Kpi tone="good" label="Net benefit a year" value={money(CASE.annualNetBenefit)} />
-            <Kpi tone="plain" label="Payback" value={`${CASE.paybackMonths} months`} />
-            <Kpi
-              tone="plain"
-              label="Vendors retired"
-              value={`${CASE.vendorsConsolidated} of ${CASE.vendorCount}`}
-            />
           </ul>
 
           <div className={styles.chartCard}>
@@ -119,7 +122,7 @@ function Result({ onOpen }) {
         </div>
 
         <p className={styles.foot}>
-          Three contracts lapse during {CASE.startYear}; the fourth runs a year longer.{' '}
+          Three of the four contracts lapse in the same year; the fourth runs a year longer.{' '}
           <button type="button" className={styles.inlineLink} onClick={onOpen}>
             See the full report
           </button>
@@ -141,47 +144,61 @@ function Kpi({ label, value, tone }) {
 /* ------------------------------- what changes ------------------------------ */
 
 /**
- * The consolidation, as a picture rather than a table. Four vendor contracts on
- * one side, Microsoft on the other, and what the swap does to annual spend.
+ * The consolidation as a picture: four contracts on one side, one destination
+ * on the other.
+ *
+ * The destination is Microsoft, not a single SKU. This case buys three products
+ * and the heading says "one platform in", so naming any one of them as THE
+ * replacement would be false — three of the four vendors give way to Microsoft
+ * 365 E5 Security and the fourth to Sentinel. What is true, and what the
+ * sentence actually means, is that four separate vendor relationships become
+ * one. The card carries the products inside it and the total they cost a year.
  */
 function WhatChanges() {
   return (
     <section className={styles.band}>
       <div className={styles.grid}>
-        <h2 className={styles.sectionTitle}>Four vendors out, one platform in</h2>
+        <h2 className={styles.sectionTitle}>
+          {CONSOLIDATION.vendorCount} vendors out, one platform in
+        </h2>
         <p className={styles.sectionLede}>
           The saving is spend that stops, not spend that is estimated.
         </p>
 
-        <div className={styles.changeLayout}>
-          {/* Category, not brand. This page is public marketing, so naming a
-              competitor beside an invented price would be Microsoft publishing a
-              pricing claim about someone else's product. Inside the tool the seller
-              enters the real vendor for their own deal, which is their statement
-              about their own customer rather than ours. The argument here is about
-              categories of spend and contract timing, and loses nothing without
-              the brand. */}
-          <ul className={styles.vendors}>
+        {/* Category, not brand. This page is public marketing, so naming a
+            competitor beside an invented price would be Microsoft publishing a
+            pricing claim about someone else's product. Inside the tool the
+            seller enters the real vendor for their own deal. */}
+        <div className={styles.swap}>
+          <ul className={styles.fromList}>
             {LEDGER.map((l) => (
-              <li key={l.id} className={styles.vendor}>
-                <span className={styles.vendorTop}>
-                  <span className={styles.vendorName}>{l.category}</span>
-                  <span className={styles.vendorCost}>{money(l.annualCost)}/yr</span>
-                </span>
-                <span className={styles.vendorArrow} aria-hidden="true" />
-                <span className={styles.vendorTo}>{l.replacedBy}</span>
+              <li key={l.id} className={styles.fromCard}>
+                <span className={styles.fromName}>{l.category}</span>
+                <span className={styles.fromCost}>{money(l.annualCost)}/yr</span>
               </li>
             ))}
           </ul>
 
-          <div className={styles.chartCard}>
-            <SpendComparison
-              current={CASE.todayAnnualSpend ?? 0}
-              future={CASE.futureAnnualSpend ?? 0}
-              contractCount={CASE.vendorCount}
-              symbol="$"
-            />
+          <span className={styles.swapArrow} aria-hidden="true" />
+
+          <div className={styles.toCard}>
+            <span className={styles.toEyebrow}>Microsoft Security</span>
+            <ul className={styles.toProducts}>
+              {CONSOLIDATION.products.map((name) => (
+                <li key={name}>{name}</li>
+              ))}
+            </ul>
+            <span className={styles.toCost}>{money(CONSOLIDATION.annualCost)}/yr</span>
           </div>
+        </div>
+
+        <div className={styles.chartCard}>
+          <SpendComparison
+            current={CASE.todayAnnualSpend ?? 0}
+            future={CASE.futureAnnualSpend ?? 0}
+            contractCount={CASE.vendorCount}
+            symbol="$"
+          />
         </div>
       </div>
     </section>
@@ -191,8 +208,14 @@ function WhatChanges() {
 /* -------------------------------- why timing ------------------------------- */
 
 /**
- * The credibility beat, kept to one idea and one graphic: nothing is saved in
- * year one, because on day one every contract is still running.
+ * The same honesty, told forwards.
+ *
+ * This section used to open "Year one saves nothing", which is true and is the
+ * least interesting true thing here. The headline ROI is a blend across the
+ * whole horizon, dragged down by a first year in which nothing can legally be
+ * switched off yet — so the rate the customer actually lives with afterwards is
+ * much better than the number on the fold, and saying so is not a softening.
+ * The reason year one is nil still gets stated; it is just no longer the point.
  */
 function WhyTiming() {
   const peak = Math.max(...CASE.competitorByYear);
@@ -200,33 +223,38 @@ function WhyTiming() {
   return (
     <section className={`${styles.band} ${styles.bandTint}`}>
       <div className={styles.grid}>
-        <h2 className={styles.sectionTitle}>Year one saves nothing</h2>
+        <h2 className={styles.sectionTitle}>It gets better every year</h2>
         <p className={styles.sectionLede}>
-          A vendor cannot be switched off mid-contract, so savings begin the year after one lapses.
-          That is why payback lands at month{' '}
-          {CASE.paybackMonths} rather than immediately — and why
-          this case can be checked.
+          A vendor cannot be switched off mid-contract, so each saving starts the year after that
+          contract lapses. Nothing is saved in the first year, and the run rate climbs as the
+          others fall away.
         </p>
 
         <ol className={styles.years}>
           {CASE.competitorByYear.map((v, i) => (
             <li key={i} className={styles.year}>
-              <span className={styles.yearLabel}>{CASE.startYear + i}</span>
+              <span className={styles.yearLabel}>Year {i + 1}</span>
               <span className={styles.yearTrack}>
                 <span
                   className={styles.yearFill}
                   style={{ width: v ? `${(v / peak) * 100}%` : '0%' }}
                 />
               </span>
-              <span className={styles.yearValue}>{v ? money(v) : 'nothing'}</span>
+              <span className={styles.yearValue}>{v ? money(v) : 'nothing yet'}</span>
             </li>
           ))}
         </ol>
 
-        {/* Both of these were interactive controls. They are stated instead: a
-            landing page that asks a stranger to operate widgets before they know
-            what the product is reads as odd, and neither argument needs a click
-            to land. */}
+        <div className={styles.steady}>
+          <span className={styles.steadyValue}>{pct(STEADY.ratio)}</span>
+          <span className={styles.steadyText}>
+            What the case runs at once every contract has lapsed — {money(STEADY.saves)} a year of
+            spend stopping against {money(STEADY.costs)} of Microsoft. The {pct(CASE.roi)} on the
+            fold is the blended figure across all {CASE.years} years, held down by a first year in
+            which nothing can be switched off yet.
+          </span>
+        </div>
+
         <p className={styles.factsTitle}>What it will not do</p>
         <ul className={styles.facts}>
           <li className={styles.fact}>
@@ -240,9 +268,9 @@ function WhyTiming() {
           <li className={styles.fact}>
             <span className={styles.factValue}>{pct(STRESS.roi)}</span>
             <span className={styles.factText}>
-              What the same case reports if no contract lapses before {STRESS.year}. Nothing can be
-              switched off, so there is nothing to save — and the tool says so rather than finding
-              a saving anyway.
+              What the same case reports if no contract lapses inside the analysis period. Nothing
+              can be switched off, so there is nothing to save — and the tool says so rather than
+              finding a saving anyway.
             </span>
           </li>
         </ul>
@@ -270,6 +298,12 @@ function Close({ onStart }) {
   return (
     <section className={`${styles.band} ${styles.bandLast}`}>
       <div className={styles.grid}>
+        <h2 className={styles.sectionTitle}>Independent research behind the category</h2>
+        <p className={styles.sectionLede}>
+          Figures a seller can cite directly. They are not what this case is built from — that is
+          the customer's own contracts — but they are what it is argued against.
+        </p>
+
         <ul className={styles.evidence}>
           {EVIDENCE.map((s) => (
             <li key={s.label} className={styles.evidenceItem}>

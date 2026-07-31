@@ -154,10 +154,13 @@
   margin-top: var(--spacingVerticalXL);
 }
 
+/* Two figures, stacked. Four in a 2x2 made the fold a scoreboard; the ratio
+   and the money are the two anyone repeats, and payback and vendor count are
+   in the report a click away. */
 .kpis {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacingHorizontalM);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacingVerticalM);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -275,88 +278,9 @@
 
 /* ------------------------------- what changes ------------------------------ */
 
-.changeLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--spacingHorizontalXXL);
-  align-items: start;
-}
-
-.vendors {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacingVerticalM);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 /* Each row is one displacement: what goes, what it costs, what replaces it. */
-.vendor {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr);
-  align-items: center;
-  gap: var(--spacingHorizontalM);
-  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
-  border: 1px solid var(--colorNeutralStroke2);
-  border-radius: var(--borderRadiusMedium);
-  background-color: var(--colorNeutralBackground1);
-}
-
-.vendorTop {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-
-.vendorName {
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
-.vendorCost {
-  font-size: var(--fontSizeBase200);
-  font-variant-numeric: tabular-nums;
-  color: var(--colorPaletteRedForeground1);
-}
-
 /* A CSS arrow rather than an icon import — it is pure ornament between two
    labels that already carry the meaning, and it is aria-hidden. */
-.vendorArrow {
-  width: 18px;
-  height: 8px;
-  position: relative;
-}
-
-.vendorArrow::before {
-  content: '';
-  position: absolute;
-  inset: 3px 0 auto 0;
-  height: 2px;
-  background-color: var(--colorNeutralStroke1);
-}
-
-.vendorArrow::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid var(--colorNeutralStroke1);
-  border-right: 2px solid var(--colorNeutralStroke1);
-  transform: rotate(45deg);
-}
-
-.vendorTo {
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorBrandForeground1);
-  min-width: 0;
-}
-
 /* -------------------------------- why timing ------------------------------- */
 
 .years {
@@ -554,3 +478,162 @@
   }
 }
 
+/* ------------------------------ the swap ---------------------------------- */
+
+/* Four contracts on the left, one destination on the right, an arrow between.
+   The asymmetry is the argument, so the two sides are not equal columns — the
+   left is a list of four and the right is a single card that has to look like
+   a destination rather than a fifth item. */
+.swap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px minmax(0, 0.9fr);
+  gap: var(--spacingHorizontalL);
+  align-items: center;
+  margin-bottom: var(--spacingVerticalXXL);
+}
+
+.fromList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fromCard {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalM);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground1);
+}
+
+.fromName {
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground1);
+}
+
+.fromCost {
+  font-size: var(--fontSizeBase300);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorPaletteRedForeground1);
+}
+
+/* CSS rather than an icon: it is pure ornament between two labelled things. */
+.swapArrow {
+  position: relative;
+  height: 10px;
+}
+
+.swapArrow::before {
+  content: '';
+  position: absolute;
+  inset: 4px 0 auto 0;
+  height: 2px;
+  background-color: var(--colorNeutralStroke1);
+}
+
+.swapArrow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 1px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--colorNeutralStroke1);
+  border-right: 2px solid var(--colorNeutralStroke1);
+  transform: rotate(45deg);
+}
+
+.toCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXL);
+  border: 1px solid var(--colorBrandStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorBrandBackground2);
+}
+
+.toEyebrow {
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--colorBrandForeground2);
+}
+
+.toProducts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.toCost {
+  margin-top: var(--spacingVerticalXS);
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorBrandForeground1);
+}
+
+/* ---------------------------- steady state -------------------------------- */
+
+/* The number the customer lives with after the contracts have gone. Sits
+   between the year bars and the refusals, because it is what the bars are
+   climbing towards. */
+.steady {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacingHorizontalXL);
+  align-items: center;
+  margin-bottom: var(--spacingVerticalXXL);
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXL);
+  border: 1px solid var(--colorPaletteGreenBorder1);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorPaletteGreenBackground1);
+}
+
+.steadyValue {
+  font-size: 46px;
+  line-height: 50px;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--colorPaletteGreenForeground1);
+}
+
+.steadyText {
+  max-width: var(--bcb-landing-prose);
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+@media (max-width: 1000px) {
+  .swap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .swapArrow {
+    transform: rotate(90deg);
+    justify-self: center;
+    width: 40px;
+  }
+
+  .steady {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacingVerticalM);
+  }
+}
