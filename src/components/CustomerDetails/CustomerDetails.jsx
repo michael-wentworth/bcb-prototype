@@ -40,7 +40,6 @@ import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
-import Disclosure from '../shared/Disclosure.jsx';
 import CompetitorMatrixDialog from './CompetitorMatrixDialog.jsx';
 import styles from './CustomerDetails.module.css';
 
@@ -162,6 +161,42 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
+          <FormField label="Opportunity ID" meta={fieldMeta.opportunityId}>
+            {(id) => (
+              <>
+                <Input
+                  id={id}
+                  value={customer.opportunityId}
+                  onChange={(_, d) => setCustomer('opportunityId', d.value)}
+                  placeholder="e.g. 7-3F56BL3EVL"
+                  contentAfter={<Search20Regular />}
+                  disabled={customer.notForCustomer}
+                />
+                <button type="button" className={styles.addLink}>
+                  + Add new opportunity ID
+                </button>
+              </>
+            )}
+          </FormField>
+
+          <FormField label="Opportunity name" meta={fieldMeta.opportunityName}>
+            {(id) => (
+              <>
+                <Input
+                  id={id}
+                  value={customer.opportunityName}
+                  onChange={(_, d) => setCustomer('opportunityName', d.value)}
+                  placeholder="Search opportunity name"
+                  contentAfter={<Search20Regular />}
+                  disabled={customer.notForCustomer}
+                />
+                <button type="button" className={styles.addLink}>
+                  + Add new opportunity name
+                </button>
+              </>
+            )}
+          </FormField>
+
         </div>
 
         <Checkbox
@@ -172,6 +207,37 @@ export default function CustomerDetails() {
         />
 
         <div className={styles.grid}>
+          <FormField label="TPID" meta={fieldMeta.tpid}>
+            {(id) => (
+              <Input
+                id={id}
+                value={customer.tpid}
+                onChange={(_, d) => setCustomer('tpid', d.value)}
+                placeholder="e.g. 1234567"
+                disabled={customer.notForCustomer}
+              />
+            )}
+          </FormField>
+
+          <FormField label="Opportunity close date">
+            {(id) => (
+              <Input
+                id={id}
+                type="date"
+                value={customer.closeDate}
+                onChange={(_, d) => setCustomer('closeDate', d.value)}
+                disabled={customer.notForCustomer}
+              />
+            )}
+          </FormField>
+
+          {/* Seller alias sits with the other engagement facts. It used to close the
+              old "Customer environment" card, which no longer exists — and it is
+              about the seller, not about anything the customer runs. */}
+          <FormField label="Seller alias">
+            {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
+          </FormField>
+
           <FormField label="Industry" meta={fieldMeta.industry}>
             {(id) => (
               <Dropdown
@@ -264,97 +330,6 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-        </div>
-
-
-        <FormField label="Description" meta={fieldMeta.description}>
-          {(id) => (
-            <Textarea
-              id={id}
-              className={styles.textarea}
-              value={customer.description}
-              onChange={(_, d) => setCustomer('description', d.value)}
-              placeholder="Optional notes about this customer or engagement"
-              resize="vertical"
-            />
-          )}
-        </FormField>
-
-        {/* Opportunity identifiers, the close date, the seller alias and the two
-            unused counts. None reaches the model, the report or a recommendation
-            — they are CRM plumbing, and several are things a seller cannot answer
-            without opening MSX. The fields that shape the report's STORY rather
-            than its arithmetic — industry, segment, sales motion, BCB role and
-            the description — stay above, because burying them is what would keep
-            them permanently unwired. */}
-        <Disclosure label="Additional details" count={7}>
-          <div className={styles.grid}>
-          <FormField label="Opportunity ID" meta={fieldMeta.opportunityId}>
-            {(id) => (
-              <>
-                <Input
-                  id={id}
-                  value={customer.opportunityId}
-                  onChange={(_, d) => setCustomer('opportunityId', d.value)}
-                  placeholder="e.g. 7-3F56BL3EVL"
-                  contentAfter={<Search20Regular />}
-                  disabled={customer.notForCustomer}
-                />
-                <button type="button" className={styles.addLink}>
-                  + Add new opportunity ID
-                </button>
-              </>
-            )}
-          </FormField>
-
-          <FormField label="Opportunity name" meta={fieldMeta.opportunityName}>
-            {(id) => (
-              <>
-                <Input
-                  id={id}
-                  value={customer.opportunityName}
-                  onChange={(_, d) => setCustomer('opportunityName', d.value)}
-                  placeholder="Search opportunity name"
-                  contentAfter={<Search20Regular />}
-                  disabled={customer.notForCustomer}
-                />
-                <button type="button" className={styles.addLink}>
-                  + Add new opportunity name
-                </button>
-              </>
-            )}
-          </FormField>
-          <FormField label="TPID" meta={fieldMeta.tpid}>
-            {(id) => (
-              <Input
-                id={id}
-                value={customer.tpid}
-                onChange={(_, d) => setCustomer('tpid', d.value)}
-                placeholder="e.g. 1234567"
-                disabled={customer.notForCustomer}
-              />
-            )}
-          </FormField>
-
-          <FormField label="Opportunity close date">
-            {(id) => (
-              <Input
-                id={id}
-                type="date"
-                value={customer.closeDate}
-                onChange={(_, d) => setCustomer('closeDate', d.value)}
-                disabled={customer.notForCustomer}
-              />
-            )}
-          </FormField>
-
-          {/* Seller alias sits with the other engagement facts. It used to close the
-              old "Customer environment" card, which no longer exists — and it is
-              about the seller, not about anything the customer runs. */}
-          <FormField label="Seller alias">
-            {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
-          </FormField>
-
           <FormField label="Customer website" span={false}>
             {(id) => (
               <Input
@@ -382,8 +357,23 @@ export default function CustomerDetails() {
               />
             )}
           </FormField>
-          </div>
-        </Disclosure>
+
+        </div>
+
+
+        <FormField label="Description" meta={fieldMeta.description}>
+          {(id) => (
+            <Textarea
+              id={id}
+              className={styles.textarea}
+              value={customer.description}
+              onChange={(_, d) => setCustomer('description', d.value)}
+              placeholder="Optional notes about this customer or engagement"
+              resize="vertical"
+            />
+          )}
+        </FormField>
+
       </Card>
 
       {/* ------------------------ Microsoft environment ----------------------- */}
