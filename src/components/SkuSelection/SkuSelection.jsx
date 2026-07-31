@@ -18,6 +18,7 @@ import {
   Add16Filled,
   Checkmark16Regular,
   Delete16Regular,
+  Search20Regular,
   Sparkle16Filled,
 } from '@fluentui/react-icons';
 import {
@@ -262,6 +263,72 @@ export default function SkuSelection() {
  * proposal covers, and which it does not cover yet.
  */
 /**
+ * Typeahead over the eight security outcomes.
+ *
+ * Same shape as the competitor search on step 1 — a list of buttons under an
+ * input, because picking one ADDS it and clears the box rather than leaving a
+ * value behind. Showing the detail line in the result keeps what the old
+ * checkbox cards were carrying: the labels alone are jargon to anyone who does
+ * not already know the taxonomy.
+ */
+function OutcomeSearch({ selected, onPick }) {
+  const [query, setQuery] = useState('');
+  // Closed at rest. Listing all eight permanently cost as much height as the
+  // grid it replaced, which was the point of replacing it. Focus opens the full
+  // list, so the taxonomy is still one click from view for anyone who does not
+  // know it well enough to type a term.
+  const [open, setOpen] = useState(false);
+  const q = query.trim().toLowerCase();
+  const available = SECURITY_OUTCOMES.filter((o) => !selected.includes(o.id));
+  const matches = q
+    ? available.filter((o) => o.label.toLowerCase().includes(q) || o.detail.toLowerCase().includes(q))
+    : available;
+
+  if (available.length === 0) {
+    return <p className={styles.allPicked}>All eight outcomes are selected.</p>;
+  }
+
+  return (
+    <div className={styles.outcomeSearchWrap}>
+      <Input
+        className={styles.outcomeSearchInput}
+        value={query}
+        onChange={(_, d) => setQuery(d.value)}
+        placeholder="Search outcomes"
+        contentBefore={<Search20Regular />}
+        aria-label="Search security outcomes"
+        onFocus={() => setOpen(true)}
+        /* Deferred so a click on a result lands before the list unmounts. */
+        onBlur={() => setTimeout(() => setOpen(false), 160)}
+      />
+      {open || query ? (
+        <ul className={styles.outcomeResults} role="listbox" aria-label="Security outcomes">
+          {matches.length === 0 ? (
+            <li className={styles.outcomeNoResult}>Nothing matches that.</li>
+          ) : (
+            matches.map((o) => (
+              <li key={o.id}>
+                <button
+                  type="button"
+                  className={styles.outcomeResult}
+                  onClick={() => {
+                    onPick(o.id);
+                    setQuery('');
+                  }}
+                >
+                  <span className={styles.outcomeResultLabel}>{o.label}</span>
+                  <span className={styles.outcomeResultDetail}>{o.detail}</span>
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/**
  * Outcomes, and whether the proposal actually covers them.
  *
  * These were two cards: a grid of checkboxes, and a read-only "Why this
@@ -326,6 +393,10 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
           <h2 className={styles.cardTitle}>
             What security outcomes is the customer trying to achieve?
           </h2>
+          <p className={styles.cardLead}>
+            Add the outcomes this proposal has to serve. Each one shows the Microsoft product that
+            delivers it, so a gap is something you can close here.
+          </p>
         </div>
         <Checkbox
           checked={allSelected}
@@ -335,24 +406,10 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
         />
       </div>
 
-      <div className={styles.outcomeGrid}>
-        {SECURITY_OUTCOMES.map((o) => (
-          <label
-            key={o.id}
-            className={`${styles.outcome} ${outcomes.includes(o.id) ? styles.outcomeOn : ''}`}
-          >
-            <Checkbox
-              checked={outcomes.includes(o.id)}
-              onChange={() => onToggle(o.id)}
-              aria-label={o.label}
-            />
-            <span className={styles.outcomeBody}>
-              <span className={styles.outcomeLabel}>{o.label}</span>
-              <span className={styles.outcomeDetail}>{o.detail}</span>
-            </span>
-          </label>
-        ))}
-      </div>
+      {/* Search to add, exactly as competitor products work on step 1. Eight
+          checkbox cards in a 2x4 grid cost a screenful to say what a one-line
+          picker says, and most cases select two or three of them. */}
+      <OutcomeSearch selected={outcomes} onPick={onToggle} />
 
       {selected.length > 0 ? (
         <div className={styles.coverage}>
@@ -362,10 +419,19 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
               : `${covered} of ${selected.length} selected outcomes covered. Add a product for the rest.`}
           </p>
 
+          <div className={styles.coverageHeadRow}>
+            <span>Outcome</span>
+            <span>Delivered by</span>
+            <span className={styles.srOnly}>Remove</span>
+          </div>
+
           <ul className={styles.coverageList}>
             {lines.map((line) => (
               <li key={line.id} className={styles.coverageRow}>
-                <span className={styles.coverageOutcome}>{line.label}</span>
+                <span className={styles.coverageOutcome}>
+                  <span className={styles.coverageLabel}>{line.label}</span>
+                  <span className={styles.coverageDetail}>{line.detail}</span>
+                </span>
                 <span className={styles.coverageSkus}>
                   {line.served.map((sku) => (
                     <span key={sku.id} className={styles.coveredChip}>
@@ -390,6 +456,13 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
                       ))
                     : null}
                 </span>
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<Delete16Regular />}
+                  aria-label={`Remove ${line.label}`}
+                  onClick={() => onToggle(line.id)}
+                />
               </li>
             ))}
           </ul>
@@ -415,8 +488,7 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
         </div>
       ) : (
         <p className={styles.emptyNote}>
-          Pick the outcomes this proposal has to serve. Each one will show the Microsoft product
-          that delivers it, and you can add it here.
+          No outcomes yet. Search above to add the ones this proposal has to serve.
         </p>
       )}
     </Card>

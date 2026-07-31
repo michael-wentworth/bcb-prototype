@@ -40,7 +40,6 @@ import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
-import MultiSelect from '../shared/MultiSelect.jsx';
 import Disclosure from '../shared/Disclosure.jsx';
 import CompetitorMatrixDialog from './CompetitorMatrixDialog.jsx';
 import styles from './CustomerDetails.module.css';
