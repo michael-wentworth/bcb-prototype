@@ -352,3 +352,12 @@
 .cellProduct input {
   font-weight: var(--fontWeightSemibold);
 }
+
+/* The BCB role sits beside the analysis period rather than under it: two
+   case-level settings read as a pair. It spans the remaining two columns
+   because three horizontal radios need the width, and it carries no vertical
+   margin of its own — the grid's row gap owns the spacing now. */
+.roleInline {
+  grid-column: span 2;
+  align-self: start;
+}

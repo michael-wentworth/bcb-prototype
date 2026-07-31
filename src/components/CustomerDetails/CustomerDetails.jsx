@@ -117,26 +117,26 @@ export default function CustomerDetails() {
               </Dropdown>
             )}
           </FormField>
-        </div>
 
-        <div className={styles.roleBlock}>
-          <span className={styles.roleLabel}>
-            Role of Security BCB
-          </span>
-          <RadioGroup
-            layout="horizontal"
-            value={customer.bcbRole}
-            onChange={(_, d) => setCustomer('bcbRole', d.value)}
-          >
-            {BCB_ROLES.map((r) => (
-              <Radio key={r.id} value={r.id} label={r.label} />
-            ))}
-          </RadioGroup>
-          {customer.bcbRole ? (
-            <p className={styles.roleDetail}>
-              {BCB_ROLES.find((r) => r.id === customer.bcbRole)?.detail}
-            </p>
-          ) : null}
+          <div className={styles.roleInline}>
+            <span className={styles.roleLabel}>
+              Role of Security BCB
+            </span>
+            <RadioGroup
+              layout="horizontal"
+              value={customer.bcbRole}
+              onChange={(_, d) => setCustomer('bcbRole', d.value)}
+            >
+              {BCB_ROLES.map((r) => (
+                <Radio key={r.id} value={r.id} label={r.label} />
+              ))}
+            </RadioGroup>
+            {customer.bcbRole ? (
+              <p className={styles.roleDetail}>
+                {BCB_ROLES.find((r) => r.id === customer.bcbRole)?.detail}
+              </p>
+            ) : null}
+          </div>
         </div>
       </Card>
 
