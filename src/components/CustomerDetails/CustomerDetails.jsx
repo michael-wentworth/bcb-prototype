@@ -36,8 +36,10 @@ import {
   currencySymbol,
 } from '../../data/referenceData.js';
 import { CASE_START_YEAR, formatCurrency } from '../../data/model.js';
+import { AUTHORSHIP } from '../../data/authoring.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
+import ConfidenceBadge from '../shared/ConfidenceBadge.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import CompetitorMatrixDialog from './CompetitorMatrixDialog.jsx';
@@ -119,6 +121,18 @@ export default function CustomerDetails() {
           <div className={styles.roleInline}>
             <span className={styles.roleLabel}>
               Role of Security BCB
+              {/* Not a FormField, so it carries its own badge. The AI infers this
+                  from the stated goals and it changes who the report is written
+                  for — a seller should see that it was inferred, not chosen. */}
+              {fieldMeta.bcbRole ? (
+                <ConfidenceBadge
+                  level={fieldMeta.bcbRole.confidence}
+                  basis={fieldMeta.bcbRole.basis}
+                  evidence={fieldMeta.bcbRole.evidence}
+                  ai={fieldMeta.bcbRole.source === 'ai'}
+                  compact
+                />
+              ) : null}
             </span>
             <RadioGroup
               layout="horizontal"
@@ -330,7 +344,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Customer website" span={false}>
+          <FormField label="Customer website" meta={fieldMeta.website}>
             {(id) => (
               <Input
                 id={id}
@@ -388,7 +402,7 @@ export default function CustomerDetails() {
 
         <div className={styles.grid}>
 
-          <FormField label="Current Microsoft bundle">
+          <FormField label="Current Microsoft bundle" meta={fieldMeta.bundleId}>
             {(id) => (
               <Dropdown
                 id={id}
@@ -418,6 +432,7 @@ export default function CustomerDetails() {
           <FormField
             label="Annual license price"
             help={`Per-user cost, ${currency}. For a mixed estate, enter a blended rate.`}
+            meta={fieldMeta.annualPerUser}
           >
             {(id) => (
               <Input
@@ -433,6 +448,7 @@ export default function CustomerDetails() {
           <FormField
             label="Additional products or savings"
             help="Other Microsoft products or negotiated savings, per year"
+            meta={fieldMeta.additionalValue}
           >
             {(id) => (
               <Input
@@ -683,7 +699,7 @@ function CompetitiveEnvironment({
                       </>
                     ) : (
                       <>
-                        <td>
+                        <td className={styles.productCell}>
                           <Input
                             size="small"
                             className={styles.cellProduct}
@@ -691,6 +707,19 @@ function CompetitiveEnvironment({
                             value={r.currentProduct}
                             onChange={(_, d) => onUpdate(r.id, { currentProduct: d.value })}
                           />
+                          {/* The copilot infers these from install-base signal, and
+                              its own reply tells the seller to check them. Without a
+                              marker on the row there is nothing saying which rows it
+                              meant. */}
+                          {r.authorship === AUTHORSHIP.AI ? (
+                            <ConfidenceBadge
+                              level="medium"
+                              basis="Inferred from install-base signal"
+                              evidence="Detected against this account rather than stated — confirm the product and its contract end year before this reaches a customer."
+                              ai
+                              compact
+                            />
+                          ) : null}
                         </td>
                         <td>
                           <Dropdown

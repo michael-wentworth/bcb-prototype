@@ -11,6 +11,31 @@ export const DEMO_PROMPT =
 
 /** Field-level provenance, shown against each populated field. */
 export const EXTRACTION_EVIDENCE = {
+  website: {
+    confidence: 'medium',
+    basis: 'Matched to account record',
+    evidence: 'Primary domain on the Contoso Ltd. account in MSX',
+  },
+  bcbRole: {
+    confidence: 'medium',
+    basis: 'Inferred from stated goals',
+    evidence: 'A vendor-consolidation conversation is normally taken to the customer',
+  },
+  bundleId: {
+    confidence: 'high',
+    basis: 'Stated directly',
+    evidence: '"…currently uses Microsoft 365 E3…"',
+  },
+  annualPerUser: {
+    confidence: 'medium',
+    basis: 'List price for the stated bundle',
+    evidence: 'Microsoft 365 E3 at $432 per user per year — replace with the negotiated rate',
+  },
+  additionalValue: {
+    confidence: 'low',
+    basis: 'Not stated',
+    evidence: 'Placeholder for other Microsoft products or negotiated savings — nothing in the description supports a figure',
+  },
   accountName: { confidence: 'high', basis: 'Stated directly', evidence: '"Contoso has 18,000 employees…"' },
   opportunityId: {
     confidence: 'medium',
@@ -69,10 +94,6 @@ export const DEMO_EXTRACTION = {
       'Reduce vendor sprawl across the security estate and modernise security operations. Consolidate endpoint, identity and SIEM tooling onto a single platform to lower operational complexity.',
   },
 
-  environment: {
-    competitorProducts: ['CrowdStrike Falcon', 'Okta Workforce Identity'],
-  },
-
   outcomes: ['identity', 'threat', 'endpoint', 'consolidation'],
 
   /**
@@ -99,14 +120,14 @@ export const DEMO_EXTRACTION = {
       softwareSolution: 'Endpoint protection',
       currentProduct: 'CrowdStrike Falcon',
       competitorCost: '1350000',
-      newMicrosoftProduct: 'Microsoft Defender for Endpoint P2',
+      newMicrosoftProduct: 'Microsoft 365 E5 Security',
       yearContractEnds: '2026',
     },
     {
       softwareSolution: 'Identity & access',
       currentProduct: 'Okta Workforce Identity',
       competitorCost: '720000',
-      newMicrosoftProduct: 'Microsoft Entra ID P2',
+      newMicrosoftProduct: 'Microsoft 365 E5 Security',
       yearContractEnds: '2026',
     },
     {
@@ -120,7 +141,7 @@ export const DEMO_EXTRACTION = {
       softwareSolution: 'Email security',
       currentProduct: 'Proofpoint Email Protection',
       competitorCost: '410000',
-      newMicrosoftProduct: 'Microsoft Defender for Office 365 P2',
+      newMicrosoftProduct: 'Microsoft 365 E5 Security',
       yearContractEnds: '2026',
     },
   ],

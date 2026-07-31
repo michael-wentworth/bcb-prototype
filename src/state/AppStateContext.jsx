@@ -46,7 +46,6 @@ const emptyCustomer = {
 };
 
 const emptyEnvironment = {
-  competitorProducts: [],
   sellerAlias: CURRENT_USER_ALIAS,
 };
 
@@ -424,17 +423,19 @@ function reducer(state, action) {
       );
     }
 
-    case 'AI_FILL_ENVIRONMENT':
-      return aiTouch(
-        { ...state, environment: { ...state.environment, ...action.patch } },
-        'customer',
-      );
-
     case 'AI_FILL_OUTCOMES':
       return aiTouch({ ...state, outcomes: action.ids }, 'outcomes');
 
-    case 'AI_FILL_BUNDLE':
-      return { ...state, bundle: { ...state.bundle, ...action.patch } };
+    /* Same provenance treatment the customer fields get. The bundle drives both
+       bars of the spend comparison, and its price is a list figure the seller is
+       meant to replace — a pill saying so is the only thing that tells them. */
+    case 'AI_FILL_BUNDLE': {
+      const meta = { ...state.fieldMeta };
+      Object.keys(action.patch).forEach((key) => {
+        if (EXTRACTION_EVIDENCE[key]) meta[key] = { ...EXTRACTION_EVIDENCE[key], source: 'ai' };
+      });
+      return { ...state, bundle: { ...state.bundle, ...action.patch }, fieldMeta: meta };
+    }
 
     case 'AI_FILL_SKUS': {
       const years = Number(state.caseSetup.analysisPeriod) || 3;
@@ -589,8 +590,7 @@ export function AppStateProvider({ children }) {
         if (action.type === 'fillCase') {
           const d = DEMO_EXTRACTION;
           schedule(() => dispatch({ type: 'AI_FILL_CUSTOMER', patch: d.customer }), 260);
-          schedule(() => dispatch({ type: 'AI_FILL_ENVIRONMENT', patch: d.environment }), 620);
-          schedule(() => dispatch({ type: 'AI_FILL_OUTCOMES', ids: d.outcomes }), 900);
+            schedule(() => dispatch({ type: 'AI_FILL_OUTCOMES', ids: d.outcomes }), 900);
           schedule(() => dispatch({ type: 'AI_FILL_SKUS', rows: d.skus }), 1200);
           schedule(() => dispatch({ type: 'AI_FILL_BUNDLE', patch: d.bundle }), 1400);
           schedule(() => dispatch({ type: 'AI_FILL_COMPETITORS', rows: d.competitors }), 1600);

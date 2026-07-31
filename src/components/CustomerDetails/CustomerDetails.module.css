@@ -97,7 +97,9 @@
 }
 
 .roleLabel {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
   margin-bottom: 4px;
   font-size: var(--fontSizeBase300);
   font-weight: var(--fontWeightSemibold);
@@ -359,4 +361,11 @@
 .roleInline {
   grid-column: span 2;
   align-self: start;
+}
+
+/* The product name and, when the copilot guessed it, the badge saying so. */
+.productCell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
 }
