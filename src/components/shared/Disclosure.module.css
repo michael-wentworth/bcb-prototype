@@ -1,0 +1,73 @@
+/* Progressive disclosure for secondary form fields. Quiet by design — it is a
+   way out of the primary flow, not a call to action, so it carries no card, no
+   fill and no border until it is opened. */
+
+.root {
+  margin-top: var(--spacingVerticalL);
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  padding: 6px 8px;
+  margin-left: -8px; /* glyph aligns to the card's left edge, not the hit area */
+  border: none;
+  border-radius: var(--borderRadiusMedium);
+  background: none;
+  font-family: inherit;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground2);
+  cursor: pointer;
+}
+
+.trigger:hover {
+  background-color: var(--colorNeutralBackground1Hover);
+  color: var(--colorNeutralForeground1);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.chevron {
+  flex: none;
+  transition: transform var(--durationFaster) var(--curveEasyEase);
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.label {
+  font-weight: var(--fontWeightSemibold);
+}
+
+/* How many fields are inside, so a collapsed section does not read as "something
+   important might be hidden here". */
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorNeutralBackground3);
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground3);
+}
+
+.panel {
+  margin-top: var(--spacingVerticalM);
+  padding-top: var(--spacingVerticalM);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}

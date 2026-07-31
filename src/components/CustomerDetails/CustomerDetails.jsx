@@ -36,6 +36,7 @@ import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import MultiSelect from '../shared/MultiSelect.jsx';
+import Disclosure from '../shared/Disclosure.jsx';
 import styles from './CustomerDetails.module.css';
 
 /**
@@ -99,41 +100,6 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Opportunity ID" required meta={fieldMeta.opportunityId}>
-            {(id) => (
-              <>
-                <Input
-                  id={id}
-                  value={customer.opportunityId}
-                  onChange={(_, d) => setCustomer('opportunityId', d.value)}
-                  placeholder="e.g. 7-3F56BL3EVL"
-                  contentAfter={<Search20Regular />}
-                  disabled={customer.notForCustomer}
-                />
-                <button type="button" className={styles.addLink}>
-                  + Add new opportunity ID
-                </button>
-              </>
-            )}
-          </FormField>
-
-          <FormField label="Opportunity name" required meta={fieldMeta.opportunityName}>
-            {(id) => (
-              <>
-                <Input
-                  id={id}
-                  value={customer.opportunityName}
-                  onChange={(_, d) => setCustomer('opportunityName', d.value)}
-                  placeholder="Search opportunity name"
-                  contentAfter={<Search20Regular />}
-                  disabled={customer.notForCustomer}
-                />
-                <button type="button" className={styles.addLink}>
-                  + Add new opportunity name
-                </button>
-              </>
-            )}
-          </FormField>
         </div>
 
         <Checkbox
@@ -144,37 +110,6 @@ export default function CustomerDetails() {
         />
 
         <div className={styles.grid}>
-          <FormField label="TPID" meta={fieldMeta.tpid}>
-            {(id) => (
-              <Input
-                id={id}
-                value={customer.tpid}
-                onChange={(_, d) => setCustomer('tpid', d.value)}
-                placeholder="e.g. 1234567"
-                disabled={customer.notForCustomer}
-              />
-            )}
-          </FormField>
-
-          <FormField label="Opportunity close date">
-            {(id) => (
-              <Input
-                id={id}
-                type="date"
-                value={customer.closeDate}
-                onChange={(_, d) => setCustomer('closeDate', d.value)}
-                disabled={customer.notForCustomer}
-              />
-            )}
-          </FormField>
-
-          {/* Seller alias sits with the other engagement facts. It used to close the
-              old "Customer environment" card, which no longer exists — and it is
-              about the seller, not about anything the customer runs. */}
-          <FormField label="Seller alias">
-            {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
-          </FormField>
-
           <FormField label="Industry" meta={fieldMeta.industry}>
             {(id) => (
               <Dropdown
@@ -215,7 +150,7 @@ export default function CustomerDetails() {
             {(id) => <Input id={id} value={customer.geography ? currency : '—'} disabled />}
           </FormField>
 
-          <FormField label="Customer segment" required meta={fieldMeta.segment}>
+          <FormField label="Customer segment" meta={fieldMeta.segment}>
             {(id) => (
               <Dropdown
                 id={id}
@@ -233,7 +168,7 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Primary sales motion" required meta={fieldMeta.salesMotion}>
+          <FormField label="Primary sales motion" meta={fieldMeta.salesMotion}>
             {(id) => (
               <Dropdown
                 id={id}
@@ -254,7 +189,7 @@ export default function CustomerDetails() {
           <FormField
             label="Number of users"
             required
-            help="Used for pricing and benefit calculations"
+            help="Sets baseline Microsoft spend and seeds the per-year seat defaults"
             meta={fieldMeta.numberOfUsers}
           >
             {(id) => (
@@ -267,38 +202,11 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Customer website" span={false}>
-            {(id) => (
-              <Input
-                id={id}
-                value={customer.website}
-                onChange={(_, d) => setCustomer('website', d.value)}
-                placeholder="e.g. contoso.com"
-              />
-            )}
-          </FormField>
-
-          <FormField
-            label="Number of devices"
-            help={
-              effectiveDevices > 0 && !customer.numberOfDevices
-                ? `Defaults to 1.2 × users — ${effectiveDevices.toLocaleString('en-US')} devices`
-                : 'Endpoint count for Defender-related calculations'
-            }
-          >
-            {(id) => (
-              <Input
-                id={id}
-                value={customer.numberOfDevices}
-                onChange={(_, d) => setCustomer('numberOfDevices', d.value)}
-              />
-            )}
-          </FormField>
         </div>
 
         <div className={styles.roleBlock}>
           <span className={styles.roleLabel}>
-            Role of Security BCB<span className={styles.required}> *</span>
+            Role of Security BCB
           </span>
           <RadioGroup
             layout="horizontal"
@@ -328,6 +236,111 @@ export default function CustomerDetails() {
             />
           )}
         </FormField>
+
+        {/* Opportunity identifiers, the close date, the seller alias and the two
+            unused counts. None reaches the model, the report or a recommendation
+            — they are CRM plumbing, and several are things a seller cannot answer
+            without opening MSX. The fields that shape the report's STORY rather
+            than its arithmetic — industry, segment, sales motion, BCB role and
+            the description — stay above, because burying them is what would keep
+            them permanently unwired. */}
+        <Disclosure label="Additional details" count={7}>
+          <div className={styles.grid}>
+          <FormField label="Opportunity ID" meta={fieldMeta.opportunityId}>
+            {(id) => (
+              <>
+                <Input
+                  id={id}
+                  value={customer.opportunityId}
+                  onChange={(_, d) => setCustomer('opportunityId', d.value)}
+                  placeholder="e.g. 7-3F56BL3EVL"
+                  contentAfter={<Search20Regular />}
+                  disabled={customer.notForCustomer}
+                />
+                <button type="button" className={styles.addLink}>
+                  + Add new opportunity ID
+                </button>
+              </>
+            )}
+          </FormField>
+
+          <FormField label="Opportunity name" meta={fieldMeta.opportunityName}>
+            {(id) => (
+              <>
+                <Input
+                  id={id}
+                  value={customer.opportunityName}
+                  onChange={(_, d) => setCustomer('opportunityName', d.value)}
+                  placeholder="Search opportunity name"
+                  contentAfter={<Search20Regular />}
+                  disabled={customer.notForCustomer}
+                />
+                <button type="button" className={styles.addLink}>
+                  + Add new opportunity name
+                </button>
+              </>
+            )}
+          </FormField>
+          <FormField label="TPID" meta={fieldMeta.tpid}>
+            {(id) => (
+              <Input
+                id={id}
+                value={customer.tpid}
+                onChange={(_, d) => setCustomer('tpid', d.value)}
+                placeholder="e.g. 1234567"
+                disabled={customer.notForCustomer}
+              />
+            )}
+          </FormField>
+
+          <FormField label="Opportunity close date">
+            {(id) => (
+              <Input
+                id={id}
+                type="date"
+                value={customer.closeDate}
+                onChange={(_, d) => setCustomer('closeDate', d.value)}
+                disabled={customer.notForCustomer}
+              />
+            )}
+          </FormField>
+
+          {/* Seller alias sits with the other engagement facts. It used to close the
+              old "Customer environment" card, which no longer exists — and it is
+              about the seller, not about anything the customer runs. */}
+          <FormField label="Seller alias">
+            {(id) => <Input id={id} value={environment.sellerAlias} disabled />}
+          </FormField>
+
+          <FormField label="Customer website" span={false}>
+            {(id) => (
+              <Input
+                id={id}
+                value={customer.website}
+                onChange={(_, d) => setCustomer('website', d.value)}
+                placeholder="e.g. contoso.com"
+              />
+            )}
+          </FormField>
+
+          <FormField
+            label="Number of devices"
+            help={
+              effectiveDevices > 0 && !customer.numberOfDevices
+                ? `Defaults to 1.2 × users — ${effectiveDevices.toLocaleString('en-US')} devices`
+                : 'Endpoint count for Defender-related calculations'
+            }
+          >
+            {(id) => (
+              <Input
+                id={id}
+                value={customer.numberOfDevices}
+                onChange={(_, d) => setCustomer('numberOfDevices', d.value)}
+              />
+            )}
+          </FormField>
+          </div>
+        </Disclosure>
       </Card>
 
       {/* ------------------------ Microsoft environment ----------------------- */}
@@ -343,8 +356,7 @@ export default function CustomerDetails() {
         <div className={styles.grid}>
           <FormField
             label="Existing MS licenses"
-            required
-            help="Drives SKU recommendations and upsell logic"
+                        help="Drives SKU recommendations and upsell logic"
           >
             {(id) => (
               <MultiSelect
@@ -516,8 +528,7 @@ function CompetitiveEnvironment({
       <div className={styles.grid}>
         <FormField
           label="Current security stack"
-          required
-          help="Drives competitive displacement recommendations"
+                    help="Drives competitive displacement recommendations"
         >
           {(id) => (
             <MultiSelect
