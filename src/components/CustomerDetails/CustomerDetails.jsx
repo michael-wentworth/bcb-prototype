@@ -70,6 +70,7 @@ export default function CustomerDetails() {
     setBundle,
     setCompetitorDiscount,
     addCompetitorRow,
+    updateCompetitorRow,
     removeCompetitorRow,
     ask,
   } = useAppState();
@@ -433,6 +434,7 @@ export default function CustomerDetails() {
         onEnvironment={setEnvironment}
         onDiscount={setCompetitorDiscount}
         onAdd={addCompetitorRow}
+        onUpdate={updateCompetitorRow}
         onRemove={removeCompetitorRow}
         onAsk={ask}
       />
@@ -562,6 +564,7 @@ function CompetitiveEnvironment({
   onEnvironment,
   onDiscount,
   onAdd,
+  onUpdate,
   onRemove,
   onAsk,
 }) {
@@ -741,14 +744,54 @@ function CompetitiveEnvironment({
                 const line = lineFor(r.id);
                 return (
                   <tr key={r.id}>
-                    <td>{r.softwareSolution || '—'}</td>
                     <td>
-                      <span className={styles.cellMain}>{r.currentProduct}</span>
+                      <Dropdown
+                        size="small"
+                        className={styles.cellSolution}
+                        placeholder="—"
+                        aria-label={`Software solution for ${r.currentProduct}`}
+                        value={r.softwareSolution}
+                        selectedOptions={r.softwareSolution ? [r.softwareSolution] : []}
+                        onOptionSelect={(_, d) =>
+                          onUpdate(r.id, { softwareSolution: d.optionValue })
+                        }
+                      >
+                        {SOFTWARE_SOLUTIONS.map((sol) => (
+                          <Option key={sol} value={sol}>
+                            {sol}
+                          </Option>
+                        ))}
+                      </Dropdown>
+                    </td>
+                    <td>
+                      <Input
+                        size="small"
+                        className={styles.cellProduct}
+                        aria-label="Competitor product name"
+                        value={r.currentProduct}
+                        onChange={(_, d) => onUpdate(r.id, { currentProduct: d.value })}
+                      />
                     </td>
                     <td className={styles.numeric}>
-                      {formatCurrency(Number(r.competitorCost), { symbol })}
+                      <Input
+                        size="small"
+                        className={styles.cellCost}
+                        aria-label={`Annual cost at MSRP for ${r.currentProduct}`}
+                        value={r.competitorCost}
+                        contentBefore={symbol}
+                        onChange={(_, d) => onUpdate(r.id, { competitorCost: d.value })}
+                      />
                     </td>
-                    <td>{r.yearContractEnds || '—'}</td>
+                    <td>
+                      <Input
+                        size="small"
+                        className={styles.cellYear}
+                        aria-label={`Year the ${r.currentProduct} contract ends`}
+                        value={r.yearContractEnds}
+                        placeholder={String(CASE_START_YEAR)}
+                        onChange={(_, d) => onUpdate(r.id, { yearContractEnds: d.value })}
+                      />
+                    </td>
                     <td>
                       {line?.displaceable ? (
                         <span className={styles.inHorizon}>
@@ -777,7 +820,8 @@ function CompetitiveEnvironment({
 
       {competitors.rows.length > 0 ? (
         <p className={styles.tableNote}>
-          You will map each of these to a Microsoft product in step 2.
+          Costs from the catalogue are indicative — replace them with what the customer actually
+          pays, and set each contract end year. You will map these to Microsoft products in step 2.
         </p>
       ) : null}
 

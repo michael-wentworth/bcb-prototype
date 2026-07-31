@@ -307,3 +307,34 @@
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
 }
+
+/* ---------------------- editable cells, competitor table -------------------- */
+
+/* Sized to their content so the table still reads as a table rather than a grid
+   of boxes. The contract year is the highest-leverage field in the model, so it
+   gets a real input rather than being something you delete the row to change. */
+.cellSolution {
+  min-width: 168px;
+}
+
+.cellProduct {
+  width: 100%;
+  min-width: 160px;
+}
+
+.cellCost {
+  width: 132px;
+}
+
+.cellCost input {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cellYear {
+  width: 88px;
+}
+
+.cellYear input {
+  font-variant-numeric: tabular-nums;
+}
