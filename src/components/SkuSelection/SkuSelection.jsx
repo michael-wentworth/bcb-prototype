@@ -263,72 +263,6 @@ export default function SkuSelection() {
  * proposal covers, and which it does not cover yet.
  */
 /**
- * Typeahead over the eight security outcomes.
- *
- * Same shape as the competitor search on step 1 — a list of buttons under an
- * input, because picking one ADDS it and clears the box rather than leaving a
- * value behind. Showing the detail line in the result keeps what the old
- * checkbox cards were carrying: the labels alone are jargon to anyone who does
- * not already know the taxonomy.
- */
-function OutcomeSearch({ selected, onPick }) {
-  const [query, setQuery] = useState('');
-  // Closed at rest. Listing all eight permanently cost as much height as the
-  // grid it replaced, which was the point of replacing it. Focus opens the full
-  // list, so the taxonomy is still one click from view for anyone who does not
-  // know it well enough to type a term.
-  const [open, setOpen] = useState(false);
-  const q = query.trim().toLowerCase();
-  const available = SECURITY_OUTCOMES.filter((o) => !selected.includes(o.id));
-  const matches = q
-    ? available.filter((o) => o.label.toLowerCase().includes(q) || o.detail.toLowerCase().includes(q))
-    : available;
-
-  if (available.length === 0) {
-    return <p className={styles.allPicked}>All eight outcomes are selected.</p>;
-  }
-
-  return (
-    <div className={styles.outcomeSearchWrap}>
-      <Input
-        className={styles.outcomeSearchInput}
-        value={query}
-        onChange={(_, d) => setQuery(d.value)}
-        placeholder="Search outcomes"
-        contentBefore={<Search20Regular />}
-        aria-label="Search security outcomes"
-        onFocus={() => setOpen(true)}
-        /* Deferred so a click on a result lands before the list unmounts. */
-        onBlur={() => setTimeout(() => setOpen(false), 160)}
-      />
-      {open || query ? (
-        <ul className={styles.outcomeResults} role="listbox" aria-label="Security outcomes">
-          {matches.length === 0 ? (
-            <li className={styles.outcomeNoResult}>Nothing matches that.</li>
-          ) : (
-            matches.map((o) => (
-              <li key={o.id}>
-                <button
-                  type="button"
-                  className={styles.outcomeResult}
-                  onClick={() => {
-                    onPick(o.id);
-                    setQuery('');
-                  }}
-                >
-                  <span className={styles.outcomeResultLabel}>{o.label}</span>
-                  <span className={styles.outcomeResultDetail}>{o.detail}</span>
-                </button>
-              </li>
-            ))
-          )}
-        </ul>
-      ) : null}
-    </div>
-  );
-}
-
-/**
  * Outcomes, and whether the proposal actually covers them.
  *
  * These were two cards: a grid of checkboxes, and a read-only "Why this
@@ -373,6 +307,7 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
     [chosenIds, selected],
   );
 
+  const available = SECURITY_OUTCOMES.filter((o) => !outcomes.includes(o.id));
   const covered = lines.filter((l) => l.served.length > 0).length;
 
   const add = (sku) =>
@@ -394,8 +329,8 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
             What security outcomes is the customer trying to achieve?
           </h2>
           <p className={styles.cardLead}>
-            Add the outcomes this proposal has to serve. Each one shows the Microsoft product that
-            delivers it, so a gap is something you can close here.
+            Pick the outcomes this proposal has to serve. Each one shows the Microsoft product
+            that delivers it, so a gap is something you can close here.
           </p>
         </div>
         <Checkbox
@@ -406,10 +341,29 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
         />
       </div>
 
-      {/* Search to add, exactly as competitor products work on step 1. Eight
-          checkbox cards in a 2x4 grid cost a screenful to say what a one-line
-          picker says, and most cases select two or three of them. */}
-      <OutcomeSearch selected={outcomes} onPick={onToggle} />
+      {/* One pill per outcome not yet chosen. A pill is small enough that all
+          eight fit two lines, and the row shrinks as they are picked — the grid
+          this replaced spent a screenful on eight cards whether you needed them
+          or not, and a search field made a closed list of eight feel like
+          something you had to guess at. */}
+      {available.length > 0 ? (
+        <div className={styles.outcomePills}>
+          {available.map((o) => (
+            <button
+              key={o.id}
+              type="button"
+              className={styles.outcomePill}
+              title={o.detail}
+              onClick={() => onToggle(o.id)}
+            >
+              <Add16Filled aria-hidden="true" />
+              {o.label}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className={styles.allPicked}>Every outcome is on the case.</p>
+      )}
 
       {selected.length > 0 ? (
         <div className={styles.coverage}>
@@ -419,53 +373,62 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
               : `${covered} of ${selected.length} selected outcomes covered. Add a product for the rest.`}
           </p>
 
-          <div className={styles.coverageHeadRow}>
-            <span>Outcome</span>
-            <span>Delivered by</span>
-            <span className={styles.srOnly}>Remove</span>
-          </div>
-
-          <ul className={styles.coverageList}>
-            {lines.map((line) => (
-              <li key={line.id} className={styles.coverageRow}>
-                <span className={styles.coverageOutcome}>
-                  <span className={styles.coverageLabel}>{line.label}</span>
-                  <span className={styles.coverageDetail}>{line.detail}</span>
-                </span>
-                <span className={styles.coverageSkus}>
-                  {line.served.map((sku) => (
-                    <span key={sku.id} className={styles.coveredChip}>
-                      <Checkmark16Regular aria-hidden="true" />
-                      {sku.name}
-                    </span>
-                  ))}
-                  {line.served.length === 0 && line.suggested.length === 0 ? (
-                    <span className={styles.coverageGap}>Nothing in the catalogue covers this.</span>
-                  ) : null}
-                  {line.served.length === 0
-                    ? line.suggested.map((sku) => (
-                        <Button
-                          key={sku.id}
-                          size="small"
-                          appearance="secondary"
-                          icon={<Add16Filled />}
-                          onClick={() => add(sku)}
-                        >
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th scope="col">Outcome</th>
+                  <th scope="col">Recommended Microsoft solution</th>
+                  <th scope="col" aria-label="Actions" />
+                </tr>
+              </thead>
+              <tbody>
+                {lines.map((line) => (
+                  <tr key={line.id}>
+                    <th scope="row" className={styles.outcomeCell}>
+                      {line.label}
+                      <span className={styles.cellSub}>{line.detail}</span>
+                    </th>
+                    <td className={styles.solutionCell}>
+                      {line.served.map((sku) => (
+                        <span key={sku.id} className={styles.coveredChip}>
+                          <Checkmark16Regular aria-hidden="true" />
                           {sku.name}
-                        </Button>
-                      ))
-                    : null}
-                </span>
-                <Button
-                  appearance="subtle"
-                  size="small"
-                  icon={<Delete16Regular />}
-                  aria-label={`Remove ${line.label}`}
-                  onClick={() => onToggle(line.id)}
-                />
-              </li>
-            ))}
-          </ul>
+                        </span>
+                      ))}
+                      {line.served.length === 0 && line.suggested.length === 0 ? (
+                        <span className={styles.coverageGap}>
+                          Nothing in the catalogue covers this.
+                        </span>
+                      ) : null}
+                      {line.served.length === 0
+                        ? line.suggested.map((sku) => (
+                            <Button
+                              key={sku.id}
+                              size="small"
+                              appearance="secondary"
+                              icon={<Add16Filled />}
+                              onClick={() => add(sku)}
+                            >
+                              {sku.name}
+                            </Button>
+                          ))
+                        : null}
+                    </td>
+                    <td>
+                      <Button
+                        appearance="subtle"
+                        size="small"
+                        icon={<Delete16Regular />}
+                        aria-label={`Remove ${line.label}`}
+                        onClick={() => onToggle(line.id)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {unattached.length > 0 ? (
             <p className={styles.emptyNote}>
@@ -488,7 +451,7 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
         </div>
       ) : (
         <p className={styles.emptyNote}>
-          No outcomes yet. Search above to add the ones this proposal has to serve.
+          No outcomes yet. Pick the ones this proposal has to serve from the list above.
         </p>
       )}
     </Card>

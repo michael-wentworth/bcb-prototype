@@ -340,38 +340,8 @@
   color: var(--colorNeutralForeground1);
 }
 
-.coverageList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacingVerticalS);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.coverageRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) 32px;
-  gap: var(--spacingHorizontalL);
-  align-items: center;
-  padding: var(--spacingVerticalS) 0;
-  border-bottom: 1px solid var(--colorNeutralStroke3);
-}
-
 .coverageRow:last-child {
   border-bottom: none;
-}
-
-.coverageOutcome {
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground1);
-}
-
-.coverageSkus {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacingHorizontalS);
 }
 
 /* Covered reads as settled, so it is a quiet chip rather than a control. An
@@ -399,40 +369,6 @@
    seller who has never met the taxonomy needs to read them, not guess a search
    term. It filters as you type and shrinks as you pick, so a case that selects
    six ends up shorter than it started. */
-.outcomeSearchWrap {
-  margin-top: var(--spacingVerticalM);
-}
-
-.outcomeSearchInput {
-  width: 100%;
-  max-width: 420px;
-}
-
-.outcomeResults {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2px;
-  margin: var(--spacingVerticalS) 0 0;
-  padding: 0;
-  list-style: none;
-  max-height: 210px;
-  overflow-y: auto;
-}
-
-.outcomeResult {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  width: 100%;
-  padding: 7px 10px;
-  border: none;
-  border-radius: var(--borderRadiusMedium);
-  background: none;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
 .outcomeResult:hover {
   background-color: var(--colorNeutralBackground1Hover);
 }
@@ -442,19 +378,6 @@
   outline-offset: -2px;
 }
 
-.outcomeResultLabel {
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
-.outcomeResultDetail {
-  font-size: var(--fontSizeBase200);
-  line-height: 16px;
-  color: var(--colorNeutralForeground3);
-}
-
-.outcomeNoResult,
 .allPicked {
   padding: 9px 2px;
   margin: var(--spacingVerticalS) 0 0;
@@ -467,33 +390,6 @@
 /* The chips beside each outcome are Microsoft products. Without a column
    heading they read as unexplained tags — the header is what says what they
    are. Same grid as .coverageRow so the columns line up. */
-.coverageHeadRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) 32px;
-  gap: var(--spacingHorizontalL);
-  padding-bottom: var(--spacingVerticalS);
-  border-bottom: 1px solid var(--colorNeutralStroke2);
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--colorNeutralForeground3);
-}
-
-.coverageLabel {
-  display: block;
-  font-size: var(--fontSizeBase300);
-  color: var(--colorNeutralForeground1);
-}
-
-.coverageDetail {
-  display: block;
-  margin-top: 1px;
-  font-size: var(--fontSizeBase200);
-  line-height: 16px;
-  color: var(--colorNeutralForeground3);
-}
-
 .srOnly {
   position: absolute;
   width: 1px;
@@ -504,4 +400,66 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ---------------------------- outcome pills ------------------------------- */
+
+/* One per outcome not yet on the case, so the row shrinks as they are picked.
+   The detail sits on title= rather than under each pill: it is what made the
+   old card grid a screenful, and it reappears in the table row once chosen. */
+.outcomePills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalS);
+  margin-top: var(--spacingVerticalM);
+}
+
+.outcomePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px 6px 9px;
+  border-radius: var(--borderRadiusCircular);
+  border: 1px solid var(--colorNeutralStroke1);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground1);
+  cursor: pointer;
+  transition: background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.outcomePill:hover {
+  background-color: var(--colorBrandBackground2);
+  border-color: var(--colorBrandStroke2);
+  color: var(--colorBrandForeground1);
+}
+
+.outcomePill:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+/* Outcome labels and their detail line are prose, so this column opts out of
+   the table's nowrap. Everything else in these tables is short enough to keep
+   it. */
+.outcomeCell {
+  white-space: normal;
+  min-width: 260px;
+  font-weight: var(--fontWeightRegular);
+  color: var(--colorNeutralForeground1);
+}
+
+.solutionCell {
+  white-space: normal;
+}
+
+.solutionCell > * + * {
+  margin-left: var(--spacingHorizontalS);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outcomePill {
+    transition: none;
+  }
 }
