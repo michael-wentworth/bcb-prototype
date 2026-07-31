@@ -167,13 +167,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.cellMain {
-  display: block;
-  font-weight: var(--fontWeightMedium);
-  color: var(--colorNeutralForeground1);
-  margin-bottom: 2px;
-}
-
 .tableEmpty {
   text-align: center;
   font-style: italic;
@@ -345,4 +338,17 @@
   padding-top: 10px;
   padding-bottom: 10px;
   vertical-align: middle;
+}
+
+/* One emphasised column: the product is what the row IS, so it carries the
+   weight and everything beside it qualifies it. Applied to the input as well as
+   the static cell, so a table mixing catalogue and hand-entered rows still reads
+   as one column rather than two treatments. */
+.cellProductText {
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.cellProduct input {
+  font-weight: var(--fontWeightSemibold);
 }

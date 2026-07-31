@@ -724,8 +724,8 @@ function CompetitiveEnvironment({
         <table className={styles.table}>
           <thead>
             <tr>
-              <th scope="col">Software solution</th>
               <th scope="col">Current product</th>
+              <th scope="col">Software solution</th>
               {/* At MSRP, before the discount above. Step 2 reports the same rows
                   net of that discount, which is the figure the model uses. */}
               <th scope="col" className={styles.numeric}>
@@ -757,14 +757,22 @@ function CompetitiveEnvironment({
                         seller IS the source. */}
                     {r.catalogueId ? (
                       <>
-                        <td className={styles.cellFixed}>{r.softwareSolution || '—'}</td>
-                        <td className={styles.cellFixed}>
-                          <span className={styles.cellMain}>{r.currentProduct}</span>
-                          <span className={styles.cellSub}>From the catalogue</span>
+                        <td className={`${styles.cellFixed} ${styles.cellProductText}`}>
+                          {r.currentProduct}
                         </td>
+                        <td className={styles.cellFixed}>{r.softwareSolution || '—'}</td>
                       </>
                     ) : (
                       <>
+                        <td>
+                          <Input
+                            size="small"
+                            className={styles.cellProduct}
+                            aria-label="Competitor product name"
+                            value={r.currentProduct}
+                            onChange={(_, d) => onUpdate(r.id, { currentProduct: d.value })}
+                          />
+                        </td>
                         <td>
                           <Dropdown
                             size="small"
@@ -783,15 +791,6 @@ function CompetitiveEnvironment({
                               </Option>
                             ))}
                           </Dropdown>
-                        </td>
-                        <td>
-                          <Input
-                            size="small"
-                            className={styles.cellProduct}
-                            aria-label="Competitor product name"
-                            value={r.currentProduct}
-                            onChange={(_, d) => onUpdate(r.id, { currentProduct: d.value })}
-                          />
                         </td>
                       </>
                     )}
