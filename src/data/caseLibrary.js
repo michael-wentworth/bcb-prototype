@@ -54,10 +54,10 @@ export const MY_CASES = [
       competitors: {
         msrpDiscount: '',
         rows: [
-          { id: 'c1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '1350000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
-          { id: 'c1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '720000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
+          { id: 'c1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '1350000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
+          { id: 'c1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '720000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
           { id: 'c1r3', softwareSolution: 'SIEM / SOC', currentProduct: 'Splunk Enterprise Security', competitorCost: '980000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2027' },
-          { id: 'c1r4', softwareSolution: 'Email security', currentProduct: 'Proofpoint Email Protection', competitorCost: '410000', newMicrosoftProduct: 'Microsoft Defender for Office 365 P2', yearContractEnds: '2026' },
+          { id: 'c1r4', softwareSolution: 'Email security', currentProduct: 'Proofpoint Email Protection', competitorCost: '410000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
         ],
       },
     },
@@ -180,8 +180,8 @@ export const EXAMPLE_CASES = [
       competitors: {
         msrpDiscount: '20',
         rows: [
-          { id: 'e1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '2900000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
-          { id: 'e1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1600000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
+          { id: 'e1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '2900000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
+          { id: 'e1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1600000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
           { id: 'e1r3', softwareSolution: 'SIEM / SOC', currentProduct: 'Splunk Enterprise Security', competitorCost: '2100000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
           { id: 'e1r4', softwareSolution: 'Data loss prevention', currentProduct: 'Symantec DLP', competitorCost: '780000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2027' },
         ],

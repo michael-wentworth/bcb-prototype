@@ -117,34 +117,30 @@ export const EXISTING_MS_LICENSES = [
  * the stale value and can change it.
  */
 export function displacementOptions(skuRows = [], current = '', solution = '') {
+  // Exactly the SKUs on the recommended-solution table. Nothing else, because
+  // every other product on this step carries a seat count and a price, and a
+  // displacement naming something with no line item behind it is a claim the
+  // investment side never paid for. Buying Microsoft 365 E5 Security is how a
+  // customer retires an endpoint product — so E5 Security is what the row says.
   const names = new Set();
-  const ids = new Set();
+  const bought = [];
   (skuRows || []).forEach((row) => {
     const sku = MICROSOFT_SKUS.find((s) => s.id === row.skuId);
     if (!sku) return;
     names.add(sku.name);
-    ids.add(sku.id);
-    (sku.includes || []).forEach((id) => {
-      const part = MICROSOFT_SKUS.find((s) => s.id === id);
-      if (part) {
-        names.add(part.name);
-        ids.add(part.id);
-      }
-    });
+    bought.push(sku);
   });
   if (current) names.add(current);
 
-  // Which Microsoft products actually serve this competitor's capability. The
-  // catalogue already records one per competitor product, so the answer is
-  // derived rather than a second table to keep in step.
+  // `includes` is not used to widen the list — only to work out which of the
+  // SKUs already on the table answers this competitor's capability. A suite
+  // serves a capability when one of its components does.
   const canonical = new Set(
     COMPETITOR_CATALOGUE.filter((c) => c.solution === solution).map((c) => c.microsoft),
   );
-  // A suite serves the capability if any of its parts do — buying Microsoft 365
-  // E5 Security is how most estates retire a point endpoint product.
   const serves = (name) => {
     if (canonical.has(name)) return true;
-    const sku = MICROSOFT_SKUS.find((s) => s.name === name);
+    const sku = bought.find((s) => s.name === name);
     return (sku?.includes || []).some((id) => {
       const part = MICROSOFT_SKUS.find((s) => s.id === id);
       return part && canonical.has(part.name);
@@ -152,9 +148,6 @@ export function displacementOptions(skuRows = [], current = '', solution = '') {
   };
 
   const all = [...names].sort((a, b) => a.localeCompare(b));
-  // Not a filter. A seller can have a reason to map a displacement we did not
-  // anticipate, so everything the case buys stays selectable — the split only
-  // says which ones are the obvious answer.
   return {
     matched: solution ? all.filter(serves) : [],
     other: solution ? all.filter((n) => !serves(n)) : all,

@@ -521,7 +521,7 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
                             }
                             return (
                               <>
-                                <OptionGroup label={`Serves ${r.softwareSolution.toLowerCase()}`}>
+                                <OptionGroup label={`Serves ${r.softwareSolution}`}>
                                   {o.matched.map((name) => (
                                     <Option key={name} value={name}>
                                       {name}
