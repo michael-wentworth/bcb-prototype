@@ -28,11 +28,14 @@ import {
   SOLUTION_AREAS,
   SOLUTION_PLAYS,
   currencySymbol,
+  outcomeCoverage,
   skuById,
 } from '../../data/referenceData.js';
 import { formatCurrency } from '../../data/model.js';
+import { AUTHORSHIP } from '../../data/authoring.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
+import ConfidenceBadge from '../shared/ConfidenceBadge.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import styles from './SkuSelection.module.css';
@@ -51,6 +54,7 @@ export default function SkuSelection() {
     skus,
     competitors,
     customer,
+    sectionAuthorship,
     currency,
     businessCase,
     toggleOutcome,
@@ -69,13 +73,15 @@ export default function SkuSelection() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="The solution you are proposing: the outcomes it has to serve, the SKUs that serve them, and the vendors each one replaces."
+        description="Review what the copilot has proposed: the outcomes it has to serve, the Microsoft products that serve them, and the vendors each one replaces."
       />
 
       {/* ---------------------- Outcomes and coverage ---------------------- */}
       <Outcomes
         outcomes={outcomes}
         skus={skus}
+        authorship={sectionAuthorship.outcomes}
+        competitorRows={competitors.rows}
         users={customer.numberOfUsers}
         onToggle={toggleOutcome}
         onEnsureSku={ensureSkuRow}
@@ -99,7 +105,7 @@ export default function SkuSelection() {
           return (
             <div key={row.id} className={styles.skuRow}>
               <div className={styles.skuTop}>
-              <FormField label="Microsoft SKU">
+              <FormField label="Microsoft product">
                 {(id) => (
                   <Dropdown
                     id={id}
@@ -207,7 +213,7 @@ export default function SkuSelection() {
                   appearance="subtle"
                   size="small"
                   icon={<Delete16Regular />}
-                  aria-label={`Remove ${catalog?.name || 'this SKU'}`}
+                  aria-label={`Remove ${catalog?.name || 'this product'}`}
                   onClick={() => removeSkuRow(row.id)}
                 >
                   Remove
@@ -223,12 +229,12 @@ export default function SkuSelection() {
             icon={<Add16Filled />}
             onClick={() => addSkuRow({}, customer.numberOfUsers)}
           >
-            Add SKU
+            Add product
           </Button>
           <Button
             appearance="transparent"
             icon={<Sparkle16Filled className={styles.aiIcon} />}
-            onClick={() => ask('Which SKUs match the outcomes I selected?')}
+            onClick={() => ask('Which products match the outcomes I selected?')}
           >
             Suggest SKUs
           </Button>
@@ -274,26 +280,32 @@ export default function SkuSelection() {
  * Now one card answers one question: what does the customer want, and is
  * anything in the proposal delivering it. A gap is a button, not a sentence.
  */
-function Outcomes({ outcomes, skus, users, onToggle, onEnsureSku, onAsk }) {
-
-  const chosenIds = useMemo(
-    () => Array.from(new Set(skus.map((r) => r.skuId).filter(Boolean))),
-    [skus],
-  );
+function Outcomes({ outcomes, skus, authorship, competitorRows, users, onToggle, onEnsureSku, onAsk }) {
 
   const selected = useMemo(
     () => SECURITY_OUTCOMES.filter((o) => outcomes.includes(o.id)),
     [outcomes],
   );
 
+  /* Drives off the same resolver the copilot uses. Matching `implies` against
+     raw skuIds looked equivalent and was not: it cannot see that Microsoft 365
+     E5 Security *contains* Entra ID P2 and Defender for Endpoint, so it marked
+     three of Contoso's outcomes unserved and offered an Add button for a $57
+     suite the case already covers — while the Explain-the-fit answer directly
+     below the table said all five were served. One resolver, one answer. */
   const lines = useMemo(
     () =>
-      selected.map((o) => ({
-        ...o,
-        served: o.implies.filter((id) => chosenIds.includes(id)).map(skuById).filter(Boolean),
-        suggested: o.implies.filter((id) => !chosenIds.includes(id)).map(skuById).filter(Boolean),
-      })),
-    [selected, chosenIds],
+      selected.map((o) => {
+        const c = outcomeCoverage(o.id, skus, competitorRows) || {};
+        return {
+          ...o,
+          covered: !!c.covered,
+          served: c.deliveredBy || [],
+          displaced: c.displaced,
+          suggested: c.covered ? [] : c.wouldNeed || [],
+        };
+      }),
+    [selected, skus, competitorRows],
   );
 
 
@@ -316,6 +328,19 @@ function Outcomes({ outcomes, skus, users, onToggle, onEnsureSku, onAsk }) {
         <div>
           <h2 className={styles.cardTitle}>
             What security outcomes is the customer trying to achieve?
+            {/* The copilot selects these on a populate and nothing said so — the
+                one AI-authored surface in the app with no marker on it. Section
+                authorship was already being tracked in state and read by no
+                component. */}
+            {authorship === AUTHORSHIP.AI ? (
+              <ConfidenceBadge
+                level="medium"
+                basis="Selected from your description"
+                evidence="I picked these from the goals you stated. Deselect anything the customer has not actually asked for — every one of them has to be answered by something in the proposal."
+                ai
+                compact
+              />
+            ) : null}
           </h2>
           <p className={styles.cardLead}>
             Pick the outcomes this proposal has to serve. Each one shows the Microsoft product
@@ -368,13 +393,31 @@ function Outcomes({ outcomes, skus, users, onToggle, onEnsureSku, onAsk }) {
                       <span className={styles.cellSub}>{line.detail}</span>
                     </th>
                     <td className={styles.solutionCell}>
+                      {/* Consolidation is not bought, it is measured — the answer
+                          is the displacement table, so no SKU chip and no Add
+                          button belongs in this cell. */}
+                      {Array.isArray(line.displaced) ? (
+                        line.covered ? (
+                          <span className={styles.coveredChip}>
+                            <Checkmark16Regular aria-hidden="true" />
+                            {line.displaced.length} contract
+                            {line.displaced.length === 1 ? '' : 's'} displaced
+                          </span>
+                        ) : (
+                          <span className={styles.coverageGap}>
+                            Map a competitor product to a Microsoft replacement on this step.
+                          </span>
+                        )
+                      ) : null}
                       {line.served.map((sku) => (
                         <span key={sku.id} className={styles.coveredChip}>
                           <Checkmark16Regular aria-hidden="true" />
                           {sku.name}
                         </span>
                       ))}
-                      {line.served.length === 0 && line.suggested.length === 0 ? (
+                      {!Array.isArray(line.displaced) &&
+                      line.served.length === 0 &&
+                      line.suggested.length === 0 ? (
                         <span className={styles.coverageGap}>
                           Nothing in the catalogue covers this.
                         </span>
@@ -413,7 +456,7 @@ function Outcomes({ outcomes, skus, users, onToggle, onEnsureSku, onAsk }) {
             <Button
               appearance="transparent"
               icon={<Sparkle16Filled className={styles.aiIcon} />}
-              onClick={() => onAsk('Explain why these SKUs fit the outcomes I selected')}
+              onClick={() => onAsk('Explain why these products fit the outcomes I selected')}
             >
               Explain the fit
             </Button>
@@ -447,7 +490,7 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
     <Card className={styles.card}>
       <div className={styles.cardHead}>
         <div>
-          <h2 className={styles.cardTitle}>Competitive displacement</h2>
+          <h2 className={styles.cardTitle}>Vendor consolidation</h2>
           <p className={styles.cardLead}>
             What each incumbent vendor gives way to. The products and their costs come from the
             customer environment you captured on step 1 — the Microsoft replacement is the decision

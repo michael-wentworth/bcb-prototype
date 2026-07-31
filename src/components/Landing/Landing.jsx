@@ -110,7 +110,7 @@ function Result({ onOpen }) {
           Contoso could save <strong>{money(CASE.annualNetBenefit)}</strong> a year
         </h2>
         <p className={styles.subhead}>
-          18,000 users · Manufacturing · {CASE.years}-year analysis
+          {CASE.users.toLocaleString()} users · {CASE.industry} · {CASE.years}-year analysis
         </p>
 
         <div className={styles.resultLayout}>

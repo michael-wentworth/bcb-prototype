@@ -7,7 +7,7 @@
    --------------------------------------------------------------------------- */
 
 export const DEMO_PROMPT =
-  'Contoso has 18,000 employees and currently uses Microsoft 365 E3, CrowdStrike and Okta. They want to reduce vendor sprawl and improve security operations.';
+  'Contoso has 18,000 employees and currently uses Microsoft 365 E3, CrowdStrike and Okta. They want to reduce vendor sprawl, improve security operations, and give a stretched SOC team AI assistance rather than more headcount. Their EA renewal is expected to carry around $200,000 a year in negotiated concessions.';
 
 /** Field-level provenance, shown against each populated field. */
 export const EXTRACTION_EVIDENCE = {
@@ -32,9 +32,10 @@ export const EXTRACTION_EVIDENCE = {
     evidence: 'Microsoft 365 E3 at $432 per user per year — replace with the negotiated rate',
   },
   additionalValue: {
-    confidence: 'low',
-    basis: 'Not stated',
-    evidence: 'Placeholder for other Microsoft products or negotiated savings — nothing in the description supports a figure',
+    confidence: 'medium',
+    basis: 'Stated as an expectation',
+    evidence:
+      '"…expected to carry around $200,000 a year in negotiated concessions." Expected, not signed — confirm before this reaches a customer',
   },
   accountName: { confidence: 'high', basis: 'Stated directly', evidence: '"Contoso has 18,000 employees…"' },
   opportunityId: {
@@ -61,7 +62,7 @@ export const EXTRACTION_EVIDENCE = {
   geography: {
     confidence: 'medium',
     basis: 'Inferred from account footprint',
-    evidence: 'Primary operations recorded across the US, Germany and the UK',
+    evidence: 'Headquarters and the majority of seats in the United States, with smaller operations in Germany and the UK',
   },
   segment: { confidence: 'medium', basis: 'Inferred from seat count', evidence: 'A seat count of 18,000 sits in the Enterprise band' },
   salesMotion: {
@@ -70,9 +71,9 @@ export const EXTRACTION_EVIDENCE = {
     evidence: '"…reduce vendor sprawl…" reads as a consolidation motion',
   },
   description: {
-    confidence: 'high',
-    basis: 'Paraphrased from stated goals',
-    evidence: '"…want to reduce vendor sprawl and improve security operations."',
+    confidence: 'medium',
+    basis: 'Paraphrased and extended from stated goals',
+    evidence: '"…reduce vendor sprawl, improve security operations, and give a stretched SOC team AI assistance…"',
   },
 };
 
@@ -81,7 +82,7 @@ export const DEMO_EXTRACTION = {
     accountName: 'Contoso Ltd.',
     opportunityId: '7-3F56BL3EVL',
     opportunityName: 'Contoso Security Consolidation FY27',
-    tpid: '1234567',
+    tpid: '4820517',
     industry: 'Manufacturing',
     geography: 'northam',
     segment: 'Enterprise',
@@ -91,10 +92,13 @@ export const DEMO_EXTRACTION = {
     numberOfDevices: '',
     bcbRole: 'customer-facing',
     description:
-      'Reduce vendor sprawl across the security estate and modernise security operations. Consolidate endpoint, identity and SIEM tooling onto a single platform to lower operational complexity.',
+      'Reduce vendor sprawl across the security estate and modernise security operations. Consolidate the security tooling detected on this account onto a single platform to lower operational complexity, and extend a stretched SOC with AI assistance rather than additional headcount.',
   },
 
-  outcomes: ['identity', 'threat', 'endpoint', 'consolidation'],
+  /** Named from the opportunity, so "I filled the whole case in" is true. */
+  caseSetup: { name: 'Contoso FY27 Security Consolidation' },
+
+  outcomes: ['identity', 'threat', 'endpoint', 'ai-security', 'consolidation'],
 
   /**
    * Shortlisted from the stated objectives and the existing E3 position.
@@ -112,11 +116,13 @@ export const DEMO_EXTRACTION = {
 
   /**
    * Contract end years gate every saving. These are staggered on purpose —
-   * CrowdStrike has already lapsed, the rest fall inside the horizon, so the
-   * benefit builds across the period rather than landing on day one.
+   * three lapse at the close of 2026 and Splunk a year later, so no benefit
+   * lands in year one and the run rate climbs across the period.
    */
   competitors: [
     {
+      // Named in the description, so this row is not an inference.
+      stated: true,
       softwareSolution: 'Endpoint protection',
       currentProduct: 'CrowdStrike Falcon',
       competitorCost: '1350000',
@@ -124,6 +130,7 @@ export const DEMO_EXTRACTION = {
       yearContractEnds: '2026',
     },
     {
+      stated: true,
       softwareSolution: 'Identity & access',
       currentProduct: 'Okta Workforce Identity',
       competitorCost: '720000',

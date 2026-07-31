@@ -6,9 +6,17 @@ import { useAppState } from '../../state/AppStateContext.jsx';
 import styles from './StepFooter.module.css';
 
 /**
- * Back / Next. Deliberately never disabled — a seller filling the form by hand
- * must be able to move through the workflow without touching the assistant.
+ * Back, and a forward button that says what pressing it produces.
+ *
+ * "Next" describes the direction of travel and nothing else, which wastes the
+ * one control on the page a seller is guaranteed to read. Naming the outcome
+ * also carries the working model: you are reviewing a recommendation that has
+ * already been drafted, and the last press is the one that produces the case.
+ *
+ * Deliberately never disabled — a seller filling the form by hand must be able
+ * to move through the workflow without touching the assistant.
  */
+const FORWARD = ['Review recommendation', 'Generate business case'];
 export default function StepFooter({ hint, extra }) {
   const { step, goToStep } = useAppState();
   const isLast = step === STEPS.length - 1;
@@ -34,7 +42,7 @@ export default function StepFooter({ hint, extra }) {
             iconPosition="after"
             onClick={() => goToStep(step + 1)}
           >
-            Next
+            {FORWARD[step] || 'Next'}
           </Button>
         ) : null}
       </div>

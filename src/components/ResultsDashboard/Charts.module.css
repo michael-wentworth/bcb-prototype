@@ -192,7 +192,9 @@
   border-radius: var(--borderRadiusMedium);
   background-color: var(--colorNeutralBackground1);
   border: 1px solid var(--colorNeutralStroke2);
-  box-shadow: var(--shadow8);
+  /* Reads with the menus and dropdowns, not with a hovered card — it is over
+     the plot, not part of it. */
+  box-shadow: var(--shadow16);
   pointer-events: none;
   z-index: 2;
 }

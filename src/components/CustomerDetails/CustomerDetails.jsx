@@ -81,7 +81,7 @@ export default function CustomerDetails() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="What the customer runs today — their Microsoft footprint and the competitor products in the estate. Every number in the report is measured against it."
+        description="Tell the copilot what the customer runs today — their Microsoft licensing and the competitor products in the estate. Every number in the report is measured against it."
       />
 
       {/* --------------------------- About this case -------------------------- */}
@@ -99,7 +99,7 @@ export default function CustomerDetails() {
         <div className={styles.grid}>
           <FormField
             label="Analysis period (years)"
-            help="Determines the horizon for cost, benefit, ROI and reporting — and how many years of seats you enter per SKU"
+            help="Sets the horizon for cost, benefit, ROI and reporting — and how many years of seats you enter per product"
           >
             {(id) => (
               <Dropdown
@@ -390,10 +390,10 @@ export default function CustomerDetails() {
 
       </Card>
 
-      {/* ------------------------ Microsoft environment ----------------------- */}
+      {/* --------------------- Current Microsoft licensing -------------------- */}
       <Card className={styles.card}>
         <div className={styles.cardHead}>
-          <h2 className={styles.cardTitle}>Microsoft environment</h2>
+          <h2 className={styles.cardTitle}>Current Microsoft licensing</h2>
           <p className={styles.cardLead}>
             What the customer already owns and already pays Microsoft. This offsets the uplift in
             step 2 rather than counting as new spend.
@@ -402,7 +402,7 @@ export default function CustomerDetails() {
 
         <div className={styles.grid}>
 
-          <FormField label="Current Microsoft bundle" meta={fieldMeta.bundleId}>
+          <FormField label="Microsoft products owned" meta={fieldMeta.bundleId}>
             {(id) => (
               <Dropdown
                 id={id}
@@ -463,7 +463,7 @@ export default function CustomerDetails() {
         </div>
       </Card>
 
-      {/* ----------------------- Competitive environment ---------------------- */}
+      {/* -------------------------- Competitor products ----------------------- */}
       <CompetitiveEnvironment
         environment={environment}
         competitors={competitors}
@@ -616,7 +616,7 @@ function CompetitiveEnvironment({
   return (
     <Card className={styles.card}>
       <div className={styles.cardHead}>
-        <h2 className={styles.cardTitle}>Competitive environment</h2>
+        <h2 className={styles.cardTitle}>Competitor products</h2>
         <p className={styles.cardLead}>
           What the customer buys outside Microsoft today. Search for a competitor product or enter
           one that is not in our database — new competitors are saved to this customer account
@@ -707,15 +707,20 @@ function CompetitiveEnvironment({
                             value={r.currentProduct}
                             onChange={(_, d) => onUpdate(r.id, { currentProduct: d.value })}
                           />
-                          {/* The copilot infers these from install-base signal, and
-                              its own reply tells the seller to check them. Without a
-                              marker on the row there is nothing saying which rows it
-                              meant. */}
+                          {/* Two different claims wearing one badge until now. The
+                              copilot's own reply says it inferred the Splunk and
+                              Proofpoint lines "rather than anything you said" — so
+                              the rows that WERE said cannot carry the same
+                              hedge. The contract year is a guess either way. */}
                           {r.authorship === AUTHORSHIP.AI ? (
                             <ConfidenceBadge
-                              level="medium"
-                              basis="Inferred from install-base signal"
-                              evidence="Detected against this account rather than stated — confirm the product and its contract end year before this reaches a customer."
+                              level={r.stated ? 'high' : 'medium'}
+                              basis={r.stated ? 'Stated directly' : 'Inferred from install-base signal'}
+                              evidence={
+                                r.stated
+                                  ? 'Named in the description you gave me. The contract end year is still an estimate — confirm it before this reaches a customer.'
+                                  : 'Detected against this account rather than stated — confirm the product and its contract end year before this reaches a customer.'
+                              }
                               ai
                               compact
                             />

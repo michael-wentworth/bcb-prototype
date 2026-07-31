@@ -2,8 +2,6 @@ import React from 'react';
 import { Button, Card } from '@fluentui/react-components';
 import {
   Add20Filled,
-  BookOpen20Regular,
-  DocumentBulletList20Regular,
   ShieldCheckmark20Regular,
 } from '@fluentui/react-icons';
 import { EXAMPLE_CASES, caseMetrics } from '../../data/caseLibrary.js';
@@ -19,16 +17,6 @@ const VIEWS = {
     icon: <ShieldCheckmark20Regular />,
     title: 'Security BCB',
     lead: 'This destination has no page yet.',
-  },
-  studies: {
-    icon: <DocumentBulletList20Regular />,
-    title: 'Analyst studies',
-    lead: 'Third-party research you can cite directly into a business case.',
-  },
-  learning: {
-    icon: <BookOpen20Regular />,
-    title: 'Learning',
-    lead: 'Enablement for sellers and partners building business cases.',
   },
 };
 
@@ -48,7 +36,7 @@ export default function Placeholder({ view }) {
       <p className={styles.lead}>{meta.lead}</p>
       <div className={styles.actions}>
         <Button appearance="primary" icon={<Add20Filled />} onClick={newCase}>
-          New business case
+          Create business case
         </Button>
         <Button appearance="secondary" onClick={() => setView('myCases')}>
           Go to My cases
@@ -76,7 +64,7 @@ function ExampleCases() {
           </p>
         </div>
         <Button appearance="primary" icon={<Add20Filled />} onClick={newCase}>
-          New business case
+          Create business case
         </Button>
       </header>
 

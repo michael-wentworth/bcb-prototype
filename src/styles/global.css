@@ -27,6 +27,34 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Fluent's <Card> is borderless by design and leans on its shadow. Under the
+   remapped ramp that shadow is almost nothing, so the card needs the edge the
+   brief asks for — and it has to come from here, because Griffel's own rule for
+   .fui-Card beats a single class from a CSS module. Two classes wins, and
+   scoping to the provider covers the portalled cards inside dialogs too.
+
+   `background` and `border-radius` are restated rather than left to Fluent so
+   every card-shaped surface in the app resolves the same way whether it is a
+   real <Card> or a div a module styled to look like one. */
+.fui-FluentProvider .fui-Card:not([data-tone]) {
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+/* Fluent's Popover does not use a shadow token at all — it sets
+   `filter: drop-shadow(0 0 2px ambient) drop-shadow(0 8px 16px key)`, keyed to
+   --colorNeutralShadowAmbient/Key. Remapping the shadow ramp cannot reach it, so
+   the two surfaces that appear most often — every confidence pill and the share
+   flyout — kept a two-layer Material stack at .14 alpha, heavier than the modal
+   ceiling everything else was brought down to.
+
+   It has to be `filter`, not `box-shadow`: a box-shadow would paint in addition
+   to the drop-shadow rather than instead of it. */
+.fui-FluentProvider .fui-PopoverSurface {
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
+}
+
 :root {
   /* The band directly under the top bar. The workflow stepper and the copilot
      panel header both use it so they align across the full width. */

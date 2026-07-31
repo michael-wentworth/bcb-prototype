@@ -12,7 +12,7 @@ import MessageBlocks from './MessageBlocks.jsx';
 import styles from './AIAssistantPanel.module.css';
 
 export default function AIAssistantPanel({ onCollapse }) {
-  const { messages, thinking, step, ask, goToStep } = useAppState();
+  const { messages, thinking, step, customer, ask, goToStep } = useAppState();
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   const pinnedToBottom = useRef(true);
@@ -71,7 +71,17 @@ export default function AIAssistantPanel({ onCollapse }) {
     }
   };
 
-  const suggestions = STEP_SUGGESTIONS[step] || [];
+  /* The populate prompt is not a suggestion, it is the demo. It shipped as the
+     first of four identical pills and reviewers did not realise it was special —
+     or what it would do — so it comes out of the row and says both.
+
+     It also retires once the case has an account name: EXTRACT_CASE is gated on
+     that field being empty, so after a populate this button falls through the
+     intent list to a generic answer. A control that silently stops working is
+     the same confusion in a different costume. */
+  const allSuggestions = STEP_SUGGESTIONS[step] || [];
+  const starter = customer.accountName ? null : allSuggestions.find((s) => s.kind === 'demo');
+  const suggestions = allSuggestions.filter((s) => s.kind !== 'demo');
   const busy = Boolean(thinking);
 
   return (
@@ -125,21 +135,44 @@ export default function AIAssistantPanel({ onCollapse }) {
         {busy ? <Thinking steps={thinking.steps} index={thinking.index} /> : null}
       </div>
 
-      {suggestions.length > 0 ? (
+      {starter || suggestions.length > 0 ? (
         <div className={styles.suggestions}>
-          <div className={styles.suggestionList} role="group" aria-label="Suggested prompts">
-            {suggestions.map((s) => (
-              <button
-                key={s.label}
-                type="button"
-                className={styles.chip}
-                disabled={busy}
-                onClick={() => (s.kind === 'demo' ? send(DEMO_PROMPT) : send(s.label))}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
+          {starter ? (
+            <button
+              type="button"
+              className={styles.starter}
+              disabled={busy}
+              onClick={() => send(DEMO_PROMPT)}
+            >
+              <span className={styles.starterIcon} aria-hidden="true">
+                <Sparkle20Filled />
+              </span>
+              <span className={styles.starterText}>
+                <span className={styles.starterLabel}>{starter.label}</span>
+                <span className={styles.starterHint}>
+                  Fills every step from one sentence — customer, outcomes, Microsoft products
+                  and competitor contracts — so you can read a finished business case straight
+                  away.
+                </span>
+              </span>
+            </button>
+          ) : null}
+
+          {suggestions.length > 0 ? (
+            <div className={styles.suggestionList} role="group" aria-label="Suggested prompts">
+              {suggestions.map((s) => (
+                <button
+                  key={s.label}
+                  type="button"
+                  className={styles.chip}
+                  disabled={busy}
+                  onClick={() => send(s.label)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : null}
 

@@ -1,0 +1,400 @@
+/* Shared chrome for the two reference libraries. The page furniture is
+   deliberately identical to My cases — same max width, same header, same
+   tabs-left / search-right toolbar — because these are the same kind of screen:
+   a filtered list of things you are looking through. Only the rows differ, and
+   they differ because the data does. */
+
+.root {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalL);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalXXL);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fontSizeHero700);
+  line-height: 1.15;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.lead {
+  margin: var(--spacingVerticalS) 0 0;
+  max-width: 68ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+/* A count, not a decoration: it tells you how big the library is before you
+   start filtering it. */
+.headerCount {
+  flex: 0 0 auto;
+  text-align: right;
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase200);
+  line-height: 16px;
+}
+
+.headerCountValue {
+  display: block;
+  font-size: var(--fontSizeHero800);
+  line-height: 1;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorBrandForeground1);
+  font-variant-numeric: tabular-nums;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalL);
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+
+.tabs {
+  flex: 1 1 420px;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tabCount {
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorNeutralBackground4);
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground3);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalXS);
+  padding-bottom: var(--spacingVerticalS);
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.search {
+  width: 268px;
+}
+
+.empty {
+  padding: var(--spacingVerticalXXL) 0;
+  text-align: center;
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase300);
+}
+
+/* ------------------------------ study cards ------------------------------- */
+
+.grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+/* The li is the grid item and the Card sits inside it, so stretching the track
+   is not enough on its own — without this the card sizes to its own content and
+   a two-line product name leaves the row ragged. */
+.grid > li {
+  display: flex;
+}
+
+.card.card {
+  width: 100%;
+}
+
+/* Doubled: Fluent's own Card rule sets 12px padding and beats a single class
+   from outside the component. */
+.card.card,
+.cardInner {
+  position: relative;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+  align-items: stretch;
+}
+
+/* The whole card is the target. A link sitting inside a card gives you a
+   4-word hit area inside a 270px box. */
+.cardHit {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: inherit;
+}
+
+.cardHit:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The product leads. Every one of these was prefixed "TEI of Microsoft" on the
+   old page, which pushed the only distinguishing word to the far right. */
+.cardProduct {
+  margin: 0;
+  font-size: var(--fontSizeBase500);
+  line-height: 22px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+  text-wrap: balance;
+}
+
+.cardCovers {
+  margin: 0;
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground2);
+  flex: 1 1 auto;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalXS);
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: var(--spacingVerticalXS);
+}
+
+.formatRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.formatBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--borderRadiusCircular);
+  font-size: var(--fontSizeBase100);
+  line-height: 16px;
+  font-weight: var(--fontWeightSemibold);
+  background-color: var(--colorNeutralBackground4);
+  color: var(--colorNeutralForeground2);
+}
+
+/* The full study is the thing most people came for, so it is the one that
+   carries the brand tint. The rest stay neutral. */
+.formatStudy {
+  background-color: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground2);
+}
+
+/* A format is a thing you open, so it is a button. Each card now holds every
+   format that exists for its product — which is what stopped "Microsoft 365 E3"
+   appearing four times down the grid. */
+button.formatBadge {
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button.formatBadge:hover {
+  border-color: var(--colorNeutralStroke1);
+}
+
+button.formatBadge:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.publisher {
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground3);
+  margin-left: auto;
+}
+
+.projected {
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground3);
+}
+
+/* -------------------------------- learning -------------------------------- */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalM);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase500);
+  line-height: 22px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.sectionLead {
+  margin: calc(-1 * var(--spacingVerticalS)) 0 0;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+/* Two cards, so they get half the measure each rather than a quarter. The old
+   page put these same two in a full-width band and left the middle empty. */
+.startGrid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+.startGrid > li {
+  display: flex;
+}
+
+/* Doubled for the same reason as .card — Fluent's own Card padding wins
+   otherwise. */
+.startCard.startCard {
+  position: relative;
+  width: 100%;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalM);
+}
+
+.startIcon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground1);
+}
+
+.startBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalXS);
+  min-width: 0;
+}
+
+.startTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase500);
+  line-height: 22px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+/* The intro paragraph asked people to join this and then gave them no way to,
+   so it becomes a thing with a button on it. */
+.teams {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalL);
+  flex-wrap: wrap;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+.teamsIcon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground1);
+}
+
+.teamsBody {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.teamsTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.teamsLead {
+  margin: 2px 0 0;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.teamsActions {
+  display: flex;
+  gap: var(--spacingHorizontalS);
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+/* ------------------------------ feedback band ----------------------------- */
+
+.feedback {
+  margin-top: var(--spacingVerticalXXL);
+  padding: var(--spacingVerticalXXL) var(--spacingHorizontalXL);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorBrandBackground2);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacingVerticalS);
+}
+
+.feedbackTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase500);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.feedbackLead {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}

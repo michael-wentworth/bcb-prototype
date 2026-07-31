@@ -71,6 +71,9 @@ export const makeSkuRow = (seed = {}, years = 3, users = '') => ({
 
 export const makeCompetitorRow = (seed = {}) => ({
   id: rowId('comp'),
+  // Whether the product was named in the description or inferred from signal.
+  // Two very different claims, and the row badge says which.
+  stated: false,
   softwareSolution: '',
   currentProduct: '',
   competitorCost: '',
@@ -317,12 +320,21 @@ function reducer(state, action) {
     /* ------------------------------ bundle ------------------------------- */
     case 'SET_BUNDLE': {
       const bundle = { ...state.bundle, [action.key]: action.value };
-      // Picking a known bundle prefills its list price; the seller can override.
+      /* Mirrors SET_CUSTOMER: an edited field is no longer the copilot's claim.
+         Without this the sparkle pill survives a human edit, and on a bundle
+         change it survives into a flat contradiction — still quoting
+         "…currently uses Microsoft 365 E3…" against a value the seller has just
+         changed to something else. The prefilled price goes with it, since that
+         list figure is a consequence of the bundle rather than of the prompt. */
+      const meta = { ...state.fieldMeta };
+      if (meta[action.key])
+        meta[action.key] = { confidence: 'confirmed', basis: 'Edited by you', source: 'user' };
       if (action.key === 'bundleId') {
         const b = bundleById(action.value);
         if (b) bundle.annualPerUser = b.annualPerUser ? String(b.annualPerUser) : '';
+        delete meta.annualPerUser;
       }
-      return { ...state, bundle };
+      return { ...state, bundle, fieldMeta: meta };
     }
 
     /* ---------------------------- competitors ---------------------------- */
@@ -591,6 +603,11 @@ export function AppStateProvider({ children }) {
           const d = DEMO_EXTRACTION;
           schedule(() => dispatch({ type: 'AI_FILL_CUSTOMER', patch: d.customer }), 260);
             schedule(() => dispatch({ type: 'AI_FILL_OUTCOMES', ids: d.outcomes }), 900);
+          if (d.caseSetup?.name)
+            schedule(
+              () => dispatch({ type: 'SET_CASE_SETUP', key: 'name', value: d.caseSetup.name }),
+              1100,
+            );
           schedule(() => dispatch({ type: 'AI_FILL_SKUS', rows: d.skus }), 1200);
           schedule(() => dispatch({ type: 'AI_FILL_BUNDLE', patch: d.bundle }), 1400);
           schedule(() => dispatch({ type: 'AI_FILL_COMPETITORS', rows: d.competitors }), 1600);

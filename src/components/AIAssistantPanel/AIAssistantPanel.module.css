@@ -1,3 +1,7 @@
+/* The one surface in the app that is allowed to sit above the page while still
+   being docked to it. The shadow is directional — it falls left, onto the
+   workflow it is assisting — so the panel reads as a separate workspace without
+   floating free of the window edge it is attached to. */
 .panel {
   display: flex;
   flex-direction: column;
@@ -6,7 +10,11 @@
   height: 100%;
   background-color: var(--colorNeutralBackground1);
   border-left: 1px solid var(--colorNeutralStroke2);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  /* Above the workspace so the shadow lands on it rather than under it. */
+  position: relative;
+  z-index: 1;
 }
 
 /* --------------------------------- header --------------------------------- */
@@ -78,7 +86,6 @@
   color: var(--colorNeutralForegroundOnBrand);
   font-size: var(--fontSizeBase300);
   line-height: 19px;
-  box-shadow: var(--shadow2);
 }
 
 .assistantRow {
@@ -109,7 +116,6 @@
   border-radius: 4px 14px 14px 14px;
   background-color: var(--colorNeutralBackground1);
   border: 1px solid var(--colorNeutralStroke2);
-  box-shadow: var(--shadow2);
 }
 
 /* ------------------------------- thinking --------------------------------- */
@@ -163,6 +169,71 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+/* The one control in the panel that does something rather than asks something,
+   so it is the one that does not look like a question. Separation comes from
+   ground, border, size and type — in that order — and no shadow, which keeps it
+   level with the panel it sits in rather than floating off it. */
+.starter {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalS);
+  width: 100%;
+  margin-bottom: var(--spacingVerticalS);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
+  border: 1px solid var(--colorBrandStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorBrandBackground2);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--durationFaster) var(--curveEasyEase),
+    border-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.starter:hover:not(:disabled) {
+  border-color: var(--colorBrandStroke1);
+  background-color: var(--colorBrandBackground2Hover, var(--colorBrandBackground2));
+}
+
+.starter:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.starter:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.starterIcon {
+  flex: none;
+  display: inline-flex;
+  color: var(--colorBrandForeground1);
+  margin-top: 1px;
+}
+
+.starterText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.starterLabel {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+/* The label alone never said what pressing it would do, which is the half of
+   the problem a bigger button would not have fixed. */
+.starterHint {
+  font-size: var(--fontSizeBase200);
+  line-height: 16px;
+  color: var(--colorNeutralForeground2);
 }
 
 .chip {

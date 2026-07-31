@@ -109,7 +109,7 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
               Rename
             </MenuItem>
             <MenuItem icon={<Settings20Regular />} onClick={() => goToStep(0)}>
-              Business case setup
+              Review case details
             </MenuItem>
 
             <MenuDivider />

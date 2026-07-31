@@ -74,8 +74,8 @@
   animation: bcbRise 360ms var(--curveDecelerateMid) both;
 }
 
-.noInputs {
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
+.noInputs.noInputs {
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorPaletteDarkOrangeBackground1);
   border: 1px solid var(--colorPaletteDarkOrangeBorder1, var(--colorNeutralStroke2));
@@ -106,8 +106,8 @@
   align-items: start;
 }
 
-.chartCard {
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
+.chartCard.chartCard {
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXXL) var(--spacingVerticalXXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
   min-width: 0;
@@ -116,8 +116,8 @@
 
 /* ------------------------------- narrative -------------------------------- */
 
-.narrativeCard {
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
+.narrativeCard.narrativeCard {
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXXL) var(--spacingVerticalXXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
 }
@@ -143,8 +143,8 @@
   align-items: start;
 }
 
-.ledgerCard {
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
+.ledgerCard.ledgerCard {
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXXL) var(--spacingVerticalXXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
   min-width: 0;
@@ -274,8 +274,8 @@
 
 /* -------------------------------- outcomes --------------------------------- */
 
-.outcomeCard {
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL) var(--spacingVerticalXL);
+.outcomeCard.outcomeCard {
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXXL) var(--spacingVerticalXXL);
   border-radius: var(--borderRadiusLarge);
   background-color: var(--colorNeutralBackground1);
 }
@@ -310,13 +310,17 @@
 
 /* --------------------------------- actions --------------------------------- */
 
-.actionsCard {
+.actionsCard.actionsCard {
   display: flex;
+  /* Fluent's Card sets flex-direction: column for its default vertical
+     orientation. Without this the heading and the buttons stack and centre
+     instead of sitting at opposite ends of one band. */
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacingHorizontalXXL);
   flex-wrap: wrap;
-  padding: var(--spacingVerticalL) var(--spacingHorizontalXL);
+  padding: var(--spacingVerticalL) var(--spacingHorizontalXXL);
   border-radius: var(--borderRadiusLarge);
   background: linear-gradient(
     120deg,

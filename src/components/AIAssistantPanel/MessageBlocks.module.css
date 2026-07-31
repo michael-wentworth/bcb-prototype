@@ -330,7 +330,6 @@
   border-radius: var(--borderRadiusMedium);
   background-color: var(--colorNeutralBackground1);
   border: 1px solid var(--colorNeutralStroke2);
-  box-shadow: var(--shadow2);
 }
 
 .draftTitle {

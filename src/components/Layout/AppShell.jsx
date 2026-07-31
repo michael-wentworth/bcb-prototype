@@ -8,6 +8,8 @@ import CustomerReport from '../CustomerReport/CustomerReport.jsx';
 import MyCases from '../MyCases/MyCases.jsx';
 import Landing from '../Landing/Landing.jsx';
 import Placeholder from './Placeholder.jsx';
+import AnalystStudies from '../Library/AnalystStudies.jsx';
+import Learning from '../Library/Learning.jsx';
 import TopBar from './TopBar.jsx';
 import styles from './AppShell.module.css';
 
@@ -59,6 +61,10 @@ export default function AppShell({ panelOpen, onTogglePanel }) {
                   <StepView />
                 ) : view === 'myCases' ? (
                   <MyCases />
+                ) : view === 'studies' ? (
+                  <AnalystStudies />
+                ) : view === 'learning' ? (
+                  <Learning />
                 ) : (
                   <Placeholder view={view} />
                 )}

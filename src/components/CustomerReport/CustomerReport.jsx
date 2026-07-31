@@ -58,7 +58,7 @@ export default function CustomerReport() {
 
   const money = (v) => formatCurrency(v, { symbol });
   // Full precision, not compact: a headline claim reads as more considered at
-  // $2,457,000 than at $2.46M, and it is the one figure a reader quotes.
+  // its full value than at $2.46M, and it is the one figure a reader quotes.
   const exact = (v) => formatCurrency(v, { symbol, compact: false });
 
   /**
@@ -90,10 +90,11 @@ export default function CustomerReport() {
       />
 
       {!c.hasInputs ? (
-        <Card className={styles.noInputs}>
+        <Card className={styles.noInputs} data-tone="warning">
           <p className={styles.noInputsTitle}>Nothing to calculate yet</p>
           <p className={styles.noInputsText}>
-            Add a competitor product on <strong>Customer environment</strong>, or a SKU on{' '}
+            Add a competitor product on <strong>Customer environment</strong>, or a Microsoft
+            product on{' '}
             <strong>Recommended solution</strong>, and the numbers here will fill in. You can still
             write the narrative below in the meantime.
           </p>
@@ -276,8 +277,6 @@ export default function CustomerReport() {
                 <dd>{currency}</dd>
               </div>
               <div className={styles.assumption}>
-              </div>
-              <div className={styles.assumption}>
                 <dt>Current bundle</dt>
                 <dd>{bundle.annualPerUser ? `${symbol}${bundle.annualPerUser}/user/yr` : 'None'}</dd>
               </div>
@@ -303,7 +302,7 @@ export default function CustomerReport() {
         </Card>
       ) : null}
 
-      <Card className={styles.actionsCard}>
+      <Card className={styles.actionsCard} data-tone="brand">
         <div className={styles.actionsText}>
           <h2 className={styles.cardTitle}>Share the business case</h2>
         </div>

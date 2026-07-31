@@ -21,9 +21,13 @@
    type is what was drowning the call to action.
    --------------------------------------------------------------------------- */
 
+/* One band scale. The page shipped with three — 24px on the masthead, 36/44 on
+   the result band, 52 on everything else — which is why the sections read as
+   unevenly spaced: they were. */
 .root {
   --bcb-landing-measure: 1160px;
   --bcb-landing-prose: 64ch;
+  --bcb-band: 76px;
   background-color: var(--colorNeutralBackground2);
 }
 
@@ -44,18 +48,27 @@
    the complaint about the version before this one was a saturated field
    DROWNING the call to action, so the ground stays quiet and the button is the
    only saturated thing on it. */
+/* A front door, not a title bar. It was 143px tall — a tinted strip carrying a
+   heading and two buttons — so the eye crossed it before registering it as the
+   top of anything. */
 .masthead {
   background-color: var(--colorBrandBackground2);
   border-bottom: 1px solid var(--colorBrandStroke2);
-  padding: var(--spacingVerticalXXL) 0;
+  padding: 72px 0 80px;
 }
 
+/* Stacked, not shouldered. Side by side, the tagline wrapped at 480px against a
+   button group pinned right, leaving a channel of nothing down the middle of the
+   widest element on the page. */
+/* Centred, like the section heads below it. Stacked to the left, a 52px title
+   and a 52ch tagline left the right 45% of the widest band on the page empty —
+   the same one-sided void the section heads had. */
 .mastheadRow {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--spacingHorizontalXXL);
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacingVerticalXL);
 }
 
 /* The largest text on the page, and the first thing read. It was 26px, which
@@ -65,18 +78,21 @@
    40 product name, 32 the case it is demonstrating, 28 sections. */
 .wordmark {
   margin: 0;
-  font-size: 40px;
-  line-height: 46px;
+  max-width: 18ch;
+  font-size: 52px;
+  line-height: 1.06;
   font-weight: var(--fontWeightSemibold);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
   color: var(--colorNeutralForeground1);
 }
 
 .mastheadLine {
-  margin: var(--spacingVerticalXS) 0 0;
-  max-width: var(--bcb-landing-prose);
-  font-size: var(--fontSizeBase400);
-  line-height: 22px;
+  margin: var(--spacingVerticalM) auto 0;
+  max-width: 54ch;
+  text-wrap: pretty;
+  font-size: 19px;
+  line-height: 28px;
   color: var(--colorNeutralForeground2);
 }
 
@@ -119,13 +135,13 @@
 
 .resultBand {
   background-color: var(--colorNeutralBackground1);
-  border-bottom: 1px solid var(--colorNeutralStroke2);
-  padding: 36px 0 44px;
+  padding: var(--bcb-band) 0;
 }
 
 .badge {
-  display: inline-block;
-  margin: 0 0 var(--spacingVerticalM);
+  display: block;
+  width: fit-content;
+  margin: 0 auto var(--spacingVerticalM);
   padding: 3px 9px;
   border-radius: var(--borderRadiusSmall);
   background-color: var(--colorBrandBackground2);
@@ -139,13 +155,19 @@
 /* Subordinate to the product name now. It is still the biggest thing in the
    report band and still the argument — it just no longer outranks the thing
    the page is for. */
+/* The page's thesis. It was 32px against a 52px wordmark and a 28px section
+   heading — barely a step, so nothing told the eye this was the claim. */
+/* Centred with the rest. The band's own content below it is an asymmetric grid,
+   the way the other bands are — but a left-aligned head above centred heads
+   everywhere else was the last thing making the page read as misaligned. */
 .headline {
-  margin: 0;
-  max-width: 34ch;
-  font-size: 32px;
-  line-height: 40px;
+  margin: 0 auto;
+  max-width: 22ch;
+  text-align: center;
+  font-size: 44px;
+  line-height: 1.1;
   font-weight: var(--fontWeightRegular);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   text-wrap: balance;
   color: var(--colorNeutralForeground1);
 }
@@ -157,17 +179,21 @@
 
 .subhead {
   margin: var(--spacingVerticalS) 0 0;
+  text-align: center;
   font-size: var(--fontSizeBase300);
   color: var(--colorNeutralForeground3);
 }
 
 /* Figures on the left, the curve that explains them on the right. */
+/* The KPI column held two content-height tiles against a 330px chart, so a
+   third of the band's left side was empty white. Stretching the rows makes the
+   two tiles share the chart's height exactly. */
 .resultLayout {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
   gap: var(--spacingHorizontalXXL);
-  align-items: start;
-  margin-top: var(--spacingVerticalXL);
+  align-items: stretch;
+  margin-top: var(--spacingVerticalXXL);
 }
 
 /* Two figures, stacked. Four in a 2x2 made the fold a scoreboard; the ratio
@@ -175,7 +201,7 @@
    in the report a click away. */
 .kpis {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr 1fr;
   gap: var(--spacingVerticalM);
   margin: 0;
   padding: 0;
@@ -189,6 +215,10 @@
   padding: var(--spacingVerticalM) var(--spacingHorizontalM);
   border-radius: var(--borderRadiusMedium);
   border: 1px solid transparent;
+  /* The tiles stretch to the chart's height, so the label and value are centred
+     in the space rather than pinned to the top of it — otherwise fixing the
+     column's dead space just moves that space inside each tile. */
+  justify-content: center;
 }
 
 .kpiLabel {
@@ -252,10 +282,19 @@
 
 /* ---------------------------------- bands ---------------------------------- */
 
+/* Bands alternate ground rather than relying on a hairline rule. Separation by
+   surface is mechanism 4 in the hierarchy order; a 1px line between five white
+   blocks was doing the job on its own and losing. */
 .band {
-  padding: 52px 0;
+  padding: var(--bcb-band) 0;
+  background-color: var(--colorNeutralBackground2);
+}
+
+/* The result band is also a <section>, so it takes slot 1 and the three content
+   bands take 2, 3, 4 — odd here means the second and fourth sections on the
+   page, which is what puts a tint immediately under the white result band. */
+.band:nth-of-type(odd) {
   background-color: var(--colorNeutralBackground1);
-  border-bottom: 1px solid var(--colorNeutralStroke2);
 }
 
 .bandLast {
@@ -263,28 +302,38 @@
 }
 
 .foot {
-  margin: var(--spacingVerticalL) 0 0;
-  max-width: var(--bcb-landing-prose);
+  margin: var(--spacingVerticalXL) auto 0;
+  max-width: 68ch;
+  text-align: center;
+  text-wrap: pretty;
   font-size: var(--fontSizeBase300);
-  line-height: 20px;
+  line-height: 22px;
   color: var(--colorNeutralForeground2);
 }
 
+/* Centred over the full-width content beneath. Left-aligned, a 32px heading and
+   a 58ch lead occupy the left 45% of a 1160px band and leave the rest empty —
+   which is the "not spaced evenly" complaint: the void was always on one side.
+   Centring balances it, and the grids below still run the full measure. */
 .sectionTitle {
-  margin: 0;
-  font-size: 28px;
-  line-height: 36px;
+  margin: 0 auto;
+  max-width: 24ch;
+  text-align: center;
+  font-size: 32px;
+  line-height: 40px;
   font-weight: var(--fontWeightSemibold);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   color: var(--colorNeutralForeground1);
 }
 
 .sectionLede {
-  margin: var(--spacingVerticalS) 0 var(--spacingVerticalXL);
-  max-width: var(--bcb-landing-prose);
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
+  margin: var(--spacingVerticalM) auto var(--bcb-band);
+  max-width: 56ch;
+  text-align: center;
+  text-wrap: pretty;
+  font-size: 17px;
+  line-height: 26px;
   color: var(--colorNeutralForeground2);
 }
 
@@ -295,6 +344,9 @@
    labels that already carry the meaning, and it is aria-hidden. */
 /* -------------------------------- why timing ------------------------------- */
 
+/* Full measure. Capped at 760px these three bars stopped two-thirds across the
+   band while the callout directly beneath them ran the whole width, so the two
+   elements that are meant to be read together had different right edges. */
 .years {
   display: flex;
   flex-direction: column;
@@ -302,7 +354,6 @@
   margin: 0 0 var(--spacingVerticalXXL);
   padding: 0;
   list-style: none;
-  max-width: 760px;
 }
 
 .year {
@@ -320,7 +371,7 @@
 }
 
 .yearTrack {
-  height: 20px;
+  height: 26px;
   border-radius: var(--borderRadiusSmall);
   background-color: var(--colorNeutralBackground4);
   overflow: hidden;
@@ -428,25 +479,37 @@
   color: var(--colorNeutralForeground3);
 }
 
+/* The page used to end on a heading, two lines and a button adrift in white.
+   A closing band gives the last thing on the page somewhere to sit. */
 .close {
-  padding-top: var(--spacingVerticalXXL);
-  border-top: 1px solid var(--colorNeutralStroke2);
+  margin-top: var(--bcb-band);
+  padding: 56px var(--spacingHorizontalXXL);
+  border-radius: 16px;
+  background-color: var(--colorBrandBackground2);
+  border: 1px solid var(--colorBrandStroke2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacingVerticalM);
 }
 
 .closeTitle {
   margin: 0;
-  font-size: 28px;
-  line-height: 36px;
+  font-size: 36px;
+  line-height: 44px;
   font-weight: var(--fontWeightSemibold);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   color: var(--colorNeutralForeground1);
 }
 
 .closeText {
-  margin: var(--spacingVerticalS) 0 var(--spacingVerticalL);
-  max-width: var(--bcb-landing-prose);
-  font-size: var(--fontSizeBase300);
-  line-height: 20px;
+  margin: 0;
+  max-width: 54ch;
+  text-wrap: pretty;
+  font-size: 17px;
+  line-height: 26px;
   color: var(--colorNeutralForeground2);
 }
 

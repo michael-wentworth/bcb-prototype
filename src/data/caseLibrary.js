@@ -41,10 +41,14 @@ export const MY_CASES = [
         segment: 'Enterprise',
         salesMotion: 'Consolidation',
         numberOfUsers: '18000',
+        tpid: '4820517',
+        website: 'contoso.com',
         bcbRole: 'customer-facing',
+        description:
+          'Reduce vendor sprawl across the security estate and modernise security operations. Consolidate the security tooling detected on this account onto a single platform to lower operational complexity, and extend a stretched SOC with AI assistance rather than additional headcount.',
       },
       caseSetup: { name: 'Contoso FY27 Security Consolidation', analysisPeriod: 3 },
-      outcomes: ['identity', 'threat', 'endpoint', 'consolidation'],
+      outcomes: ['identity', 'threat', 'endpoint', 'ai-security', 'consolidation'],
       skus: [
         { id: 'c1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate the Security Estate', pricePerMonth: '4', seats: seats(18000) },
         { id: 'c1s2', skuId: 'sentinel', solutionArea: 'Security', solutionPlay: 'Modernize Security Operations', pricePerMonth: '1.5', seats: seats(18000) },
@@ -171,7 +175,7 @@ export const EXAMPLE_CASES = [
       skus: [
         { id: 'e1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate the Security Estate', pricePerMonth: '3.5', seats: seats(42000) },
         { id: 'e1s2', skuId: 'sentinel', solutionArea: 'Security', solutionPlay: 'Modernize Security Operations', pricePerMonth: '1.2', seats: seats(42000) },
-        { id: 'e1s3', skuId: 'purview', solutionArea: 'Security', solutionPlay: 'Safeguard and Govern Data', pricePerMonth: '1', seats: seats(42000) },
+        { id: 'e1s3', skuId: 'purview', solutionArea: 'Security', solutionPlay: 'Safeguard Data and Compliance', pricePerMonth: '1', seats: seats(42000) },
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '432', additionalValue: '400000' },
       competitors: {

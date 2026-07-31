@@ -70,7 +70,7 @@
   gap: var(--spacingHorizontalL);
 }
 
-.card {
+.card.card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -84,8 +84,8 @@
   animation: bcbRise 320ms var(--curveDecelerateMid) both;
 }
 
-.card:hover {
-  box-shadow: var(--shadow16);
+.card.card:hover {
+  box-shadow: var(--shadow8);
 }
 
 .cardHit {

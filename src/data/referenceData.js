@@ -103,6 +103,50 @@ export const ANALYSIS_PERIODS = [1, 2, 3, 4, 5];
  * a SKU never silently blanks a mapping that was already made — the seller sees
  * the stale value and can change it.
  */
+/**
+ * Which product in a case actually serves an outcome.
+ *
+ * The outcome's `implies` list names SKU ids; a case may own one of them
+ * outright or own a suite that contains it. Both count — buying Microsoft 365
+ * E5 Security is how most estates get Defender for Endpoint — so this resolves
+ * through `includes` rather than matching ids directly.
+ *
+ * Returns the outcome, the SKUs in the case that deliver it, and the ones it
+ * would need if none do.
+ */
+export function outcomeCoverage(outcomeId, skuRows = [], competitorRows = []) {
+  const outcome = SECURITY_OUTCOMES.find((o) => o.id === outcomeId);
+  if (!outcome) return null;
+
+  /* Consolidation is measured, not purchased — a mapped competitor row is the
+     evidence, so this branch never looks at the SKU table. */
+  if (outcome.viaDisplacement) {
+    const displaced = (competitorRows || []).filter(
+      (r) => r.currentProduct && r.newMicrosoftProduct,
+    );
+    return { outcome, covered: displaced.length > 0, deliveredBy: [], displaced, wouldNeed: [] };
+  }
+
+  const inCase = (skuRows || [])
+    .map((r) => MICROSOFT_SKUS.find((s) => s.id === r.skuId))
+    .filter(Boolean);
+
+  const delivers = (sku) =>
+    outcome.implies.includes(sku.id) ||
+    (sku.includes || []).some((id) => outcome.implies.includes(id));
+
+  const deliveredBy = inCase.filter(delivers);
+  const seen = new Set();
+  const unique = deliveredBy.filter((s) => (seen.has(s.id) ? false : seen.add(s.id)));
+
+  return {
+    outcome,
+    covered: unique.length > 0,
+    deliveredBy: unique,
+    wouldNeed: outcome.implies.map((id) => MICROSOFT_SKUS.find((s) => s.id === id)).filter(Boolean),
+  };
+}
+
 export function displacementOptions(skuRows = [], current = '', solution = '') {
   // Exactly the SKUs on the recommended-solution table. Nothing else, because
   // every other product on this step carries a seat count and a price, and a
@@ -155,30 +199,40 @@ export const SECURITY_OUTCOMES = [
     detail:
       'Prevent unauthorized access and reduce identity-based breaches by enforcing Zero Trust principles.',
     implies: ['entra-p2'],
+    rationale:
+      'Conditional access and risk-based sign-in are what close the standing exposure a separate IAM tool leaves behind — they have to sit with the directory rather than beside it.',
   },
   {
     id: 'threat',
     label: 'Threat detection & response (SOC/SIEM/XDR)',
     detail: 'Detect and respond to threats faster while improving SOC efficiency.',
     implies: ['defender-xdr', 'sentinel'],
+    rationale:
+      'Detection is only as good as the signal it correlates. One pipeline instead of two consoles is what shortens the gap between an alert and a decision.',
   },
   {
     id: 'data',
     label: 'Data security and compliance',
     detail: 'Protect sensitive data and reduce risk of data leaks or compliance violations.',
     implies: ['purview'],
+    rationale:
+      'Classification travels with the file rather than with the perimeter around it, which is the only version of data protection that survives the file being moved.',
   },
   {
     id: 'endpoint',
     label: 'End point and device security',
     detail: 'Reduce endpoint compromise and improve device visibility and control.',
     implies: ['defender-endpoint', 'intune'],
+    rationale:
+      'Device-level detection and the configuration baseline behind it are two halves of one control. Split across vendors, each blames the other.',
   },
   {
     id: 'cloud',
     label: 'Cloud & application security',
     detail: 'Secure cloud workloads and applications while reducing misconfiguration risk.',
     implies: ['defender-cloud'],
+    rationale:
+      'Workload protection and posture in one place, because a cloud incident almost always begins as a misconfiguration nobody was watching.',
   },
   {
     id: 'ai-security',
@@ -186,12 +240,20 @@ export const SECURITY_OUTCOMES = [
     detail:
       'Increase security team productivity and reduce time to detect and respond using AI.',
     implies: ['security-copilot'],
+    rationale:
+      'Investigation in natural language is what turns SOC headcount into throughput rather than into more alerts triaged.',
   },
   {
     id: 'consolidation',
     label: 'Reduce cost and vendor consolidation',
     detail: 'Replace multiple tools and point solutions with a unified platform solution.',
     implies: ['m365-e5'],
+    rationale:
+      'Not a product. Every contract that stops paying is the outcome, and it is delivered by what the suite absorbs rather than by another line item.',
+    /* Not answered by buying a product. A seller who has already sold the suite
+       and mapped four contracts to it has delivered this outcome; telling them
+       to add another SKU for it is advice that contradicts their own table. */
+    viaDisplacement: true,
   },
   {
     id: 'agents',
@@ -199,6 +261,8 @@ export const SECURITY_OUTCOMES = [
     detail:
       'Secure and govern AI agents while improving automation, visibility, and control across agent-driven workflows.',
     implies: ['agent-365'],
+    rationale:
+      'AI agents reach data and systems on their own credentials, so governing what they can touch is a control plane nothing else in the estate covers.',
   },
 ];
 
@@ -263,7 +327,9 @@ export const MICROSOFT_SKUS = [
     name: 'Microsoft Defender for Office 365 P2',
     listPrice: 5,
     solutionArea: 'Security',
-    solutionPlay: 'Safeguard Data and Compliance',
+    // Threat protection for mail and collaboration, not a data-governance
+    // product — it belongs with the rest of detection and response.
+    solutionPlay: 'Modernize Security Operations',
   },
   {
     id: 'defender-cloud',

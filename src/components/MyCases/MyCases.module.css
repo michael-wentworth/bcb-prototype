@@ -323,10 +323,12 @@
   font-size: var(--fontSizeBase200);
   line-height: 17px;
   color: var(--colorNeutralForeground3);
+  /* Takes up the slack so the rule below sits on one line across the row. */
+  flex: 1 1 auto;
 }
 
 .exampleStats {
-  margin-top: var(--spacingVerticalS);
+  margin-top: auto;
   padding-top: var(--spacingVerticalS);
   border-top: 1px solid var(--colorNeutralStroke2);
   font-size: var(--fontSizeBase200);

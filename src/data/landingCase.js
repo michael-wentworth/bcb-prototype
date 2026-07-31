@@ -150,15 +150,19 @@ export const STRESS = {
  * both rather than only the one that flatters least.
  */
 const lastYear = base.years - 1;
+
+/* Counts the same benefit the headline ROI counts. It used to total displaced
+   contracts alone while CASE.roi included the additional-value line, so the page
+   printed two percentages side by side that were measuring different things —
+   and the smaller one looked like the conservative version of the larger rather
+   than a different sum. */
+const steadySaves = base.competitorByYear[lastYear] + Math.round(base.additionalTotal / base.years);
+const steadyCosts = base.microsoftByYear[lastYear];
 export const STEADY = {
-  saves: base.competitorByYear[lastYear],
-  costs: base.microsoftByYear[lastYear],
-  net: base.competitorByYear[lastYear] - base.microsoftByYear[lastYear],
-  ratio:
-    base.microsoftByYear[lastYear] > 0
-      ? (base.competitorByYear[lastYear] - base.microsoftByYear[lastYear]) /
-        base.microsoftByYear[lastYear]
-      : null,
+  saves: steadySaves,
+  costs: steadyCosts,
+  net: steadySaves - steadyCosts,
+  ratio: steadyCosts > 0 ? (steadySaves - steadyCosts) / steadyCosts : null,
 };
 
 /** The Microsoft side as one destination: what is bought, and what it costs a year. */

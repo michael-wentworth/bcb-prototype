@@ -9,7 +9,12 @@
    panel never parses prose to decide what the app should do.
    --------------------------------------------------------------------------- */
 
-import { SECURITY_OUTCOMES, currencySymbol, skuById } from './referenceData.js';
+import {
+  SECURITY_OUTCOMES,
+  currencySymbol,
+  outcomeCoverage,
+  skuById,
+} from './referenceData.js';
 import { formatCurrency, formatPercent } from './model.js';
 import { DEMO_EXTRACTION } from './demoCase.js';
 
@@ -27,7 +32,7 @@ export const STEP_SUGGESTIONS = [
     { label: 'Which fields drive the numbers?' },
   ],
   [
-    { label: 'Which SKUs match the outcomes I selected?' },
+    { label: 'Which products match the outcomes I selected?' },
     { label: 'Why is this the right recommendation?' },
     { label: 'What are we displacing, and what is it worth?' },
   ],
@@ -69,7 +74,7 @@ export function getStepIntro(stepIndex) {
         blocks: [
           {
             type: 'text',
-            text: 'Select the outcomes and I will map them to SKUs.',
+            text: 'Select the outcomes and I will match them to Microsoft products.',
           },
         ],
       };
@@ -108,7 +113,7 @@ const INTENTS = [
     thinking: [
       'Reading the description',
       'Matching to account records',
-      'Selecting outcomes and SKUs',
+      'Selecting outcomes and products',
       'Estimating the competitor estate',
     ],
     delay: 2800,
@@ -116,13 +121,18 @@ const INTENTS = [
       blocks: [
         {
           type: 'text',
-          text: "I filled the whole case in — customer details, outcomes, SKUs and competitor products.",
+          text: "I filled the whole case in — customer details, outcomes, Microsoft products and competitor products.",
         },
         {
           type: 'fields',
           items: [
             { label: 'Account', value: DEMO_EXTRACTION.customer.accountName, confidence: 'high', basis: 'Stated directly' },
-            { label: 'Users', value: '18,000', confidence: 'high', basis: 'Stated directly' },
+            {
+              label: 'Users',
+              value: Number(DEMO_EXTRACTION.customer.numberOfUsers).toLocaleString(),
+              confidence: 'high',
+              basis: 'Stated directly',
+            },
             { label: 'Industry', value: DEMO_EXTRACTION.customer.industry, confidence: 'high', basis: 'Matched to account record' },
             { label: 'Geography', value: 'North America', confidence: 'medium', basis: 'Inferred from account footprint' },
           ],
@@ -131,7 +141,7 @@ const INTENTS = [
           type: 'callout',
           tone: 'coach',
           title: 'Two things worth checking',
-          text: 'I inferred the Splunk and Proofpoint lines from install-base signal rather than anything you said, and I guessed the contract end years. Both change the numbers — correct them in Competitive environment on this step before this goes out.',
+          text: 'I inferred the Splunk and Proofpoint lines from install-base signal rather than anything you said, and I guessed the contract end years. Both change the numbers — correct them under Competitor products on this step before this goes out.',
         },
         {
           type: 'actions',
@@ -144,54 +154,155 @@ const INTENTS = [
 
   /* ----------------------------- EXPLAIN ---------------------------- */
   {
-    id: 'OUTCOMES_TO_SKUS',
-    // "Why this recommendation" on step 2 asks through this same intent, so the
-    // phrasings that card's button uses have to match here as well.
+    id: 'EXPLAIN_FIT',
+    /* Split from OUTCOMES_TO_SKUS. Three different questions used to land on one
+       answer that listed products and explained nothing — and listed them from
+       the outcome map rather than from the case, so after a populate it named
+       products the proposal does not contain. This one reasons per outcome
+       against what the case actually buys. */
     test: (input) =>
       has(
         input,
-        'which sku',
-        'match the outcome',
-        'suggest sku',
-        'shortlist',
-        'right recommendation',
-        'why this recommendation',
-        'why these sku',
         'explain the fit',
+        'explain why',
+        'why these sku',
+        'why these product',
+        'why this recommendation',
+        'right recommendation',
+        'why is this the right',
         'why this solution',
+        'justify',
       ),
-    thinking: ['Mapping outcomes to SKUs'],
-    delay: 1800,
+    thinking: ['Checking each outcome against the proposal'],
+    delay: 2000,
     build: (input, ctx) => {
-      const selected = SECURITY_OUTCOMES.filter((o) => ctx.outcomes.includes(o.id));
+      const selected = ctx.outcomes || [];
       if (selected.length === 0) {
         return {
           blocks: [
             {
               type: 'text',
-              text: 'Nothing selected yet. Tick the outcomes the customer actually cares about and I will map them to SKUs — or just add the SKUs directly if you already know what you are selling.',
+              text: 'No outcomes are selected, so there is nothing to justify yet. Pick what the customer is trying to achieve and I will tie each one to a product in the proposal.',
             },
           ],
         };
       }
-      const implied = [...new Set(selected.flatMap((o) => o.implies))]
-        .map((id) => skuById(id)?.name)
-        .filter(Boolean);
-      return {
-        blocks: [
-          {
-            type: 'text',
-            text: `Your ${selected.length} selected outcome${selected.length === 1 ? ' maps' : 's map'} to these:`,
-          },
-          { type: 'bullets', items: implied.map((n) => `**${n}**`) },
-          {
-            type: 'callout',
-            tone: 'coach',
-            title: 'Seats and price are still yours',
-            text: 'I cannot tell you what the customer negotiated — enter the seats per year and the price you expect to land.',
-          },
-        ],
-      };
+
+      const compRows = ctx.competitors?.rows || [];
+      const rows = selected.map((id) => outcomeCoverage(id, ctx.skus, compRows)).filter(Boolean);
+      const covered = rows.filter((r) => r.covered);
+      const gaps = rows.filter((r) => !r.covered);
+
+      const blocks = [
+        {
+          type: 'text',
+          text: `${covered.length} of ${rows.length} selected outcome${rows.length === 1 ? ' is' : 's are'} answered by something in the proposal. Here is what carries each one.`,
+        },
+        {
+          type: 'bullets',
+          items: covered.map((r) => {
+            const carrier = Array.isArray(r.displaced)
+              ? `the ${r.displaced.length} contract${r.displaced.length === 1 ? '' : 's'} on the displacement table`
+              : r.deliveredBy.map((s) => s.name).join(' and ');
+            return `**${r.outcome.label}** — ${carrier}. ${r.outcome.rationale}`;
+          }),
+        },
+      ];
+
+      if (gaps.length > 0) {
+        blocks.push({
+          type: 'callout',
+          tone: 'coach',
+          title: gaps.length === 1 ? 'One outcome has nothing behind it' : 'Outcomes with nothing behind them',
+          text: gaps
+            .map((r) =>
+              Array.isArray(r.displaced)
+                ? `${r.outcome.label} is answered by what you displace, and nothing on the competitive table is mapped to a Microsoft replacement yet. ${r.outcome.rationale}`
+                : `${r.outcome.label} would need ${r.wouldNeed.map((s) => s.name).join(' or ')}, which this case does not buy. ${r.outcome.rationale}`,
+            )
+            .join(' '),
+        });
+      }
+
+      return { blocks };
+    },
+  },
+  {
+    id: 'OUTCOMES_TO_SKUS',
+    /* "Which SKUs match" is a different question from "why" — this one answers
+       with the state of the proposal: what is already there, and what the
+       outcomes imply that is not. */
+    test: (input) =>
+      has(input, 'which sku', 'which product', 'match the outcome', 'suggest sku', 'shortlist', 'what should i add'),
+    thinking: ['Matching outcomes to products'],
+    delay: 1800,
+    build: (input, ctx) => {
+      const selected = ctx.outcomes || [];
+      if (selected.length === 0) {
+        return {
+          blocks: [
+            {
+              type: 'text',
+              text: 'Nothing selected yet. Tick the outcomes the customer actually cares about and I will match them to products — or add the products directly if you already know what you are selling.',
+            },
+          ],
+        };
+      }
+
+      const compRows = ctx.competitors?.rows || [];
+      const rows = selected.map((id) => outcomeCoverage(id, ctx.skus, compRows)).filter(Boolean);
+      const inCase = [...new Set(rows.flatMap((r) => r.deliveredBy.map((s) => s.name)))];
+      const displaced = rows.filter((r) => r.covered && Array.isArray(r.displaced));
+      const missing = rows
+        .filter((r) => !r.covered)
+        .flatMap((r) => r.wouldNeed.map((s) => s.name));
+      const unique = [...new Set(missing)];
+
+      const blocks = [];
+
+      if (inCase.length > 0) {
+        blocks.push({
+          type: 'text',
+          text: `The proposal already covers ${rows.filter((r) => r.covered).length} of your ${rows.length} outcomes, with:`,
+        });
+        blocks.push({ type: 'bullets', items: inCase.map((n) => `**${n}**`) });
+      } else {
+        blocks.push({
+          type: 'text',
+          text: 'Nothing in the proposal answers the outcomes you selected yet.',
+        });
+      }
+
+      displaced.forEach((r) => {
+        blocks.push({
+          type: 'text',
+          text: `**${r.outcome.label}** needs no SKU of its own — the ${r.displaced.length} contracts you are displacing are what deliver it.`,
+        });
+      });
+
+      if (unique.length > 0) {
+        blocks.push({
+          type: 'text',
+          text: `Not yet covered: ${unique.map((n) => `**${n}**`).join(', ')}. Add it on this step, or drop the outcome if the customer is not buying it.`,
+        });
+      }
+
+      /* Only worth saying when it is still true. After a populate the seats and
+         the price are already in, and telling a seller to enter what is on the
+         screen in front of them is how a copilot loses their attention. */
+      const needsPricing = (ctx.skus || []).some(
+        (r) => !String(r.pricePerMonth || '').trim() || !String(r.seats?.[0] || '').trim(),
+      );
+      if (needsPricing) {
+        blocks.push({
+          type: 'callout',
+          tone: 'coach',
+          title: 'Seats and price are still yours',
+          text: 'I cannot tell you what the customer negotiated — enter the seats per year and the price you expect to land.',
+        });
+      }
+
+      return { blocks };
     },
   },
   {
@@ -212,7 +323,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'Nothing to displace yet. Competitor products are captured on step 1, in Competitive environment — add them there with a cost and a contract end year.',
+              text: 'Nothing to displace yet. Competitor products are captured on step 1 — add them there with a cost and a contract end year.',
             },
             {
               type: 'actions',
@@ -315,32 +426,76 @@ const INTENTS = [
     test: (input) => has(input, 'detect the competitor', 'competitor products in this estate'),
     thinking: ['Scanning install-base signal', 'Mapping onto Microsoft products'],
     delay: 2000,
-    build: (input, ctx) => ({
-      blocks: [
-        {
-          type: 'text',
-          text: ctx.customer.accountName
-            ? 'I have added the four products I can see against this account to Competitive environment, with estimated annual cost and contract end years. Correct them here before this reaches a customer. You map each one to its Microsoft replacement on step 2.'
-            : 'I need an account name before I can infer an estate. Fill that in above, or add the competitor products by hand.',
-        },
-        ctx.customer.accountName
-          ? {
+    build: (input, ctx) => {
+      const rows = (ctx.competitors?.rows || []).filter((r) => r.currentProduct);
+
+      if (!ctx.customer.accountName) {
+        return {
+          blocks: [
+            {
+              type: 'text',
+              text: 'I need an account name before I can infer an estate. Fill that in above, or add the competitor products by hand.',
+            },
+          ],
+        };
+      }
+
+      /* The estate is already on the form — from a populate or from the seller.
+         Re-running the fill here would silently overwrite whatever they have
+         since corrected, so this branch reads the table back instead. */
+      if (rows.length > 0) {
+        const total = rows.reduce((sum, r) => sum + (Number(r.competitorCost) || 0), 0);
+        const years = [...new Set(rows.map((r) => r.yearContractEnds).filter(Boolean))].sort();
+        const sym = currencySymbol(ctx.currency);
+        return {
+          blocks: [
+            {
+              type: 'text',
+              text: `Already done — ${rows.length} product${rows.length === 1 ? '' : 's'} on this account, worth ${sym}${(total / 1e6).toFixed(2)}M a year:`,
+            },
+            {
+              type: 'bullets',
+              items: rows.map(
+                (r) =>
+                  `**${r.currentProduct}** — ${r.softwareSolution}, ${sym}${Number(r.competitorCost).toLocaleString()} a year, contract ends ${r.yearContractEnds || 'unknown'}`,
+              ),
+            },
+            {
               type: 'callout',
               tone: 'warning',
               title: 'Estimated, not sourced',
-              text: 'Contract end years in particular are guesses. They gate the entire savings calculation, so they are worth a phone call.',
-            }
-          : null,
-      ].filter(Boolean),
-      actions: ctx.customer.accountName ? [{ type: 'fillCase' }] : [],
-    }),
+              text: `The contract end years — ${years.join(' and ')} — are guesses. They gate the whole savings calculation, so they are worth a phone call before this reaches a customer.`,
+            },
+          ],
+        };
+      }
+
+      return {
+        blocks: [
+          {
+            type: 'text',
+            text: 'Adding the products I can see against this account to Competitor products now, with estimated annual cost and contract end years. Correct them here before this reaches a customer — you map each one to its Microsoft replacement on step 2.',
+          },
+          {
+            type: 'callout',
+            tone: 'warning',
+            title: 'Estimated, not sourced',
+            text: 'Contract end years in particular are guesses. They gate the entire savings calculation, so they are worth a phone call.',
+          },
+        ],
+        actions: [{ type: 'fillCase' }],
+      };
+    },
   },
 
   /* ------------------------------ COACH ----------------------------- */
   {
     id: 'WHATS_MISSING',
     test: (input) =>
-      has(input, 'missing', 'still need', 'what else', 'gap', 'stronger', 'improve', 'validat'),
+      /* Not a bare 'improve': the populate prompt says "improve security
+         operations", so re-sending it after the case was filled matched this
+         intent and answered a question nobody asked. */
+      has(input, 'missing', 'still need', 'what else', 'gap', 'stronger', 'improve this', 'improve the case', 'validat'),
     thinking: ['Scanning the case for gaps'],
     delay: 1900,
     build: (input, ctx) => {
@@ -348,8 +503,8 @@ const INTENTS = [
       if (!ctx.customer.numberOfUsers) gaps.push('**Number of users** — nothing can be priced without it.');
       if (!ctx.caseSetup.name) gaps.push('**Business case name** — the identifier this case is saved under.');
       if (ctx.outcomes.length === 0) gaps.push('**Security outcomes** — what the customer is actually trying to fix.');
-      if (ctx.skus.length === 0) gaps.push('**At least one SKU** — there is no investment to return on yet.');
-      if (ctx.skus.some((s) => !s.pricePerMonth)) gaps.push('**Price per month** — missing on one or more SKUs, so those rows add no cost to the model.');
+      if (ctx.skus.length === 0) gaps.push('**At least one Microsoft product** — there is no investment to return on yet.');
+      if (ctx.skus.some((s) => !s.pricePerMonth)) gaps.push('**Price per month** — missing on one or more products, so those rows add no cost to the model.');
       const rows = ctx.competitors.rows || [];
       if (rows.length === 0)
         gaps.push(
@@ -360,6 +515,21 @@ const INTENTS = [
         gaps.push(
           `**${unmapped} unmapped competitor row${unmapped === 1 ? '' : 's'}** — no Microsoft product named against ${unmapped === 1 ? 'it' : 'them'} on step 2, so the report cannot say what replaces what.`,
         );
+      /* The mirror of the coverage check. Every other gap here is something
+         absent; this one is something present that nothing asked for, which is
+         the harder of the two to notice on a form you have just filled in. */
+      const implied = new Set(
+        ctx.outcomes.flatMap((id) => SECURITY_OUTCOMES.find((o) => o.id === id)?.implies || []),
+      );
+      const orphans = ctx.skus
+        .map((r) => skuById(r.skuId))
+        .filter(Boolean)
+        .filter((s) => !implied.has(s.id) && !(s.includes || []).some((i) => implied.has(i)));
+      if (orphans.length > 0)
+        gaps.push(
+          `**${orphans.map((s) => s.name).join(', ')}** — in the proposal, but no outcome you selected calls for ${orphans.length === 1 ? 'it' : 'them'}. Select the outcome ${orphans.length === 1 ? 'it serves' : 'they serve'}, or be ready to justify the line on its own.`,
+        );
+
       const outOfHorizon = ctx.businessCase.competitorLines.filter((l) => !l.displaceable);
       if (outOfHorizon.length > 0)
         gaps.push(
@@ -370,9 +540,12 @@ const INTENTS = [
         blocks: [
           {
             type: 'text',
-            text: gaps.length
-              ? 'Fix these in this order:'
-              : 'Nothing structural is missing.',
+            text:
+              gaps.length === 0
+                ? 'Nothing structural is missing.'
+                : gaps.length === 1
+                  ? 'One thing to fix:'
+                  : 'Fix these in this order:',
           },
           gaps.length ? { type: 'bullets', items: gaps } : null,
           {
@@ -399,7 +572,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'There is nothing to calculate yet — no SKUs and no competitor products. Capture the competitor estate on step 1 or the SKUs on step 2.',
+              text: 'There is nothing to calculate yet — no Microsoft products and no competitor products. Capture the competitor estate on step 1 or the products on step 2.',
             },
           ],
         };
@@ -427,8 +600,20 @@ const INTENTS = [
             text:
               c.investmentTotal > 0
                 ? `${money(c.netBenefit)} ÷ ${money(c.investmentTotal)} = ${formatPercent(c.roi)}. Of the benefit, ${money(c.competitorTotal)} is competitor spend that stops and ${money(c.additionalTotal)} is additional products and savings. The existing Microsoft bundle is not counted — the customer keeps paying it.`
-                : `There is no Microsoft investment in this case yet, so there is no return to divide — add the SKUs and their pricing on step 2. The benefit side already stands at ${money(c.benefitTotal)}: ${money(c.competitorTotal)} of competitor spend that stops and ${money(c.additionalTotal)} of additional products and savings.`,
+                : `There is no Microsoft investment in this case yet, so there is no return to divide — add the products and their pricing on step 2. The benefit side already stands at ${money(c.benefitTotal)}: ${money(c.competitorTotal)} of competitor spend that stops and ${money(c.additionalTotal)} of additional products and savings.`,
           },
+          /* Every other benefit line is dated to a contract that lapses. This one
+             is a figure the seller typed, and the ROI moves with it — so it gets
+             named rather than folded into the total, which is what a CFO would do
+             to it anyway. */
+          c.additionalTotal > 0
+            ? {
+                type: 'callout',
+                tone: 'coach',
+                title: 'One benefit line has no contract behind it',
+                text: `${money(c.additionalTotal)} of that comes from Additional products or savings on step 1 — the one benefit line here not tied to a competitor contract that lapses. Confirm it is real before this reaches a customer, or clear it and let the displacement carry the case on its own.`,
+              }
+            : null,
           {
             type: 'callout',
             tone: 'insight',
@@ -440,10 +625,10 @@ const INTENTS = [
             text: c.paybackMonths
               ? 'Costs start immediately, but each competitor saving only begins once its contract lapses.'
               : c.investmentTotal > 0
-                ? 'Not within the current horizon. Either the analysis period is too short for the contract end dates, or the SKU pricing needs revisiting.'
+                ? 'Not within the current horizon. Either the analysis period is too short for the contract end dates, or the pricing needs revisiting.'
                 : 'With nothing on the Microsoft side of the ledger there is no period to measure.',
           },
-        ],
+        ].filter(Boolean),
       };
     },
   },
@@ -544,7 +729,7 @@ const FALLBACKS = [
       {
         type: 'actions',
         items: [
-          { label: 'Which SKUs match the outcomes I selected?', kind: 'prompt' },
+          { label: 'Which products match the outcomes I selected?', kind: 'prompt' },
           { label: 'What are we displacing, and what is it worth?', kind: 'prompt' },
         ],
       },

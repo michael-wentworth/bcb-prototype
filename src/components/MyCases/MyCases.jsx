@@ -102,7 +102,7 @@ export default function MyCases() {
             button and the empty state shows none. */}
         {hasAnyCases ? (
           <Button appearance="primary" icon={<Add20Filled />} onClick={newCase}>
-            New business case
+            Create business case
           </Button>
         ) : null}
       </header>
@@ -287,7 +287,7 @@ function EmptyState({ query, onNew, onExamples, onOpenExample }) {
       </p>
       <div className={styles.emptyActions}>
         <Button appearance="primary" icon={<Add20Filled />} onClick={onNew}>
-          New business case
+          Create business case
         </Button>
         <Button appearance="secondary" icon={<Sparkle16Filled />} onClick={onOpenExample}>
           Open an example
