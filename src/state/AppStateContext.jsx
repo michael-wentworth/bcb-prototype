@@ -108,7 +108,7 @@ const initialState = {
   outcomes: [],
   skus: [],
   bundle: { bundleId: '', annualPerUser: '', additionalValue: '' },
-  competitors: { msrpDiscount: '', rows: [] },
+  competitors: { rows: [] },
 
   narrative: emptyNarrative(),
 
@@ -181,7 +181,6 @@ function reducer(state, action) {
         skus: (i.skus || []).map((s) => ({ ...s, authorship: AUTHORSHIP.MANUAL })),
         bundle: { ...initialState.bundle, ...i.bundle },
         competitors: {
-          msrpDiscount: i.competitors?.msrpDiscount ?? '',
           rows: (i.competitors?.rows || []).map((r) => ({ ...r, authorship: AUTHORSHIP.MANUAL })),
         },
         narrative: emptyNarrative(),
@@ -328,9 +327,6 @@ function reducer(state, action) {
     }
 
     /* ---------------------------- competitors ---------------------------- */
-    case 'SET_COMPETITOR_DISCOUNT':
-      return { ...state, competitors: { ...state.competitors, msrpDiscount: action.value } };
-
     case 'ADD_COMPETITOR_ROW':
       return humanTouch(
         {
@@ -655,7 +651,6 @@ export function AppStateProvider({ children }) {
         dispatch({ type: 'UPDATE_SKU_SEATS', id, index, value }),
       removeSkuRow: (id) => dispatch({ type: 'REMOVE_SKU_ROW', id }),
       setBundle: (key, value) => dispatch({ type: 'SET_BUNDLE', key, value }),
-      setCompetitorDiscount: (value) => dispatch({ type: 'SET_COMPETITOR_DISCOUNT', value }),
       addCompetitorRow: (seed) => dispatch({ type: 'ADD_COMPETITOR_ROW', seed }),
       updateCompetitorRow: (id, patch) => dispatch({ type: 'UPDATE_COMPETITOR_ROW', id, patch }),
       removeCompetitorRow: (id) => dispatch({ type: 'REMOVE_COMPETITOR_ROW', id }),

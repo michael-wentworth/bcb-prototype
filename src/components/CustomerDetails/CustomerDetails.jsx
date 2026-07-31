@@ -68,7 +68,6 @@ export default function CustomerDetails() {
     setEnvironment,
     setCaseSetup,
     setBundle,
-    setCompetitorDiscount,
     addCompetitorRow,
     ensureSkuRow,
     updateCompetitorRow,
@@ -468,7 +467,6 @@ export default function CustomerDetails() {
         years={years}
         businessCase={businessCase}
         onEnvironment={setEnvironment}
-        onDiscount={setCompetitorDiscount}
         onAdd={addCompetitorRow}
         onEnsureSku={ensureSkuRow}
         users={customer.numberOfUsers}
@@ -558,8 +556,7 @@ function CompetitiveEnvironment({
   years,
   businessCase,
   onEnvironment,
-  onDiscount,
-  onAdd,
+    onAdd,
   onEnsureSku,
   users,
   onUpdate,
@@ -631,25 +628,6 @@ function CompetitiveEnvironment({
           one that is not in our database — new competitors are saved to this customer account
           only.
         </p>
-      </div>
-
-      <div className={styles.grid}>
-
-        <FormField
-          label="What discount from competitor retail pricing (MSRP) does your customer receive?"
-          help="0 – 100 %"
-        >
-          {(id) => (
-            <Input
-              id={id}
-              value={competitors.msrpDiscount}
-              onChange={(_, d) => onDiscount(d.value)}
-              placeholder="0"
-              contentAfter="%"
-              className={styles.discountInput}
-            />
-          )}
-        </FormField>
       </div>
 
       <p className={styles.subHead}>Add a competitor product</p>
@@ -746,10 +724,12 @@ function CompetitiveEnvironment({
             <tr>
               <th scope="col">Current product</th>
               <th scope="col">Software solution</th>
-              {/* At MSRP, before the discount above. Step 2 reports the same rows
-                  net of that discount, which is the figure the model uses. */}
+              {/* What the customer actually pays for this contract, not list.
+                  There is no global discount field: vendor deals are negotiated
+                  one at a time, so a single blanket percentage across four
+                  vendors was a fiction the row can state properly itself. */}
               <th scope="col" className={styles.numeric}>
-                Competitor cost (MSRP)
+                Annual cost
               </th>
               <th scope="col">Year contract ends</th>
               <th scope="col">In horizon</th>

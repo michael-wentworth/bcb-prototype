@@ -25,7 +25,7 @@ const num = (v) => {
  * @param {number} input.numberOfUsers
  * @param {Array}  input.skus            [{ skuId, seats: number[], pricePerMonth }]
  * @param {object} input.bundle          { bundleId, annualPerUser, additionalValue }
- * @param {object} input.competitors     { msrpDiscount, rows: [...] }
+ * @param {object} input.competitors     { rows: [...] }
  */
 export function buildBusinessCase({
   analysisPeriod = 3,
@@ -62,14 +62,15 @@ export function buildBusinessCase({
   const additionalAnnual = num(bundle.additionalValue);
   const additionalTotal = additionalAnnual * years;
 
-  const discount = Math.min(100, Math.max(0, num(competitors.msrpDiscount))) / 100;
-
   /**
    * Each competitor row becomes an annual saving once its contract lapses.
    * `firstYear` is 1-based within the analysis horizon.
    */
   const competitorLines = (competitors.rows || []).map((row) => {
-    const annualCost = num(row.competitorCost) * (1 - discount);
+    // What the customer actually pays for this contract. There is no global
+    // discount to apply: vendor contracts are negotiated one at a time, so the
+    // row carries the real figure rather than a list price and a blanket cut.
+    const annualCost = num(row.competitorCost);
     const endYear = num(row.yearContractEnds) || CASE_START_YEAR;
     const offset = endYear - CASE_START_YEAR;
     const firstYear = Math.max(1, offset + 2); // pay until the contract ends

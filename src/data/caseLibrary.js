@@ -52,7 +52,6 @@ export const MY_CASES = [
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '432', additionalValue: '200000' },
       competitors: {
-        msrpDiscount: '',
         rows: [
           { id: 'c1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '1350000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
           { id: 'c1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '720000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
@@ -92,10 +91,9 @@ export const MY_CASES = [
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '400', additionalValue: '' },
       competitors: {
-        msrpDiscount: '15',
         rows: [
-          { id: 'c2r1', softwareSolution: 'Endpoint protection', currentProduct: 'SentinelOne Singularity', competitorCost: '640000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
-          { id: 'c2r2', softwareSolution: 'SIEM / SOC', currentProduct: 'IBM QRadar', competitorCost: '520000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
+          { id: 'c2r1', softwareSolution: 'Endpoint protection', currentProduct: 'SentinelOne Singularity', competitorCost: '544000', newMicrosoftProduct: 'Microsoft Defender for Endpoint P2', yearContractEnds: '2026' },
+          { id: 'c2r2', softwareSolution: 'SIEM / SOC', currentProduct: 'IBM QRadar', competitorCost: '442000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
         ],
       },
     },
@@ -130,10 +128,9 @@ export const MY_CASES = [
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '420', additionalValue: '150000' },
       competitors: {
-        msrpDiscount: '10',
         rows: [
-          { id: 'c3r1', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1180000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
-          { id: 'c3r2', softwareSolution: 'Privileged access', currentProduct: 'CyberArk', competitorCost: '460000', newMicrosoftProduct: 'Microsoft Entra Suite', yearContractEnds: '2027' },
+          { id: 'c3r1', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1062000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2026' },
+          { id: 'c3r2', softwareSolution: 'Privileged access', currentProduct: 'CyberArk', competitorCost: '414000', newMicrosoftProduct: 'Microsoft Entra Suite', yearContractEnds: '2027' },
         ],
       },
     },
@@ -178,12 +175,11 @@ export const EXAMPLE_CASES = [
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '432', additionalValue: '400000' },
       competitors: {
-        msrpDiscount: '20',
         rows: [
-          { id: 'e1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '2900000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
-          { id: 'e1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1600000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
-          { id: 'e1r3', softwareSolution: 'SIEM / SOC', currentProduct: 'Splunk Enterprise Security', competitorCost: '2100000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
-          { id: 'e1r4', softwareSolution: 'Data loss prevention', currentProduct: 'Symantec DLP', competitorCost: '780000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2027' },
+          { id: 'e1r1', softwareSolution: 'Endpoint protection', currentProduct: 'CrowdStrike Falcon', competitorCost: '2320000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
+          { id: 'e1r2', softwareSolution: 'Identity & access', currentProduct: 'Okta Workforce Identity', competitorCost: '1280000', newMicrosoftProduct: 'Microsoft 365 E5 Security', yearContractEnds: '2026' },
+          { id: 'e1r3', softwareSolution: 'SIEM / SOC', currentProduct: 'Splunk Enterprise Security', competitorCost: '1680000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
+          { id: 'e1r4', softwareSolution: 'Data loss prevention', currentProduct: 'Symantec DLP', competitorCost: '624000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2027' },
         ],
       },
     },
@@ -217,7 +213,6 @@ export const EXAMPLE_CASES = [
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '400', additionalValue: '60000' },
       competitors: {
-        msrpDiscount: '',
         rows: [
           { id: 'e2r1', softwareSolution: 'SIEM / SOC', currentProduct: 'Splunk Enterprise Security', competitorCost: '310000', newMicrosoftProduct: 'Microsoft Sentinel', yearContractEnds: '2026' },
         ],
@@ -253,10 +248,9 @@ export const EXAMPLE_CASES = [
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '432', additionalValue: '300000' },
       competitors: {
-        msrpDiscount: '10',
         rows: [
-          { id: 'e3r1', softwareSolution: 'Data loss prevention', currentProduct: 'Symantec DLP', competitorCost: '1450000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2026' },
-          { id: 'e3r2', softwareSolution: 'Identity & access', currentProduct: 'Ping Identity', competitorCost: '890000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2027' },
+          { id: 'e3r1', softwareSolution: 'Data loss prevention', currentProduct: 'Symantec DLP', competitorCost: '1305000', newMicrosoftProduct: 'Microsoft Purview', yearContractEnds: '2026' },
+          { id: 'e3r2', softwareSolution: 'Identity & access', currentProduct: 'Ping Identity', competitorCost: '801000', newMicrosoftProduct: 'Microsoft Entra ID P2', yearContractEnds: '2027' },
         ],
       },
     },

@@ -276,8 +276,6 @@ export default function CustomerReport() {
                 <dd>{currency}</dd>
               </div>
               <div className={styles.assumption}>
-                <dt>Competitor MSRP discount</dt>
-                <dd>{Number(competitors.msrpDiscount) || 0}%</dd>
               </div>
               <div className={styles.assumption}>
                 <dt>Current bundle</dt>

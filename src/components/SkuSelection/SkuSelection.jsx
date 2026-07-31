@@ -407,7 +407,6 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
   const anyOption = displacementOptions(skus).all;
   const annualSpend = (r) => lineFor(r.id)?.annualCost ?? (Number(r.competitorCost) || 0);
   const mappedSpend = mapped.reduce((sum, r) => sum + annualSpend(r), 0);
-  const discounted = Number(competitors.msrpDiscount) > 0;
 
   return (
     <Card className={styles.card}>
@@ -450,7 +449,6 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
               <span className={styles.statValue}>{formatCurrency(mappedSpend, { symbol })}</span>
               <span className={styles.statLabel}>
                 annual competitor spend those mappings carry
-                {discounted ? `, net of the ${competitors.msrpDiscount}% MSRP discount` : ''}
               </span>
             </div>
           </div>
