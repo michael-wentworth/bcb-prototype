@@ -71,7 +71,12 @@ function Masthead({ onStart, onOpen }) {
             </p>
           </div>
           <div className={styles.mastheadActions}>
-            <Button appearance="primary" icon={<Add20Filled />} onClick={onStart}>
+            <Button
+              appearance="primary"
+              size="large"
+              icon={<Add20Filled />}
+              onClick={onStart}
+            >
               Build your own case
             </Button>
             <button type="button" className={styles.textLink} onClick={onOpen}>

@@ -35,10 +35,19 @@
 
 /* --------------------------------- masthead -------------------------------- */
 
+/* Its own ground, and the reason this strip was being skipped: it was
+   colorNeutralBackground1, the same white as the result band under it and the
+   nav above it, separated by a hairline. Three white bands stacked read as one
+   block, and inside one block the eye goes to the largest thing — the 46px
+   headline — straight past the only way into the product. A tint is enough to
+   make it a place rather than a seam. It is deliberately the palest brand step:
+   the complaint about the version before this one was a saturated field
+   DROWNING the call to action, so the ground stays quiet and the button is the
+   only saturated thing on it. */
 .masthead {
-  background-color: var(--colorNeutralBackground1);
-  border-bottom: 1px solid var(--colorNeutralStroke2);
-  padding: var(--spacingVerticalXL) 0;
+  background-color: var(--colorBrandBackground2);
+  border-bottom: 1px solid var(--colorBrandStroke2);
+  padding: var(--spacingVerticalXXL) 0;
 }
 
 .mastheadRow {
@@ -70,7 +79,7 @@
 .mastheadActions {
   display: flex;
   align-items: center;
-  gap: var(--spacingHorizontalL);
+  gap: var(--spacingHorizontalXL);
   flex: none;
 }
 
