@@ -14,7 +14,12 @@ import {
   Option,
   OptionGroup,
 } from '@fluentui/react-components';
-import { Add16Filled, Delete16Regular, Sparkle16Filled } from '@fluentui/react-icons';
+import {
+  Add16Filled,
+  Checkmark16Regular,
+  Delete16Regular,
+  Sparkle16Filled,
+} from '@fluentui/react-icons';
 import {
   COMPETITOR_MATRIX,
   MICROSOFT_SKUS,
@@ -51,6 +56,7 @@ export default function SkuSelection() {
     toggleOutcome,
     setAllOutcomes,
     addSkuRow,
+    ensureSkuRow,
     updateSkuRow,
     updateSkuSeats,
     removeSkuRow,
@@ -60,7 +66,6 @@ export default function SkuSelection() {
   } = useAppState();
 
   const symbol = currencySymbol(currency);
-  const allSelected = outcomes.length === SECURITY_OUTCOMES.length;
 
   return (
     <div className={styles.root}>
@@ -68,41 +73,16 @@ export default function SkuSelection() {
         description="The solution you are proposing: the outcomes it has to serve, the SKUs that serve them, and the vendors each one replaces."
       />
 
-      {/* ---------------------------- Outcomes ---------------------------- */}
-      <Card className={styles.card}>
-        <div className={styles.cardHead}>
-          <div>
-            <h2 className={styles.cardTitle}>
-              What security outcomes is the customer trying to achieve?
-            </h2>
-          </div>
-          <Checkbox
-            checked={allSelected}
-            onChange={(_, d) => setAllOutcomes(d.checked ? SECURITY_OUTCOMES.map((o) => o.id) : [])}
-            label="Select all"
-            labelPosition="before"
-          />
-        </div>
-
-        <div className={styles.outcomeGrid}>
-          {SECURITY_OUTCOMES.map((o) => (
-            <label
-              key={o.id}
-              className={`${styles.outcome} ${outcomes.includes(o.id) ? styles.outcomeOn : ''}`}
-            >
-              <Checkbox
-                checked={outcomes.includes(o.id)}
-                onChange={() => toggleOutcome(o.id)}
-                aria-label={o.label}
-              />
-              <span className={styles.outcomeBody}>
-                <span className={styles.outcomeLabel}>{o.label}</span>
-                <span className={styles.outcomeDetail}>{o.detail}</span>
-              </span>
-            </label>
-          ))}
-        </div>
-      </Card>
+      {/* ---------------------- Outcomes and coverage ---------------------- */}
+      <Outcomes
+        outcomes={outcomes}
+        skus={skus}
+        users={customer.numberOfUsers}
+        onToggle={toggleOutcome}
+        onSetAll={setAllOutcomes}
+        onEnsureSku={ensureSkuRow}
+        onAsk={ask}
+      />
 
       {/* ------------------------------ SKUs ------------------------------ */}
       <Card className={styles.card}>
@@ -255,7 +235,6 @@ export default function SkuSelection() {
       </Card>
 
       {/* -------------------- Why this recommendation --------------------- */}
-      <Rationale outcomes={outcomes} skus={skus} onAsk={ask} />
 
       {/* ---------------------- Competitive displacement ------------------ */}
       <CompetitiveDisplacement
@@ -282,7 +261,21 @@ export default function SkuSelection() {
  * SKUs actually chosen gives both halves of the argument: which outcomes the
  * proposal covers, and which it does not cover yet.
  */
-function Rationale({ outcomes, skus, onAsk }) {
+/**
+ * Outcomes, and whether the proposal actually covers them.
+ *
+ * These were two cards: a grid of checkboxes, and a read-only "Why this
+ * recommendation" further down that echoed the same selections back. That echo
+ * announced it had "nothing to fill in", which is the tell — it sat between the
+ * seller and the thing they needed to do, and the thing they needed to do was
+ * scroll elsewhere and add a SKU by hand.
+ *
+ * Now one card answers one question: what does the customer want, and is
+ * anything in the proposal delivering it. A gap is a button, not a sentence.
+ */
+function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAsk }) {
+  const allSelected = outcomes.length === SECURITY_OUTCOMES.length;
+
   const chosenIds = useMemo(
     () => Array.from(new Set(skus.map((r) => r.skuId).filter(Boolean))),
     [skus],
@@ -313,54 +306,90 @@ function Rationale({ outcomes, skus, onAsk }) {
     [chosenIds, selected],
   );
 
-  const missing =
-    selected.length === 0 && chosenIds.length === 0
-      ? 'Select the security outcomes above, then add the SKUs you are proposing. This card writes itself once both are in.'
-      : selected.length === 0
-        ? 'No security outcomes are selected yet. Pick the outcomes this proposal has to serve and each SKU below will be tied back to one.'
-        : chosenIds.length === 0
-          ? 'No Microsoft SKU has been chosen yet. Add at least one to the recommended solution above and it will be matched to the outcomes you selected.'
-          : null;
+  const covered = lines.filter((l) => l.served.length > 0).length;
+
+  const add = (sku) =>
+    onEnsureSku(
+      {
+        skuId: sku.id,
+        solutionArea: sku.solutionArea,
+        solutionPlay: sku.solutionPlay,
+        pricePerMonth: String(sku.listPrice ?? ''),
+      },
+      users,
+    );
 
   return (
     <Card className={styles.card}>
       <div className={styles.cardHead}>
         <div>
-          <h2 className={styles.cardTitle}>Why this recommendation</h2>
-          <p className={styles.cardLead}>
-            Every outcome the customer named, and the products in the proposal that answer it. This
-            is derived from your selections above — there is nothing to fill in here.
-          </p>
+          <h2 className={styles.cardTitle}>
+            What security outcomes is the customer trying to achieve?
+          </h2>
         </div>
+        <Checkbox
+          checked={allSelected}
+          onChange={(_, d) => onSetAll(d.checked ? SECURITY_OUTCOMES.map((o) => o.id) : [])}
+          label="Select all"
+          labelPosition="before"
+        />
       </div>
 
-      {missing ? (
-        <p className={styles.emptyNote}>{missing}</p>
-      ) : (
-        <>
-          <ul className={styles.rationaleList}>
+      <div className={styles.outcomeGrid}>
+        {SECURITY_OUTCOMES.map((o) => (
+          <label
+            key={o.id}
+            className={`${styles.outcome} ${outcomes.includes(o.id) ? styles.outcomeOn : ''}`}
+          >
+            <Checkbox
+              checked={outcomes.includes(o.id)}
+              onChange={() => onToggle(o.id)}
+              aria-label={o.label}
+            />
+            <span className={styles.outcomeBody}>
+              <span className={styles.outcomeLabel}>{o.label}</span>
+              <span className={styles.outcomeDetail}>{o.detail}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+
+      {selected.length > 0 ? (
+        <div className={styles.coverage}>
+          <p className={styles.coverageHead}>
+            {covered === selected.length
+              ? `${selected.length} selected outcome${selected.length === 1 ? " is" : "s are"} covered by a product in the proposal.`
+              : `${covered} of ${selected.length} selected outcomes covered. Add a product for the rest.`}
+          </p>
+
+          <ul className={styles.coverageList}>
             {lines.map((line) => (
-              <li key={line.id} className={styles.rationaleRow}>
-                <div className={styles.rationaleOutcome}>
-                  <span className={styles.rationaleLabel}>{line.label}</span>
-                  <span className={styles.rationaleDetail}>{line.detail}</span>
-                </div>
-                <div className={styles.rationaleSkus}>
-                  {line.served.length > 0 ? (
-                    line.served.map((s) => (
-                      <span key={s.id} className={styles.chip}>
-                        {s.name}
-                      </span>
-                    ))
-                  ) : (
-                    <span className={styles.rationaleGap}>
-                      Nothing in the proposal covers this yet
-                      {line.suggested.length > 0
-                        ? ` — ${line.suggested.map((s) => s.name).join(' or ')} would serve it.`
-                        : '.'}
+              <li key={line.id} className={styles.coverageRow}>
+                <span className={styles.coverageOutcome}>{line.label}</span>
+                <span className={styles.coverageSkus}>
+                  {line.served.map((sku) => (
+                    <span key={sku.id} className={styles.coveredChip}>
+                      <Checkmark16Regular aria-hidden="true" />
+                      {sku.name}
                     </span>
-                  )}
-                </div>
+                  ))}
+                  {line.served.length === 0 && line.suggested.length === 0 ? (
+                    <span className={styles.coverageGap}>Nothing in the catalogue covers this.</span>
+                  ) : null}
+                  {line.served.length === 0
+                    ? line.suggested.map((sku) => (
+                        <Button
+                          key={sku.id}
+                          size="small"
+                          appearance="secondary"
+                          icon={<Add16Filled />}
+                          onClick={() => add(sku)}
+                        >
+                          {sku.name}
+                        </Button>
+                      ))
+                    : null}
+                </span>
               </li>
             ))}
           </ul>
@@ -373,18 +402,23 @@ function Rationale({ outcomes, skus, onAsk }) {
               its own.
             </p>
           ) : null}
-        </>
-      )}
 
-      <div className={styles.rowActions}>
-        <Button
-          appearance="transparent"
-          icon={<Sparkle16Filled className={styles.aiIcon} />}
-          onClick={() => onAsk('Explain why these SKUs fit the outcomes I selected')}
-        >
-          Explain the fit
-        </Button>
-      </div>
+          <div className={styles.rowActions}>
+            <Button
+              appearance="transparent"
+              icon={<Sparkle16Filled className={styles.aiIcon} />}
+              onClick={() => onAsk('Explain why these SKUs fit the outcomes I selected')}
+            >
+              Explain the fit
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <p className={styles.emptyNote}>
+          Pick the outcomes this proposal has to serve. Each one will show the Microsoft product
+          that delivers it, and you can add it here.
+        </p>
+      )}
     </Card>
   );
 }

@@ -365,3 +365,74 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ------------------------- outcome coverage ------------------------------- */
+
+/* Sits under the checkbox grid in the same card: pick an outcome above, see
+   whether anything delivers it here. Separated by a rule rather than a second
+   card, because it is the same question continued, not a new one. */
+.coverage {
+  margin-top: var(--spacingVerticalXL);
+  padding-top: var(--spacingVerticalL);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+
+.coverageHead {
+  margin: 0 0 var(--spacingVerticalM);
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.coverageList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coverageRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: var(--spacingHorizontalL);
+  align-items: center;
+  padding: var(--spacingVerticalS) 0;
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+}
+
+.coverageRow:last-child {
+  border-bottom: none;
+}
+
+.coverageOutcome {
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground1);
+}
+
+.coverageSkus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+}
+
+/* Covered reads as settled, so it is a quiet chip rather than a control. An
+   uncovered outcome renders a real button beside it — the difference in weight
+   is the point: one is done, the other is the next action. */
+.coveredChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorPaletteGreenBackground1);
+  font-size: var(--fontSizeBase200);
+  color: var(--colorPaletteGreenForeground1);
+}
+
+.coverageGap {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
