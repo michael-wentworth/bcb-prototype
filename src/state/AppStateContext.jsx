@@ -48,7 +48,6 @@ const emptyCustomer = {
 const emptyEnvironment = {
   existingLicenses: [],
   competitorProducts: [],
-  securityStack: [],
   sellerAlias: CURRENT_USER_ALIAS,
 };
 

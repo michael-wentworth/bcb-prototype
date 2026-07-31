@@ -103,38 +103,6 @@ export const EXISTING_MS_LICENSES = [
   'None / Not standardised',
 ];
 
-export const SECURITY_STACK_CATEGORIES = [
-  'Endpoint protection (EDR/EPP)',
-  'Identity & access management',
-  'SIEM / Security analytics',
-  'Email & collaboration security',
-  'Cloud security posture (CSPM)',
-  'Data loss prevention',
-  'Privileged access management',
-  'Network / SASE',
-  'Vulnerability management',
-  'Security awareness training',
-];
-
-/** Known competitor products and the category each one sits in. */
-export const COMPETITOR_CATALOG = [
-  { name: 'CrowdStrike Falcon', category: 'Endpoint protection (EDR/EPP)' },
-  { name: 'SentinelOne Singularity', category: 'Endpoint protection (EDR/EPP)' },
-  { name: 'Okta Workforce Identity', category: 'Identity & access management' },
-  { name: 'Ping Identity', category: 'Identity & access management' },
-  { name: 'Splunk Enterprise Security', category: 'SIEM / Security analytics' },
-  { name: 'IBM QRadar', category: 'SIEM / Security analytics' },
-  { name: 'Proofpoint Email Protection', category: 'Email & collaboration security' },
-  { name: 'Mimecast', category: 'Email & collaboration security' },
-  { name: 'Wiz', category: 'Cloud security posture (CSPM)' },
-  { name: 'Palo Alto Prisma Cloud', category: 'Cloud security posture (CSPM)' },
-  { name: 'Symantec DLP', category: 'Data loss prevention' },
-  { name: 'CyberArk', category: 'Privileged access management' },
-  { name: 'Zscaler', category: 'Network / SASE' },
-  { name: 'Tenable', category: 'Vulnerability management' },
-  { name: 'KnowBe4', category: 'Security awareness training' },
-];
-
 /* ---------------------------- Security outcomes ---------------------------- */
 
 /**

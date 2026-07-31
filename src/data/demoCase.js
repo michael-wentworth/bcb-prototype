@@ -71,7 +71,6 @@ export const DEMO_EXTRACTION = {
 
   environment: {
     existingLicenses: ['Microsoft 365 E3'],
-    securityStack: ['Endpoint protection (EDR/EPP)', 'Identity & access management'],
     competitorProducts: ['CrowdStrike Falcon', 'Okta Workforce Identity'],
   },
 

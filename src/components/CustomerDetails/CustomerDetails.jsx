@@ -32,7 +32,6 @@ import {
   INDUSTRIES,
   MS_BUNDLES,
   SALES_MOTIONS,
-  SECURITY_STACK_CATEGORIES,
   SOFTWARE_SOLUTIONS,
   currencySymbol,
 } from '../../data/referenceData.js';
@@ -608,20 +607,6 @@ function CompetitiveEnvironment({
       </div>
 
       <div className={styles.grid}>
-        <FormField
-          label="Current security stack"
-                    help="Drives competitive displacement recommendations"
-        >
-          {(id) => (
-            <MultiSelect
-              id={id}
-              options={SECURITY_STACK_CATEGORIES}
-              selected={environment.securityStack}
-              onChange={(v) => onEnvironment('securityStack', v)}
-              placeholder="Search security stack category"
-            />
-          )}
-        </FormField>
 
         <FormField
           label="What discount from competitor retail pricing (MSRP) does your customer receive?"
