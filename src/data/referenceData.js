@@ -116,19 +116,50 @@ export const EXISTING_MS_LICENSES = [
  * a SKU never silently blanks a mapping that was already made — the seller sees
  * the stale value and can change it.
  */
-export function displacementOptions(skuRows = [], current = '') {
+export function displacementOptions(skuRows = [], current = '', solution = '') {
   const names = new Set();
+  const ids = new Set();
   (skuRows || []).forEach((row) => {
     const sku = MICROSOFT_SKUS.find((s) => s.id === row.skuId);
     if (!sku) return;
     names.add(sku.name);
+    ids.add(sku.id);
     (sku.includes || []).forEach((id) => {
       const part = MICROSOFT_SKUS.find((s) => s.id === id);
-      if (part) names.add(part.name);
+      if (part) {
+        names.add(part.name);
+        ids.add(part.id);
+      }
     });
   });
   if (current) names.add(current);
-  return [...names].sort((a, b) => a.localeCompare(b));
+
+  // Which Microsoft products actually serve this competitor's capability. The
+  // catalogue already records one per competitor product, so the answer is
+  // derived rather than a second table to keep in step.
+  const canonical = new Set(
+    COMPETITOR_CATALOGUE.filter((c) => c.solution === solution).map((c) => c.microsoft),
+  );
+  // A suite serves the capability if any of its parts do — buying Microsoft 365
+  // E5 Security is how most estates retire a point endpoint product.
+  const serves = (name) => {
+    if (canonical.has(name)) return true;
+    const sku = MICROSOFT_SKUS.find((s) => s.name === name);
+    return (sku?.includes || []).some((id) => {
+      const part = MICROSOFT_SKUS.find((s) => s.id === id);
+      return part && canonical.has(part.name);
+    });
+  };
+
+  const all = [...names].sort((a, b) => a.localeCompare(b));
+  // Not a filter. A seller can have a reason to map a displacement we did not
+  // anticipate, so everything the case buys stays selectable — the split only
+  // says which ones are the obvious answer.
+  return {
+    matched: solution ? all.filter(serves) : [],
+    other: solution ? all.filter((n) => !serves(n)) : all,
+    all,
+  };
 }
 
 /* ---------------------------- Security outcomes ---------------------------- */

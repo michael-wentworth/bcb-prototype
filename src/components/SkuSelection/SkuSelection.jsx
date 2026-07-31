@@ -12,6 +12,7 @@ import {
   Dropdown,
   Input,
   Option,
+  OptionGroup,
 } from '@fluentui/react-components';
 import { Add16Filled, Delete16Regular, Sparkle16Filled } from '@fluentui/react-icons';
 import {
@@ -403,7 +404,7 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
   const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
 
   const mapped = rows.filter((r) => (r.newMicrosoftProduct || '').trim());
-  const options = displacementOptions(skus);
+  const anyOption = displacementOptions(skus).all;
   const annualSpend = (r) => lineFor(r.id)?.annualCost ?? (Number(r.competitorCost) || 0);
   const mappedSpend = mapped.reduce((sum, r) => sum + annualSpend(r), 0);
   const discounted = Number(competitors.msrpDiscount) > 0;
@@ -482,14 +483,19 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
                             Offering the whole catalogue let a seller claim a
                             displacement by a product the case never pays for,
                             which books the competitor saving with no matching
-                            Microsoft cost. Not freeform, for the same reason. */}
+                            Microsoft cost. Not freeform, for the same reason.
+
+                            Grouped, not filtered: the products that serve this
+                            competitor's capability come first, and the rest stay
+                            selectable because a seller can have a reason we did
+                            not anticipate. */}
                         <Combobox
                           placeholder={
-                            options.length
+                            anyOption.length
                               ? 'Select a Microsoft product'
                               : 'Add a Microsoft product above first'
                           }
-                          disabled={options.length === 0}
+                          disabled={anyOption.length === 0}
                           aria-label={`Microsoft product replacing ${r.currentProduct}`}
                           value={r.newMicrosoftProduct}
                           selectedOptions={
@@ -500,11 +506,40 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
                           }
                           className={styles.mapInput}
                         >
-                          {displacementOptions(skus, r.newMicrosoftProduct).map((name) => (
-                            <Option key={name} value={name}>
-                              {name}
-                            </Option>
-                          ))}
+                          {(() => {
+                            const o = displacementOptions(
+                              skus,
+                              r.newMicrosoftProduct,
+                              r.softwareSolution,
+                            );
+                            if (!o.matched.length) {
+                              return o.all.map((name) => (
+                                <Option key={name} value={name}>
+                                  {name}
+                                </Option>
+                              ));
+                            }
+                            return (
+                              <>
+                                <OptionGroup label={`Serves ${r.softwareSolution.toLowerCase()}`}>
+                                  {o.matched.map((name) => (
+                                    <Option key={name} value={name}>
+                                      {name}
+                                    </Option>
+                                  ))}
+                                </OptionGroup>
+                                {o.other.length ? (
+                                  <OptionGroup label="Also in this case">
+                                    {o.other.map((name) => (
+                                      <Option key={name} value={name}>
+                                        {name}
+                                      </Option>
+                                    ))}
+                                  </OptionGroup>
+                                ) : null}
+                              </>
+                            );
+                          })()}
                         </Combobox>
                       </td>
                     </tr>
