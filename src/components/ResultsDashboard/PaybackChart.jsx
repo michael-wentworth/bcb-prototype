@@ -180,9 +180,14 @@ export default function PaybackChart({ cashflow, paybackMonths, symbol = 'US$' }
                   r={4.5}
                   className={styles.marker}
                 />
+                {/* Below the zero line, not above it. Breakeven is by definition
+                    the point where the cumulative is ~0, so the label sat on the
+                    $0 gridline and was clipped by the line and the area fill
+                    crossing it. Everything below zero at this x is empty plot —
+                    the negative fill is all to the left of the crossing. */}
                 <text
                   x={x(breakeven.month) + 10}
-                  y={y(breakeven.cumulative) - 10}
+                  y={y(breakeven.cumulative) + 20}
                   className={styles.markerLabel}
                 >
                   Breakeven · month {breakeven.month}
