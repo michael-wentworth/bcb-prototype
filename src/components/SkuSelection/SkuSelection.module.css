@@ -333,13 +333,6 @@
   border-top: 1px solid var(--colorNeutralStroke2);
 }
 
-.coverageHead {
-  margin: 0 0 var(--spacingVerticalM);
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
 .coverageRow:last-child {
   border-bottom: none;
 }

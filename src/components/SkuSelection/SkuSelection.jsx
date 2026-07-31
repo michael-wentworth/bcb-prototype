@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import {
   Button,
   Card,
-  Checkbox,
   Combobox,
   Dialog,
   DialogBody,
@@ -55,7 +54,6 @@ export default function SkuSelection() {
     currency,
     businessCase,
     toggleOutcome,
-    setAllOutcomes,
     addSkuRow,
     ensureSkuRow,
     updateSkuRow,
@@ -80,7 +78,6 @@ export default function SkuSelection() {
         skus={skus}
         users={customer.numberOfUsers}
         onToggle={toggleOutcome}
-        onSetAll={setAllOutcomes}
         onEnsureSku={ensureSkuRow}
         onAsk={ask}
       />
@@ -274,8 +271,7 @@ export default function SkuSelection() {
  * Now one card answers one question: what does the customer want, and is
  * anything in the proposal delivering it. A gap is a button, not a sentence.
  */
-function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAsk }) {
-  const allSelected = outcomes.length === SECURITY_OUTCOMES.length;
+function Outcomes({ outcomes, skus, users, onToggle, onEnsureSku, onAsk }) {
 
   const chosenIds = useMemo(
     () => Array.from(new Set(skus.map((r) => r.skuId).filter(Boolean))),
@@ -297,18 +293,8 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
     [selected, chosenIds],
   );
 
-  // A SKU nobody asked for still costs money — worth naming rather than hiding.
-  const unattached = useMemo(
-    () =>
-      chosenIds
-        .filter((id) => !selected.some((o) => o.implies.includes(id)))
-        .map(skuById)
-        .filter(Boolean),
-    [chosenIds, selected],
-  );
 
   const available = SECURITY_OUTCOMES.filter((o) => !outcomes.includes(o.id));
-  const covered = lines.filter((l) => l.served.length > 0).length;
 
   const add = (sku) =>
     onEnsureSku(
@@ -330,15 +316,9 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
           </h2>
           <p className={styles.cardLead}>
             Pick the outcomes this proposal has to serve. Each one shows the Microsoft product
-            that delivers it, so a gap is something you can close here.
+            that delivers it.
           </p>
         </div>
-        <Checkbox
-          checked={allSelected}
-          onChange={(_, d) => onSetAll(d.checked ? SECURITY_OUTCOMES.map((o) => o.id) : [])}
-          label="Select all"
-          labelPosition="before"
-        />
       </div>
 
       {/* One pill per outcome not yet chosen. A pill is small enough that all
@@ -367,11 +347,6 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
 
       {selected.length > 0 ? (
         <div className={styles.coverage}>
-          <p className={styles.coverageHead}>
-            {covered === selected.length
-              ? `${selected.length} selected outcome${selected.length === 1 ? " is" : "s are"} covered by a product in the proposal.`
-              : `${covered} of ${selected.length} selected outcomes covered. Add a product for the rest.`}
-          </p>
 
           <div className={styles.tableWrap}>
             <table className={styles.table}>
@@ -430,14 +405,6 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
             </table>
           </div>
 
-          {unattached.length > 0 ? (
-            <p className={styles.emptyNote}>
-              {unattached.map((s) => s.name).join(', ')}{' '}
-              {unattached.length === 1 ? 'is' : 'are'} in the proposal but not tied to any outcome
-              the customer named. Either select the outcome it serves, or be ready to justify it on
-              its own.
-            </p>
-          ) : null}
 
           <div className={styles.rowActions}>
             <Button
@@ -449,11 +416,7 @@ function Outcomes({ outcomes, skus, users, onToggle, onSetAll, onEnsureSku, onAs
             </Button>
           </div>
         </div>
-      ) : (
-        <p className={styles.emptyNote}>
-          No outcomes yet. Pick the ones this proposal has to serve from the list above.
-        </p>
-      )}
+      ) : null}
     </Card>
   );
 }
