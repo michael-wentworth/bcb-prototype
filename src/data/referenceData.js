@@ -354,6 +354,80 @@ export const COMPETITOR_MATRIX = [
   { solution: 'Vulnerability management', competitors: 'Tenable, Qualys, Rapid7', microsoft: 'Microsoft Defender Vulnerability Management' },
 ];
 
+/**
+ * Product-level competitor catalogue, behind the search box and the matrix
+ * picker on the Competitive environment card.
+ *
+ * `annualCost` is an INDICATIVE list figure at MSRP for an estate of this size,
+ * used to prefill a row so a seller starts from something rather than a blank
+ * field. It is a prototype default, not a quoted price, and the seller is
+ * expected to overwrite it with what the customer actually pays — the model
+ * reads whatever ends up in the row, never this table.
+ *
+ * Naming competitors here is appropriate in a way it is not on the public
+ * landing page: this is a seller working a specific deal and recording the
+ * incumbent they are displacing, not Microsoft publishing a claim about a
+ * rival's pricing.
+ */
+export const COMPETITOR_CATALOGUE = [
+  { id: 'cp01', solution: 'Endpoint protection', product: 'CrowdStrike Falcon', annualCost: 1350000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp02', solution: 'Endpoint protection', product: 'SentinelOne Singularity', annualCost: 980000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp03', solution: 'Endpoint protection', product: 'Trellix Endpoint Security', annualCost: 640000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp04', solution: 'Endpoint protection', product: 'Sophos Intercept X', annualCost: 420000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp05', solution: 'Endpoint protection', product: 'Trend Micro Apex One', annualCost: 510000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp06', solution: 'Endpoint protection', product: 'Symantec Endpoint Protection', annualCost: 720000, licenseType: 'Perpetual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp07', solution: 'Endpoint protection', product: 'Cybereason Defense Platform', annualCost: 560000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp08', solution: 'Endpoint protection', product: 'VMware Carbon Black', annualCost: 480000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Endpoint P2' },
+  { id: 'cp09', solution: 'Identity & access', product: 'Okta Workforce Identity', annualCost: 720000, licenseType: 'Annual', microsoft: 'Microsoft Entra ID P2' },
+  { id: 'cp10', solution: 'Identity & access', product: 'Ping Identity PingOne', annualCost: 540000, licenseType: 'Annual', microsoft: 'Microsoft Entra ID P2' },
+  { id: 'cp11', solution: 'Identity & access', product: 'ForgeRock Identity Platform', annualCost: 610000, licenseType: 'Annual', microsoft: 'Microsoft Entra ID P2' },
+  { id: 'cp12', solution: 'Identity & access', product: 'OneLogin Workforce', annualCost: 290000, licenseType: 'Monthly', microsoft: 'Microsoft Entra ID P2' },
+  { id: 'cp13', solution: 'Identity & access', product: 'Duo Security MFA', annualCost: 190000, licenseType: 'Monthly', microsoft: 'Microsoft Entra ID P2' },
+  { id: 'cp14', solution: 'Identity & access', product: 'SailPoint IdentityNow', annualCost: 830000, licenseType: 'Annual', microsoft: 'Microsoft Entra ID P2' },
+  { id: 'cp15', solution: 'Identity & access', product: 'IBM Security Verify', annualCost: 470000, licenseType: 'Annual', microsoft: 'Microsoft Entra ID P2' },
+  { id: 'cp16', solution: 'SIEM / SOC', product: 'Splunk Enterprise Security', annualCost: 980000, licenseType: 'Annual', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp17', solution: 'SIEM / SOC', product: 'IBM QRadar SIEM', annualCost: 760000, licenseType: 'Annual', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp18', solution: 'SIEM / SOC', product: 'Google Chronicle SecOps', annualCost: 690000, licenseType: 'Annual', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp19', solution: 'SIEM / SOC', product: 'Sumo Logic Cloud SIEM', annualCost: 410000, licenseType: 'Monthly', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp20', solution: 'SIEM / SOC', product: 'Exabeam Fusion', annualCost: 580000, licenseType: 'Annual', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp21', solution: 'SIEM / SOC', product: 'LogRhythm Axon', annualCost: 440000, licenseType: 'Annual', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp22', solution: 'SIEM / SOC', product: 'Rapid7 InsightIDR', annualCost: 360000, licenseType: 'Annual', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp23', solution: 'SIEM / SOC', product: 'Securonix Unified Defense', annualCost: 520000, licenseType: 'Annual', microsoft: 'Microsoft Sentinel' },
+  { id: 'cp24', solution: 'Email security', product: 'Proofpoint Email Protection', annualCost: 410000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Office 365 P2' },
+  { id: 'cp25', solution: 'Email security', product: 'Mimecast Email Security', annualCost: 280000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Office 365 P2' },
+  { id: 'cp26', solution: 'Email security', product: 'Abnormal Security', annualCost: 320000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Office 365 P2' },
+  { id: 'cp27', solution: 'Email security', product: 'Barracuda Email Protection', annualCost: 150000, licenseType: 'Monthly', microsoft: 'Microsoft Defender for Office 365 P2' },
+  { id: 'cp28', solution: 'Email security', product: 'Cisco Secure Email', annualCost: 240000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Office 365 P2' },
+  { id: 'cp29', solution: 'Cloud security', product: 'Wiz CNAPP', annualCost: 890000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Cloud' },
+  { id: 'cp30', solution: 'Cloud security', product: 'Palo Alto Prisma Cloud', annualCost: 760000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Cloud' },
+  { id: 'cp31', solution: 'Cloud security', product: 'Orca Security', annualCost: 540000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Cloud' },
+  { id: 'cp32', solution: 'Cloud security', product: 'Lacework Polygraph', annualCost: 470000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Cloud' },
+  { id: 'cp33', solution: 'Cloud security', product: 'Aqua Security Platform', annualCost: 380000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Cloud' },
+  { id: 'cp34', solution: 'Cloud security', product: 'Check Point CloudGuard', annualCost: 420000, licenseType: 'Annual', microsoft: 'Microsoft Defender for Cloud' },
+  { id: 'cp35', solution: 'Data loss prevention', product: 'Symantec DLP', annualCost: 780000, licenseType: 'Perpetual', microsoft: 'Microsoft Purview' },
+  { id: 'cp36', solution: 'Data loss prevention', product: 'Forcepoint DLP', annualCost: 520000, licenseType: 'Annual', microsoft: 'Microsoft Purview' },
+  { id: 'cp37', solution: 'Data loss prevention', product: 'Digital Guardian', annualCost: 460000, licenseType: 'Annual', microsoft: 'Microsoft Purview' },
+  { id: 'cp38', solution: 'Data loss prevention', product: 'Netskope DLP', annualCost: 390000, licenseType: 'Monthly', microsoft: 'Microsoft Purview' },
+  { id: 'cp39', solution: 'Data loss prevention', product: 'Trellix DLP', annualCost: 340000, licenseType: 'Annual', microsoft: 'Microsoft Purview' },
+  { id: 'cp40', solution: 'Privileged access', product: 'CyberArk Privilege Cloud', annualCost: 640000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp41', solution: 'Privileged access', product: 'Delinea Secret Server', annualCost: 310000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp42', solution: 'Privileged access', product: 'BeyondTrust Password Safe', annualCost: 380000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp43', solution: 'Privileged access', product: 'One Identity Safeguard', annualCost: 290000, licenseType: 'Annual', microsoft: 'Microsoft Entra Suite' },
+  { id: 'cp44', solution: 'Network / SASE', product: 'Zscaler Internet Access', annualCost: 950000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
+  { id: 'cp45', solution: 'Network / SASE', product: 'Netskope Intelligent SSE', annualCost: 720000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
+  { id: 'cp46', solution: 'Network / SASE', product: 'Palo Alto Prisma Access', annualCost: 810000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
+  { id: 'cp47', solution: 'Network / SASE', product: 'Cato Networks SASE', annualCost: 480000, licenseType: 'Monthly', microsoft: 'Microsoft Entra Internet Access' },
+  { id: 'cp48', solution: 'Network / SASE', product: 'Cloudflare One', annualCost: 360000, licenseType: 'Monthly', microsoft: 'Microsoft Entra Internet Access' },
+  { id: 'cp49', solution: 'Network / SASE', product: 'Fortinet FortiSASE', annualCost: 430000, licenseType: 'Annual', microsoft: 'Microsoft Entra Internet Access' },
+  { id: 'cp50', solution: 'Vulnerability management', product: 'Tenable One', annualCost: 340000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
+  { id: 'cp51', solution: 'Vulnerability management', product: 'Qualys VMDR', annualCost: 290000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
+  { id: 'cp52', solution: 'Vulnerability management', product: 'Rapid7 InsightVM', annualCost: 260000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
+  { id: 'cp53', solution: 'Vulnerability management', product: 'Tanium Risk', annualCost: 520000, licenseType: 'Annual', microsoft: 'Microsoft Defender Vulnerability Management' },
+];
+
+/** Distinct capabilities in the catalogue, in the order sellers meet them. */
+export const CATALOGUE_CAPABILITIES = [...new Set(COMPETITOR_CATALOGUE.map((c) => c.solution))];
+
 /* --------------------------------- Currency -------------------------------- */
 
 /* Bare symbols. Every figure inside one business case is in one currency, and the

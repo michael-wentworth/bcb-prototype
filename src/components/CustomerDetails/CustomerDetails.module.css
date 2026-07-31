@@ -231,3 +231,79 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ------------------- competitor find: search / browse / AI ------------------ */
+
+.compFind {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalM);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacingVerticalM);
+}
+
+/* Anchors the results list. Relative rather than static so the list can overlay
+   the form below instead of pushing it down as you type. */
+.searchWrap {
+  position: relative;
+  flex: 1 1 320px;
+  min-width: 260px;
+}
+
+.searchInput {
+  width: 100%;
+}
+
+.results {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  margin: 4px 0 0;
+  padding: 4px;
+  list-style: none;
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground1);
+  box-shadow: var(--shadow16);
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 100%;
+  padding: 7px 9px;
+  border: none;
+  border-radius: var(--borderRadiusMedium);
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.result:hover {
+  background-color: var(--colorNeutralBackground1Hover);
+}
+
+.result:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: -2px;
+}
+
+.resultProduct {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.resultMeta {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.noResult {
+  padding: 9px;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}

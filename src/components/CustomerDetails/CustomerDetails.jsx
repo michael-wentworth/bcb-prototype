@@ -15,11 +15,17 @@ import {
   RadioGroup,
   Textarea,
 } from '@fluentui/react-components';
-import { Add16Filled, Delete16Regular, Search20Regular, Sparkle16Filled } from '@fluentui/react-icons';
+import {
+  Add16Filled,
+  Delete16Regular,
+  Grid20Regular,
+  Search20Regular,
+  Sparkle16Filled,
+} from '@fluentui/react-icons';
 import {
   ANALYSIS_PERIODS,
   BCB_ROLES,
-  COMPETITOR_MATRIX,
+  COMPETITOR_CATALOGUE,
   CUSTOMER_SEGMENTS,
   EXISTING_MS_LICENSES,
   GEOGRAPHIES,
@@ -37,6 +43,7 @@ import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import MultiSelect from '../shared/MultiSelect.jsx';
 import Disclosure from '../shared/Disclosure.jsx';
+import CompetitorMatrixDialog from './CompetitorMatrixDialog.jsx';
 import styles from './CustomerDetails.module.css';
 
 /**
@@ -490,6 +497,63 @@ export default function CustomerDetails() {
  * not an observation, so it is made on step 2 — this table has no "new
  * Microsoft product" column.
  */
+/**
+ * Typeahead over the competitor catalogue.
+ *
+ * Deliberately not a Fluent Combobox: a combobox implies the value ends up in
+ * the field, and here picking a product ADDS A ROW and clears the box. Modelling
+ * that as a list of buttons under an input says what actually happens.
+ */
+function CompetitorSearch({ onPick, symbol }) {
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLowerCase();
+  const matches = q
+    ? COMPETITOR_CATALOGUE.filter(
+        (c) => c.product.toLowerCase().includes(q) || c.solution.toLowerCase().includes(q),
+      ).slice(0, 6)
+    : [];
+
+  return (
+    <div className={styles.searchWrap}>
+      <Input
+        className={styles.searchInput}
+        value={query}
+        onChange={(_, d) => setQuery(d.value)}
+        placeholder="Search for a competitor product"
+        contentBefore={<Search20Regular />}
+        aria-label="Search for a competitor product"
+      />
+      {q ? (
+        <ul className={styles.results} role="listbox" aria-label="Matching products">
+          {matches.length === 0 ? (
+            <li className={styles.noResult}>
+              Nothing matches. Use <strong>Add a product that is not listed</strong> below.
+            </li>
+          ) : (
+            matches.map((c) => (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  className={styles.result}
+                  onClick={() => {
+                    onPick(c);
+                    setQuery('');
+                  }}
+                >
+                  <span className={styles.resultProduct}>{c.product}</span>
+                  <span className={styles.resultMeta}>
+                    {c.solution} · {formatCurrency(c.annualCost, { symbol, compact: true })}/yr
+                  </span>
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
 function CompetitiveEnvironment({
   environment,
   competitors,
@@ -512,6 +576,24 @@ function CompetitiveEnvironment({
   const [matrixOpen, setMatrixOpen] = useState(false);
 
   const canAdd = draft.currentProduct.trim() && draft.competitorCost;
+
+  /**
+   * Seed a row from the catalogue. The end year defaults to the case start year
+   * rather than being left blank — the model already treats blank as "ends this
+   * year", so an empty field hides an assumption that is doing real work. On
+   * screen the seller can see it and change it.
+   */
+  const addFromCatalogue = (c) =>
+    onAdd({
+      softwareSolution: c.solution,
+      currentProduct: c.product,
+      competitorCost: String(c.annualCost),
+      // Deliberately NOT seeding newMicrosoftProduct, even though the catalogue
+      // knows a sensible answer. Step 2 counts mapped rows and exists to make
+      // that call; arriving pre-mapped would mean the seller never meets the
+      // decision, and a displacement nobody chose is a price comparison.
+      yearContractEnds: String(CASE_START_YEAR),
+    });
   const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
 
   return (
@@ -560,6 +642,26 @@ function CompetitiveEnvironment({
 
       <p className={styles.subHead}>Add a competitor product</p>
 
+      {/* Three ways in, because sellers arrive knowing different amounts. Someone
+          who knows the product name types it; someone scoping an unfamiliar
+          estate browses the matrix; someone displacing something niche enters it
+          by hand. The first two prefill an indicative cost so the row starts from
+          a number, and all three land in the same table. */}
+      <div className={styles.compFind}>
+        <CompetitorSearch onPick={addFromCatalogue} symbol={symbol} />
+        <Button appearance="secondary" icon={<Grid20Regular />} onClick={() => setMatrixOpen(true)}>
+          Browse all {COMPETITOR_CATALOGUE.length}
+        </Button>
+        <Button
+          appearance="transparent"
+          icon={<Sparkle16Filled className={styles.aiIcon} />}
+          onClick={() => onAsk('Detect the competitor products in this estate')}
+        >
+          Detect with AI
+        </Button>
+      </div>
+
+      <Disclosure label="Add a product that is not listed" count={4}>
       <div className={styles.compForm}>
         <FormField label="Software solution">
           {(id) => (
@@ -623,17 +725,8 @@ function CompetitiveEnvironment({
         >
           Add
         </Button>
-        <Button appearance="secondary" onClick={() => setMatrixOpen(true)}>
-          View competitor matrix
-        </Button>
-        <Button
-          appearance="transparent"
-          icon={<Sparkle16Filled className={styles.aiIcon} />}
-          onClick={() => onAsk('Detect the competitor products in this estate')}
-        >
-          Detect with AI
-        </Button>
       </div>
+      </Disclosure>
 
       <div className={styles.tableWrap}>
         <table className={styles.table}>
@@ -710,35 +803,12 @@ function CompetitiveEnvironment({
         </p>
       ) : null}
 
-      <Dialog open={matrixOpen} onOpenChange={(_, d) => setMatrixOpen(d.open)}>
-        <DialogSurface className={styles.matrixSurface}>
-          <DialogBody>
-            <DialogTitle>Competitor matrix</DialogTitle>
-            <DialogContent>
-              <div className={styles.tableWrap}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th scope="col">Software solution</th>
-                      <th scope="col">Common competitors</th>
-                      <th scope="col">Microsoft product</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {COMPETITOR_MATRIX.map((m) => (
-                      <tr key={m.solution}>
-                        <td>{m.solution}</td>
-                        <td>{m.competitors}</td>
-                        <td>{m.microsoft}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </DialogContent>
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
+      <CompetitorMatrixDialog
+        open={matrixOpen}
+        onOpenChange={setMatrixOpen}
+        onAdd={addFromCatalogue}
+        symbol={symbol}
+      />
     </Card>
   );
 }
