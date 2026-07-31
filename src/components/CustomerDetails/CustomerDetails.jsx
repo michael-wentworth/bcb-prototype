@@ -431,9 +431,8 @@ export default function CustomerDetails() {
           </FormField>
 
           <FormField
-            label="Do you own any additional Microsoft products or have any licensing savings from Microsoft?"
-            help="Enter total annual value of extra products / savings"
-            span
+            label="Additional products or savings"
+            help="Other Microsoft products or negotiated savings, per year"
           >
             {(id) => (
               <Input
