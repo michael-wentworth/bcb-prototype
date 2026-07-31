@@ -128,7 +128,19 @@
   white-space: normal;
 }
 
-.footer {
+/* Doubled class again. This footer is a direct child of Fluent's DialogBody,
+   which is a grid and styles its own children — so a plain .footer rule lost,
+   the element computed as display:grid rather than flex, and the actions sat
+   left instead of opposite the count. Third component in this dialog stack
+   whose defaults beat a module class; assume it of any of them. */
+.footer.footer {
+  /* DialogBody is a grid and this is one of its items, so it sized to its own
+     content — 507px inside a 1030px body. space-between was working correctly
+     inside a box half the available width, which is why the actions looked
+     left-aligned. Span the row and take the width. */
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -149,6 +161,7 @@
   gap: var(--spacingHorizontalS);
   flex: none;
   white-space: nowrap;
+  margin-left: auto; /* holds the right edge even if the footer wraps */
 }
 
 .pageOf {
