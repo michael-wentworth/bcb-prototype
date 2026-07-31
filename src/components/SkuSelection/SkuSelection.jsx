@@ -94,22 +94,11 @@ export default function SkuSelection() {
           </div>
         </div>
 
-        {skus.map((row, rowIndex) => {
+        {skus.map((row) => {
           const catalog = skuById(row.skuId);
           return (
             <div key={row.id} className={styles.skuRow}>
-              <div className={styles.skuHead}>
-                <span className={styles.skuIndex}>SKU {rowIndex + 1}</span>
-                <Button
-                  appearance="subtle"
-                  size="small"
-                  icon={<Delete16Regular />}
-                  aria-label={`Remove SKU ${rowIndex + 1}`}
-                  onClick={() => removeSkuRow(row.id)}
-                  className={styles.skuRemove}
-                />
-              </div>
-
+              <div className={styles.skuTop}>
               <FormField label="Microsoft SKU">
                 {(id) => (
                   <Dropdown
@@ -135,8 +124,6 @@ export default function SkuSelection() {
                   </Dropdown>
                 )}
               </FormField>
-
-              <div className={styles.skuMeta}>
                 <FormField label="Solution area">
                   {(id) => (
                     <Dropdown
@@ -173,7 +160,7 @@ export default function SkuSelection() {
                 </FormField>
               </div>
 
-              <p className={styles.seatsLabel}>How many seats will be required per year?</p>
+              <p className={styles.seatsLabel}>Seats per year</p>
               <div className={styles.seatsGrid}>
                 {row.seats.map((seat, i) => (
                   <FormField key={i} label={`Year ${i + 1}`}>
@@ -200,16 +187,32 @@ export default function SkuSelection() {
                 </FormField>
               </div>
 
-              {row.pricePerMonth && row.seats[0] ? (
-                <p className={styles.skuTotal}>
-                  Year 1 cost{' '}
-                  <strong>
-                    {formatCurrency(Number(row.seats[0]) * Number(row.pricePerMonth) * 12, {
-                      symbol,
-                    })}
-                  </strong>
-                </p>
-              ) : null}
+              {/* The footer always renders, because it carries Remove. The cost
+                  appears beside it once there is a price and a seat count to
+                  multiply — a row is worth showing before it is worth costing. */}
+              <div className={styles.skuFoot}>
+                {row.pricePerMonth && row.seats[0] ? (
+                  <p className={styles.skuTotal}>
+                    Year 1 cost{' '}
+                    <strong>
+                      {formatCurrency(Number(row.seats[0]) * Number(row.pricePerMonth) * 12, {
+                        symbol,
+                      })}
+                    </strong>
+                  </p>
+                ) : (
+                  <span />
+                )}
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<Delete16Regular />}
+                  aria-label={`Remove ${catalog?.name || 'this SKU'}`}
+                  onClick={() => removeSkuRow(row.id)}
+                >
+                  Remove
+                </Button>
+              </div>
             </div>
           );
         })}

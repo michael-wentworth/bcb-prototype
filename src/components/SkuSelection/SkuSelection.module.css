@@ -90,37 +90,22 @@
   animation: bcbRise 260ms var(--curveDecelerateMid) both;
 }
 
-.skuHead {
-  display: flex;
-  align-items: center;
-  gap: var(--spacingHorizontalS);
-  margin-bottom: var(--spacingVerticalM);
-}
-
-.skuIndex {
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--colorNeutralForeground3);
-}
-
-.skuRemove {
-  margin-left: auto;
-}
-
-.skuMeta {
+/* The product and the two fields that classify it, on one row. The SKU picker
+   used to have a row to itself and the classification another, which made a
+   three-field question look like two sections. */
+.skuTop {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--spacingHorizontalXL);
-  margin-top: var(--spacingVerticalL);
 }
 
 .seatsLabel {
   margin: var(--spacingVerticalL) 0 var(--spacingVerticalS);
-  font-size: var(--fontSizeBase300);
+  font-size: var(--fontSizeBase200);
   font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--colorNeutralForeground3);
 }
 
 .seatsGrid {
@@ -315,9 +300,7 @@
 }
 
 @media (max-width: 900px) {
-  .outcomeGrid,
-  .skuMeta,
-  .rationaleRow {
+  .skuTop {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -455,4 +438,17 @@
   .outcomePill {
     transition: none;
   }
+}
+
+/* Cost on the left, Remove on the right, on the row that closes the card —
+   a destructive action belongs at the end of the thing it destroys, not in a
+   title bar above it. */
+.skuFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalL);
+  margin-top: var(--spacingVerticalL);
+  padding-top: var(--spacingVerticalM);
+  border-top: 1px solid var(--colorNeutralStroke2);
 }
