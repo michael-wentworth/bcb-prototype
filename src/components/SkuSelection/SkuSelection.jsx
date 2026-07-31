@@ -17,6 +17,7 @@ import { Add16Filled, Delete16Regular, Sparkle16Filled } from '@fluentui/react-i
 import {
   COMPETITOR_MATRIX,
   MICROSOFT_SKUS,
+  displacementOptions,
   SECURITY_OUTCOMES,
   SOLUTION_AREAS,
   SOLUTION_PLAYS,
@@ -261,6 +262,7 @@ export default function SkuSelection() {
         businessCase={businessCase}
         symbol={symbol}
         onMap={updateCompetitorRow}
+        skus={skus}
         onBack={() => goToStep(0)}
         onAsk={ask}
       />
@@ -394,13 +396,14 @@ function Rationale({ outcomes, skus, onAsk }) {
  * The rows themselves are current state and are not editable here; the only
  * field this screen owns is the Microsoft product each vendor gives way to.
  */
-function CompetitiveDisplacement({ competitors, businessCase, symbol, onMap, onBack, onAsk }) {
+function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMap, onBack, onAsk }) {
   const [matrixOpen, setMatrixOpen] = useState(false);
 
   const rows = competitors.rows || [];
   const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
 
   const mapped = rows.filter((r) => (r.newMicrosoftProduct || '').trim());
+  const options = displacementOptions(skus);
   const annualSpend = (r) => lineFor(r.id)?.annualCost ?? (Number(r.competitorCost) || 0);
   const mappedSpend = mapped.reduce((sum, r) => sum + annualSpend(r), 0);
   const discounted = Number(competitors.msrpDiscount) > 0;
@@ -474,9 +477,19 @@ function CompetitiveDisplacement({ competitors, businessCase, symbol, onMap, onB
                         {formatCurrency(annualSpend(r), { symbol })}
                       </td>
                       <td className={styles.mapCell}>
+                        {/* Only what this case actually buys — the SKUs chosen
+                            above, plus the components of any suite among them.
+                            Offering the whole catalogue let a seller claim a
+                            displacement by a product the case never pays for,
+                            which books the competitor saving with no matching
+                            Microsoft cost. Not freeform, for the same reason. */}
                         <Combobox
-                          freeform
-                          placeholder="Select or type a Microsoft product"
+                          placeholder={
+                            options.length
+                              ? 'Select a Microsoft product'
+                              : 'Add a Microsoft product above first'
+                          }
+                          disabled={options.length === 0}
                           aria-label={`Microsoft product replacing ${r.currentProduct}`}
                           value={r.newMicrosoftProduct}
                           selectedOptions={
@@ -485,14 +498,11 @@ function CompetitiveDisplacement({ competitors, businessCase, symbol, onMap, onB
                           onOptionSelect={(_, d) =>
                             onMap(r.id, { newMicrosoftProduct: d.optionText || d.optionValue })
                           }
-                          onChange={(e) =>
-                            onMap(r.id, { newMicrosoftProduct: e.target.value })
-                          }
                           className={styles.mapInput}
                         >
-                          {MICROSOFT_SKUS.map((s) => (
-                            <Option key={s.id} value={s.name}>
-                              {s.name}
+                          {displacementOptions(skus, r.newMicrosoftProduct).map((name) => (
+                            <Option key={name} value={name}>
+                              {name}
                             </Option>
                           ))}
                         </Combobox>

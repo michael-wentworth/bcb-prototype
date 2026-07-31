@@ -103,6 +103,34 @@ export const EXISTING_MS_LICENSES = [
   'None / Not standardised',
 ];
 
+/**
+ * Microsoft product names a case can legitimately displace a competitor with.
+ *
+ * Only what the case actually buys — the SKUs on the recommended-solution table
+ * — plus the components of any suite among them. A suite is the normal way this
+ * happens: a customer buys Microsoft 365 E5 Security once, and its parts retire
+ * four separate point products. Offering the whole catalogue instead let a
+ * seller claim a displacement by a product the case never pays for.
+ *
+ * `current` is always included even when it is no longer available, so removing
+ * a SKU never silently blanks a mapping that was already made — the seller sees
+ * the stale value and can change it.
+ */
+export function displacementOptions(skuRows = [], current = '') {
+  const names = new Set();
+  (skuRows || []).forEach((row) => {
+    const sku = MICROSOFT_SKUS.find((s) => s.id === row.skuId);
+    if (!sku) return;
+    names.add(sku.name);
+    (sku.includes || []).forEach((id) => {
+      const part = MICROSOFT_SKUS.find((s) => s.id === id);
+      if (part) names.add(part.name);
+    });
+  });
+  if (current) names.add(current);
+  return [...names].sort((a, b) => a.localeCompare(b));
+}
+
 /* ---------------------------- Security outcomes ---------------------------- */
 
 /**
@@ -194,6 +222,7 @@ export const MICROSOFT_SKUS = [
     listPrice: 57,
     solutionArea: 'Modern Work',
     solutionPlay: 'Consolidate the Security Estate',
+    includes: ['m365-e5-security', 'defender-xdr', 'defender-endpoint', 'defender-office', 'entra-p2', 'purview', 'intune'],
   },
   {
     id: 'm365-e5-security',
@@ -201,6 +230,7 @@ export const MICROSOFT_SKUS = [
     listPrice: 12,
     solutionArea: 'Security',
     solutionPlay: 'Consolidate the Security Estate',
+    includes: ['defender-xdr', 'defender-endpoint', 'defender-office', 'entra-p2'],
   },
   {
     id: 'defender-xdr',
@@ -208,6 +238,7 @@ export const MICROSOFT_SKUS = [
     listPrice: 12,
     solutionArea: 'Security',
     solutionPlay: 'Modernize Security Operations',
+    includes: ['defender-endpoint', 'defender-office'],
   },
   {
     id: 'defender-endpoint',
@@ -243,6 +274,7 @@ export const MICROSOFT_SKUS = [
     listPrice: 12,
     solutionArea: 'Security',
     solutionPlay: 'Secure Identities and Access',
+    includes: ['entra-p2'],
   },
   {
     id: 'sentinel',

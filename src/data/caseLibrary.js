@@ -126,6 +126,7 @@ export const MY_CASES = [
       outcomes: ['identity', 'consolidation'],
       skus: [
         { id: 'c3s1', skuId: 'entra-p2', solutionArea: 'Security', solutionPlay: 'Secure Identities and Access', pricePerMonth: '2.5', seats: seats(24000, 4) },
+        { id: 'c3s2', skuId: 'entra-suite', solutionArea: 'Security', solutionPlay: 'Secure Identities and Access', pricePerMonth: '0.8', seats: seats(24000, 4) },
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '420', additionalValue: '150000' },
       competitors: {
@@ -173,6 +174,7 @@ export const EXAMPLE_CASES = [
       skus: [
         { id: 'e1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate the Security Estate', pricePerMonth: '3.5', seats: seats(42000) },
         { id: 'e1s2', skuId: 'sentinel', solutionArea: 'Security', solutionPlay: 'Modernize Security Operations', pricePerMonth: '1.2', seats: seats(42000) },
+        { id: 'e1s3', skuId: 'purview', solutionArea: 'Security', solutionPlay: 'Safeguard and Govern Data', pricePerMonth: '1', seats: seats(42000) },
       ],
       bundle: { bundleId: 'm365-e3', annualPerUser: '432', additionalValue: '400000' },
       competitors: {
