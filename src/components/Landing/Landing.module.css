@@ -507,9 +507,9 @@
 }
 
 .fromCard {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 28px;
+  align-items: center;
   gap: var(--spacingHorizontalM);
   padding: var(--spacingVerticalM) var(--spacingHorizontalL);
   border: 1px solid var(--colorNeutralStroke2);
@@ -572,16 +572,43 @@
   color: var(--colorBrandForeground2);
 }
 
-.toProducts {
+/* The mark that answers each row, at the end of the row it answers. Small and
+   aria-hidden: the capability beside it is the accessible label, and the logo
+   is recognition rather than information. */
+.fromLogo {
+  width: 28px;
+  height: 28px;
+  justify-self: end;
+}
+
+.toLogos {
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacingVerticalS);
+}
+
+.toLogo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
   font-size: var(--fontSizeBase300);
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
+}
+
+.toLogo img {
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+
+.toNote {
+  font-size: var(--fontSizeBase200);
+  line-height: 16px;
+  color: var(--colorNeutralForeground3);
 }
 
 .toCost {

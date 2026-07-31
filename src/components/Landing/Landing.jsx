@@ -16,6 +16,7 @@ import {
   money,
   pct,
 } from '../../data/landingCase.js';
+import { logoFor, logosFor } from './productLogos.js';
 import styles from './Landing.module.css';
 
 /**
@@ -176,24 +177,40 @@ function WhatChanges() {
             seller enters the real vendor for their own deal. */}
         <div className={styles.swap}>
           <ul className={styles.fromList}>
-            {LEDGER.map((l) => (
-              <li key={l.id} className={styles.fromCard}>
-                <span className={styles.fromName}>{l.category}</span>
-                <span className={styles.fromCost}>{money(l.annualCost)}/yr</span>
-              </li>
-            ))}
+            {LEDGER.map((l) => {
+              const logo = logoFor(l.category);
+              return (
+                <li key={l.id} className={styles.fromCard}>
+                  <span className={styles.fromName}>{l.category}</span>
+                  <span className={styles.fromCost}>{money(l.annualCost)}/yr</span>
+                  {logo ? (
+                    <img className={styles.fromLogo} src={logo.src} alt="" aria-hidden="true" />
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
 
           <span className={styles.swapArrow} aria-hidden="true" />
 
+          {/* The marks the four capabilities land on, derived from the rows
+              rather than listed by hand — a case displacing DLP would show
+              Purview here without anyone editing this. Three products sitting
+              together says "platform" faster than three lines of text did. */}
           <div className={styles.toCard}>
             <span className={styles.toEyebrow}>Microsoft Security</span>
-            <ul className={styles.toProducts}>
-              {CONSOLIDATION.products.map((name) => (
-                <li key={name}>{name}</li>
+            <ul className={styles.toLogos}>
+              {logosFor(LEDGER.map((l) => l.category)).map((logo) => (
+                <li key={logo.name} className={styles.toLogo}>
+                  <img src={logo.src} alt="" aria-hidden="true" />
+                  <span>{logo.name}</span>
+                </li>
               ))}
             </ul>
             <span className={styles.toCost}>{money(CONSOLIDATION.annualCost)}/yr</span>
+            <span className={styles.toNote}>
+              Licensed as {CONSOLIDATION.products.join(', ')}.
+            </span>
           </div>
         </div>
 
