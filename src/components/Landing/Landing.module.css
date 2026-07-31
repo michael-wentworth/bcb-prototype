@@ -507,9 +507,9 @@
 }
 
 .fromCard {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 28px;
-  align-items: center;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   gap: var(--spacingHorizontalM);
   padding: var(--spacingVerticalM) var(--spacingHorizontalL);
   border: 1px solid var(--colorNeutralStroke2);
@@ -572,36 +572,31 @@
   color: var(--colorBrandForeground2);
 }
 
-/* The mark that answers each row, at the end of the row it answers. Small and
-   aria-hidden: the capability beside it is the accessible label, and the logo
-   is recognition rather than information. */
-.fromLogo {
-  width: 28px;
-  height: 28px;
-  justify-self: end;
-}
-
+/* Across, not down. Three marks in a row read as a set — one platform made of
+   parts — where a stacked list read as three separate things that happened to
+   be in the same box. */
 .toLogos {
-  margin: 0;
+  margin: var(--spacingVerticalS) 0;
   padding: 0;
   list-style: none;
   display: flex;
-  flex-direction: column;
-  gap: var(--spacingVerticalS);
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalXL);
 }
 
 .toLogo {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--spacingHorizontalS);
-  font-size: var(--fontSizeBase300);
+  gap: 4px;
+  font-size: var(--fontSizeBase200);
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
 }
 
 .toLogo img {
-  width: 32px;
-  height: 32px;
+  width: 52px;
+  height: 52px;
   flex: none;
 }
 

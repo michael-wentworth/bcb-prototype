@@ -16,7 +16,7 @@ import {
   money,
   pct,
 } from '../../data/landingCase.js';
-import { logoFor, logosFor } from './productLogos.js';
+import { logosFor } from './productLogos.js';
 import styles from './Landing.module.css';
 
 /**
@@ -177,18 +177,12 @@ function WhatChanges() {
             seller enters the real vendor for their own deal. */}
         <div className={styles.swap}>
           <ul className={styles.fromList}>
-            {LEDGER.map((l) => {
-              const logo = logoFor(l.category);
-              return (
-                <li key={l.id} className={styles.fromCard}>
-                  <span className={styles.fromName}>{l.category}</span>
-                  <span className={styles.fromCost}>{money(l.annualCost)}/yr</span>
-                  {logo ? (
-                    <img className={styles.fromLogo} src={logo.src} alt="" aria-hidden="true" />
-                  ) : null}
-                </li>
-              );
-            })}
+            {LEDGER.map((l) => (
+              <li key={l.id} className={styles.fromCard}>
+                <span className={styles.fromName}>{l.category}</span>
+                <span className={styles.fromCost}>{money(l.annualCost)}/yr</span>
+              </li>
+            ))}
           </ul>
 
           <span className={styles.swapArrow} aria-hidden="true" />
@@ -203,7 +197,7 @@ function WhatChanges() {
               {logosFor(LEDGER.map((l) => l.category)).map((logo) => (
                 <li key={logo.name} className={styles.toLogo}>
                   <img src={logo.src} alt="" aria-hidden="true" />
-                  <span>{logo.name}</span>
+                  <span>{logo.short}</span>
                 </li>
               ))}
             </ul>

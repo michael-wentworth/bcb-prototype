@@ -18,20 +18,27 @@ import sentinel from '../../assets/products/sentinel.svg';
  * category is the only thing it can map from.
  */
 const LOGOS = {
-  'Endpoint protection': { src: defender, name: 'Microsoft Defender' },
-  'Email security': { src: defender, name: 'Microsoft Defender' },
-  'Cloud security': { src: defender, name: 'Microsoft Defender' },
-  'Vulnerability management': { src: defender, name: 'Microsoft Defender' },
-  'Identity & access': { src: entra, name: 'Microsoft Entra' },
-  'Privileged access': { src: entra, name: 'Microsoft Entra' },
-  'Network / SASE': { src: entra, name: 'Microsoft Entra' },
-  'SIEM / SOC': { src: sentinel, name: 'Microsoft Sentinel' },
-  'Data loss prevention': { src: purview, name: 'Microsoft Purview' },
+  'Endpoint protection': { src: defender, name: 'Microsoft Defender', short: 'Defender' },
+  'Email security': { src: defender, name: 'Microsoft Defender', short: 'Defender' },
+  'Cloud security': { src: defender, name: 'Microsoft Defender', short: 'Defender' },
+  'Vulnerability management': { src: defender, name: 'Microsoft Defender', short: 'Defender' },
+  'Identity & access': { src: entra, name: 'Microsoft Entra', short: 'Entra' },
+  'Privileged access': { src: entra, name: 'Microsoft Entra', short: 'Entra' },
+  'Network / SASE': { src: entra, name: 'Microsoft Entra', short: 'Entra' },
+  'SIEM / SOC': { src: sentinel, name: 'Microsoft Sentinel', short: 'Sentinel' },
+  'Data loss prevention': { src: purview, name: 'Microsoft Purview', short: 'Purview' },
 };
 
 export const logoFor = (solution) => LOGOS[solution] || null;
 
-/** Distinct marks for a set of capabilities, in the order they first appear. */
+/**
+ * Distinct marks for a set of capabilities, in the order they first appear.
+ *
+ * `name` is the full product name, kept for alt text and anywhere the mark is
+ * not carrying its own label. `short` is what goes under the logo — beside a
+ * recognisable mark, "Microsoft" on every one of three is three redundant
+ * words in a row.
+ */
 export function logosFor(solutions = []) {
   const seen = new Set();
   const out = [];
