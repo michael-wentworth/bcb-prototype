@@ -90,19 +90,6 @@ export const ANALYSIS_PERIODS = [1, 2, 3, 4, 5];
 
 /* --------------------------- Customer Environment -------------------------- */
 
-export const EXISTING_MS_LICENSES = [
-  'Microsoft 365 E3',
-  'Microsoft 365 E5',
-  'Microsoft 365 F3',
-  'Microsoft 365 Business Premium',
-  'Office 365 E1',
-  'Office 365 E3',
-  'Enterprise Mobility + Security E3',
-  'Enterprise Mobility + Security E5',
-  'Microsoft 365 E5 Security',
-  'None / Not standardised',
-];
-
 /**
  * Microsoft product names a case can legitimately displace a competitor with.
  *

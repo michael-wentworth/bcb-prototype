@@ -28,7 +28,6 @@ import {
   COMPETITOR_CATALOGUE,
   MICROSOFT_SKUS,
   CUSTOMER_SEGMENTS,
-  EXISTING_MS_LICENSES,
   GEOGRAPHIES,
   INDUSTRIES,
   MS_BUNDLES,
@@ -400,20 +399,6 @@ export default function CustomerDetails() {
         </div>
 
         <div className={styles.grid}>
-          <FormField
-            label="Existing MS licenses"
-                        help="Drives SKU recommendations and upsell logic"
-          >
-            {(id) => (
-              <MultiSelect
-                id={id}
-                options={EXISTING_MS_LICENSES}
-                selected={environment.existingLicenses}
-                onChange={(v) => setEnvironment('existingLicenses', v)}
-                placeholder="Search license"
-              />
-            )}
-          </FormField>
 
           <FormField label="Current Microsoft bundle">
             {(id) => (
@@ -422,7 +407,16 @@ export default function CustomerDetails() {
                 placeholder="Select"
                 value={MS_BUNDLES.find((b) => b.id === bundle.bundleId)?.name || ''}
                 selectedOptions={bundle.bundleId ? [bundle.bundleId] : []}
-                onOptionSelect={(_, d) => setBundle('bundleId', d.optionValue)}
+                onOptionSelect={(_, d) => {
+                  setBundle('bundleId', d.optionValue);
+                  // MS_BUNDLES has carried a price per bundle all along and
+                  // nothing read it — the seller picked "Microsoft 365 E3" and
+                  // then typed 432 by hand. Overwrites rather than filling only
+                  // when blank: choosing a different bundle is the seller saying
+                  // it is a different product, so the stale price should go.
+                  const picked = MS_BUNDLES.find((b) => b.id === d.optionValue);
+                  if (picked) setBundle('annualPerUser', String(picked.annualPerUser));
+                }}
               >
                 {MS_BUNDLES.map((b) => (
                   <Option key={b.id} value={b.id} text={b.name}>
@@ -433,7 +427,10 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-          <FormField label="Annual license price" help={`Per-user cost, ${currency}`}>
+          <FormField
+            label="Annual license price"
+            help={`Per-user cost, ${currency}. For a mixed estate, enter a blended rate.`}
+          >
             {(id) => (
               <Input
                 id={id}

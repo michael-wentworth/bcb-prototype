@@ -46,7 +46,6 @@ const emptyCustomer = {
 };
 
 const emptyEnvironment = {
-  existingLicenses: [],
   competitorProducts: [],
   sellerAlias: CURRENT_USER_ALIAS,
 };

@@ -70,7 +70,6 @@ export const DEMO_EXTRACTION = {
   },
 
   environment: {
-    existingLicenses: ['Microsoft 365 E3'],
     competitorProducts: ['CrowdStrike Falcon', 'Okta Workforce Identity'],
   },
 
