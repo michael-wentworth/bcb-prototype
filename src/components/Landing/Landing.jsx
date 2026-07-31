@@ -226,7 +226,7 @@ function WhyTiming() {
   const peak = Math.max(...CASE.competitorByYear);
 
   return (
-    <section className={`${styles.band} ${styles.bandTint}`}>
+    <section className={styles.band}>
       <div className={styles.grid}>
         <h2 className={styles.sectionTitle}>It gets better every year</h2>
         <p className={styles.sectionLede}>

@@ -251,10 +251,6 @@
   border-bottom: 1px solid var(--colorNeutralStroke2);
 }
 
-.bandTint {
-  background-color: var(--colorNeutralBackground2);
-}
-
 .bandLast {
   border-bottom: none;
 }
