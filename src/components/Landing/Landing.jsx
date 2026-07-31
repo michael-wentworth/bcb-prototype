@@ -68,7 +68,8 @@ function Masthead({ onStart, onOpen }) {
           <div>
             <h1 className={styles.wordmark}>Security Business Case Builder</h1>
             <p className={styles.mastheadLine}>
-              Work out what a customer saves by moving their security vendors onto Microsoft.
+              Build a defensible ROI case for your customer: what they would buy, what they
+              would retire, and what the switch is worth.
             </p>
           </div>
           <div className={styles.mastheadActions}>
@@ -103,7 +104,7 @@ function Result({ onOpen }) {
   return (
     <section className={styles.resultBand}>
       <div className={styles.grid}>
-        <p className={styles.badge}>Worked example · Contoso Ltd. · figures in USD</p>
+        <p className={styles.badge}>A case built with this tool · figures in USD</p>
 
         <h2 className={styles.headline}>
           Contoso could save <strong>{money(CASE.annualNetBenefit)}</strong> a year
@@ -128,7 +129,8 @@ function Result({ onOpen }) {
         </div>
 
         <p className={styles.foot}>
-          Three of the four contracts lapse in the same year; the fourth runs a year longer.{' '}
+          This is the page you put in front of the customer. Three of their four contracts
+          lapse in the same year; the fourth runs a year longer.{' '}
           <button type="button" className={styles.inlineLink} onClick={onOpen}>
             See the full report
           </button>
@@ -168,7 +170,7 @@ function WhatChanges() {
           {CONSOLIDATION.vendorCount} vendors out, one platform in
         </h2>
         <p className={styles.sectionLede}>
-          The saving is spend that stops, not spend that is estimated.
+          You show them spend that stops, not spend you estimated.
         </p>
 
         {/* Category, not brand. This page is public marketing, so naming a
@@ -241,9 +243,9 @@ function WhyTiming() {
       <div className={styles.grid}>
         <h2 className={styles.sectionTitle}>It gets better every year</h2>
         <p className={styles.sectionLede}>
-          A vendor cannot be switched off mid-contract, so each saving starts the year after that
-          contract lapses. Nothing is saved in the first year, and the run rate climbs as the
-          others fall away.
+          A vendor cannot be switched off mid-contract, so each saving starts the year after
+          that contract lapses. Your case says so — nothing in the first year, climbing as the
+          others fall away. That is the part a CFO checks, and the reason they believe the rest.
         </p>
 
         <ol className={styles.years}>
@@ -264,29 +266,29 @@ function WhyTiming() {
         <div className={styles.steady}>
           <span className={styles.steadyValue}>{pct(STEADY.ratio)}</span>
           <span className={styles.steadyText}>
-            What the case runs at once every contract has lapsed — {money(STEADY.saves)} a year of
-            spend stopping against {money(STEADY.costs)} of Microsoft. The {pct(CASE.roi)} on the
-            fold is the blended figure across all {CASE.years} years, held down by a first year in
-            which nothing can be switched off yet.
+            The number you quote for the years after the switch — {money(STEADY.saves)} a year
+            of spend stopping against {money(STEADY.costs)} of Microsoft. The {pct(CASE.roi)} above
+            is the blended figure across all {CASE.years} years, held down by a first year in which
+            nothing can be switched off yet.
           </span>
         </div>
 
-        <p className={styles.factsTitle}>What it will not do</p>
+        <p className={styles.factsTitle}>What it will not let you claim</p>
         <ul className={styles.facts}>
           <li className={styles.fact}>
             <span className={styles.factValue}>{pct(EXCLUDED.inflatedRoi)}</span>
             <span className={styles.factText}>
-              What this case would report if the {money(EXCLUDED.annual)} a year Contoso already
-              spends on {EXCLUDED.bundleName} were counted as a saving. It is not — that spend
-              continues either way.
+              What you could report if the {money(EXCLUDED.annual)} a year the customer already
+              spends on {EXCLUDED.bundleName} were counted as a saving. The tool will not — that
+              spend continues either way, and a CFO who spots it will not trust the rest.
             </span>
           </li>
           <li className={styles.fact}>
             <span className={styles.factValue}>{pct(STRESS.roi)}</span>
             <span className={styles.factText}>
-              What the same case reports if no contract lapses inside the analysis period. Nothing
-              can be switched off, so there is nothing to save — and the tool says so rather than
-              finding a saving anyway.
+              What the same case reports if none of their contracts lapse inside the analysis
+              period. Nothing can be switched off, so there is nothing to save — and it tells you
+              that rather than finding a saving anyway.
             </span>
           </li>
         </ul>
@@ -316,8 +318,8 @@ function Close({ onStart }) {
       <div className={styles.grid}>
         <h2 className={styles.sectionTitle}>Independent research behind the category</h2>
         <p className={styles.sectionLede}>
-          Figures a seller can cite directly. They are not what this case is built from — that is
-          the customer's own contracts — but they are what it is argued against.
+          Figures you can put in a deck as they are. They are not what your case is built from
+          — that is your customer's own contracts — but they are what it is argued against.
         </p>
 
         <ul className={styles.evidence}>
@@ -329,8 +331,7 @@ function Close({ onStart }) {
           ))}
         </ul>
         <p className={styles.evidenceNote}>
-          Forrester Total Economic Impact™ studies, commissioned by Microsoft. Your case is built
-          from your customer&rsquo;s own contracts, not from these.
+          Forrester Total Economic Impact™ studies, commissioned by Microsoft.
         </p>
 
         <div className={styles.close}>
