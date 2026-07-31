@@ -563,16 +563,6 @@ function CompetitiveEnvironment({
   onRemove,
   onAsk,
 }) {
-  const blank = {
-    softwareSolution: '',
-    currentProduct: '',
-    competitorCost: '',
-    yearContractEnds: '',
-  };
-  const [draft, setDraft] = useState(blank);
-  const [matrixOpen, setMatrixOpen] = useState(false);
-
-  const canAdd = draft.currentProduct.trim() && draft.competitorCost;
 
   /**
    * Seed a row from the catalogue. The end year defaults to the case start year
@@ -617,6 +607,8 @@ function CompetitiveEnvironment({
       users,
     );
   };
+  const [matrixOpen, setMatrixOpen] = useState(false);
+
   const lineFor = (id) => businessCase.competitorLines.find((l) => l.id === id);
 
   return (
@@ -643,6 +635,20 @@ function CompetitiveEnvironment({
           Browse all {COMPETITOR_CATALOGUE.length}
         </Button>
         <Button
+          appearance="secondary"
+          icon={<Add16Filled />}
+          onClick={() =>
+            // A blank row, filled in place. The table's cells are already the
+            // editing surface, so a separate four-field form to create a row was
+            // the same data entered through a second, longer door. The end year
+            // is seeded rather than left empty because the model reads a blank
+            // as "ends this year" — better to show the assumption than hide it.
+            onAdd({ yearContractEnds: String(CASE_START_YEAR) })
+          }
+        >
+          Add a row
+        </Button>
+        <Button
           appearance="transparent"
           icon={<Sparkle16Filled className={styles.aiIcon} />}
           onClick={() => onAsk('Detect the competitor products in this estate')}
@@ -651,72 +657,6 @@ function CompetitiveEnvironment({
         </Button>
       </div>
 
-      <Disclosure label="Add a product that is not listed" count={4}>
-      <div className={styles.compForm}>
-        <FormField label="Software solution">
-          {(id) => (
-            <Dropdown
-              id={id}
-              placeholder="Select"
-              value={draft.softwareSolution}
-              selectedOptions={draft.softwareSolution ? [draft.softwareSolution] : []}
-              onOptionSelect={(_, d) => setDraft({ ...draft, softwareSolution: d.optionValue })}
-            >
-              {SOFTWARE_SOLUTIONS.map((s) => (
-                <Option key={s} value={s}>
-                  {s}
-                </Option>
-              ))}
-            </Dropdown>
-          )}
-        </FormField>
-        <FormField label="Current product">
-          {(id) => (
-            <Input
-              id={id}
-              value={draft.currentProduct}
-              onChange={(_, d) => setDraft({ ...draft, currentProduct: d.value })}
-              placeholder="e.g. CrowdStrike"
-            />
-          )}
-        </FormField>
-        <FormField label="Competitor cost" help="Annual, at MSRP">
-          {(id) => (
-            <Input
-              id={id}
-              value={draft.competitorCost}
-              onChange={(_, d) => setDraft({ ...draft, competitorCost: d.value })}
-              placeholder="0"
-              contentBefore={symbol}
-            />
-          )}
-        </FormField>
-        <FormField label="Year contract ends" help="Savings start the year after">
-          {(id) => (
-            <Input
-              id={id}
-              value={draft.yearContractEnds}
-              onChange={(_, d) => setDraft({ ...draft, yearContractEnds: d.value })}
-              placeholder={String(CASE_START_YEAR)}
-            />
-          )}
-        </FormField>
-      </div>
-
-      <div className={styles.rowActions}>
-        <Button
-          appearance="primary"
-          icon={<Add16Filled />}
-          disabled={!canAdd}
-          onClick={() => {
-            onAdd(draft);
-            setDraft(blank);
-          }}
-        >
-          Add
-        </Button>
-      </div>
-      </Disclosure>
 
       <div className={styles.tableWrap}>
         <table className={styles.table}>
