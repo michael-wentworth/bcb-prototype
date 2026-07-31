@@ -141,11 +141,14 @@
   grid-column: 1 / -1;
   justify-self: stretch;
   width: 100%;
-  display: flex;
+  /* Three tracks with equal outer columns, so the middle one is centred on the
+     dialog rather than on whatever is left over between the count and the
+     button. space-between would have centred it only when those two happened
+     to be the same width. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: var(--spacingHorizontalL);
-  flex-wrap: wrap;
   padding-top: var(--spacingVerticalL);
 }
 
@@ -155,13 +158,16 @@
   color: var(--colorNeutralForeground3);
 }
 
-.footerActions {
+/* Previous / page / Next, as one unit in the centre track. */
+.pager {
   display: flex;
   align-items: center;
   gap: var(--spacingHorizontalS);
-  flex: none;
   white-space: nowrap;
-  margin-left: auto; /* holds the right edge even if the footer wraps */
+}
+
+.commit {
+  justify-self: end;
 }
 
 .pageOf {

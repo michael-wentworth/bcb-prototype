@@ -130,7 +130,7 @@ export default function CompetitorMatrixDialog({ open, onOpenChange, onAdd, symb
                     <tr>
                       <td colSpan={5} className={styles.empty}>
                         No product matches &ldquo;{query}&rdquo;. Close this and use{' '}
-                        <strong>Add a product that is not listed</strong> to enter it by hand.
+                        <strong>Add a new product</strong> to enter it by hand.
                       </td>
                     </tr>
                   ) : (
@@ -175,7 +175,10 @@ export default function CompetitorMatrixDialog({ open, onOpenChange, onAdd, symb
               {picked.size > 0 ? ` · ${picked.size} selected` : ''}
             </span>
 
-            <div className={styles.footerActions}>
+            {/* Paging sits in its own centre track so it stays centred on the
+                dialog whatever the count on the left or the button on the right
+                happen to be wide enough to say. */}
+            <div className={styles.pager}>
               <Button
                 appearance="subtle"
                 disabled={current === 0}
@@ -193,10 +196,16 @@ export default function CompetitorMatrixDialog({ open, onOpenChange, onAdd, symb
               >
                 Next
               </Button>
-              <Button appearance="primary" disabled={picked.size === 0} onClick={commit}>
-                {picked.size > 0 ? `Add ${picked.size} product${picked.size === 1 ? '' : 's'}` : 'Add products'}
-              </Button>
             </div>
+
+            <Button
+              className={styles.commit}
+              appearance="primary"
+              disabled={picked.size === 0}
+              onClick={commit}
+            >
+              {picked.size > 0 ? `Add ${picked.size} product${picked.size === 1 ? '' : 's'}` : 'Add products'}
+            </Button>
           </div>
         </DialogBody>
       </DialogSurface>
