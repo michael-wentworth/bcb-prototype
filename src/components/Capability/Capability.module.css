@@ -601,3 +601,81 @@
   text-align: right;
   white-space: nowrap;
 }
+
+/* ------------------------------ vendor contracts --------------------------- */
+
+.quickAdd {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+  flex-wrap: wrap;
+}
+
+.quickAddBox {
+  min-width: 320px;
+}
+
+.quickAddHint {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.contracts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+}
+
+/* One card per contract, because one contract is what the customer is billed
+   for. The capability table below shows where each one lands. */
+.contract {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalXS);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-left: 3px solid var(--colorPaletteGreenBorder2, #107c10);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+/* Blocked means the model will not count it yet, so it does not get the colour
+   that says "this is money". */
+.contractBlocked {
+  border-left-color: var(--colorPaletteDarkOrangeBorder1, #da3b01);
+}
+
+.contractHead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  flex-wrap: wrap;
+}
+
+.contractVendor {
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.contractCaps {
+  flex: 1 1 auto;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.contractReason {
+  margin: 0;
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground2);
+}
+
+.rowEcho {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+  font-variant-numeric: tabular-nums;
+}

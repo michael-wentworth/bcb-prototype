@@ -16,6 +16,10 @@
 
 import { CAPABILITIES, STRATEGIC, annualOf, capabilityById, entitlementById } from './capabilities.js';
 
+/** Every capability the catalogue says a vendor sells. */
+export const capabilitiesSoldBy = (vendor) =>
+  CAPABILITIES.filter((c) => c.competitors.includes(vendor)).map((c) => c.id);
+
 export const CASE_START_YEAR = 2026;
 
 const num = (v) => {
@@ -67,12 +71,12 @@ export const hasMarketEquivalent = (id) => {
  * "new Microsoft capability" to confirmed displacement — which is the difference
  * between "you would gain DLP" and "you would stop paying Forcepoint for DLP".
  */
-export function capabilityDelta(currentLicenses = [], futureLicenses = [], competitorRows = []) {
+export function capabilityDelta(currentLicenses = [], futureLicenses = [], contracts = []) {
   const current = grantsOf(currentLicenses);
   const future = grantsOf(futureLicenses);
 
   const named = new Set(
-    competitorRows.filter((r) => r.capabilityId && r.product).map((r) => r.capabilityId),
+    contracts.filter((c) => c.vendor).flatMap((c) => c.capabilityIds || []),
   );
 
   const retained = [];
@@ -146,12 +150,61 @@ export function competitorChoices(delta) {
  * cannot be switched off mid-term, so its saving starts the year *after* it
  * lapses. It is the single most common way one of these cases overstates itself.
  */
+/**
+ * What one contract is worth, and whether it can be counted at all.
+ *
+ * A contract is per vendor, not per capability - the customer gets one Okta
+ * invoice, not six. Keying the row on capability let the same contract be
+ * entered against every capability it covers, and the model summed all of them:
+ * one CrowdStrike line at $1.35M produced $8.1M of savings across the three
+ * capabilities it genuinely serves.
+ *
+ * The partial-cover rule is the other half. If the catalogue says a vendor also
+ * sells something the future state does not deliver, the customer probably
+ * cannot cancel the contract, so nothing is counted until the seller confirms
+ * this customer does not use it for that.
+ */
+export function evaluateContract(contract, futureCaps, displaceable, years) {
+  const sold = capabilitiesSoldBy(contract.vendor);
+  const linked = (contract.capabilityIds || []).filter((id) => displaceable.has(id));
+  const uncovered = sold.filter((id) => !futureCaps.has(id));
+  const blocked = uncovered.length > 0 && !contract.soleUseConfirmed;
+
+  const annualCost = num(contract.annualCost);
+  const endYear = num(contract.yearContractEnds) || CASE_START_YEAR;
+  const firstYear = Math.max(1, endYear - CASE_START_YEAR + 2);
+  const yearsSaved = Math.max(0, years - firstYear + 1);
+
+  const counts = linked.length > 0 && !blocked && yearsSaved > 0;
+  return {
+    ...contract,
+    sold,
+    linked,
+    uncovered,
+    blocked,
+    annualCost,
+    endYear,
+    firstYear,
+    yearsSaved: counts ? yearsSaved : 0,
+    saved: counts ? annualCost * yearsSaved : 0,
+    displaceable: counts,
+    reason:
+      linked.length === 0
+        ? 'None of the capabilities this covers are added by the future state, so the spend continues.'
+        : blocked
+          ? `Also covers ${uncovered.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}, which the future state does not deliver - confirm they do not use it for that.`
+          : yearsSaved === 0
+            ? 'The contract ends after the analysis period, so no saving lands inside it.'
+            : null,
+  };
+}
+
 export function buildCapabilityCase({
   analysisPeriod = 3,
   numberOfUsers = 0,
   currentLicenses = [],
   futureLicenses = [],
-  competitorRows = [],
+  contracts = [],
   /* Per user per month, and the seller's number rather than the catalogue's.
      List prices are the wrong basis for an enterprise case — an estate of this
      size does not pay rate card, and quoting one would overstate the investment
@@ -161,7 +214,7 @@ export function buildCapabilityCase({
 } = {}) {
   const years = Math.max(1, Math.min(5, Number(analysisPeriod) || 3));
   const users = num(numberOfUsers);
-  const delta = capabilityDelta(currentLicenses, futureLicenses, competitorRows);
+  const delta = capabilityDelta(currentLicenses, futureLicenses, contracts);
 
   const currentPerUser = annualPerUserOf(currentLicenses);
   const futurePerUser = annualPerUserOf(futureLicenses);
@@ -177,34 +230,13 @@ export function buildCapabilityCase({
   const microsoftByYear = Array.from({ length: years }, () => incrementalAnnual);
   const investmentTotal = incrementalAnnual * years;
 
-  /* Only rows whose capability is genuinely displaced count. A row against a
-     capability the future state does not deliver is spend that continues. */
+  /* One line per contract. A vendor cannot appear twice, so the same spend
+     cannot be counted twice however it was entered. */
+  const futureCaps = grantsOf(futureLicenses);
   const displaceable = new Set(delta.consolidation);
-  const competitorLines = competitorRows
-    .filter((r) => r.capabilityId && r.product)
-    .map((row) => {
-      const annualCost = num(row.annualCost);
-      const endYear = num(row.yearContractEnds) || CASE_START_YEAR;
-      const offset = endYear - CASE_START_YEAR;
-      const firstYear = Math.max(1, offset + 2);
-      const yearsSaved = Math.max(0, years - firstYear + 1);
-      const displaces = displaceable.has(row.capabilityId);
-      return {
-        ...row,
-        capability: capabilityById(row.capabilityId),
-        annualCost,
-        endYear,
-        firstYear,
-        yearsSaved: displaces ? yearsSaved : 0,
-        saved: displaces ? annualCost * yearsSaved : 0,
-        displaceable: displaces && yearsSaved > 0,
-        reason: !displaces
-          ? 'The future state does not deliver this capability, so the spend continues.'
-          : yearsSaved === 0
-            ? 'The contract ends after the analysis period, so no saving lands inside it.'
-            : null,
-      };
-    });
+  const competitorLines = contracts
+    .filter((c) => c.vendor)
+    .map((c) => evaluateContract(c, futureCaps, displaceable, years));
 
   const competitorByYear = Array.from({ length: years }, (_, y) =>
     competitorLines.reduce((sum, l) => sum + (y + 1 >= l.firstYear ? l.saved / Math.max(l.yearsSaved, 1) : 0), 0),

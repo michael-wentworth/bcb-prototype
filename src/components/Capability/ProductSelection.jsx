@@ -1,5 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import { Button, Card, Combobox, Input, Option, Tab, TabList } from '@fluentui/react-components';
+import {
+  Button,
+  Card,
+  Checkbox,
+  Combobox,
+  Input,
+  Option,
+  Tab,
+  TabList,
+} from '@fluentui/react-components';
 import { Dismiss16Regular } from '@fluentui/react-icons';
 import {
   BASE_SKUS,
@@ -12,7 +21,12 @@ import {
   licenseById,
   pathsFor,
 } from '../../data/capabilities.js';
-import { annualPerUserOf, competitorChoices, grantsOf } from '../../data/capabilityModel.js';
+import {
+  annualPerUserOf,
+  capabilitiesSoldBy,
+  competitorChoices,
+  grantsOf,
+} from '../../data/capabilityModel.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
@@ -53,16 +67,17 @@ export default function ProductSelection() {
     setFuturePath,
     setFutureLicenses,
     setNegotiatedUplift,
-    addCapabilityRow,
-    updateCapabilityRow,
-    removeCapabilityRow,
+    linkVendor,
+    unlinkVendor,
+    updateContract,
+    removeContract,
   } = useAppState();
 
 
   const base = currentLicenses.find((id) => licenseById(id)?.kind === 'base') || '';
   const paths = pathsFor(base);
   const currentCaps = useMemo(() => grantsOf(currentLicenses), [currentLicenses]);
-  const { delta, counts } = capabilityCase;
+  const { delta, counts, competitorLines } = capabilityCase;
 
   const gainedBy = (ids) => [...grantsOf(ids)].filter((c) => !currentCaps.has(c)).length;
   const toggleFuture = (id) =>
@@ -74,11 +89,31 @@ export default function ProductSelection() {
 
   const listUplift = Math.max(0, annualPerUserOf(futureLicenses) - annualPerUserOf(currentLicenses));
   const groups = competitorChoices(delta);
-  const rows = capabilityCompetitors.rows;
-  const rowFor = (capId) => rows.find((r) => r.capabilityId === capId);
+  const contracts = capabilityCompetitors.contracts;
+  const mappable = new Set(delta.potentialConsolidation);
+  const contractFor = (capId) => contracts.find((c) => c.capabilityIds.includes(capId));
 
-  /* One draft string per row. Undefined means "not typing", so the field shows
-     the committed vendor; a string means the seller is filtering. */
+  /* Adding a vendor links it to every mappable capability the catalogue says it
+     sells. That is the whole point of the quick-add: a seller holding a list of
+     four products should not have to find fourteen rows. Picking the same vendor
+     from a single row's dropdown runs the same function, so the two entry paths
+     cannot produce different data. */
+  const addVendor = (vendor) => {
+    const caps = capabilitiesSoldBy(vendor).filter((id) => mappable.has(id));
+    linkVendor(vendor, caps.length ? caps : []);
+  };
+
+  const allVendors = useMemo(() => {
+    const set = new Set();
+    groups.forEach((g) => g.capabilities.forEach((c) => c.competitors.forEach((v) => set.add(v))));
+    return [...set].sort();
+  }, [groups]);
+
+  const [vendorQuery, setVendorQuery] = useState('');
+  const vendorMatches = allVendors.filter((v) =>
+    v.toLowerCase().includes(vendorQuery.trim().toLowerCase()),
+  );
+
   const [queries, setQueries] = useState({});
   const setQuery = (capId, value) => setQueries((q) => ({ ...q, [capId]: value }));
   const clearQuery = (capId) =>
@@ -87,13 +122,6 @@ export default function ProductSelection() {
       delete next[capId];
       return next;
     });
-
-  const pickVendor = (capId, vendor) => {
-    const existing = rowFor(capId);
-    if (existing && existing.product === vendor) return removeCapabilityRow(existing.id);
-    if (existing) return updateCapabilityRow(existing.id, 'product', vendor);
-    return addCapabilityRow({ capabilityId: capId, product: vendor });
-  };
 
   return (
     <div className={styles.root}>
@@ -282,6 +310,79 @@ export default function ProductSelection() {
             </p>
           </div>
 
+          <div className={styles.quickAdd}>
+            <Combobox
+              freeform
+              className={styles.quickAddBox}
+              placeholder="Add a product they already use..."
+              value={vendorQuery}
+              selectedOptions={[]}
+              onChange={(e) => setVendorQuery(e.target.value)}
+              onOptionSelect={(_, d) => {
+                addVendor(d.optionText);
+                setVendorQuery('');
+              }}
+              aria-label="Add a product the customer already uses"
+            >
+              {vendorMatches.slice(0, 30).map((v) => (
+                <Option key={v} text={v}>{v}</Option>
+              ))}
+            </Combobox>
+            <span className={styles.quickAddHint}>
+              Added once, against every capability it covers.
+            </span>
+          </div>
+
+          {competitorLines.length > 0 ? (
+            <ul className={styles.contracts}>
+              {competitorLines.map((l) => (
+                <li
+                  key={l.id}
+                  className={`${styles.contract} ${l.blocked ? styles.contractBlocked : ''}`}
+                >
+                  <div className={styles.contractHead}>
+                    <span className={styles.contractVendor}>{l.vendor}</span>
+                    <span className={styles.contractCaps}>
+                      {l.linked.length} capabilit{l.linked.length === 1 ? 'y' : 'ies'}
+                    </span>
+                    <Input
+                      size="small"
+                      className={styles.costInput}
+                      value={l.annualCost || ''}
+                      onChange={(_, d) => updateContract(l.id, 'annualCost', d.value)}
+                      contentBefore="$"
+                      placeholder="Annual cost"
+                      aria-label={`Annual cost for ${l.vendor}`}
+                    />
+                    <Input
+                      size="small"
+                      className={styles.yearInput}
+                      value={l.yearContractEnds || ''}
+                      onChange={(_, d) => updateContract(l.id, 'yearContractEnds', d.value)}
+                      placeholder="Ends"
+                      aria-label={`Contract end year for ${l.vendor}`}
+                    />
+                    <Button
+                      appearance="subtle"
+                      size="small"
+                      icon={<Dismiss16Regular />}
+                      aria-label={`Remove ${l.vendor}`}
+                      onClick={() => removeContract(l.id)}
+                    />
+                  </div>
+                  {l.reason ? <p className={styles.contractReason}>{l.reason}</p> : null}
+                  {l.blocked ? (
+                    <Checkbox
+                      label="They do not use it for those - count this contract"
+                      checked={!!l.soleUseConfirmed}
+                      onChange={(_, d) => updateContract(l.id, 'soleUseConfirmed', !!d.checked)}
+                    />
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
           <div className={styles.tableWrap}>
             <table className={styles.mapTable}>
               <thead>
@@ -303,14 +404,14 @@ export default function ProductSelection() {
                       </th>
                     </tr>
                     {g.capabilities.map((c) => {
-                      const row = rowFor(c.id);
+                      const ctr = contractFor(c.id);
                       const q = queries[c.id];
-                      const typed = q !== undefined ? q : row?.product || '';
+                      const typed = q !== undefined ? q : ctr?.vendor || '';
                       const matches = c.competitors.filter((v) =>
                         v.toLowerCase().includes((q ?? '').toLowerCase()),
                       );
                       return (
-                        <tr key={c.id} className={row?.product ? styles.rowNamed : ''}>
+                        <tr key={c.id} className={ctr ? styles.rowNamed : ''}>
                           <th scope="row" className={styles.capCell}>{c.name}</th>
                           <td className={styles.msCell}>{c.product}</td>
                           <td>
@@ -324,17 +425,17 @@ export default function ProductSelection() {
                               className={styles.vendorPicker}
                               placeholder="Search or type…"
                               value={typed}
-                              selectedOptions={row?.product ? [row.product] : []}
+                              selectedOptions={ctr ? [ctr.vendor] : []}
                               onChange={(e) => setQuery(c.id, e.target.value)}
                               onOptionSelect={(_, d) => {
-                                pickVendor(c.id, d.optionText);
+                                addVendor(d.optionText);
                                 clearQuery(c.id);
                               }}
                               onBlur={() => {
                                 const v = (q ?? '').trim();
-                                if (q !== undefined && v !== (row?.product || '')) {
-                                  if (v) pickVendor(c.id, v);
-                                  else if (row) removeCapabilityRow(row.id);
+                                if (q !== undefined && v !== (ctr?.vendor || '')) {
+                                  if (v) linkVendor(v, [c.id]);
+                                  else if (ctr) unlinkVendor(ctr.id, c.id);
                                 }
                                 clearQuery(c.id);
                               }}
@@ -351,28 +452,15 @@ export default function ProductSelection() {
                             </Combobox>
                           </td>
                           <td className={styles.numericCol}>
-                            <Input
-                              size="small"
-                              className={styles.costInput}
-                              disabled={!row?.product}
-                              value={row?.annualCost || ''}
-                              onChange={(_, d) => updateCapabilityRow(row.id, 'annualCost', d.value)}
-                              contentBefore="$"
-                              aria-label={`Annual cost for ${c.name}`}
-                            />
+                            {/* Cost and end year belong to the contract, not to
+                                each capability it covers - editing them per row
+                                would ask the same question up to nine times. */}
+                            <span className={styles.rowEcho}>
+                              {ctr?.annualCost ? `$${Number(ctr.annualCost).toLocaleString()}` : '-'}
+                            </span>
                           </td>
                           <td className={styles.numericCol}>
-                            <Input
-                              size="small"
-                              className={styles.yearInput}
-                              disabled={!row?.product}
-                              value={row?.yearContractEnds || ''}
-                              onChange={(_, d) =>
-                                updateCapabilityRow(row.id, 'yearContractEnds', d.value)
-                              }
-                              placeholder="2027"
-                              aria-label={`Contract end year for ${c.name}`}
-                            />
+                            <span className={styles.rowEcho}>{ctr?.yearContractEnds || '-'}</span>
                           </td>
                         </tr>
                       );
@@ -388,7 +476,7 @@ export default function ProductSelection() {
       <StepFooter
         hint={
           delta.future.length
-            ? `${delta.gained.length} gained · ${counts.consolidation} incumbent${counts.consolidation === 1 ? '' : 's'} named · ${delta.strategic.length} net-new.`
+            ? `${delta.gained.length} gained · ${contracts.length} contract${contracts.length === 1 ? '' : 's'} named · ${delta.strategic.length} net-new.`
             : 'Pick a future state to see the analysis.'
         }
       />

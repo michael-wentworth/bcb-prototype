@@ -84,12 +84,21 @@ export const makeCompetitorRow = (seed = {}) => ({
   ...seed,
 });
 
-export const makeCapabilityRow = (seed = {}) => ({
-  id: rowId('cap'),
-  capabilityId: '',
-  product: '',
+/**
+ * One vendor contract, covering however many capabilities that vendor supplies.
+ *
+ * Keyed on the vendor rather than the capability because that is how the
+ * customer is billed — one Okta invoice, not one per capability. The previous
+ * shape let the same contract be entered against each capability it covered and
+ * counted every copy.
+ */
+export const makeContract = (seed = {}) => ({
+  id: rowId('ctr'),
+  vendor: '',
   annualCost: '',
   yearContractEnds: '',
+  capabilityIds: [],
+  soleUseConfirmed: false,
   authorship: AUTHORSHIP.MANUAL,
   ...seed,
 });
@@ -132,7 +141,7 @@ const initialState = {
   futurePath: '',
   futureLicenses: [],
   negotiatedUplift: '',
-  capabilityCompetitors: { rows: [] },
+  capabilityCompetitors: { contracts: [] },
 
   narrative: emptyNarrative(),
 
@@ -529,39 +538,62 @@ function reducer(state, action) {
     case 'SET_NEGOTIATED_UPLIFT':
       return humanTouch({ ...state, negotiatedUplift: action.value }, 'skus');
 
-    case 'ADD_CAPABILITY_ROW':
+    /* Linking a vendor to a capability and creating its contract are the same
+       action, so the dropdown and the quick-add cannot diverge: whichever the
+       seller uses, one vendor means one contract. */
+    case 'LINK_VENDOR': {
+      const list = state.capabilityCompetitors.contracts;
+      const existing = list.find((c) => c.vendor === action.vendor);
+      const next = existing
+        ? list.map((c) =>
+            c.id === existing.id
+              ? { ...c, capabilityIds: [...new Set([...c.capabilityIds, ...action.capabilityIds])] }
+              : c,
+          )
+        : [...list, makeContract({ vendor: action.vendor, capabilityIds: action.capabilityIds })];
       return humanTouch(
-        {
-          ...state,
-          capabilityCompetitors: {
-            ...state.capabilityCompetitors,
-            rows: [...state.capabilityCompetitors.rows, makeCapabilityRow(action.seed)],
-          },
-        },
+        { ...state, capabilityCompetitors: { ...state.capabilityCompetitors, contracts: next } },
         'competitors',
       );
+    }
 
-    case 'UPDATE_CAPABILITY_ROW':
+    case 'UNLINK_VENDOR': {
+      const next = state.capabilityCompetitors.contracts
+        .map((c) =>
+          c.id === action.id
+            ? { ...c, capabilityIds: c.capabilityIds.filter((x) => x !== action.capabilityId) }
+            : c,
+        )
+        /* A contract with nothing left to displace is not a contract the case
+           has anything to say about. */
+        .filter((c) => c.capabilityIds.length > 0);
+      return humanTouch(
+        { ...state, capabilityCompetitors: { ...state.capabilityCompetitors, contracts: next } },
+        'competitors',
+      );
+    }
+
+    case 'UPDATE_CONTRACT':
       return humanTouch(
         {
           ...state,
           capabilityCompetitors: {
             ...state.capabilityCompetitors,
-            rows: state.capabilityCompetitors.rows.map((r) =>
-              r.id === action.id ? { ...r, [action.key]: action.value } : r,
+            contracts: state.capabilityCompetitors.contracts.map((c) =>
+              c.id === action.id ? { ...c, [action.key]: action.value } : c,
             ),
           },
         },
         'competitors',
       );
 
-    case 'REMOVE_CAPABILITY_ROW':
+    case 'REMOVE_CONTRACT':
       return humanTouch(
         {
           ...state,
           capabilityCompetitors: {
             ...state.capabilityCompetitors,
-            rows: state.capabilityCompetitors.rows.filter((r) => r.id !== action.id),
+            contracts: state.capabilityCompetitors.contracts.filter((c) => c.id !== action.id),
           },
         },
         'competitors',
@@ -669,7 +701,7 @@ export function AppStateProvider({ children }) {
         numberOfUsers: state.customer.numberOfUsers,
         currentLicenses: state.currentLicenses,
         futureLicenses: state.futureLicenses,
-        competitorRows: state.capabilityCompetitors.rows,
+        contracts: state.capabilityCompetitors.contracts,
         negotiatedUplift: state.negotiatedUplift,
       }),
     [
@@ -775,9 +807,10 @@ export function AppStateProvider({ children }) {
       setFuturePath: (path) => dispatch({ type: 'SET_FUTURE_PATH', path }),
       setFutureLicenses: (ids) => dispatch({ type: 'SET_FUTURE_LICENSES', ids }),
       setNegotiatedUplift: (value) => dispatch({ type: 'SET_NEGOTIATED_UPLIFT', value }),
-      addCapabilityRow: (seed) => dispatch({ type: 'ADD_CAPABILITY_ROW', seed }),
-      updateCapabilityRow: (id, key, value) => dispatch({ type: 'UPDATE_CAPABILITY_ROW', id, key, value }),
-      removeCapabilityRow: (id) => dispatch({ type: 'REMOVE_CAPABILITY_ROW', id }),
+      linkVendor: (vendor, capabilityIds) => dispatch({ type: 'LINK_VENDOR', vendor, capabilityIds }),
+      unlinkVendor: (id, capabilityId) => dispatch({ type: 'UNLINK_VENDOR', id, capabilityId }),
+      updateContract: (id, key, value) => dispatch({ type: 'UPDATE_CONTRACT', id, key, value }),
+      removeContract: (id) => dispatch({ type: 'REMOVE_CONTRACT', id }),
       toggleOutcome: (id) => dispatch({ type: 'TOGGLE_OUTCOME', id }),
       setAllOutcomes: (ids) => dispatch({ type: 'SET_ALL_OUTCOMES', ids }),
       addSkuRow: (seed, users) => dispatch({ type: 'ADD_SKU_ROW', seed, users }),
