@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Button, Card, Combobox, Input, Option, Tab, TabList } from '@fluentui/react-components';
-import { Checkmark16Filled, Dismiss16Regular } from '@fluentui/react-icons';
+import { Dismiss16Regular } from '@fluentui/react-icons';
 import {
   BASE_SKUS,
   SKUS,
@@ -119,12 +119,7 @@ export default function ProductSelection() {
                 aria-label={`${l.name}, ${l.grants.length} capabilit${l.grants.length === 1 ? 'y' : 'ies'}`}
                 onClick={() => setCurrentLicenses(base === l.id ? [] : [l.id])}
               >
-                <span className={styles.tileName}>
-                  {base === l.id ? (
-                    <Checkmark16Filled aria-hidden="true" className={styles.tileCheck} />
-                  ) : null}
-                  {l.name}
-                </span>
+                <span className={styles.tileName}>{l.name}</span>
                 <span className={styles.tileMeta}>
                   {l.grants.length} capabilit{l.grants.length === 1 ? 'y' : 'ies'} · ${l.pupm}
                   /user/mo
@@ -196,12 +191,7 @@ export default function ProductSelection() {
                       aria-label={`${item.name}, ${item.grants.length} capabilit${item.grants.length === 1 ? 'y' : 'ies'}`}
                       onClick={() => toggleFuture(item.id)}
                     >
-                      <span className={styles.tileName}>
-                        {on ? (
-                          <Checkmark16Filled aria-hidden="true" className={styles.tileCheck} />
-                        ) : null}
-                        {item.name}
-                      </span>
+                      <span className={styles.tileName}>{item.name}</span>
                       <span className={styles.tileMeta}>
                         {item.grants.length} capabilit{item.grants.length === 1 ? 'y' : 'ies'} · $
                         {item.pupm}/user/mo

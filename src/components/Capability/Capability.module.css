@@ -37,69 +37,49 @@
   gap: var(--spacingHorizontalXL);
 }
 
-/* ------------------------------ license tiles ------------------------------ */
-
-.tiles {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--spacingHorizontalM);
-}
-
-/* A license is a choice, so it is a button that looks chosen or not — not a
-   checkbox in a list. The estate is picked in seconds either way, but this reads
-   as "what do they have" rather than as a form to complete. */
-.tile {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
-  border: 1px solid var(--colorNeutralStroke2);
-  border-radius: var(--borderRadiusLarge);
-  background-color: var(--colorNeutralBackground1);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color var(--durationFaster) var(--curveEasyEase),
-    background-color var(--durationFaster) var(--curveEasyEase);
-}
-
-.tile:hover {
-  border-color: var(--colorBrandStroke2);
-}
-
-.tile:focus-visible {
-  outline: 2px solid var(--colorStrokeFocus2);
-  outline-offset: 1px;
-}
-
-.tileOn {
-  border-color: var(--colorBrandStroke1);
-  background-color: var(--colorBrandBackground2);
-}
+/* ------------------------------ selectable tiles --------------------------- */
 
 .tileName {
   font-size: var(--fontSizeBase300);
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  min-width: 0;
 }
 
 .tileMeta {
+  flex: none;
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
   font-variant-numeric: tabular-nums;
 }
 
-.tileCheck {
-  color: var(--colorBrandForeground1);
-  flex: none;
+/* Selected state is Fluent's own: the brand-2 ground with a brand-1 edge, the
+   pairing its selectable tags use. No icon — a mark inserted on selection sat in
+   the text flow, re-wrapped the label and changed the tile's height, so the grid
+   reflowed on every click. Colour carries it with nothing to lay out.
+
+   Selectors are compound rather than a bare .tileOn because .licenseTile and
+   .path are declared later in this file; a single class would tie on
+   specificity and lose on source order, which is exactly what happened. */
+.licenseTile.tileOn,
+.path.pathOn {
+  border-color: var(--colorBrandStroke1);
+  background-color: var(--colorBrandBackground2);
+  /* Drawn inward, so the edge reads at 2px without displacing any content the
+     way an actual border-width change would. */
+  box-shadow: inset 0 0 0 1px var(--colorBrandStroke1);
+}
+
+.licenseTile.tileOn .tileName,
+.licenseTile.tileOn .tileMeta,
+.path.pathOn .pathLabel {
+  color: var(--colorBrandForeground2);
+}
+
+.licenseTile.tileOn:hover,
+.path.pathOn:hover {
+  background-color: var(--colorBrandBackground2Hover, var(--colorBrandBackground2));
+  border-color: var(--colorBrandStroke1);
 }
 
 .groupLabel {
@@ -123,6 +103,7 @@
 }
 
 .path {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -146,9 +127,8 @@
   outline-offset: 1px;
 }
 
-.pathOn {
-  border-color: var(--colorBrandStroke1);
-  background-color: var(--colorBrandBackground2);
+.pathOn .pathLabel {
+  color: var(--colorBrandForeground2);
 }
 
 .pathLabel {
@@ -497,6 +477,7 @@
 }
 
 .licenseTile {
+  position: relative;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
