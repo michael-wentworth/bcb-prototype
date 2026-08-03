@@ -522,3 +522,15 @@
   outline: 2px solid var(--colorStrokeFocus2);
   outline-offset: 1px;
 }
+
+/* A price the customer's own sheet did not supply. Small, but present on every
+   tile it applies to — a made-up number that looks identical to a real one is
+   worse than no number. */
+.estimate {
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorNeutralBackground4);
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase100);
+}

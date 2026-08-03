@@ -169,6 +169,8 @@ export const CAPABILITIES = [
     competitors: ['ChatGPT Enterprise', 'Google Gemini for Workspace'] },
   { id: 'security-ai', name: 'Security AI Assistant', area: 'ai', group: 'Security AI', product: 'Microsoft Security Copilot',
     competitors: [] },
+  { id: 'agent-governance', name: 'AI Agent Governance', area: 'ai', group: 'Agent management', product: 'Agent 365',
+    competitors: [] },
 ];
 
 /**
@@ -183,6 +185,7 @@ export const CAPABILITIES = [
  */
 export const STRATEGIC = new Set([
   'security-ai',
+  'agent-governance',
   'verifiable-credentials',
   'face-check',
   'decentralized-identity',
@@ -195,86 +198,117 @@ export const STRATEGIC = new Set([
 export const capabilityById = (id) => CAPABILITIES.find((c) => c.id === id);
 export const areaById = (id) => SOLUTION_AREAS.find((a) => a.id === id);
 
-/* ------------------------------ the licensing layer ------------------------ */
+/* ------------------------------- the catalogue ----------------------------- */
 
 const INTUNE_CORE = ['mdm', 'mam', 'desktop-mgmt'];
 const INTUNE_SUITE = ['epm', 'endpoint-analytics', 'tunnel-mam', 'specialty-devices', 'enterprise-app-mgmt', 'cloud-pki', 'remote-help'];
 const ENTRA_P1 = ['iam', 'sso', 'mfa'];
 const ENTRA_P2 = ['pim', 'risk-ca', 'adaptive-mfa'];
 const ENTRA_SUITE = ['id-governance', 'lifecycle-workflows', 'ztna', 'swg', 'verifiable-credentials', 'face-check', 'decentralized-identity'];
-const DEFENDER_E5 = ['edr', 'endpoint-platform', 'vuln-mgmt', 'email-protection', 'collab-protection', 'anti-phishing', 'casb', 'identity-monitoring'];
+const DEFENDER_SUITE = ['edr', 'endpoint-platform', 'vuln-mgmt', 'email-protection', 'collab-protection', 'anti-phishing', 'casb', 'identity-monitoring'];
 const PURVIEW_E3 = ['information-protection', 'data-classification', 'records-mgmt', 'retention-mgmt', 'ediscovery', 'audit'];
-const PURVIEW_E5 = ['dlp', 'message-encryption', 'insider-risk', 'comms-compliance', 'information-barriers', 'data-lifecycle', 'dsi', 'dspm', 'pam'];
+const PURVIEW_SUITE = ['dlp', 'message-encryption', 'insider-risk', 'comms-compliance', 'information-barriers',
+  'data-lifecycle', 'dsi', 'dspm', 'pam', 'data-discovery', 'unified-catalog'];
 
 /**
- * What a license grants, as capability ids.
+ * Every orderable thing, in one list.
  *
- * `kind: 'base'` entries are mutually exclusive - a customer sits on one base
- * bundle. `kind: 'addon'` entries stack on top, which is what makes "E3 plus the
- * Defender suite" expressible without inventing a bundle per combination.
+ * There is no separate "license" and "product" tier. A SKU is a line on a quote
+ * with a per-user-per-month price; a license is the same object once the
+ * customer holds it. E5 and the Entra Suite differ only in how many capabilities
+ * they grant, not in kind — modelling them as different sorts of thing produced
+ * three concepts where the price list has one.
  *
- * The base list is the full commercial ladder rather than the four bundles that
- * cover most deals: a seller whose customer is on Business Standard or F3 should
- * not have to pick the nearest thing and mentally adjust the delta.
+ * `kind` is the one distinction that earns its place, and only because it is
+ * behavioural: a base is mutually exclusive, an add-on stacks.
+ *
+ * `source` is not decoration. 'sheet' means the price came from the customer's
+ * own price list; 'estimate' means it is mine and should not be quoted. The
+ * previous version mixed the two silently and five products sat on a $48
+ * fallback that looked exactly like data.
  */
-export const LICENSES = [
-  /* --------------------------- Office 365 family -------------------------- */
-  { id: 'o365-e1', name: 'Office 365 E1', kind: 'base', annualPerUser: 120,
-    grants: ['retention-mgmt'] },
-  { id: 'o365-e3', name: 'Office 365 E3', kind: 'base', annualPerUser: 276,
-    grants: ['ediscovery', 'audit', 'retention-mgmt'] },
-  { id: 'o365-e5', name: 'Office 365 E5', kind: 'base', annualPerUser: 456,
-    grants: ['ediscovery', 'audit', 'retention-mgmt', 'records-mgmt', 'information-protection',
-      'dlp', 'email-protection', 'collab-protection', 'anti-phishing', 'casb'] },
-
-  /* -------------------------- Microsoft 365 family ------------------------ */
-  { id: 'm365-f1', name: 'Microsoft 365 F1', kind: 'base', annualPerUser: 30,
-    grants: [...ENTRA_P1] },
-  { id: 'm365-f3', name: 'Microsoft 365 F3', kind: 'base', annualPerUser: 96,
-    grants: [...INTUNE_CORE, ...ENTRA_P1, 'retention-mgmt'] },
-  { id: 'm365-e3', name: 'Microsoft 365 E3', kind: 'base', annualPerUser: 432,
+export const SKUS = [
+  /* ------------------------- priced from the sheet ------------------------ */
+  { id: 'm365-e3', name: 'Microsoft 365 E3', kind: 'base', pupm: 39, source: 'sheet',
     grants: [...INTUNE_CORE, ...ENTRA_P1, ...PURVIEW_E3] },
-  { id: 'm365-e5', name: 'Microsoft 365 E5', kind: 'base', annualPerUser: 684,
-    grants: [...INTUNE_CORE, ...ENTRA_P1, ...ENTRA_P2, ...PURVIEW_E3, ...PURVIEW_E5, ...DEFENDER_E5] },
-
-  /* ------------------------------- Business ------------------------------- */
-  { id: 'bus-basic', name: 'Microsoft 365 Business Basic', kind: 'base', annualPerUser: 72,
-    grants: [] },
-  { id: 'bus-standard', name: 'Microsoft 365 Business Standard', kind: 'base', annualPerUser: 150,
-    grants: [] },
-  { id: 'bus-premium', name: 'Microsoft 365 Business Premium', kind: 'base', annualPerUser: 264,
+  { id: 'm365-e5', name: 'Microsoft 365 E5', kind: 'base', pupm: 60, source: 'sheet',
+    grants: [...INTUNE_CORE, ...ENTRA_P1, ...ENTRA_P2, ...PURVIEW_E3, ...PURVIEW_SUITE, ...DEFENDER_SUITE] },
+  { id: 'bus-premium', name: 'Microsoft 365 Business Premium', kind: 'base', pupm: 22, source: 'sheet',
     grants: [...INTUNE_CORE, ...ENTRA_P1, 'edr', 'email-protection', 'anti-phishing', 'information-protection'] },
 
-  /* ------------------------------ no bundle ------------------------------- */
-  { id: 'none', name: 'No Microsoft bundle', kind: 'base', annualPerUser: 0,
+  { id: 'defender-suite', name: 'Microsoft Defender Suite', kind: 'addon', pupm: 12, source: 'sheet',
+    grants: DEFENDER_SUITE },
+  { id: 'purview-suite', name: 'Microsoft Purview Suite', kind: 'addon', pupm: 12, source: 'sheet',
+    grants: PURVIEW_SUITE },
+  { id: 'entra-suite', name: 'Microsoft Entra Suite', kind: 'addon', pupm: 12, source: 'sheet',
+    grants: [...ENTRA_P2, ...ENTRA_SUITE] },
+  { id: 'intune-suite', name: 'Microsoft Intune Suite', kind: 'addon', pupm: 10, source: 'sheet',
+    grants: INTUNE_SUITE },
+  { id: 'agent-365', name: 'Agent 365', kind: 'addon', pupm: 15, source: 'sheet',
+    grants: ['agent-governance'] },
+
+  /* Business Premium has its own priced bundles of the suites, and they only
+     apply on that base — so they are constrained rather than offered to
+     everyone the way the standalone suites are. */
+  { id: 'bp-defender-purview', name: 'Defender and Purview Suites for Business Premium', kind: 'addon', pupm: 15, source: 'sheet',
+    requiresBase: ['bus-premium'], grants: [...DEFENDER_SUITE, ...PURVIEW_SUITE] },
+  { id: 'bp-purview', name: 'Purview Suite for Business Premium', kind: 'addon', pupm: 10, source: 'sheet',
+    requiresBase: ['bus-premium'], grants: PURVIEW_SUITE },
+  { id: 'bp-defender', name: 'Defender Suite for Business Premium', kind: 'addon', pupm: 10, source: 'sheet',
+    requiresBase: ['bus-premium'], grants: DEFENDER_SUITE },
+
+  /* ---------------------------- my estimates ------------------------------ */
+  /* Kept so the current-state picker covers the whole ladder, but every price
+     here is mine and is flagged in the UI. Replace before anything is quoted. */
+  { id: 'none', name: 'No Microsoft bundle', kind: 'base', pupm: 0, source: 'sheet', grants: [] },
+  { id: 'o365-e1', name: 'Office 365 E1', kind: 'base', pupm: 10, source: 'estimate',
+    grants: ['retention-mgmt'] },
+  { id: 'o365-e3', name: 'Office 365 E3', kind: 'base', pupm: 23, source: 'estimate',
+    grants: ['ediscovery', 'audit', 'retention-mgmt'] },
+  { id: 'o365-e5', name: 'Office 365 E5', kind: 'base', pupm: 38, source: 'estimate',
+    grants: ['ediscovery', 'audit', 'retention-mgmt', 'records-mgmt', 'information-protection',
+      'dlp', 'email-protection', 'collab-protection', 'anti-phishing', 'casb'] },
+  { id: 'm365-f1', name: 'Microsoft 365 F1', kind: 'base', pupm: 2.25, source: 'estimate',
+    grants: [...ENTRA_P1] },
+  { id: 'm365-f3', name: 'Microsoft 365 F3', kind: 'base', pupm: 8, source: 'estimate',
+    grants: [...INTUNE_CORE, ...ENTRA_P1, 'retention-mgmt'] },
+  { id: 'bus-basic', name: 'Microsoft 365 Business Basic', kind: 'base', pupm: 6, source: 'estimate',
+    grants: [] },
+  { id: 'bus-standard', name: 'Microsoft 365 Business Standard', kind: 'base', pupm: 12.5, source: 'estimate',
     grants: [] },
 
-  /* -------------------------------- add-ons ------------------------------- */
-  { id: 'e5-security', name: 'Microsoft 365 E5 Security', kind: 'addon', annualPerUser: 144,
-    grants: [...ENTRA_P2, ...DEFENDER_E5] },
-  { id: 'e5-compliance', name: 'Microsoft 365 E5 Compliance', kind: 'addon', annualPerUser: 144,
-    grants: [...PURVIEW_E5, ...PURVIEW_E3] },
-  { id: 'entra-suite', name: 'Microsoft Entra Suite', kind: 'addon', annualPerUser: 144,
-    grants: [...ENTRA_P2, ...ENTRA_SUITE] },
-  { id: 'intune-suite', name: 'Microsoft Intune Suite', kind: 'addon', annualPerUser: 120,
-    grants: INTUNE_SUITE },
-  { id: 'purview-suite', name: 'Microsoft Purview Suite', kind: 'addon', annualPerUser: 132,
-    grants: [...PURVIEW_E5, 'data-discovery', 'unified-catalog'] },
-  { id: 'sentinel', name: 'Microsoft Sentinel', kind: 'addon', annualPerUser: 96,
+  /* These three are real products but are not billed per user — Sentinel by GB
+     ingested, Defender for Cloud per resource, Security Copilot per SCU-hour.
+     The per-user figure is a modelling convenience and says so. */
+  { id: 'sentinel', name: 'Microsoft Sentinel', kind: 'addon', pupm: 8, source: 'estimate', notPerUser: 'Billed per GB ingested',
     grants: ['siem', 'soar', 'unified-secops'] },
-  { id: 'defender-cloud', name: 'Microsoft Defender for Cloud', kind: 'addon', annualPerUser: 72,
+  { id: 'defender-cloud', name: 'Microsoft Defender for Cloud', kind: 'addon', pupm: 6, source: 'estimate', notPerUser: 'Billed per protected resource',
     grants: ['cwpp', 'cspm', 'easm'] },
-  { id: 'security-copilot', name: 'Microsoft Security Copilot', kind: 'addon', annualPerUser: 60,
+  { id: 'security-copilot', name: 'Microsoft Security Copilot', kind: 'addon', pupm: 5, source: 'estimate', notPerUser: 'Billed per SCU-hour',
     grants: ['security-ai'] },
-  { id: 'm365-copilot', name: 'Microsoft 365 Copilot', kind: 'addon', annualPerUser: 360,
+  { id: 'm365-copilot', name: 'Microsoft 365 Copilot', kind: 'addon', pupm: 30, source: 'estimate',
     grants: ['productivity-ai'] },
-  { id: 'external-id', name: 'Microsoft Entra External ID', kind: 'addon', annualPerUser: 24,
+  { id: 'external-id', name: 'Microsoft Entra External ID', kind: 'addon', pupm: 2, source: 'estimate', notPerUser: 'Billed per monthly active user',
     grants: ['ciam'] },
 ];
 
-export const licenseById = (id) => LICENSES.find((l) => l.id === id);
-export const BASE_LICENSES = LICENSES.filter((l) => l.kind === 'base');
-export const ADDON_LICENSES = LICENSES.filter((l) => l.kind === 'addon');
+/* Annual per user, derived rather than stored twice. */
+export const annualOf = (sku) => (sku ? sku.pupm * 12 : 0);
+
+export const skuByIdCatalog = (id) => SKUS.find((x) => x.id === id);
+export const entitlementById = skuByIdCatalog;
+export const licenseById = skuByIdCatalog;
+export const BASE_SKUS = SKUS.filter((x) => x.kind === 'base');
+export const ADDON_SKUS = SKUS.filter((x) => x.kind === 'addon');
+
+/** Add-ons available on a given base — some are sold only against one bundle. */
+export const addonsFor = (baseId) =>
+  ADDON_SKUS.filter((a) => !a.requiresBase || a.requiresBase.includes(baseId));
+
+/* Back-compat aliases for the components that still import the old names. */
+export const LICENSES = SKUS;
+export const BASE_LICENSES = BASE_SKUS;
+export const ADDON_LICENSES = ADDON_SKUS;
 
 export const LICENSING_PATHS = {
   none: [
@@ -318,8 +352,7 @@ export const LICENSING_PATHS = {
   ],
   'm365-e3': [
     { id: 'e3-e5', label: 'Microsoft 365 E3 to Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'The standard consolidation path.' },
-    { id: 'e3-security', label: 'Microsoft 365 E3 plus E5 Security', base: 'm365-e3', addons: ['e5-security'], note: 'Security only, without the compliance half of E5.' },
-    { id: 'e3-compliance', label: 'Microsoft 365 E3 plus E5 Compliance', base: 'm365-e3', addons: ['e5-compliance'], note: 'Compliance only, for a regulated estate.' },
+    { id: 'e3-security', label: 'Microsoft 365 E3 plus Defender Suite', base: 'm365-e3', addons: ['defender-suite'], note: 'Security only, without the compliance half of E5.' },
     { id: 'e3-purview', label: 'Microsoft 365 E3 plus Purview Suite', base: 'm365-e3', addons: ['purview-suite'], note: 'Data security and governance, including discovery.' },
     { id: 'e3-entra', label: 'Microsoft 365 E3 plus Entra Suite', base: 'm365-e3', addons: ['entra-suite'], note: 'Identity governance and network access without changing the base.' },
     { id: 'e3-e5-copilot', label: 'Microsoft 365 E3 to E5 plus Security Copilot', base: 'm365-e5', addons: ['security-copilot'], note: 'The full estate with the SOC productivity layer.' },
@@ -337,96 +370,3 @@ export const LICENSING_PATHS = {
 export function pathsFor(currentBaseId) {
   return LICENSING_PATHS[currentBaseId] || [];
 }
-
-/* ------------------------------ the product layer -------------------------- */
-
-/**
- * List price per user per year for each Microsoft product, keyed by name.
- *
- * Kept beside the products rather than inside CAPABILITIES because several
- * capabilities share one product — Intune delivers MDM, MAM and desktop
- * management, and it is billed once.
- */
-const PRODUCT_PRICES = {
-  'Microsoft Intune': 96,
-  'Microsoft Intune Endpoint Privilege Management': 36,
-  'Microsoft Intune Advanced Analytics': 36,
-  'Microsoft Intune Tunnel for MAM': 24,
-  'Microsoft Intune Specialty Device Management': 24,
-  'Microsoft Intune Enterprise Application Management': 24,
-  'Microsoft Intune Cloud PKI': 24,
-  'Microsoft Intune Remote Help': 42,
-  'Microsoft Entra ID P1': 72,
-  'Microsoft Entra ID P2': 108,
-  'Microsoft Entra ID Governance': 84,
-  'Microsoft Entra Verified ID': 36,
-  'Microsoft Entra Private Access': 60,
-  'Microsoft Entra Internet Access': 60,
-  'Microsoft Entra External ID': 24,
-  'Microsoft Defender for Identity': 72,
-  'Microsoft Sentinel': 96,
-  'Microsoft Defender for Endpoint': 72,
-  'Microsoft Defender Vulnerability Management': 24,
-  'Microsoft Defender for Office 365': 60,
-  'Microsoft Defender for Cloud': 60,
-  'Microsoft Defender for Cloud CSPM': 36,
-  'Microsoft Defender EASM': 36,
-  'Microsoft Defender for Cloud Apps': 60,
-  'Microsoft Purview Insider Risk Management': 72,
-  'Microsoft Purview Communication Compliance': 48,
-  'Microsoft Purview Information Barriers': 36,
-  'Microsoft Purview Information Protection': 60,
-  'Microsoft Purview Data Loss Prevention': 60,
-  'Microsoft Purview Message Encryption': 24,
-  'Microsoft Purview Records Management': 48,
-  'Microsoft Purview Data Lifecycle Management': 48,
-  'Microsoft Purview Data Map': 36,
-  'Microsoft Purview Unified Catalog': 36,
-  'Microsoft Purview eDiscovery': 48,
-  'Microsoft Purview Audit': 24,
-  'Microsoft Purview Data Security Investigations': 60,
-  'Microsoft Purview DSPM': 60,
-  'Microsoft Purview Privileged Access Management': 48,
-  'Microsoft 365 Copilot': 360,
-  'Microsoft Security Copilot': 60,
-};
-
-const slug = (name) =>
-  name.toLowerCase().replace(/^microsoft /, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-/**
- * Every individual Microsoft product, derived from the capability table rather
- * than listed twice.
- *
- * A seller who already knows they are quoting Entra ID Governance on its own
- * should not have to find a bundle that happens to contain it — so products are
- * selectable alongside licenses, and both resolve to capabilities the same way.
- */
-export const MICROSOFT_PRODUCTS = (() => {
-  const byName = new Map();
-  CAPABILITIES.forEach((c) => {
-    if (!byName.has(c.product)) {
-      byName.set(c.product, {
-        id: `prod:${slug(c.product)}`,
-        name: c.product,
-        kind: 'product',
-        area: c.area,
-        grants: [],
-        annualPerUser: PRODUCT_PRICES[c.product] ?? 48,
-      });
-    }
-    byName.get(c.product).grants.push(c.id);
-  });
-  return [...byName.values()];
-})();
-
-export const productById = (id) => MICROSOFT_PRODUCTS.find((p) => p.id === id);
-
-/**
- * One lookup for anything that grants capabilities — a base bundle, an add-on
- * suite, or a single product. Everything downstream reads through this, so the
- * delta never has to care which kind of thing the seller picked.
- */
-export const entitlementById = (id) => licenseById(id) || productById(id);
-
-export const productsByArea = (areaId) => MICROSOFT_PRODUCTS.filter((p) => p.area === areaId);

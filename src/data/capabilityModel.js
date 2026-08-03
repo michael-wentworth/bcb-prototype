@@ -14,7 +14,7 @@
    licence as new spend understates the case; counting none of it overstates it.
    --------------------------------------------------------------------------- */
 
-import { CAPABILITIES, STRATEGIC, capabilityById, entitlementById } from './capabilities.js';
+import { CAPABILITIES, STRATEGIC, annualOf, capabilityById, entitlementById } from './capabilities.js';
 
 export const CASE_START_YEAR = 2026;
 
@@ -44,7 +44,7 @@ export function grantsOf(entitlementIds = []) {
 export function annualPerUserOf(entitlementIds = []) {
   return entitlementIds
     .filter(Boolean)
-    .reduce((sum, id) => sum + (entitlementById(id)?.annualPerUser || 0), 0);
+    .reduce((sum, id) => sum + annualOf(entitlementById(id)), 0);
 }
 
 /**

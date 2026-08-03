@@ -2,10 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { Button, Card, Input, Tab, TabList } from '@fluentui/react-components';
 import { Checkmark16Filled, Dismiss16Regular } from '@fluentui/react-icons';
 import {
-  ADDON_LICENSES,
-  BASE_LICENSES,
-  MICROSOFT_PRODUCTS,
-  SOLUTION_AREAS,
+  BASE_SKUS,
+  addonsFor,
+  annualOf,
   areaById,
   capabilityById,
   entitlementById,
@@ -58,7 +57,6 @@ export default function ProductSelection() {
     removeCapabilityRow,
   } = useAppState();
 
-  const [area, setArea] = useState('entra');
 
   const base = currentLicenses.find((id) => licenseById(id)?.kind === 'base') || '';
   const paths = pathsFor(base);
@@ -99,7 +97,7 @@ export default function ProductSelection() {
           </p>
         </div>
         <ul className={styles.licenseGrid}>
-          {BASE_LICENSES.map((l) => (
+          {BASE_SKUS.map((l) => (
             <li key={l.id}>
               <button
                 type="button"
@@ -115,8 +113,13 @@ export default function ProductSelection() {
                   {l.name}
                 </span>
                 <span className={styles.tileMeta}>
-                  {l.grants.length} capabilit{l.grants.length === 1 ? 'y' : 'ies'} · $
-                  {l.annualPerUser}/user/yr
+                  {l.grants.length} capabilit{l.grants.length === 1 ? 'y' : 'ies'} · ${l.pupm}
+                  /user/mo
+                  {l.source === 'estimate' ? (
+                    <span className={styles.estimate} title="Not from the price list">
+                      est.
+                    </span>
+                  ) : null}
                 </span>
               </button>
             </li>
@@ -168,30 +171,20 @@ export default function ProductSelection() {
           )
         ) : (
           <>
-            {/* Suites and single products in one list, because from the model's
-                point of view they are the same thing — something that grants
-                capabilities. Splitting them was a distinction only the price
-                list cares about. */}
-            <TabList selectedValue={area} onTabSelect={(_, d) => setArea(d.value)}>
-              <Tab value="suites">Suites</Tab>
-              {SOLUTION_AREAS.map((a) => (
-                <Tab key={a.id} value={a.id}>{a.label}</Tab>
-              ))}
-            </TabList>
-            <ul className={styles.tiles}>
-              {(area === 'suites'
-                ? [...BASE_LICENSES, ...ADDON_LICENSES]
-                : MICROSOFT_PRODUCTS.filter((p) => p.area === area)
-              ).map((item) => {
-                const e = entitlementById(item.id) || item;
+            {/* The orderable add-ons, filtered to what is sold against this
+                base. There is no separate product tier any more: a suite and a
+                bundle are the same kind of thing, something with a price that
+                grants capabilities, and the price list never drew that line. */}
+            <ul className={styles.licenseGrid}>
+              {(base ? addonsFor(base) : []).map((item) => {
                 const on = futureLicenses.includes(item.id);
                 return (
                   <li key={item.id}>
                     <button
                       type="button"
-                      className={`${styles.tile} ${on ? styles.tileOn : ''}`}
+                      className={`${styles.licenseTile} ${on ? styles.tileOn : ''}`}
                       aria-pressed={on}
-                      aria-label={`${item.name}, ${e.grants.length} capabilit${e.grants.length === 1 ? 'y' : 'ies'}`}
+                      aria-label={`${item.name}, ${item.grants.length} capabilit${item.grants.length === 1 ? 'y' : 'ies'}`}
                       onClick={() => toggleFuture(item.id)}
                     >
                       <span className={styles.tileName}>
@@ -201,14 +194,27 @@ export default function ProductSelection() {
                         {item.name}
                       </span>
                       <span className={styles.tileMeta}>
-                        {e.grants.length} capabilit{e.grants.length === 1 ? 'y' : 'ies'} · $
-                        {item.annualPerUser}/user/yr
+                        {item.grants.length} capabilit{item.grants.length === 1 ? 'y' : 'ies'} · $
+                        {item.pupm}/user/mo
+                        {item.source === 'estimate' ? (
+                          <span className={styles.estimate} title={item.notPerUser || 'Not from the price list'}>
+                            est.
+                          </span>
+                        ) : null}
                       </span>
                     </button>
                   </li>
                 );
               })}
             </ul>
+            {!base ? (
+              <p className={styles.empty}>Pick a current license above first.</p>
+            ) : (
+              <p className={styles.cardLead}>
+                A base bundle can be selected here too if the move changes it — use the path tab
+                for the common upgrades.
+              </p>
+            )}
           </>
         )}
 
