@@ -27,14 +27,19 @@ import { DEMO_EXTRACTION } from './demoCase.js';
 export const STEP_SUGGESTIONS = [
   [
     { label: 'Use the Contoso example', kind: 'demo' },
-    { label: 'Detect the competitor products in this estate' },
-    { label: 'Why does "Year contract ends" matter?' },
+    { label: 'Why does the current licence matter?' },
     { label: 'Which fields drive the numbers?' },
   ],
   [
-    { label: 'Which products match the outcomes I selected?' },
-    { label: 'Why is this the right recommendation?' },
-    { label: 'What are we displacing, and what is it worth?' },
+    { label: 'What would this path add?' },
+    { label: 'Why is the investment only the difference?' },
+  ],
+  [
+    { label: 'What is the difference between the four categories?' },
+  ],
+  [
+    { label: 'Why are only some capabilities listed here?' },
+    { label: 'Why does "Contract ends" matter?' },
   ],
   [
     { label: 'How did you calculate the ROI?' },
@@ -57,44 +62,18 @@ export const STEP_SUGGESTIONS = [
    grows back to three paragraphs. */
 
 export function getStepIntro(stepIndex) {
-  switch (stepIndex) {
-    case 0:
-      return {
-        intent: 'INTRO_CUSTOMER',
-        blocks: [
-          {
-            type: 'text',
-            text: 'Describe the customer in a sentence — who they are, their size, and what they run today — and I will fill in this step.',
-          },
-        ],
-      };
-    case 1:
-      return {
-        intent: 'INTRO_SKU',
-        blocks: [
-          {
-            type: 'text',
-            text: 'Select the outcomes and I will match them to Microsoft products.',
-          },
-        ],
-      };
-    case 2:
-      return {
-        intent: 'INTRO_REPORT',
-        blocks: [
-          {
-            type: 'text',
-            text: 'Change a seat count or a contract year and this recalculates immediately.',
-          },
-          /* No actions block here. The two it used to carry — the ROI question and
-             the what-is-missing question — are the first two entries of
-             STEP_SUGGESTIONS[2], so they rendered twice on one screen: as buttons
-             inside the message and as chips above the composer. */
-        ],
-      };
-    default:
-      return null;
-  }
+  const line = [
+    'Tell me who the customer is and what they are licensed for today — that is the whole current-state inventory.',
+    'Pick where they are going. I only show paths that apply from what they own now.',
+    'This is computed, not filled in. Ask me why a capability landed in a category.',
+    'Only the capabilities the future state adds are here. Leave anything blank if they have no incumbent.',
+    'Change a licence or a contract year and everything here recalculates.',
+  ][stepIndex];
+  if (!line) return null;
+  return {
+    intent: `INTRO_STEP_${stepIndex}`,
+    blocks: [{ type: 'text', text: line }],
+  };
 }
 
 /* ------------------------------- Matchers --------------------------------- */

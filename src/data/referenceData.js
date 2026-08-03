@@ -9,15 +9,18 @@
 /* ----------------------------- Workflow steps ------------------------------ */
 
 export const STEPS = [
-  // Current state, then future state, then what it is worth — the arc a business
-  // case actually makes. Step 2 is "Recommended solution" rather than "AI
-  // recommendations": the copilot can propose a starting point, but the SKU
-  // table and the displacement mapping are filled in by hand, and the label
-  // should not claim otherwise. It is also singular on purpose — the step
-  // produces one proposal, not a menu of options.
-  { id: 'customer', label: 'Customer environment', caption: 'Current state' },
-  { id: 'sku', label: 'Recommended solution', caption: 'Future state' },
-  { id: 'report', label: 'Business case report', caption: 'Value & justification' },
+  /* Capability-led rather than product-led. The old three steps asked a seller to
+     pick SKUs and then justify them; these five ask what the customer owns, what
+     they would own, and let the capability delta produce the rest.
+
+     Steps 3 and 5 are almost entirely computed — the seller reads them rather
+     than filling them in, which is the point: the effort is two licence
+     selections and a short competitor list, not an inventory. */
+  { id: 'current', label: 'Current environment', caption: 'What they own today' },
+  { id: 'future', label: 'Future environment', caption: 'What they would move to' },
+  { id: 'analysis', label: 'Capability analysis', caption: 'What changes' },
+  { id: 'mapping', label: 'Competitor mapping', caption: 'What it replaces' },
+  { id: 'report', label: 'Business case', caption: 'What it is worth' },
 ];
 
 /* -------------------------- Customer Information --------------------------- */

@@ -1,0 +1,485 @@
+/* Shared chrome for the five capability steps. Matches the form steps it
+   replaces — same card padding, same 8px radius, same border-led separation. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalXXL);
+}
+
+.card.card {
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXXL) var(--spacingVerticalXXL);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalL);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase500);
+  line-height: 24px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.cardLead {
+  margin: var(--spacingVerticalXS) 0 0;
+  max-width: 76ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalXL);
+}
+
+/* ------------------------------ licence tiles ------------------------------ */
+
+.tiles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+/* A licence is a choice, so it is a button that looks chosen or not — not a
+   checkbox in a list. The estate is picked in seconds either way, but this reads
+   as "what do they have" rather than as a form to complete. */
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--durationFaster) var(--curveEasyEase),
+    background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.tile:hover {
+  border-color: var(--colorBrandStroke2);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.tileOn {
+  border-color: var(--colorBrandStroke1);
+  background-color: var(--colorBrandBackground2);
+}
+
+.tileName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tileMeta {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+  font-variant-numeric: tabular-nums;
+}
+
+.tileCheck {
+  color: var(--colorBrandForeground1);
+  flex: none;
+}
+
+.groupLabel {
+  margin: 0 0 var(--spacingVerticalS);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--colorNeutralForeground3);
+}
+
+/* ------------------------------ path options ------------------------------- */
+
+.paths {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+}
+
+.path {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalL);
+  width: 100%;
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.path:hover {
+  border-color: var(--colorBrandStroke2);
+}
+
+.path:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.pathOn {
+  border-color: var(--colorBrandStroke1);
+  background-color: var(--colorBrandBackground2);
+}
+
+.pathLabel {
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.pathNote {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightRegular);
+  color: var(--colorNeutralForeground2);
+}
+
+.pathGain {
+  flex: none;
+  text-align: right;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+  font-variant-numeric: tabular-nums;
+}
+
+.pathGainValue {
+  display: block;
+  font-size: var(--fontSizeBase500);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorBrandForeground1);
+  line-height: 1.1;
+}
+
+/* -------------------------------- the delta -------------------------------- */
+
+.buckets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+.bucket {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-left: 3px solid var(--colorNeutralStroke1);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+/* Each bucket carries a different claim, so each carries a different edge —
+   retained is neutral because it argues nothing, and the two that carry money
+   are the two that read loudest. */
+.bucketRetained { border-left-color: var(--colorNeutralStroke1); }
+.bucketNew { border-left-color: var(--colorBrandStroke1); }
+.bucketConsolidation { border-left-color: var(--colorPaletteGreenBorder2, #107c10); }
+.bucketStrategic { border-left-color: var(--colorPalettePurpleBorderActive, #8764b8); }
+
+.bucketCount {
+  font-size: 32px;
+  line-height: 1;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.bucketName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.bucketWhy {
+  margin: 0;
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground2);
+}
+
+.capList {
+  margin: var(--spacingVerticalS) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.capChip {
+  padding: 2px 8px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorNeutralBackground4);
+  font-size: var(--fontSizeBase100);
+  line-height: 16px;
+  color: var(--colorNeutralForeground2);
+}
+
+.capMore {
+  padding: 2px 4px;
+  font-size: var(--fontSizeBase100);
+  line-height: 16px;
+  color: var(--colorNeutralForeground3);
+}
+
+/* ------------------------------ area breakdown ----------------------------- */
+
+.areaRow {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+  padding: var(--spacingVerticalS) 0;
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+}
+
+.areaName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.areaBar {
+  display: flex;
+  height: 20px;
+  border-radius: var(--borderRadiusSmall);
+  overflow: hidden;
+  background-color: var(--colorNeutralBackground4);
+}
+
+.segRetained { background-color: var(--colorNeutralForeground4); }
+.segNew { background-color: var(--colorBrandBackground); }
+.segConsolidation { background-color: var(--colorPaletteGreenBackground3, #107c10); }
+.segStrategic { background-color: var(--colorPalettePurpleBackground2, #8764b8); }
+
+.areaCount {
+  text-align: right;
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground3);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalL);
+  margin-top: var(--spacingVerticalM);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+}
+
+/* ----------------------------- competitor mapping -------------------------- */
+
+.mapGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+  padding-bottom: var(--spacingVerticalL);
+}
+
+.mapCap {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
+  gap: var(--spacingHorizontalL);
+  align-items: start;
+  padding: var(--spacingVerticalM) 0;
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+}
+
+.mapCapName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.mapCapProduct {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.vendorRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.vendor {
+  padding: 4px 10px;
+  border-radius: var(--borderRadiusCircular);
+  border: 1px solid var(--colorNeutralStroke2);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+  cursor: pointer;
+}
+
+.vendor:hover {
+  border-color: var(--colorBrandStroke2);
+  color: var(--colorBrandForeground2);
+}
+
+.vendorOn {
+  border-color: var(--colorBrandStroke1);
+  background-color: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground2);
+  font-weight: var(--fontWeightSemibold);
+}
+
+.vendorNone {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.costRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px 130px 32px;
+  gap: var(--spacingHorizontalS);
+  align-items: center;
+  margin-top: var(--spacingVerticalS);
+}
+
+.costLabel {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+/* -------------------------------- results ---------------------------------- */
+
+.kpis {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+.kpiLabel {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.kpiValue {
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.kpiBrand .kpiValue { color: var(--colorBrandForeground1); }
+.kpiGood .kpiValue { color: var(--colorPaletteGreenForeground1, #0e700e); }
+
+.kpiNote {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fontSizeBase300);
+}
+
+.table thead th {
+  text-align: left;
+  padding: var(--spacingVerticalS) var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground3);
+  white-space: nowrap;
+}
+
+.table tbody td,
+.table tbody th {
+  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+  text-align: left;
+  font-weight: var(--fontWeightRegular);
+  vertical-align: baseline;
+}
+
+.table tbody td.numeric,
+.table thead th.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.excluded {
+  color: var(--colorNeutralForeground3);
+}
+
+.empty {
+  padding: var(--spacingVerticalXXL) 0;
+  text-align: center;
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase300);
+}
+
+.uplift {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--spacingHorizontalL);
+  align-items: start;
+}

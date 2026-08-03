@@ -8,6 +8,7 @@ import React, {
   useRef,
 } from 'react';
 import { STEPS, bundleById, geographyById, skuById } from '../data/referenceData.js';
+import { buildCapabilityCase } from '../data/capabilityModel.js';
 import { buildBusinessCase } from '../data/model.js';
 import {
   AUTHORSHIP,
@@ -83,6 +84,16 @@ export const makeCompetitorRow = (seed = {}) => ({
   ...seed,
 });
 
+export const makeCapabilityRow = (seed = {}) => ({
+  id: rowId('cap'),
+  capabilityId: '',
+  product: '',
+  annualCost: '',
+  yearContractEnds: '',
+  authorship: AUTHORSHIP.MANUAL,
+  ...seed,
+});
+
 const initialState = {
   /**
    * Which destination is showing. The builder is deliberately not a nav item —
@@ -111,6 +122,17 @@ const initialState = {
   skus: [],
   bundle: { bundleId: '', annualPerUser: '', additionalValue: '' },
   competitors: { rows: [] },
+
+  /* ------------------------- the capability model ------------------------- */
+  /* Two licence selections and a short competitor list. Everything the report
+     says is derived from these — there is no separate SKU table, and no
+     inventory of the existing estate. */
+  currentLicenses: [],
+  futureMode: 'path',
+  futurePath: '',
+  futureLicenses: [],
+  negotiatedUplift: '',
+  capabilityCompetitors: { rows: [] },
 
   narrative: emptyNarrative(),
 
@@ -175,7 +197,10 @@ function reducer(state, action) {
         activeCaseStatus: action.entry.status || 'draft',
         activeCaseOwner: action.entry.owner || CURRENT_USER,
         step: 0,
-        maxStepReached: 2,
+        /* Opening a saved case unlocks the whole stepper. Was hardcoded to the
+           last index of the old three-step flow, which would have stranded a
+           reopened case two steps short of its own report. */
+        maxStepReached: STEPS.length - 1,
         customer: { ...emptyCustomer, ...i.customer },
         environment: { ...emptyEnvironment },
         caseSetup: { ...emptyCase, ...i.caseSetup },
@@ -478,6 +503,70 @@ function reducer(state, action) {
         'competitors',
       );
 
+    /* ---------------------------- capabilities ---------------------------- */
+
+    case 'SET_CURRENT_LICENSES':
+      /* Changing what the customer owns invalidates the path they were on — an
+         E3 path makes no sense once the base is E5, and leaving it selected
+         would quietly compute a delta against a licence they no longer hold. */
+      return humanTouch(
+        { ...state, currentLicenses: action.ids, futurePath: '', futureLicenses: [] },
+        'customer',
+      );
+
+    case 'SET_FUTURE_MODE':
+      return { ...state, futureMode: action.mode, futurePath: '', futureLicenses: [] };
+
+    case 'SET_FUTURE_PATH':
+      return humanTouch(
+        { ...state, futurePath: action.path.id, futureLicenses: [action.path.base, ...action.path.addons] },
+        'skus',
+      );
+
+    case 'SET_FUTURE_LICENSES':
+      return humanTouch({ ...state, futurePath: '', futureLicenses: action.ids }, 'skus');
+
+    case 'SET_NEGOTIATED_UPLIFT':
+      return humanTouch({ ...state, negotiatedUplift: action.value }, 'skus');
+
+    case 'ADD_CAPABILITY_ROW':
+      return humanTouch(
+        {
+          ...state,
+          capabilityCompetitors: {
+            ...state.capabilityCompetitors,
+            rows: [...state.capabilityCompetitors.rows, makeCapabilityRow(action.seed)],
+          },
+        },
+        'competitors',
+      );
+
+    case 'UPDATE_CAPABILITY_ROW':
+      return humanTouch(
+        {
+          ...state,
+          capabilityCompetitors: {
+            ...state.capabilityCompetitors,
+            rows: state.capabilityCompetitors.rows.map((r) =>
+              r.id === action.id ? { ...r, [action.key]: action.value } : r,
+            ),
+          },
+        },
+        'competitors',
+      );
+
+    case 'REMOVE_CAPABILITY_ROW':
+      return humanTouch(
+        {
+          ...state,
+          capabilityCompetitors: {
+            ...state.capabilityCompetitors,
+            rows: state.capabilityCompetitors.rows.filter((r) => r.id !== action.id),
+          },
+        },
+        'competitors',
+      );
+
     /* ----------------------------- assistant ----------------------------- */
     case 'ADD_MESSAGE':
       return { ...state, messages: [...state.messages, action.message] };
@@ -571,6 +660,28 @@ export function AppStateProvider({ children }) {
       state.competitors,
     ],
   );
+  /* The capability case. Recomputed from the same five inputs the seller
+     touches, so every screen from step 3 on is a read of this object. */
+  const capabilityCase = useMemo(
+    () =>
+      buildCapabilityCase({
+        analysisPeriod: state.caseSetup.analysisPeriod,
+        numberOfUsers: state.customer.numberOfUsers,
+        currentLicenses: state.currentLicenses,
+        futureLicenses: state.futureLicenses,
+        competitorRows: state.capabilityCompetitors.rows,
+        negotiatedUplift: state.negotiatedUplift,
+      }),
+    [
+      state.caseSetup.analysisPeriod,
+      state.customer.numberOfUsers,
+      state.currentLicenses,
+      state.futureLicenses,
+      state.capabilityCompetitors,
+      state.negotiatedUplift,
+    ],
+  );
+
   const businessCaseRef = useRef(businessCase);
   businessCaseRef.current = businessCase;
 
@@ -659,6 +770,14 @@ export function AppStateProvider({ children }) {
       setCustomer: (key, value) => dispatch({ type: 'SET_CUSTOMER', key, value }),
       setEnvironment: (key, value) => dispatch({ type: 'SET_ENVIRONMENT', key, value }),
       setCaseSetup: (key, value) => dispatch({ type: 'SET_CASE_SETUP', key, value }),
+      setCurrentLicenses: (ids) => dispatch({ type: 'SET_CURRENT_LICENSES', ids }),
+      setFutureMode: (mode) => dispatch({ type: 'SET_FUTURE_MODE', mode }),
+      setFuturePath: (path) => dispatch({ type: 'SET_FUTURE_PATH', path }),
+      setFutureLicenses: (ids) => dispatch({ type: 'SET_FUTURE_LICENSES', ids }),
+      setNegotiatedUplift: (value) => dispatch({ type: 'SET_NEGOTIATED_UPLIFT', value }),
+      addCapabilityRow: (seed) => dispatch({ type: 'ADD_CAPABILITY_ROW', seed }),
+      updateCapabilityRow: (id, key, value) => dispatch({ type: 'UPDATE_CAPABILITY_ROW', id, key, value }),
+      removeCapabilityRow: (id) => dispatch({ type: 'REMOVE_CAPABILITY_ROW', id }),
       toggleOutcome: (id) => dispatch({ type: 'TOGGLE_OUTCOME', id }),
       setAllOutcomes: (ids) => dispatch({ type: 'SET_ALL_OUTCOMES', ids }),
       addSkuRow: (seed, users) => dispatch({ type: 'ADD_SKU_ROW', seed, users }),
@@ -732,6 +851,7 @@ export function AppStateProvider({ children }) {
       ...state,
       ...actions,
       businessCase,
+      capabilityCase,
       currency,
       effectiveDevices,
       skuById,
@@ -739,7 +859,7 @@ export function AppStateProvider({ children }) {
       runNarrativeAction,
       reset,
     }),
-    [state, actions, businessCase, currency, effectiveDevices, ask, runNarrativeAction, reset],
+    [state, actions, businessCase, capabilityCase, currency, effectiveDevices, ask, runNarrativeAction, reset],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
