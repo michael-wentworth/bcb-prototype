@@ -9,18 +9,14 @@
 /* ----------------------------- Workflow steps ------------------------------ */
 
 export const STEPS = [
-  /* Capability-led rather than product-led. The old three steps asked a seller to
-     pick SKUs and then justify them; these five ask what the customer owns, what
-     they would own, and let the capability delta produce the rest.
-
-     Steps 3 and 5 are almost entirely computed — the seller reads them rather
-     than filling them in, which is the point: the effort is two licence
-     selections and a short competitor list, not an inventory. */
-  { id: 'current', label: 'Current environment', caption: 'What they own today' },
-  { id: 'future', label: 'Future environment', caption: 'What they would move to' },
-  { id: 'analysis', label: 'Capability analysis', caption: 'What changes' },
-  { id: 'mapping', label: 'Competitor mapping', caption: 'What it replaces' },
-  { id: 'report', label: 'Business case', caption: 'What it is worth' },
+  /* Three steps, and the middle one is the whole product conversation: what they
+     own, what they would move to, what that changes, and what it replaces. Those
+     were four screens once and it was three too many — the capability delta is a
+     consequence of the two selections above it, so putting it elsewhere made the
+     seller walk away from the controls that produce it. */
+  { id: 'customer', label: 'Customer details', caption: 'Who this is for' },
+  { id: 'products', label: 'Product selection', caption: 'Current and future state' },
+  { id: 'report', label: 'Business case report', caption: 'What it is worth' },
 ];
 
 /* -------------------------- Customer Information --------------------------- */

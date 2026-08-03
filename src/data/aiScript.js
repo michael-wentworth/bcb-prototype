@@ -27,19 +27,12 @@ import { DEMO_EXTRACTION } from './demoCase.js';
 export const STEP_SUGGESTIONS = [
   [
     { label: 'Use the Contoso example', kind: 'demo' },
-    { label: 'Why does the current licence matter?' },
     { label: 'Which fields drive the numbers?' },
   ],
   [
     { label: 'What would this path add?' },
     { label: 'Why is the investment only the difference?' },
-  ],
-  [
     { label: 'What is the difference between the four categories?' },
-  ],
-  [
-    { label: 'Why are only some capabilities listed here?' },
-    { label: 'Why does "Contract ends" matter?' },
   ],
   [
     { label: 'How did you calculate the ROI?' },
@@ -63,17 +56,12 @@ export const STEP_SUGGESTIONS = [
 
 export function getStepIntro(stepIndex) {
   const line = [
-    'Tell me who the customer is and what they are licensed for today — that is the whole current-state inventory.',
-    'Pick where they are going. I only show paths that apply from what they own now.',
-    'This is computed, not filled in. Ask me why a capability landed in a category.',
-    'Only the capabilities the future state adds are here. Leave anything blank if they have no incumbent.',
-    'Change a licence or a contract year and everything here recalculates.',
+    'Describe the customer in a sentence and I will fill in this step.',
+    'Pick what they own and where they are going — the capability analysis underneath follows from those two choices.',
+    'Change a license or a contract year and everything here recalculates.',
   ][stepIndex];
   if (!line) return null;
-  return {
-    intent: `INTRO_STEP_${stepIndex}`,
-    blocks: [{ type: 'text', text: line }],
-  };
+  return { intent: `INTRO_STEP_${stepIndex}`, blocks: [{ type: 'text', text: line }] };
 }
 
 /* ------------------------------- Matchers --------------------------------- */

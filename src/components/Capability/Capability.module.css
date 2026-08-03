@@ -483,3 +483,42 @@
   gap: var(--spacingHorizontalL);
   align-items: start;
 }
+
+/* The current-license picker fills the measure rather than sitting in narrow
+   270px columns — eleven bundles in a cramped grid reads as a wall, and this is
+   the single most consequential choice on the step. */
+.licenseGrid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+.licenseTile {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalM);
+  width: 100%;
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--durationFaster) var(--curveEasyEase),
+    background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.licenseTile:hover {
+  border-color: var(--colorBrandStroke2);
+}
+
+.licenseTile:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}

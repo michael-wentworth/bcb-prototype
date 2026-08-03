@@ -207,23 +207,49 @@ const PURVIEW_E3 = ['information-protection', 'data-classification', 'records-mg
 const PURVIEW_E5 = ['dlp', 'message-encryption', 'insider-risk', 'comms-compliance', 'information-barriers', 'data-lifecycle', 'dsi', 'dspm', 'pam'];
 
 /**
- * What a licence grants, as capability ids.
+ * What a license grants, as capability ids.
  *
- * `kind: 'base'` entries are mutually exclusive — a customer sits on one base
- * bundle. `kind: 'addon'` entries stack on top of whatever base is selected,
- * which is what makes "E3 plus the Defender suite" expressible without
- * inventing a bundle for every combination.
+ * `kind: 'base'` entries are mutually exclusive - a customer sits on one base
+ * bundle. `kind: 'addon'` entries stack on top, which is what makes "E3 plus the
+ * Defender suite" expressible without inventing a bundle per combination.
+ *
+ * The base list is the full commercial ladder rather than the four bundles that
+ * cover most deals: a seller whose customer is on Business Standard or F3 should
+ * not have to pick the nearest thing and mentally adjust the delta.
  */
 export const LICENSES = [
+  /* --------------------------- Office 365 family -------------------------- */
+  { id: 'o365-e1', name: 'Office 365 E1', kind: 'base', annualPerUser: 120,
+    grants: ['retention-mgmt'] },
   { id: 'o365-e3', name: 'Office 365 E3', kind: 'base', annualPerUser: 276,
     grants: ['ediscovery', 'audit', 'retention-mgmt'] },
+  { id: 'o365-e5', name: 'Office 365 E5', kind: 'base', annualPerUser: 456,
+    grants: ['ediscovery', 'audit', 'retention-mgmt', 'records-mgmt', 'information-protection',
+      'dlp', 'email-protection', 'collab-protection', 'anti-phishing', 'casb'] },
+
+  /* -------------------------- Microsoft 365 family ------------------------ */
+  { id: 'm365-f1', name: 'Microsoft 365 F1', kind: 'base', annualPerUser: 30,
+    grants: [...ENTRA_P1] },
+  { id: 'm365-f3', name: 'Microsoft 365 F3', kind: 'base', annualPerUser: 96,
+    grants: [...INTUNE_CORE, ...ENTRA_P1, 'retention-mgmt'] },
   { id: 'm365-e3', name: 'Microsoft 365 E3', kind: 'base', annualPerUser: 432,
     grants: [...INTUNE_CORE, ...ENTRA_P1, ...PURVIEW_E3] },
   { id: 'm365-e5', name: 'Microsoft 365 E5', kind: 'base', annualPerUser: 684,
     grants: [...INTUNE_CORE, ...ENTRA_P1, ...ENTRA_P2, ...PURVIEW_E3, ...PURVIEW_E5, ...DEFENDER_E5] },
+
+  /* ------------------------------- Business ------------------------------- */
+  { id: 'bus-basic', name: 'Microsoft 365 Business Basic', kind: 'base', annualPerUser: 72,
+    grants: [] },
+  { id: 'bus-standard', name: 'Microsoft 365 Business Standard', kind: 'base', annualPerUser: 150,
+    grants: [] },
   { id: 'bus-premium', name: 'Microsoft 365 Business Premium', kind: 'base', annualPerUser: 264,
     grants: [...INTUNE_CORE, ...ENTRA_P1, 'edr', 'email-protection', 'anti-phishing', 'information-protection'] },
 
+  /* ------------------------------ no bundle ------------------------------- */
+  { id: 'none', name: 'No Microsoft bundle', kind: 'base', annualPerUser: 0,
+    grants: [] },
+
+  /* -------------------------------- add-ons ------------------------------- */
   { id: 'e5-security', name: 'Microsoft 365 E5 Security', kind: 'addon', annualPerUser: 144,
     grants: [...ENTRA_P2, ...DEFENDER_E5] },
   { id: 'e5-compliance', name: 'Microsoft 365 E5 Compliance', kind: 'addon', annualPerUser: 144,
@@ -250,48 +276,60 @@ export const licenseById = (id) => LICENSES.find((l) => l.id === id);
 export const BASE_LICENSES = LICENSES.filter((l) => l.kind === 'base');
 export const ADDON_LICENSES = LICENSES.filter((l) => l.kind === 'addon');
 
-/**
- * Upgrade paths, keyed by the base licence the customer is on today.
- *
- * The point of keying them is the requirement that a seller never sees a path
- * that does not apply: someone already on E5 should not be offered "E3 to E5",
- * and someone on Office 365 E3 should not be offered a Defender add-on that
- * assumes an E3 base they do not have.
- */
 export const LICENSING_PATHS = {
-  'o365-e3': [
-    { id: 'o365e3-m365e3', label: 'Office 365 E3 → Microsoft 365 E3', base: 'm365-e3', addons: [],
-      note: 'Adds device management and the identity floor.' },
-    { id: 'o365e3-m365e5', label: 'Office 365 E3 → Microsoft 365 E5', base: 'm365-e5', addons: [],
-      note: 'The full jump — identity, endpoint, email and compliance in one move.' },
+  none: [
+    { id: 'none-m365e3', label: 'Start on Microsoft 365 E3', base: 'm365-e3', addons: [], note: 'The enterprise baseline.' },
+    { id: 'none-m365e5', label: 'Start on Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'Security and compliance included from day one.' },
+    { id: 'none-bp', label: 'Start on Business Premium', base: 'bus-premium', addons: [], note: 'For an estate under 300 seats.' },
   ],
-  'm365-e3': [
-    { id: 'e3-e5', label: 'Microsoft 365 E3 → Microsoft 365 E5', base: 'm365-e5', addons: [],
-      note: 'The standard consolidation path.' },
-    { id: 'e3-security', label: 'Microsoft 365 E3 + E5 Security', base: 'm365-e3', addons: ['e5-security'],
-      note: 'Security only, without the compliance half of E5.' },
-    { id: 'e3-compliance', label: 'Microsoft 365 E3 + E5 Compliance', base: 'm365-e3', addons: ['e5-compliance'],
-      note: 'Compliance only, for a regulated estate.' },
-    { id: 'e3-purview', label: 'Microsoft 365 E3 + Purview Suite', base: 'm365-e3', addons: ['purview-suite'],
-      note: 'Data security and governance, including discovery.' },
-    { id: 'e3-entra', label: 'Microsoft 365 E3 + Entra Suite', base: 'm365-e3', addons: ['entra-suite'],
-      note: 'Identity governance and network access without changing the base.' },
+  'bus-basic': [
+    { id: 'bb-bp', label: 'Business Basic to Business Premium', base: 'bus-premium', addons: [], note: 'Adds device management and endpoint protection.' },
+    { id: 'bb-e3', label: 'Business Basic to Microsoft 365 E3', base: 'm365-e3', addons: [], note: 'The enterprise baseline as the estate grows.' },
   ],
-  'm365-e5': [
-    { id: 'e5-copilot', label: 'Microsoft 365 E5 + Security Copilot', base: 'm365-e5', addons: ['security-copilot'],
-      note: 'The SOC productivity layer on a complete estate.' },
-    { id: 'e5-entra', label: 'Microsoft 365 E5 + Entra Suite', base: 'm365-e5', addons: ['entra-suite'],
-      note: 'Adds governance, ZTNA and secure web gateway.' },
-    { id: 'e5-sentinel', label: 'Microsoft 365 E5 + Sentinel', base: 'm365-e5', addons: ['sentinel'],
-      note: 'Brings security operations onto the same platform.' },
-    { id: 'e5-intune', label: 'Microsoft 365 E5 + Intune Suite', base: 'm365-e5', addons: ['intune-suite'],
-      note: 'The advanced endpoint management add-ons.' },
+  'bus-standard': [
+    { id: 'bs-bp', label: 'Business Standard to Business Premium', base: 'bus-premium', addons: [], note: 'The security half Standard does not carry.' },
+    { id: 'bs-e3', label: 'Business Standard to Microsoft 365 E3', base: 'm365-e3', addons: [], note: 'Moves the estate onto enterprise terms.' },
+    { id: 'bs-e5', label: 'Business Standard to Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'Straight to the full estate.' },
   ],
   'bus-premium': [
-    { id: 'bp-m365e3', label: 'Business Premium → Microsoft 365 E3', base: 'm365-e3', addons: [],
-      note: 'The enterprise baseline as the estate grows.' },
-    { id: 'bp-m365e5', label: 'Business Premium → Microsoft 365 E5', base: 'm365-e5', addons: [],
-      note: 'Straight to the full security and compliance estate.' },
+    { id: 'bp-m365e3', label: 'Business Premium to Microsoft 365 E3', base: 'm365-e3', addons: [], note: 'The enterprise baseline as the estate grows.' },
+    { id: 'bp-m365e5', label: 'Business Premium to Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'Straight to the full security and compliance estate.' },
+  ],
+  'm365-f1': [
+    { id: 'f1-f3', label: 'Microsoft 365 F1 to F3', base: 'm365-f3', addons: [], note: 'Adds device management for frontline staff.' },
+    { id: 'f1-e3', label: 'Microsoft 365 F1 to E3', base: 'm365-e3', addons: [], note: 'Moves frontline users onto the knowledge-worker bundle.' },
+  ],
+  'm365-f3': [
+    { id: 'f3-e3', label: 'Microsoft 365 F3 to E3', base: 'm365-e3', addons: [], note: 'Adds the information protection layer.' },
+    { id: 'f3-e5', label: 'Microsoft 365 F3 to E5', base: 'm365-e5', addons: [], note: 'The full jump for a frontline-heavy estate.' },
+  ],
+  'o365-e1': [
+    { id: 'o1-o3', label: 'Office 365 E1 to E3', base: 'o365-e3', addons: [], note: 'Adds eDiscovery and audit.' },
+    { id: 'o1-m3', label: 'Office 365 E1 to Microsoft 365 E3', base: 'm365-e3', addons: [], note: 'Adds device management and the identity floor.' },
+  ],
+  'o365-e3': [
+    { id: 'o365e3-m365e3', label: 'Office 365 E3 to Microsoft 365 E3', base: 'm365-e3', addons: [], note: 'Adds device management and the identity floor.' },
+    { id: 'o365e3-m365e5', label: 'Office 365 E3 to Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'The full jump - identity, endpoint, email and compliance in one move.' },
+    { id: 'o365e3-o365e5', label: 'Office 365 E3 to Office 365 E5', base: 'o365-e5', addons: [], note: 'Stays in Office 365 and adds the security and compliance layer.' },
+  ],
+  'o365-e5': [
+    { id: 'o5-m5', label: 'Office 365 E5 to Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'Adds device management and advanced identity.' },
+    { id: 'o5-sentinel', label: 'Office 365 E5 plus Sentinel', base: 'o365-e5', addons: ['sentinel'], note: 'Security operations without changing the base.' },
+  ],
+  'm365-e3': [
+    { id: 'e3-e5', label: 'Microsoft 365 E3 to Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'The standard consolidation path.' },
+    { id: 'e3-security', label: 'Microsoft 365 E3 plus E5 Security', base: 'm365-e3', addons: ['e5-security'], note: 'Security only, without the compliance half of E5.' },
+    { id: 'e3-compliance', label: 'Microsoft 365 E3 plus E5 Compliance', base: 'm365-e3', addons: ['e5-compliance'], note: 'Compliance only, for a regulated estate.' },
+    { id: 'e3-purview', label: 'Microsoft 365 E3 plus Purview Suite', base: 'm365-e3', addons: ['purview-suite'], note: 'Data security and governance, including discovery.' },
+    { id: 'e3-entra', label: 'Microsoft 365 E3 plus Entra Suite', base: 'm365-e3', addons: ['entra-suite'], note: 'Identity governance and network access without changing the base.' },
+    { id: 'e3-e5-copilot', label: 'Microsoft 365 E3 to E5 plus Security Copilot', base: 'm365-e5', addons: ['security-copilot'], note: 'The full estate with the SOC productivity layer.' },
+  ],
+  'm365-e5': [
+    { id: 'e5-copilot', label: 'Microsoft 365 E5 plus Security Copilot', base: 'm365-e5', addons: ['security-copilot'], note: 'The SOC productivity layer on a complete estate.' },
+    { id: 'e5-entra', label: 'Microsoft 365 E5 plus Entra Suite', base: 'm365-e5', addons: ['entra-suite'], note: 'Adds governance, ZTNA and secure web gateway.' },
+    { id: 'e5-sentinel', label: 'Microsoft 365 E5 plus Sentinel', base: 'm365-e5', addons: ['sentinel'], note: 'Brings security operations onto the same platform.' },
+    { id: 'e5-intune', label: 'Microsoft 365 E5 plus Intune Suite', base: 'm365-e5', addons: ['intune-suite'], note: 'The advanced endpoint management add-ons.' },
+    { id: 'e5-cloud', label: 'Microsoft 365 E5 plus Defender for Cloud', base: 'm365-e5', addons: ['defender-cloud'], note: 'Extends protection to cloud workloads.' },
   ],
 };
 
@@ -362,7 +400,7 @@ const slug = (name) =>
  *
  * A seller who already knows they are quoting Entra ID Governance on its own
  * should not have to find a bundle that happens to contain it — so products are
- * selectable alongside licences, and both resolve to capabilities the same way.
+ * selectable alongside licenses, and both resolve to capabilities the same way.
  */
 export const MICROSOFT_PRODUCTS = (() => {
   const byName = new Map();

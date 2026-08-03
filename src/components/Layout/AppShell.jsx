@@ -2,10 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import WorkflowHeader from '../WorkflowHeader/WorkflowHeader.jsx';
 import AIAssistantPanel from '../AIAssistantPanel/AIAssistantPanel.jsx';
-import CurrentEnvironment from '../Capability/CurrentEnvironment.jsx';
-import FutureEnvironment from '../Capability/FutureEnvironment.jsx';
-import CapabilityAnalysis from '../Capability/CapabilityAnalysis.jsx';
-import CompetitorMapping from '../Capability/CompetitorMapping.jsx';
+import CustomerDetails from '../CustomerDetails/CustomerDetails.jsx';
+import ProductSelection from '../Capability/ProductSelection.jsx';
 import CapabilityReport from '../Capability/CapabilityReport.jsx';
 import MyCases from '../MyCases/MyCases.jsx';
 import Landing from '../Landing/Landing.jsx';
@@ -18,17 +16,11 @@ import styles from './AppShell.module.css';
 /* Five capability-led steps. The old three — customer details, SKU table,
    report — are still in the tree but no longer routed to; the flow they served
    asked for a product list where this one asks for two licence selections. */
-const STEP_VIEWS = [
-  CurrentEnvironment,
-  FutureEnvironment,
-  CapabilityAnalysis,
-  CompetitorMapping,
-  CapabilityReport,
-];
+const STEP_VIEWS = [CustomerDetails, ProductSelection, CapabilityReport];
 
 export default function AppShell({ panelOpen, onTogglePanel }) {
   const { view, step } = useAppState();
-  const StepView = STEP_VIEWS[step] || CurrentEnvironment;
+  const StepView = STEP_VIEWS[step] || CustomerDetails;
   const workspaceRef = useRef(null);
   const inBuilder = view === 'builder';
 

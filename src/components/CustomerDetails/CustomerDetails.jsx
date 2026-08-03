@@ -390,93 +390,9 @@ export default function CustomerDetails() {
 
       </Card>
 
-      {/* --------------------- Current Microsoft licensing -------------------- */}
-      <Card className={styles.card}>
-        <div className={styles.cardHead}>
-          <h2 className={styles.cardTitle}>Current Microsoft licensing</h2>
-          <p className={styles.cardLead}>
-            What the customer already owns and already pays Microsoft. This offsets the uplift in
-            step 2 rather than counting as new spend.
-          </p>
-        </div>
-
-        <div className={styles.grid}>
-
-          <FormField label="Microsoft products owned" meta={fieldMeta.bundleId}>
-            {(id) => (
-              <Dropdown
-                id={id}
-                placeholder="Select"
-                value={MS_BUNDLES.find((b) => b.id === bundle.bundleId)?.name || ''}
-                selectedOptions={bundle.bundleId ? [bundle.bundleId] : []}
-                onOptionSelect={(_, d) => {
-                  setBundle('bundleId', d.optionValue);
-                  // MS_BUNDLES has carried a price per bundle all along and
-                  // nothing read it — the seller picked "Microsoft 365 E3" and
-                  // then typed 432 by hand. Overwrites rather than filling only
-                  // when blank: choosing a different bundle is the seller saying
-                  // it is a different product, so the stale price should go.
-                  const picked = MS_BUNDLES.find((b) => b.id === d.optionValue);
-                  if (picked) setBundle('annualPerUser', String(picked.annualPerUser));
-                }}
-              >
-                {MS_BUNDLES.map((b) => (
-                  <Option key={b.id} value={b.id} text={b.name}>
-                    {b.name}
-                  </Option>
-                ))}
-              </Dropdown>
-            )}
-          </FormField>
-
-          <FormField
-            label="Annual license price"
-            help={`Per-user cost, ${currency}. For a mixed estate, enter a blended rate.`}
-            meta={fieldMeta.annualPerUser}
-          >
-            {(id) => (
-              <Input
-                id={id}
-                value={bundle.annualPerUser}
-                onChange={(_, d) => setBundle('annualPerUser', d.value)}
-                placeholder="0"
-                contentBefore={symbol}
-              />
-            )}
-          </FormField>
-
-          <FormField
-            label="Additional products or savings"
-            help="Other Microsoft products or negotiated savings, per year"
-            meta={fieldMeta.additionalValue}
-          >
-            {(id) => (
-              <Input
-                id={id}
-                value={bundle.additionalValue}
-                onChange={(_, d) => setBundle('additionalValue', d.value)}
-                placeholder="0"
-                contentBefore={symbol}
-              />
-            )}
-          </FormField>
-        </div>
-      </Card>
-
-      {/* -------------------------- Competitor products ----------------------- */}
-      <CompetitiveEnvironment
-        environment={environment}
-        competitors={competitors}
-        symbol={symbol}
-        years={years}
-        businessCase={businessCase}
-        onEnvironment={setEnvironment}
-        onAdd={addCompetitorRow}
-        onEnsureSku={ensureSkuRow}
-        users={customer.numberOfUsers}
-        onUpdate={updateCompetitorRow}
-        onRemove={removeCompetitorRow}
-      />
+      {/* Current Microsoft licensing and the competitor estate both moved to
+          step 2, where they sit beside the future state they are compared
+          against. Keeping them here split one conversation across two screens. */}
 
       {/* ------------------------- Business Case Setup ------------------------ */}
 
