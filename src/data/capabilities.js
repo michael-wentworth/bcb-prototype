@@ -253,7 +253,6 @@ export const SKUS = [
   /* ---------------------------- my estimates ------------------------------ */
   /* Kept so the current-state picker covers the whole ladder, but every price
      here is mine and is flagged in the UI. Replace before anything is quoted. */
-  { id: 'none', name: 'No Microsoft bundle', kind: 'base', pupm: 0, source: 'sheet', grants: [] },
   { id: 'o365-e1', name: 'Office 365 E1', kind: 'base', pupm: 10, source: 'estimate',
     grants: ['retention-mgmt'] },
   { id: 'o365-e3', name: 'Office 365 E3', kind: 'base', pupm: 23, source: 'estimate',
@@ -303,8 +302,18 @@ export const LICENSES = SKUS;
 export const BASE_LICENSES = BASE_SKUS;
 export const ADDON_LICENSES = ADDON_SKUS;
 
+/**
+ * Upgrade paths, keyed by the base the customer is on today.
+ *
+ * The NO_BASE key holds the starting points offered when nothing is selected.
+ * There is no "no bundle" SKU to pick: an empty selection already says the
+ * customer is not licensed, and making someone click a tile to assert nothing
+ * is a question the form can answer itself.
+ */
+export const NO_BASE = '__none__';
+
 export const LICENSING_PATHS = {
-  none: [
+  [NO_BASE]: [
     { id: 'none-m365e3', label: 'Start on Microsoft 365 E3', base: 'm365-e3', addons: [], note: 'The enterprise baseline.' },
     { id: 'none-m365e5', label: 'Start on Microsoft 365 E5', base: 'm365-e5', addons: [], note: 'Security and compliance included from day one.' },
     { id: 'none-bp', label: 'Start on Business Premium', base: 'bus-premium', addons: [], note: 'For an estate under 300 seats.' },
@@ -359,7 +368,10 @@ export const LICENSING_PATHS = {
   ],
 };
 
-/** Only the paths that start from what the customer actually owns. */
+/**
+ * Only the paths that start from what the customer actually owns — and the
+ * starting points when they own nothing.
+ */
 export function pathsFor(currentBaseId) {
-  return LICENSING_PATHS[currentBaseId] || [];
+  return LICENSING_PATHS[currentBaseId || NO_BASE] || [];
 }

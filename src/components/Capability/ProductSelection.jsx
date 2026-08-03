@@ -104,8 +104,9 @@ export default function ProductSelection() {
         <div>
           <h2 className={styles.cardTitle}>Which Microsoft license are they on today?</h2>
           <p className={styles.cardLead}>
-            One base bundle — the whole current-state inventory. It also decides which upgrade
-            paths apply below.
+            One base bundle, and the whole current-state inventory. Leave it unselected if they
+            are not on a Microsoft bundle — the analysis assumes none rather than asking you to
+            say so.
           </p>
         </div>
         <ul className={styles.licenseGrid}>
@@ -146,7 +147,7 @@ export default function ProductSelection() {
           <p className={styles.cardLead}>
             {base
               ? `Paths are filtered to what applies from ${licenseById(base)?.name}.`
-              : 'Pick a current license above and the applicable paths appear here.'}
+              : 'No current bundle assumed, so these are starting points rather than upgrades.'}
           </p>
         </div>
 
@@ -156,10 +157,9 @@ export default function ProductSelection() {
         </TabList>
 
         {futureMode === 'path' ? (
-          base ? (
-            <ul className={styles.paths}>
+          <ul className={styles.paths}>
               {paths.map((p) => (
-                <li key={p.id}>
+              <li key={p.id}>
                   <button
                     type="button"
                     className={`${styles.path} ${futurePath === p.id ? styles.pathOn : ''}`}
@@ -176,11 +176,8 @@ export default function ProductSelection() {
                     </span>
                   </button>
                 </li>
-              ))}
-            </ul>
-          ) : (
-            <p className={styles.empty}>Nothing to show until a current license is selected.</p>
-          )
+            ))}
+          </ul>
         ) : (
           <>
             {/* The orderable add-ons, filtered to what is sold against this
@@ -188,7 +185,7 @@ export default function ProductSelection() {
                 bundle are the same kind of thing, something with a price that
                 grants capabilities, and the price list never drew that line. */}
             <ul className={styles.licenseGrid}>
-              {(base ? [...BASE_SKUS.filter((b) => b.id !== 'none' && b.id !== base), ...addonsFor(base)] : []).map((item) => {
+              {[...BASE_SKUS.filter((b) => b.id !== base), ...addonsFor(base)].map((item) => {
                 const on = futureLicenses.includes(item.id);
                 return (
                   <li key={item.id}>
@@ -219,15 +216,11 @@ export default function ProductSelection() {
                 );
               })}
             </ul>
-            {!base ? (
-              <p className={styles.empty}>Pick a current license above first.</p>
-            ) : (
-              <p className={styles.cardLead}>
-                Bases first, then the add-ons sold against {licenseById(base)?.name}. A customer on
-                no bundle at all picks their target base here, or takes one of the starting points
-                on the path tab.
-              </p>
-            )}
+            <p className={styles.cardLead}>
+              Bases first, then the add-ons{base ? ` sold against ${licenseById(base)?.name}` : ''}.
+              A customer on no bundle picks their target base here, or takes a starting point on
+              the path tab.
+            </p>
           </>
         )}
 
@@ -406,7 +399,7 @@ export default function ProductSelection() {
         hint={
           delta.future.length
             ? `${delta.gained.length} gained · ${counts.consolidation} incumbent${counts.consolidation === 1 ? '' : 's'} named · ${delta.strategic.length} net-new.`
-            : 'Pick a current license and a future state to see the analysis.'
+            : 'Pick a future state to see the analysis.'
         }
       />
     </div>
