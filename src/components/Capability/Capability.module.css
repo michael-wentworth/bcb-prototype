@@ -37,7 +37,7 @@
   gap: var(--spacingHorizontalXL);
 }
 
-/* ------------------------------ licence tiles ------------------------------ */
+/* ------------------------------ license tiles ------------------------------ */
 
 .tiles {
   margin: 0;
@@ -48,7 +48,7 @@
   gap: var(--spacingHorizontalM);
 }
 
-/* A licence is a choice, so it is a button that looks chosen or not — not a
+/* A license is a choice, so it is a button that looks chosen or not — not a
    checkbox in a list. The estate is picked in seconds either way, but this reads
    as "what do they have" rather than as a form to complete. */
 .tile {
@@ -533,4 +533,90 @@
   background-color: var(--colorNeutralBackground4);
   color: var(--colorNeutralForeground3);
   font-size: var(--fontSizeBase100);
+}
+
+/* ---------------------------- competitor table ----------------------------- */
+
+/* Thirty-odd capabilities as stacked cards of chips was unreadable. One table,
+   one row per capability, and the vendor list behind a search field — the lists
+   are eight or nine deep now and no chip row survives that. */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.mapTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fontSizeBase300);
+}
+
+.mapTable thead th {
+  text-align: left;
+  padding: var(--spacingVerticalS) var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground3);
+  white-space: nowrap;
+}
+
+.mapTable tbody td,
+.mapTable tbody th {
+  padding: 6px var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+  text-align: left;
+  font-weight: var(--fontWeightRegular);
+  vertical-align: middle;
+}
+
+.groupRow th {
+  padding-top: var(--spacingVerticalL);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--colorNeutralForeground2);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+
+.groupArea {
+  margin-left: 8px;
+  font-weight: var(--fontWeightRegular);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--colorNeutralForeground3);
+}
+
+.capCell {
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.msCell {
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase200);
+}
+
+/* A named row is the only kind that can carry a saving, so it is the only kind
+   that changes colour. */
+.rowNamed {
+  background-color: var(--colorBrandBackground2);
+}
+
+.vendorPicker {
+  min-width: 210px;
+  width: 100%;
+}
+
+.costInput {
+  width: 130px;
+}
+
+.yearInput {
+  width: 96px;
+}
+
+.numericCol {
+  text-align: right;
+  white-space: nowrap;
 }

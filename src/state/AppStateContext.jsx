@@ -124,7 +124,7 @@ const initialState = {
   competitors: { rows: [] },
 
   /* ------------------------- the capability model ------------------------- */
-  /* Two licence selections and a short competitor list. Everything the report
+  /* Two license selections and a short competitor list. Everything the report
      says is derived from these — there is no separate SKU table, and no
      inventory of the existing estate. */
   currentLicenses: [],
@@ -508,7 +508,7 @@ function reducer(state, action) {
     case 'SET_CURRENT_LICENSES':
       /* Changing what the customer owns invalidates the path they were on — an
          E3 path makes no sense once the base is E5, and leaving it selected
-         would quietly compute a delta against a licence they no longer hold. */
+         would quietly compute a delta against a license they no longer hold. */
       return humanTouch(
         { ...state, currentLicenses: action.ids, futurePath: '', futureLicenses: [] },
         'customer',

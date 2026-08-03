@@ -33,45 +33,45 @@ export const SOLUTION_AREAS = [
 export const CAPABILITIES = [
   /* ------------------------------- Intune -------------------------------- */
   { id: 'mdm', name: 'Mobile Device Management', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune',
-    competitors: ['VMware Workspace ONE', 'Ivanti', 'Jamf', 'Cisco Meraki', 'ManageEngine'] },
+    competitors: ['VMware Workspace ONE', 'Ivanti Neurons for MDM', 'Jamf Pro', 'Cisco Meraki Systems Manager', 'ManageEngine Endpoint Central', 'IBM MaaS360', 'SOTI MobiControl', 'Citrix Endpoint Management', 'BlackBerry UEM', 'Scalefusion', 'Hexnode', 'Kandji', 'Addigy', 'Baramundi', 'Matrix42', 'Workspace ONE UEM'] },
   { id: 'mam', name: 'Mobile Application Management', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune',
-    competitors: ['VMware Workspace ONE', 'Ivanti', 'ManageEngine'] },
+    competitors: ['VMware Workspace ONE', 'Ivanti Neurons', 'ManageEngine Endpoint Central', 'IBM MaaS360', 'SOTI MobiControl', 'Citrix Endpoint Management', 'BlackBerry UEM', 'Hexnode', 'Scalefusion'] },
   { id: 'desktop-mgmt', name: 'Desktop Management', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune',
-    competitors: ['VMware Workspace ONE', 'Ivanti', 'ManageEngine'] },
+    competitors: ['VMware Workspace ONE', 'Ivanti Neurons', 'ManageEngine Endpoint Central', 'Tanium', 'BigFix', 'Quest KACE', 'PDQ Deploy', 'Baramundi', 'Matrix42', 'NinjaOne', 'Automox'] },
   { id: 'epm', name: 'Endpoint Privilege Management', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune Endpoint Privilege Management',
-    competitors: ['BeyondTrust', 'CyberArk'] },
+    competitors: ['BeyondTrust Privilege Management', 'CyberArk Endpoint Privilege Manager', 'Delinea Privilege Manager', 'Admin By Request', 'AutoElevate', 'Netwrix PolicyPak', 'ThreatLocker'] },
   { id: 'endpoint-analytics', name: 'Advanced Endpoint Analytics', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune Advanced Analytics',
-    competitors: ['Ivanti', 'Nexthink'] },
+    competitors: ['Nexthink', 'Ivanti Neurons for Digital Experience', '1E Tachyon', 'Lakeside SysTrack', 'ControlUp', 'Riverbed Aternity'] },
   { id: 'tunnel-mam', name: 'Tunnel for Mobile Application Management', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune Tunnel for MAM',
-    competitors: ['VMware Workspace ONE'] },
+    competitors: ['VMware Workspace ONE Tunnel', 'Ivanti Tunnel', 'Cisco AnyConnect', 'Zscaler Client Connector', 'NetMotion'] },
   { id: 'specialty-devices', name: 'Specialty Device Management', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune Specialty Device Management',
-    competitors: ['VMware Workspace ONE', 'Jamf'] },
+    competitors: ['VMware Workspace ONE', 'Jamf Pro', 'SOTI MobiControl', 'Esper', 'Scalefusion', '42Gears SureMDM'] },
   { id: 'enterprise-app-mgmt', name: 'Enterprise Application Management', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune Enterprise Application Management',
-    competitors: ['Ivanti', 'ManageEngine'] },
+    competitors: ['Ivanti Application Control', 'ManageEngine Patch Manager', 'Flexera', 'Chocolatey for Business', 'PatchMyPC', 'Automox', 'NinjaOne'] },
   { id: 'cloud-pki', name: 'Cloud PKI', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune Cloud PKI',
-    competitors: [] },
+    competitors: ['Keyfactor', 'Venafi', 'DigiCert', 'Entrust', 'AppViewX', 'Sectigo', 'GlobalSign'] },
   { id: 'remote-help', name: 'Remote Help', area: 'intune', group: 'Endpoint management', product: 'Microsoft Intune Remote Help',
-    competitors: ['TeamViewer Tensor', 'AnyDesk Enterprise'] },
+    competitors: ['TeamViewer Tensor', 'AnyDesk Enterprise', 'BeyondTrust Remote Support', 'Splashtop Enterprise', 'GoTo Resolve', 'ConnectWise ScreenConnect', 'RealVNC Connect', 'Zoho Assist'] },
 
   /* -------------------------------- Entra -------------------------------- */
   { id: 'iam', name: 'Identity & Access Management', area: 'entra', group: 'Identity foundation', product: 'Microsoft Entra ID P1',
-    competitors: ['Okta', 'Ping Identity', 'ForgeRock'] },
+    competitors: ['Okta Workforce Identity', 'Ping Identity', 'ForgeRock', 'OneLogin', 'IBM Security Verify', 'Oracle Identity Cloud', 'JumpCloud', 'CyberArk Identity', 'RSA SecurID', 'Thales SafeNet Trusted Access'] },
   { id: 'sso', name: 'Single Sign-On', area: 'entra', group: 'Identity foundation', product: 'Microsoft Entra ID P1',
-    competitors: ['Okta', 'Ping Identity', 'ForgeRock'] },
+    competitors: ['Okta Workforce Identity', 'Ping Identity', 'ForgeRock', 'OneLogin', 'IBM Security Verify', 'JumpCloud', 'CyberArk Identity', 'Google Cloud Identity'] },
   { id: 'mfa', name: 'Multi-Factor Authentication', area: 'entra', group: 'Identity foundation', product: 'Microsoft Entra ID P1',
-    competitors: ['Okta', 'Duo', 'Ping Identity'] },
+    competitors: ['Duo Security', 'Okta Workforce Identity', 'Ping Identity', 'RSA SecurID', 'Thales SafeNet', 'Yubico', 'Silverfort', 'HYPR', 'OneLogin', 'IBM Security Verify'] },
 
   { id: 'pim', name: 'Privileged Identity Management', area: 'entra', group: 'Advanced identity protection', product: 'Microsoft Entra ID P2',
-    competitors: ['CyberArk', 'BeyondTrust'] },
+    competitors: ['CyberArk Privileged Access Manager', 'BeyondTrust Password Safe', 'Delinea Secret Server', 'One Identity Safeguard', 'Saviynt PAM', 'Senhasegura', 'HashiCorp Vault', 'Wallix Bastion', 'Arcon PAM'] },
   { id: 'risk-ca', name: 'Risk-Based Conditional Access', area: 'entra', group: 'Advanced identity protection', product: 'Microsoft Entra ID P2',
-    competitors: ['Okta', 'Ping Identity'] },
+    competitors: ['Okta Adaptive MFA', 'Ping Identity', 'Duo Security', 'ForgeRock', 'Silverfort', 'SecureAuth', 'IBM Security Verify'] },
   { id: 'adaptive-mfa', name: 'Adaptive MFA', area: 'entra', group: 'Advanced identity protection', product: 'Microsoft Entra ID P2',
-    competitors: ['Okta', 'Duo'] },
+    competitors: ['Duo Security', 'Okta Adaptive MFA', 'Ping Identity', 'SecureAuth', 'Silverfort', 'RSA SecurID', 'HYPR'] },
 
   { id: 'id-governance', name: 'Identity Governance', area: 'entra', group: 'Governance', product: 'Microsoft Entra ID Governance',
-    competitors: ['SailPoint', 'Saviynt'] },
+    competitors: ['SailPoint IdentityIQ', 'SailPoint IdentityNow', 'Saviynt', 'One Identity Manager', 'Omada Identity', 'Oracle Identity Governance', 'IBM Verify Governance', 'Clear Skye', 'Zilla Security', 'Veza'] },
   { id: 'lifecycle-workflows', name: 'Lifecycle Workflows', area: 'entra', group: 'Governance', product: 'Microsoft Entra ID Governance',
-    competitors: ['SailPoint', 'Saviynt'] },
+    competitors: ['SailPoint', 'Saviynt', 'One Identity Manager', 'Omada Identity', 'Okta Lifecycle Management', 'BetterCloud', 'Zluri'] },
 
   { id: 'verifiable-credentials', name: 'Verifiable Credentials', area: 'entra', group: 'Modern identity', product: 'Microsoft Entra Verified ID',
     competitors: [] },
@@ -81,119 +81,112 @@ export const CAPABILITIES = [
     competitors: [] },
 
   { id: 'ztna', name: 'Zero Trust Network Access', area: 'entra', group: 'Secure access service edge', product: 'Microsoft Entra Private Access',
-    competitors: ['Zscaler', 'Cloudflare Access', 'Cisco Umbrella'] },
+    competitors: ['Zscaler Private Access', 'Palo Alto Prisma Access', 'Cloudflare Access', 'Netskope Private Access', 'Cisco Duo Network Gateway', 'Appgate SDP', 'Twingate', 'Tailscale', 'Perimeter 81', 'Banyan Security'] },
   { id: 'swg', name: 'Secure Web Gateway', area: 'entra', group: 'Secure access service edge', product: 'Microsoft Entra Internet Access',
-    competitors: ['Zscaler', 'Cisco Umbrella', 'Netskope'] },
+    competitors: ['Zscaler Internet Access', 'Netskope', 'Cisco Umbrella', 'Palo Alto Prisma Access', 'Forcepoint ONE', 'Menlo Security', 'iboss', 'Skyhigh Security', 'Cloudflare Gateway', 'Broadcom/Symantec Web Security'] },
 
   { id: 'ciam', name: 'Customer Identity & Access Management', area: 'entra', group: 'External identity', product: 'Microsoft Entra External ID',
-    competitors: ['Okta', 'ForgeRock', 'Ping Identity'] },
+    competitors: ['Okta Customer Identity (Auth0)', 'Ping Identity', 'ForgeRock', 'Amazon Cognito', 'Transmit Security', 'LoginRadius', 'Frontegg', 'Descope', 'Stytch'] },
 
   { id: 'identity-monitoring', name: 'Cloud-Based Identity Monitoring', area: 'entra', group: 'Identity threat detection', product: 'Microsoft Defender for Identity',
-    competitors: ['CrowdStrike', 'Palo Alto Cortex'] },
+    competitors: ['CrowdStrike Falcon Identity Protection', 'Semperis', 'Silverfort', 'Quest Change Auditor', 'Varonis', 'SentinelOne Singularity Identity', 'Netwrix', 'Attivo Networks'] },
 
   /* ------------------------------- Defender ------------------------------ */
   { id: 'siem', name: 'SIEM', area: 'defender', group: 'Security operations', product: 'Microsoft Sentinel',
-    competitors: ['Splunk', 'IBM QRadar', 'Sumo Logic'] },
+    competitors: ['Splunk Enterprise Security', 'IBM QRadar', 'Elastic Security', 'Sumo Logic', 'Exabeam', 'Securonix', 'LogRhythm', 'Devo', 'Google Chronicle', 'Palo Alto Cortex XSIAM', 'Rapid7 InsightIDR', 'Fortinet FortiSIEM', 'LevelBlue USM', 'Graylog'] },
   { id: 'soar', name: 'SOAR', area: 'defender', group: 'Security operations', product: 'Microsoft Sentinel',
-    competitors: ['Splunk', 'Palo Alto Cortex'] },
+    competitors: ['Splunk SOAR', 'Palo Alto Cortex XSOAR', 'Google Chronicle SOAR', 'Swimlane', 'Tines', 'Torq', 'IBM Resilient', 'Rapid7 InsightConnect', 'ServiceNow SecOps'] },
   { id: 'unified-secops', name: 'Unified Security Operations Platform', area: 'defender', group: 'Security operations', product: 'Microsoft Sentinel',
-    competitors: ['Splunk', 'Palo Alto Cortex'] },
+    competitors: ['Palo Alto Cortex XSIAM', 'Splunk Enterprise Security', 'Google SecOps', 'CrowdStrike Falcon Next-Gen SIEM', 'Exabeam', 'Securonix', 'Devo'] },
 
   { id: 'edr', name: 'Endpoint Detection & Response', area: 'defender', group: 'Endpoint security', product: 'Microsoft Defender for Endpoint',
-    competitors: ['CrowdStrike', 'SentinelOne', 'Trend Micro', 'Palo Alto Cortex'] },
+    competitors: ['CrowdStrike Falcon', 'SentinelOne Singularity', 'Palo Alto Cortex XDR', 'Trend Micro Vision One', 'Sophos Intercept X', 'Trellix Endpoint', 'Cybereason', 'Bitdefender GravityZone', 'ESET PROTECT', 'Broadcom/Symantec Endpoint', 'Cisco Secure Endpoint', 'Deep Instinct', 'WithSecure', 'Elastic Security', 'Check Point Harmony Endpoint'] },
   { id: 'endpoint-platform', name: 'Endpoint Security Platform', area: 'defender', group: 'Endpoint security', product: 'Microsoft Defender for Endpoint',
-    competitors: ['CrowdStrike', 'SentinelOne', 'Trend Micro'] },
+    competitors: ['CrowdStrike Falcon', 'SentinelOne Singularity', 'Trend Micro Vision One', 'Sophos Intercept X', 'Trellix', 'Bitdefender GravityZone', 'ESET PROTECT', 'Check Point Harmony Endpoint', 'Cisco Secure Endpoint'] },
   { id: 'vuln-mgmt', name: 'Risk-Based Vulnerability Management', area: 'defender', group: 'Endpoint security', product: 'Microsoft Defender Vulnerability Management',
-    competitors: ['Tenable', 'Rapid7'] },
+    competitors: ['Tenable Vulnerability Management', 'Rapid7 InsightVM', 'Qualys VMDR', 'Ivanti Neurons for RBVM', 'Greenbone', 'Wiz', 'Orca Security', 'Nucleus Security', 'Vulcan Cyber'] },
 
   { id: 'email-protection', name: 'Email Protection', area: 'defender', group: 'Email security', product: 'Microsoft Defender for Office 365',
-    competitors: ['Proofpoint', 'Mimecast'] },
+    competitors: ['Proofpoint', 'Mimecast', 'Barracuda Email Protection', 'Abnormal Security', 'Cisco Secure Email', 'Trend Micro Email Security', 'Sophos Email', 'Fortinet FortiMail', 'Check Point Harmony Email', 'IRONSCALES', 'Egress Defend', 'Libraesva', 'Trustwave MailMarshal'] },
   { id: 'collab-protection', name: 'Collaboration Protection', area: 'defender', group: 'Email security', product: 'Microsoft Defender for Office 365',
-    competitors: ['Proofpoint', 'Mimecast'] },
+    competitors: ['Proofpoint', 'Mimecast', 'Abnormal Security', 'Check Point Harmony Email & Collaboration', 'Avanan', 'Perception Point', 'SafeGuard Cyber'] },
   { id: 'anti-phishing', name: 'Anti-Phishing Protection', area: 'defender', group: 'Email security', product: 'Microsoft Defender for Office 365',
-    competitors: ['Proofpoint', 'Mimecast'] },
+    competitors: ['Proofpoint', 'Mimecast', 'Abnormal Security', 'IRONSCALES', 'Cofense', 'KnowBe4 PhishER', 'Barracuda Sentinel', 'Egress Defend'] },
 
   { id: 'cwpp', name: 'Cloud Workload Protection Platform', area: 'defender', group: 'Cloud security', product: 'Microsoft Defender for Cloud',
-    competitors: ['Wiz', 'Lacework', 'Palo Alto Cortex'] },
+    competitors: ['Wiz', 'Palo Alto Prisma Cloud', 'Orca Security', 'Lacework', 'CrowdStrike Falcon Cloud Security', 'Trend Micro Cloud One', 'Aqua Security', 'Sysdig Secure', 'Check Point CloudGuard', 'Tenable Cloud Security', 'Rapid7 InsightCloudSec', 'Uptycs'] },
   { id: 'cspm', name: 'Cloud Security Posture Management', area: 'defender', group: 'Cloud security', product: 'Microsoft Defender for Cloud CSPM',
-    competitors: ['Wiz', 'Lacework'] },
+    competitors: ['Wiz', 'Palo Alto Prisma Cloud', 'Orca Security', 'Lacework', 'Check Point CloudGuard', 'Tenable Cloud Security', 'Trend Micro Cloud One', 'Ermetic', 'Fugue', 'Rapid7 InsightCloudSec'] },
 
   { id: 'easm', name: 'External Attack Surface Management', area: 'defender', group: 'External exposure', product: 'Microsoft Defender EASM',
-    competitors: ['Tenable', 'Rapid7'] },
+    competitors: ['Tenable Attack Surface Management', 'Palo Alto Cortex Xpanse', 'CyCognito', 'Censys', 'Bitsight', 'Rapid7 Surface Command', 'Detectify', 'IONIX', 'Group-IB'] },
 
   { id: 'casb', name: 'Cloud Access Security Broker', area: 'defender', group: 'SaaS security', product: 'Microsoft Defender for Cloud Apps',
-    competitors: ['Netskope', 'Skyhigh Security'] },
+    competitors: ['Netskope', 'Skyhigh Security', 'Palo Alto Prisma SaaS', 'Zscaler CASB', 'Forcepoint ONE', 'Cisco Cloudlock', 'Bitglass', 'Lookout CASB', 'Proofpoint CASB'] },
 
   /* ------------------------------- Purview ------------------------------- */
   { id: 'insider-risk', name: 'Insider Risk Management', area: 'purview', group: 'Insider risk', product: 'Microsoft Purview Insider Risk Management',
-    competitors: ['Proofpoint Insider Risk', 'Varonis'] },
+    competitors: ['Proofpoint Insider Threat Management', 'DTEX Systems', 'Teramind', 'Veriato', 'Forcepoint Insider Threat', 'Varonis', 'Code42 Incydr', 'Everfox', 'Gurucul'] },
   { id: 'comms-compliance', name: 'Communication Compliance', area: 'purview', group: 'Insider risk', product: 'Microsoft Purview Communication Compliance',
-    competitors: ['Proofpoint Insider Risk', 'Relativity'] },
+    competitors: ['Smarsh', 'Global Relay', 'Proofpoint Capture', 'Relativity Trace', 'Theta Lake', 'Shield', 'Behavox', 'Verint', 'NICE Actimize'] },
   { id: 'information-barriers', name: 'Information Barriers', area: 'purview', group: 'Insider risk', product: 'Microsoft Purview Information Barriers',
-    competitors: [] },
+    competitors: ['Smarsh', 'Global Relay', 'Shield', 'Behavox'] },
 
   { id: 'information-protection', name: 'Information Protection', area: 'purview', group: 'Data protection', product: 'Microsoft Purview Information Protection',
-    competitors: ['Symantec DLP', 'Broadcom Information Protection', 'Varonis'] },
+    competitors: ['Broadcom/Symantec Information Centric', 'Fortra Titus', 'Fortra Boldon James', 'Seclore', 'Virtru', 'NextLabs', 'Varonis', 'Janusnet', 'GigaTrust'] },
   { id: 'data-classification', name: 'Data Classification', area: 'purview', group: 'Data protection', product: 'Microsoft Purview Information Protection',
-    competitors: ['BigID', 'Varonis', 'Spirion'] },
+    competitors: ['BigID', 'Varonis', 'Spirion', 'Fortra Titus', 'Fortra Boldon James', 'Securiti', 'OneTrust', 'Informatica', 'Collibra', 'Concentric AI'] },
   { id: 'dlp', name: 'Data Loss Prevention', area: 'purview', group: 'Data protection', product: 'Microsoft Purview Data Loss Prevention',
-    competitors: ['Symantec DLP', 'Forcepoint DLP'] },
+    competitors: ['Broadcom/Symantec DLP', 'Forcepoint DLP', 'Trellix DLP', 'Digital Guardian', 'Netskope DLP', 'Zscaler DLP', 'Proofpoint DLP', 'GTB Technologies', 'Safetica', 'Endpoint Protector', 'Nightfall', 'Cyberhaven'] },
   { id: 'message-encryption', name: 'Message Encryption', area: 'purview', group: 'Data protection', product: 'Microsoft Purview Message Encryption',
-    competitors: ['Broadcom Information Protection'] },
+    competitors: ['Zix', 'Virtru', 'Echoworx', 'Broadcom/Symantec', 'Cisco Secure Email Encryption', 'Egress Protect', 'Trend Micro Email Encryption'] },
 
   { id: 'records-mgmt', name: 'Records Management', area: 'purview', group: 'Governance', product: 'Microsoft Purview Records Management',
-    competitors: ['OneTrust', 'Exterro'] },
+    competitors: ['OpenText', 'IBM FileNet', 'Veritas Enterprise Vault', 'Iron Mountain', 'Gimmal', 'RecordPoint', 'Zasio', 'Everteam', 'Hyland'] },
   { id: 'retention-mgmt', name: 'Retention Management', area: 'purview', group: 'Governance', product: 'Microsoft Purview Records Management',
-    competitors: ['OneTrust', 'Exterro'] },
+    competitors: ['OpenText', 'Veritas Enterprise Vault', 'Smarsh', 'Global Relay', 'Proofpoint Archive', 'Mimecast Archive', 'Iron Mountain', 'Barracuda Archiver'] },
   { id: 'data-lifecycle', name: 'Data Lifecycle Management', area: 'purview', group: 'Governance', product: 'Microsoft Purview Data Lifecycle Management',
-    competitors: ['OneTrust', 'BigID'] },
+    competitors: ['OneTrust', 'BigID', 'Informatica', 'Collibra', 'Securiti', 'Varonis', 'Solix', 'Delphix'] },
 
   { id: 'data-discovery', name: 'Data Discovery', area: 'purview', group: 'Data discovery', product: 'Microsoft Purview Data Map',
-    competitors: ['BigID', 'Spirion', 'Varonis'] },
+    competitors: ['BigID', 'Collibra', 'Alation', 'Informatica', 'Atlan', 'Securiti', 'Varonis', 'Spirion', 'data.world', 'Concentric AI', 'Immuta'] },
   { id: 'unified-catalog', name: 'Unified Catalog', area: 'purview', group: 'Data discovery', product: 'Microsoft Purview Unified Catalog',
-    competitors: ['BigID'] },
+    competitors: ['Collibra', 'Alation', 'Atlan', 'Informatica', 'data.world', 'Select Star', 'Castor'] },
 
   { id: 'ediscovery', name: 'eDiscovery', area: 'purview', group: 'Investigation & compliance', product: 'Microsoft Purview eDiscovery',
-    competitors: ['Exterro', 'Relativity'] },
+    competitors: ['Relativity', 'Exterro', 'Nuix', 'Everlaw', 'DISCO', 'Logikcull', 'OpenText Recommind', 'Reveal', 'Consilio', 'Zapproved', 'Casepoint', 'Lighthouse'] },
   { id: 'audit', name: 'Auditing', area: 'purview', group: 'Investigation & compliance', product: 'Microsoft Purview Audit',
-    competitors: ['Exterro'] },
+    competitors: ['Splunk', 'Netwrix Auditor', 'Quest Change Auditor', 'ManageEngine ADAudit Plus', 'LogRhythm', 'Varonis', 'Lepide'] },
   { id: 'dsi', name: 'Data Security Investigations', area: 'purview', group: 'Investigation & compliance', product: 'Microsoft Purview Data Security Investigations',
-    competitors: [] },
+    competitors: ['Exterro', 'Nuix', 'Relativity', 'Varonis'] },
   { id: 'dspm', name: 'Data Security Posture Management', area: 'purview', group: 'Investigation & compliance', product: 'Microsoft Purview DSPM',
-    competitors: [] },
+    competitors: ['BigID', 'Varonis', 'Securiti', 'Cyera', 'Sentra', 'Dig Security', 'Normalyze', 'Symmetry Systems'] },
   { id: 'pam', name: 'Privileged Access Management', area: 'purview', group: 'Investigation & compliance', product: 'Microsoft Purview Privileged Access Management',
-    competitors: ['CyberArk', 'BeyondTrust'] },
+    competitors: ['CyberArk', 'BeyondTrust', 'Delinea', 'One Identity Safeguard', 'Senhasegura', 'Wallix', 'Arcon', 'HashiCorp Vault'] },
 
   /* ---------------------------------- AI --------------------------------- */
   { id: 'productivity-ai', name: 'Personal AI Assistant', area: 'ai', group: 'Productivity AI', product: 'Microsoft 365 Copilot',
-    competitors: ['ChatGPT Enterprise', 'Google Gemini for Workspace'] },
+    competitors: ['ChatGPT Enterprise', 'Google Gemini for Workspace', 'Claude for Enterprise', 'Glean', 'Writer', 'Salesforce Einstein', 'Notion AI'] },
   { id: 'security-ai', name: 'Security AI Assistant', area: 'ai', group: 'Security AI', product: 'Microsoft Security Copilot',
-    competitors: [] },
+    competitors: ['CrowdStrike Charlotte AI', 'Palo Alto Cortex XSIAM AI', 'Google Threat Intelligence AI', 'SentinelOne Purple AI', 'Dropzone AI'] },
   { id: 'agent-governance', name: 'AI Agent Governance', area: 'ai', group: 'Agent management', product: 'Agent 365',
-    competitors: [] },
+    competitors: ['CrowdStrike', 'Zenity', 'Prompt Security', 'Lasso Security', 'Witness AI'] },
 ];
 
 /**
- * Capabilities the model treats as strategic even where a competitor exists.
+ * Capabilities treated as strategic even though a competitor exists.
  *
- * The mechanical rule — no competitor mapped means net-new — gets the Verified
- * ID and DSPM cases right on its own. Security Copilot is the exception the
- * source model calls out by name: Charlotte AI and Cortex XSIAM AI exist, but
- * they are not products a customer displaces on a licensing renewal, so pricing
- * this as a consolidation play would overstate the saving. Market-equivalence is
- * a judgement, so it is written down rather than inferred.
+ * The mechanical rule does the work now that the vendor lists are real: no
+ * vendors means nothing to displace, which is why the three Verified ID
+ * capabilities fall out as net-new without being named here.
+ *
+ * The two that are named are the AI assistants. Charlotte AI and Cortex XSIAM
+ * AI exist, but they are not products a customer stops paying for on a
+ * licensing renewal, so pricing them as a consolidation play would invent a
+ * saving. Everything else - DSPM, data security investigations, information
+ * barriers, cloud PKI - has a genuine vendor market and is displaceable.
  */
-export const STRATEGIC = new Set([
-  'security-ai',
-  'agent-governance',
-  'verifiable-credentials',
-  'face-check',
-  'decentralized-identity',
-  'dspm',
-  'dsi',
-  'information-barriers',
-  'cloud-pki',
-]);
+export const STRATEGIC = new Set(['security-ai', 'agent-governance']);
 
 export const capabilityById = (id) => CAPABILITIES.find((c) => c.id === id);
 export const areaById = (id) => SOLUTION_AREAS.find((a) => a.id === id);

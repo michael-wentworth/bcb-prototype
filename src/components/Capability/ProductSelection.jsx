@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { Button, Card, Input, Tab, TabList } from '@fluentui/react-components';
+import { Button, Card, Combobox, Input, Option, Tab, TabList } from '@fluentui/react-components';
 import { Checkmark16Filled, Dismiss16Regular } from '@fluentui/react-icons';
 import {
   BASE_SKUS,
+  SKUS,
   addonsFor,
   annualOf,
   areaById,
@@ -75,6 +76,17 @@ export default function ProductSelection() {
   const groups = competitorChoices(delta);
   const rows = capabilityCompetitors.rows;
   const rowFor = (capId) => rows.find((r) => r.capabilityId === capId);
+
+  /* One draft string per row. Undefined means "not typing", so the field shows
+     the committed vendor; a string means the seller is filtering. */
+  const [queries, setQueries] = useState({});
+  const setQuery = (capId, value) => setQueries((q) => ({ ...q, [capId]: value }));
+  const clearQuery = (capId) =>
+    setQueries((q) => {
+      const next = { ...q };
+      delete next[capId];
+      return next;
+    });
 
   const pickVendor = (capId, vendor) => {
     const existing = rowFor(capId);
@@ -176,7 +188,7 @@ export default function ProductSelection() {
                 bundle are the same kind of thing, something with a price that
                 grants capabilities, and the price list never drew that line. */}
             <ul className={styles.licenseGrid}>
-              {(base ? addonsFor(base) : []).map((item) => {
+              {(base ? [...BASE_SKUS.filter((b) => b.id !== 'none' && b.id !== base), ...addonsFor(base)] : []).map((item) => {
                 const on = futureLicenses.includes(item.id);
                 return (
                   <li key={item.id}>
@@ -211,8 +223,9 @@ export default function ProductSelection() {
               <p className={styles.empty}>Pick a current license above first.</p>
             ) : (
               <p className={styles.cardLead}>
-                A base bundle can be selected here too if the move changes it — use the path tab
-                for the common upgrades.
+                Bases first, then the add-ons sold against {licenseById(base)?.name}. A customer on
+                no bundle at all picks their target base here, or takes one of the starting points
+                on the path tab.
               </p>
             )}
           </>
@@ -275,74 +288,119 @@ export default function ProductSelection() {
       ) : null}
 
       {/* --------------------------- competitor mapping ------------------------- */}
-      {groups.map((g) => (
-        <Card key={`${g.area}:${g.group}`} className={styles.card}>
+      {groups.length > 0 ? (
+        <Card className={styles.card}>
           <div>
-            <h2 className={styles.cardTitle}>{g.group}</h2>
+            <h2 className={styles.cardTitle}>What are they using for this today?</h2>
             <p className={styles.cardLead}>
-              {areaById(g.area)?.label} · who do they use for this today? Leave blank if nobody —
-              only named incumbents produce a saving.
+              Only the capabilities this move would add. Leave a row blank if nobody supplies it —
+              a blank is an honest answer and most rows will be blank. Only named incumbents with a
+              cost produce a saving.
             </p>
           </div>
-          <div className={styles.mapGroup}>
-            {g.capabilities.map((c) => {
-              const row = rowFor(c.id);
-              return (
-                <div key={c.id} className={styles.mapCap}>
-                  <span>
-                    <span className={styles.mapCapName}>{c.name}</span>
-                    <span className={styles.mapCapProduct}>{c.product}</span>
-                  </span>
-                  <div>
-                    <div className={styles.vendorRow}>
-                      {c.competitors.map((v) => (
-                        <button
-                          key={v}
-                          type="button"
-                          className={`${styles.vendor} ${row?.product === v ? styles.vendorOn : ''}`}
-                          aria-pressed={row?.product === v}
-                          onClick={() => pickVendor(c.id, v)}
-                        >
-                          {v}
-                        </button>
-                      ))}
-                    </div>
-                    {row?.product ? (
-                      <div className={styles.costRow}>
-                        <span className={styles.costLabel}>What do they pay?</span>
-                        <Input
-                          size="small"
-                          value={row.annualCost}
-                          onChange={(_, d) => updateCapabilityRow(row.id, 'annualCost', d.value)}
-                          placeholder="Annual cost"
-                          contentBefore="$"
-                          aria-label={`Annual cost for ${row.product}`}
-                        />
-                        <Input
-                          size="small"
-                          value={row.yearContractEnds}
-                          onChange={(_, d) =>
-                            updateCapabilityRow(row.id, 'yearContractEnds', d.value)
-                          }
-                          placeholder="Contract ends"
-                          aria-label={`Contract end year for ${row.product}`}
-                        />
-                        <Button
-                          appearance="subtle"
-                          size="small"
-                          icon={<Dismiss16Regular />}
-                          aria-label={`Remove ${row.product}`}
-                          onClick={() => removeCapabilityRow(row.id)}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              );
-            })}
+
+          <div className={styles.tableWrap}>
+            <table className={styles.mapTable}>
+              <thead>
+                <tr>
+                  <th scope="col">Capability</th>
+                  <th scope="col">Microsoft delivers it with</th>
+                  <th scope="col">Current vendor</th>
+                  <th scope="col" className={styles.numericCol}>Annual cost</th>
+                  <th scope="col" className={styles.numericCol}>Contract ends</th>
+                </tr>
+              </thead>
+              <tbody>
+                {groups.map((g) => (
+                  <React.Fragment key={`${g.area}:${g.group}`}>
+                    <tr className={styles.groupRow}>
+                      <th scope="colgroup" colSpan={5}>
+                        {g.group}
+                        <span className={styles.groupArea}>{areaById(g.area)?.label}</span>
+                      </th>
+                    </tr>
+                    {g.capabilities.map((c) => {
+                      const row = rowFor(c.id);
+                      const q = queries[c.id];
+                      const typed = q !== undefined ? q : row?.product || '';
+                      const matches = c.competitors.filter((v) =>
+                        v.toLowerCase().includes((q ?? '').toLowerCase()),
+                      );
+                      return (
+                        <tr key={c.id} className={row?.product ? styles.rowNamed : ''}>
+                          <th scope="row" className={styles.capCell}>{c.name}</th>
+                          <td className={styles.msCell}>{c.product}</td>
+                          <td>
+                            {/* Freeform so it doubles as a search box and still
+                                accepts a vendor the catalogue has never heard
+                                of — there are more of those than there are
+                                entries in any list we could ship. */}
+                            <Combobox
+                              size="small"
+                              freeform
+                              className={styles.vendorPicker}
+                              placeholder="Search or type…"
+                              value={typed}
+                              selectedOptions={row?.product ? [row.product] : []}
+                              onChange={(e) => setQuery(c.id, e.target.value)}
+                              onOptionSelect={(_, d) => {
+                                pickVendor(c.id, d.optionText);
+                                clearQuery(c.id);
+                              }}
+                              onBlur={() => {
+                                const v = (q ?? '').trim();
+                                if (q !== undefined && v !== (row?.product || '')) {
+                                  if (v) pickVendor(c.id, v);
+                                  else if (row) removeCapabilityRow(row.id);
+                                }
+                                clearQuery(c.id);
+                              }}
+                              aria-label={`Current vendor for ${c.name}`}
+                            >
+                              {matches.map((v) => (
+                                <Option key={v} text={v}>{v}</Option>
+                              ))}
+                              {matches.length === 0 ? (
+                                <Option key="__none" text={typed} disabled>
+                                  No match — press Tab to use what you typed
+                                </Option>
+                              ) : null}
+                            </Combobox>
+                          </td>
+                          <td className={styles.numericCol}>
+                            <Input
+                              size="small"
+                              className={styles.costInput}
+                              disabled={!row?.product}
+                              value={row?.annualCost || ''}
+                              onChange={(_, d) => updateCapabilityRow(row.id, 'annualCost', d.value)}
+                              contentBefore="$"
+                              aria-label={`Annual cost for ${c.name}`}
+                            />
+                          </td>
+                          <td className={styles.numericCol}>
+                            <Input
+                              size="small"
+                              className={styles.yearInput}
+                              disabled={!row?.product}
+                              value={row?.yearContractEnds || ''}
+                              onChange={(_, d) =>
+                                updateCapabilityRow(row.id, 'yearContractEnds', d.value)
+                              }
+                              placeholder="2027"
+                              aria-label={`Contract end year for ${c.name}`}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
           </div>
         </Card>
-      ))}
+      ) : null}
 
       <StepFooter
         hint={

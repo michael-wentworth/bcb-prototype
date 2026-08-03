@@ -202,7 +202,7 @@ export const EXCLUDED = {
 export const REFUSALS = [
   {
     title: 'Spend the customer keeps paying',
-    text: `The ${EXCLUDED.bundleName} licences underneath this estate cost ${exact(EXCLUDED.annual)} a year. They are not a saving, because the customer keeps paying them.`,
+    text: `The ${EXCLUDED.bundleName} licenses underneath this estate cost ${exact(EXCLUDED.annual)} a year. They are not a saving, because the customer keeps paying them.`,
   },
   {
     title: 'Savings before the contract ends',

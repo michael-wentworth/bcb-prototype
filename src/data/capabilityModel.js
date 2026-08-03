@@ -8,10 +8,10 @@
    each bucket carries a different claim, and mixing them is how a case ends up
    asserting a saving against something the customer was never paying for.
 
-   Second the arithmetic. The investment is the *incremental* licence cost, not
+   Second the arithmetic. The investment is the *incremental* license cost, not
    the full future bill: the customer is already paying for their current estate
    and will keep paying for the part that carries over. Counting the whole future
-   licence as new spend understates the case; counting none of it overstates it.
+   license as new spend understates the case; counting none of it overstates it.
    --------------------------------------------------------------------------- */
 
 import { CAPABILITIES, STRATEGIC, annualOf, capabilityById, entitlementById } from './capabilities.js';

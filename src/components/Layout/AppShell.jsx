@@ -15,7 +15,7 @@ import styles from './AppShell.module.css';
 
 /* Five capability-led steps. The old three — customer details, SKU table,
    report — are still in the tree but no longer routed to; the flow they served
-   asked for a product list where this one asks for two licence selections. */
+   asked for a product list where this one asks for two license selections. */
 const STEP_VIEWS = [CustomerDetails, ProductSelection, CapabilityReport];
 
 export default function AppShell({ panelOpen, onTogglePanel }) {

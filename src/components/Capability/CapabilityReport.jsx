@@ -46,7 +46,7 @@ export default function CapabilityReport() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description={`${c.years}-year analysis across ${c.users.toLocaleString()} users. Every figure derives from the two licence selections and the incumbents you named.`}
+        description={`${c.years}-year analysis across ${c.users.toLocaleString()} users. Every figure derives from the two license selections and the incumbents you named.`}
       />
 
       <Card className={styles.card}>
