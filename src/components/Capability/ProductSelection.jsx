@@ -99,8 +99,14 @@ export default function ProductSelection() {
      from a single row's dropdown runs the same function, so the two entry paths
      cannot produce different data. */
   const addVendor = (vendor) => {
-    const caps = capabilitiesSoldBy(vendor).filter((id) => mappable.has(id));
-    linkVendor(vendor, caps.length ? caps : []);
+    const name = (vendor || '').trim();
+    if (!name) return;
+    /* A vendor in the catalogue links to everything it sells that this move
+       adds. One we have never heard of links to nothing, because we have no
+       claim about what it covers — the seller says where it applies, and the
+       partial-cover rule stays quiet rather than blocking a contract on a gap
+       we invented. */
+    linkVendor(name, capabilitiesSoldBy(name).filter((id) => mappable.has(id)));
   };
 
   const allVendors = useMemo(() => {
@@ -322,14 +328,35 @@ export default function ProductSelection() {
                 addVendor(d.optionText);
                 setVendorQuery('');
               }}
+              /* Freeform, so a product the catalogue does not carry is typed and
+                 kept rather than silently dropped. 346 entries is nowhere near
+                 the whole market and never will be. */
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+                addVendor(vendorQuery);
+                setVendorQuery('');
+              }}
+              onBlur={() => {
+                if (vendorQuery.trim()) {
+                  addVendor(vendorQuery);
+                  setVendorQuery('');
+                }
+              }}
               aria-label="Add a product the customer already uses"
             >
               {vendorMatches.slice(0, 30).map((v) => (
                 <Option key={v} text={v}>{v}</Option>
               ))}
+              {vendorQuery.trim() && !vendorMatches.some((v) => v.toLowerCase() === vendorQuery.trim().toLowerCase()) ? (
+                <Option key="__custom" text={vendorQuery.trim()}>
+                  Add &ldquo;{vendorQuery.trim()}&rdquo; &mdash; not in the list
+                </Option>
+              ) : null}
             </Combobox>
             <span className={styles.quickAddHint}>
-              Added once, against every capability it covers.
+              Added once, against every capability it covers. Type any name to add a product we do
+              not list.
             </span>
           </div>
 
@@ -343,7 +370,9 @@ export default function ProductSelection() {
                   <div className={styles.contractHead}>
                     <span className={styles.contractVendor}>{l.vendor}</span>
                     <span className={styles.contractCaps}>
-                      {l.linked.length} capabilit{l.linked.length === 1 ? 'y' : 'ies'}
+                      {l.linked.length
+                        ? l.linked.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')
+                        : 'Not linked to a capability yet'}
                     </span>
                     <Input
                       size="small"
@@ -370,7 +399,14 @@ export default function ProductSelection() {
                       onClick={() => removeContract(l.id)}
                     />
                   </div>
-                  {l.reason ? <p className={styles.contractReason}>{l.reason}</p> : null}
+                  {l.linked.length === 0 ? (
+                    <p className={styles.contractReason}>
+                      We do not carry this product, so we cannot say what it covers. Pick it in the
+                      rows below wherever it applies and it will attach to this contract.
+                    </p>
+                  ) : l.reason ? (
+                    <p className={styles.contractReason}>{l.reason}</p>
+                  ) : null}
                   {l.blocked ? (
                     <Checkbox
                       label="They do not use it for those - count this contract"
@@ -444,9 +480,10 @@ export default function ProductSelection() {
                               {matches.map((v) => (
                                 <Option key={v} text={v}>{v}</Option>
                               ))}
-                              {matches.length === 0 ? (
-                                <Option key="__none" text={typed} disabled>
-                                  No match — press Tab to use what you typed
+                              {typed.trim() &&
+                              !matches.some((v) => v.toLowerCase() === typed.trim().toLowerCase()) ? (
+                                <Option key="__custom" text={typed.trim()}>
+                                  Add &ldquo;{typed.trim()}&rdquo; &mdash; not in the list
                                 </Option>
                               ) : null}
                             </Combobox>
