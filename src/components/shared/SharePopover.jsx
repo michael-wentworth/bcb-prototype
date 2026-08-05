@@ -17,6 +17,7 @@ import {
   SlideText20Regular,
 } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
+import { SIGNALS } from '../../data/signals.js';
 import { CASE_STATUS } from '../../data/caseLibrary.js';
 import { CURRENT_USER } from '../../data/session.js';
 import styles from './SharePopover.module.css';
@@ -33,7 +34,8 @@ import styles from './SharePopover.module.css';
  * been told something false about a prototype with no backend.
  */
 export default function SharePopover({ children, onNameIt }) {
-  const { caseSetup, customer, activeCaseId, activeCaseOwner, activeCaseStatus } = useAppState();
+  const { caseSetup, customer, activeCaseId, activeCaseOwner, activeCaseStatus, recordSignal } =
+    useAppState();
   const [open, setOpen] = useState(false);
 
   const toasterId = useId('share-toaster');
@@ -123,22 +125,34 @@ export default function SharePopover({ children, onNameIt }) {
           <span className={styles.divider} aria-hidden="true" />
 
           <div className={styles.actions}>
-            <Button icon={<Link20Regular />} onClick={copyLink} disabled={!name}>
+            {/* Copying the link is the one action here with a real side effect,
+                and the closest thing the prototype has to "this went to somebody".
+                A case worth sharing is a stronger endorsement than any rating. */}
+            <Button
+              icon={<Link20Regular />}
+              onClick={() => {
+                recordSignal(SIGNALS.REPORT_SHARED, { via: 'link' });
+                copyLink();
+              }}
+              disabled={!name}
+            >
               Copy link
             </Button>
             <Button
               icon={<SlideText20Regular />}
-              onClick={() =>
-                notify('PowerPoint generated', 'Executive deck — prototype, no file produced.')
-              }
+              onClick={() => {
+                recordSignal(SIGNALS.REPORT_DOWNLOADED, { format: 'pptx', from: 'share' });
+                notify('PowerPoint generated', 'Executive deck — prototype, no file produced.');
+              }}
             >
               PowerPoint
             </Button>
             <Button
               icon={<DocumentPdf20Regular />}
-              onClick={() =>
-                notify('PDF generated', 'Full business case — prototype, no file produced.')
-              }
+              onClick={() => {
+                recordSignal(SIGNALS.REPORT_DOWNLOADED, { format: 'pdf', from: 'share' });
+                notify('PDF generated', 'Full business case — prototype, no file produced.');
+              }}
             >
               PDF
             </Button>

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Button,
   Card,
-  Checkbox,
   Dialog,
   DialogBody,
   DialogContent,
@@ -13,6 +12,7 @@ import {
   Option,
   Radio,
   RadioGroup,
+  Switch,
   Textarea,
 } from '@fluentui/react-components';
 import {
@@ -81,7 +81,7 @@ export default function CustomerDetails() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="Tell the copilot what the customer runs today — their Microsoft licensing and the competitor products in the estate. Every number in the report is measured against it."
+        description="Who the case is for, and how many users"
       />
 
       {/* --------------------------- About this case -------------------------- */}
@@ -99,7 +99,7 @@ export default function CustomerDetails() {
         <div className={styles.grid}>
           <FormField
             label="Analysis period (years)"
-            help="Sets the horizon for cost, benefit, ROI and reporting — and how many years of seats you enter per product"
+            help="Sets the horizon for cost, benefit and ROI"
           >
             {(id) => (
               <Dropdown
@@ -154,7 +154,20 @@ export default function CustomerDetails() {
 
       {/* ------------------------ Customer Information ------------------------ */}
       <Card className={styles.card}>
-        <h2 className={styles.cardTitle}>Customer information</h2>
+        {/* On the title row rather than in the field flow. It switches off every
+            input in this card, so it is a property of the section, not one more
+            thing to fill in — and as a full-width row under the heading it read
+            as the first field, which is exactly what it is not. */}
+        <div className={styles.cardTitleRow}>
+          <h2 className={styles.cardTitle}>Customer information</h2>
+          <Switch
+            className={styles.notCustomer}
+            labelPosition="before"
+            checked={customer.notForCustomer}
+            onChange={(_, d) => setCustomer('notForCustomer', d.checked)}
+            label="Not for a specific customer"
+          />
+        </div>
 
         <div className={styles.grid}>
           <FormField label="Account name" required meta={fieldMeta.accountName}>
@@ -211,16 +224,6 @@ export default function CustomerDetails() {
             )}
           </FormField>
 
-        </div>
-
-        <Checkbox
-          className={styles.notCustomer}
-          checked={customer.notForCustomer}
-          onChange={(_, d) => setCustomer('notForCustomer', d.checked)}
-          label="This calculation is not for a customer"
-        />
-
-        <div className={styles.grid}>
           <FormField label="TPID" meta={fieldMeta.tpid}>
             {(id) => (
               <Input
@@ -331,7 +334,7 @@ export default function CustomerDetails() {
           <FormField
             label="Number of users"
             required
-            help="Sets baseline Microsoft spend and seeds the per-year seat defaults"
+            help="Seeds the per-year seat defaults"
             meta={fieldMeta.numberOfUsers}
           >
             {(id) => (
@@ -358,9 +361,15 @@ export default function CustomerDetails() {
           <FormField
             label="Number of devices"
             help={
-              effectiveDevices > 0 && !customer.numberOfDevices
-                ? `Defaults to 1.2 × users — ${effectiveDevices.toLocaleString('en-US')} devices`
-                : 'Endpoint count for Defender-related calculations'
+              /* The rule is stated whenever the field is empty, whether or not a
+                 seat count exists yet. It used to need one, so a brand-new case
+                 — where nothing is filled in and the hint is most useful — was
+                 the one place it never appeared. */
+              customer.numberOfDevices
+                ? 'Endpoint count for Defender-related calculations'
+                : effectiveDevices > 0
+                  ? `Defaults to 1.2 × users — ${effectiveDevices.toLocaleString('en-US')} devices`
+                  : 'Defaults to 1.2 × users'
             }
           >
             {(id) => (
@@ -534,9 +543,8 @@ function CompetitiveEnvironment({
       <div className={styles.cardHead}>
         <h2 className={styles.cardTitle}>Competitor products</h2>
         <p className={styles.cardLead}>
-          What the customer buys outside Microsoft today. Search for a competitor product or enter
-          one that is not in our database — new competitors are saved to this customer account
-          only.
+          What the customer buys outside Microsoft today. Search, or enter a product not in our
+          database.
         </p>
       </div>
 

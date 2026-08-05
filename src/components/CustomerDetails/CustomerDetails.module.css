@@ -77,8 +77,33 @@
   text-decoration: underline;
 }
 
+/* Title left, section switch right. The row inherits the title's bottom margin
+   so this card's heading-to-content distance still matches every other card. */
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalL);
+  margin-bottom: var(--spacingVerticalXL);
+}
+
+.cardTitleRow .cardTitle {
+  margin-bottom: 0;
+}
+
+/* Fluent's Switch pads its own label; the negative right margin pulls the track
+   flush with the card's content edge so it lines up with the fields below. */
 .notCustomer {
-  margin: var(--spacingVerticalL) 0;
+  flex: 0 0 auto;
+  margin-right: calc(-1 * var(--spacingHorizontalS));
+}
+
+/* Spacing only. The label's colour stays Fluent's, which drives it from the
+   switch's own checked/enabled state — a flat override here loses to that
+   selector anyway, and winning would mean restating all three states and
+   breaking the disabled greying for the sake of one tone. */
+.notCustomer.notCustomer label {
+  padding-right: var(--spacingHorizontalS);
 }
 
 .textarea {
