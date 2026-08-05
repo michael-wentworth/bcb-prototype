@@ -4,6 +4,8 @@ import { SOLUTION_AREAS, capabilityById } from '../../data/capabilities.js';
 import { formatCurrency, formatPercent } from '../../data/model.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
+import PaybackChart from '../ResultsDashboard/PaybackChart.jsx';
+import SpendComparison from '../ResultsDashboard/SpendComparison.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import styles from './Capability.module.css';
 
@@ -46,7 +48,7 @@ export default function CapabilityReport() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description={`${c.years}-year analysis across ${c.users.toLocaleString()} users. Every figure derives from the two license selections and the incumbents you named.`}
+        description={`${c.years}-year analysis across ${c.users.toLocaleString()} users`}
       />
 
       <Card className={styles.card}>
@@ -56,8 +58,7 @@ export default function CapabilityReport() {
           </h2>
           <p className={styles.cardLead}>
             {c.delta.retained.length} retained, {c.counts.displaced} vendor
-            {c.counts.displaced === 1 ? '' : 's'} displaced, {c.delta.strategic.length} net-new with
-            nothing comparable on the market.
+            {c.counts.displaced === 1 ? '' : 's'} displaced, {c.delta.strategic.length} net-new.
           </p>
         </div>
 
@@ -76,7 +77,7 @@ export default function CapabilityReport() {
             <span className={styles.kpiLabel}>Microsoft uplift</span>
             <span className={styles.kpiValue}>{money(c.investmentTotal)}</span>
             <span className={styles.kpiNote}>
-              {c.usingList ? 'At list — enter a negotiated rate' : `${money(c.incrementalAnnual)} a year`}
+              {c.usingList ? 'At list — set a rate on step 2' : `${money(c.incrementalAnnual)} in year one`}
             </span>
           </li>
           <li className={styles.kpi}>
@@ -90,17 +91,44 @@ export default function CapabilityReport() {
 
         <p className={styles.cardLead}>
           Net {exact(c.netBenefit)} over {c.years} years — {exact(c.competitorTotal)} of spend that
-          stops against {exact(c.investmentTotal)} of additional Microsoft licensing. The estate
-          they already pay for is not counted on either side.
+          stops against {exact(c.investmentTotal)} of additional Microsoft licensing. The estate the
+          customer already pays for is not counted on either side.
         </p>
       </Card>
+
+      {/* The two charts the report is actually read from: when the case turns
+          net-positive, and what the annual bill looks like either side of the
+          move. Both take the capability case directly — same numbers as the
+          KPIs above them, drawn rather than listed. */}
+      <div className={styles.chartRow}>
+        {/* No card heading above either: both charts title themselves, and a
+            second heading over the top was two lines of text between the reader
+            and the graphic. */}
+        <Card className={styles.card}>
+          <PaybackChart cashflow={c.cashflow} paybackMonths={c.paybackMonths} symbol="$" />
+        </Card>
+        <Card className={styles.card}>
+          {/* Today is the Microsoft bill PLUS the contracts that stop; the future
+              is the Microsoft bill alone. Passing the two licensing figures made
+              it a comparison of Microsoft against Microsoft, which showed the
+              move costing more while the row underneath counted vendors. Spend
+              that continues either way is excluded from both sides, the same
+              rule the rest of the report uses. */}
+          <SpendComparison
+            current={c.currentAnnual + displaced.reduce((sum, l) => sum + l.annualCost, 0)}
+            future={c.futureAnnual}
+            contractCount={c.counts.displaced}
+            symbol="$"
+          />
+        </Card>
+      </div>
 
       <Card className={styles.card}>
         <div>
           <h2 className={styles.cardTitle}>What the money comes from</h2>
           <p className={styles.cardLead}>
             A contract cannot be switched off mid-term, so each saving starts the year after it
-            lapses. Rows that cannot contribute are shown with the reason rather than dropped.
+            lapses.
           </p>
         </div>
 
@@ -123,10 +151,15 @@ export default function CapabilityReport() {
               </tr>
             ) : (
               c.competitorLines.map((l) => (
+                /* vendor and capabilityIds, not product and capability. A line is
+                   a contract now, and the two fields it used to read stopped
+                   existing when competitor entry moved from one row per
+                   capability to one row per vendor — leaving both cells blank on
+                   every saved case. */
                 <tr key={l.id} className={l.displaceable ? '' : styles.excluded}>
-                  <th scope="row">{l.product}</th>
+                  <th scope="row">{l.vendor}</th>
                   <td>
-                    {l.capability?.name}
+                    {l.capabilityIds.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}
                     {l.reason ? <span className={styles.mapCapProduct}>{l.reason}</span> : null}
                   </td>
                   <td className="numeric">{money(l.annualCost)}</td>
@@ -139,8 +172,8 @@ export default function CapabilityReport() {
         </table>
         {excluded.length > 0 ? (
           <p className={styles.cardLead}>
-            {excluded.length} row{excluded.length === 1 ? '' : 's'} contribute nothing. That is the
-            model refusing to count a saving it cannot defend, not an error.
+            {excluded.length} row{excluded.length === 1 ? '' : 's'} contribute nothing — a saving
+            the model cannot defend, not an error.
           </p>
         ) : null}
       </Card>
@@ -149,8 +182,7 @@ export default function CapabilityReport() {
         <div>
           <h2 className={styles.cardTitle}>Value beyond the savings</h2>
           <p className={styles.cardLead}>
-            Stated as capability rather than converted to currency. A number invented for security
-            or compliance value is the fastest way to lose the room.
+            Stated as capability rather than converted to currency.
           </p>
         </div>
 
