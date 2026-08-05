@@ -371,3 +371,31 @@
   padding-bottom: 3px;
   white-space: normal;
 }
+
+/* The one question, in the conversation. Chips rather than radios: three
+   discrete answers, one tap, no submit. */
+.confidenceAsk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalXS);
+}
+
+.confidenceChip {
+  border-radius: var(--borderRadiusCircular);
+}
+
+.confidenceThanks {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalXS);
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground2);
+}
+
+.confidenceThanksIcon {
+  flex: none;
+  margin-top: 1px;
+  color: var(--colorPaletteGreenForeground1);
+}

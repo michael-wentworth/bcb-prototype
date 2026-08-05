@@ -6,11 +6,40 @@
    the copilot creates is in a place the seller cannot reach.
    --------------------------------------------------------------------------- */
 
+/* What the copilot actually needs, in the order it needs it: the bundle the
+   customer is on, the one they are moving to, and who they buy security from
+   today. The prompt used to be a list of outcomes — vendor sprawl, security
+   operations, SOC headcount — which read well but named nothing the capability
+   model consumes, so the fill had to invent the licensing move behind it. */
 export const DEMO_PROMPT =
-  'Contoso has 18,000 employees and currently uses Microsoft 365 E3, CrowdStrike and Okta. They want to reduce vendor sprawl, improve security operations, and give a stretched SOC team AI assistance rather than more headcount. Their EA renewal is expected to carry around $200,000 a year in negotiated concessions.';
+  'Contoso has 18,000 employees on Microsoft 365 E3 and wants to move to E5. Today they run CrowdStrike Falcon for endpoint, Okta for identity and Proofpoint for email security.';
 
 /** Field-level provenance, shown against each populated field. */
 export const EXTRACTION_EVIDENCE = {
+  /* Step 2's fields. The licensing move is stated outright in the prompt; the
+     money behind it is not, and the badges say which is which — a negotiated
+     rate is the one number here nobody can read off a record. */
+  currentLicenses: {
+    confidence: 'high',
+    basis: 'Stated directly',
+    evidence: '"…18,000 employees on Microsoft 365 E3…"',
+  },
+  futurePath: {
+    confidence: 'high',
+    basis: 'Stated directly',
+    evidence: '"…wants to move to E5."',
+  },
+  rateByLicense: {
+    confidence: 'low',
+    basis: 'Estimated from comparable agreements',
+    evidence: 'No negotiated rate exists in any record I can read. This is a placeholder for the one you land.',
+  },
+  capabilityContracts: {
+    confidence: 'medium',
+    basis: 'Products named by you, cost and end year inferred',
+    evidence: 'CrowdStrike, Okta and Proofpoint were stated. Annual cost and contract end year are estimated from install-base signal.',
+  },
+
   website: {
     confidence: 'medium',
     basis: 'Matched to account record',
@@ -113,6 +142,10 @@ export const DEMO_EXTRACTION = {
 
   /** The current bundle. Context for the spend comparison, not a saving. */
   bundle: { bundleId: 'm365-e3', annualPerUser: '432', additionalValue: '200000' },
+
+  /* The capability half of the fill is not duplicated here. It is the saved
+     Contoso case, read from caseLibrary at fill time — two hand-maintained
+     copies of one customer is how the demo and the saved case drift apart. */
 
   /**
    * Contract end years gate every saving. These are staggered on purpose —

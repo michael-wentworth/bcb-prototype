@@ -8,6 +8,7 @@ import {
   Warning20Filled,
 } from '@fluentui/react-icons';
 import ConfidenceBadge from '../shared/ConfidenceBadge.jsx';
+import ConfidenceAsk from './ConfidenceAsk.jsx';
 import styles from './MessageBlocks.module.css';
 
 /** Minimal inline markdown — **bold** only. Enough for scripted copy. */
@@ -211,6 +212,12 @@ function Block({ block, onAction }) {
           ))}
         </div>
       );
+
+    /* The one explicit question, rendered from the conversation rather than
+       from the report. It reads its own state so the panel needs no new
+       plumbing and the answered form replaces it in place. */
+    case 'confidence':
+      return <ConfidenceAsk />;
 
     default:
       return null;

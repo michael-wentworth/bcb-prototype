@@ -34,6 +34,7 @@ import {
   SlideText20Regular,
 } from '@fluentui/react-icons';
 import { useAppState } from '../../state/AppStateContext.jsx';
+import { SIGNALS } from '../../data/signals.js';
 import SharePopover from '../shared/SharePopover.jsx';
 import styles from './CaseActions.module.css';
 
@@ -46,11 +47,18 @@ import styles from './CaseActions.module.css';
  * one you must already know about to look for.
  */
 export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
-  const { goToStep, reset } = useAppState();
+  const { goToStep, reset, recordSignal } = useAppState();
   const [confirmReset, setConfirmReset] = useState(false);
 
   const toasterId = useId('case-actions-toaster');
   const { dispatchToast } = useToastController(toasterId);
+  /* The download buttons are placeholders that toast rather than produce a
+     file, but the intent behind the click is real and is the signal worth
+     having — a case somebody exported is one they were willing to show. */
+  const exported = (format) => (
+    recordSignal(SIGNALS.REPORT_DOWNLOADED, { format })
+  );
+
   const notify = (title, body) =>
     dispatchToast(
       <Toast>
@@ -116,17 +124,19 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
 
             <MenuItem
               icon={<SlideText20Regular />}
-              onClick={() =>
-                notify('PowerPoint generated', 'Executive deck — prototype, no file produced.')
-              }
+              onClick={() => {
+                exported('pptx');
+                notify('PowerPoint generated', 'Executive deck — prototype, no file produced.');
+              }}
             >
               Download PowerPoint
             </MenuItem>
             <MenuItem
               icon={<DocumentPdf20Regular />}
-              onClick={() =>
-                notify('PDF generated', 'Full business case — prototype, no file produced.')
-              }
+              onClick={() => {
+                exported('pdf');
+                notify('PDF generated', 'Full business case — prototype, no file produced.');
+              }}
             >
               Download PDF
             </MenuItem>

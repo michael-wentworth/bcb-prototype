@@ -3,8 +3,8 @@ import { useAppState } from '../../state/AppStateContext.jsx';
 import WorkflowHeader from '../WorkflowHeader/WorkflowHeader.jsx';
 import AIAssistantPanel from '../AIAssistantPanel/AIAssistantPanel.jsx';
 import CustomerDetails from '../CustomerDetails/CustomerDetails.jsx';
-import SkuSelection from '../SkuSelection/SkuSelection.jsx';
-import CustomerReport from '../CustomerReport/CustomerReport.jsx';
+import ProductSelection from '../Capability/ProductSelection.jsx';
+import CapabilityReport from '../Capability/CapabilityReport.jsx';
 import MyCases from '../MyCases/MyCases.jsx';
 import Landing from '../Landing/Landing.jsx';
 import Placeholder from './Placeholder.jsx';
@@ -13,7 +13,10 @@ import Learning from '../Library/Learning.jsx';
 import TopBar from './TopBar.jsx';
 import styles from './AppShell.module.css';
 
-const STEP_VIEWS = [CustomerDetails, SkuSelection, CustomerReport];
+/* Five capability-led steps. The old three — customer details, SKU table,
+   report — are still in the tree but no longer routed to; the flow they served
+   asked for a product list where this one asks for two license selections. */
+const STEP_VIEWS = [CustomerDetails, ProductSelection, CapabilityReport];
 
 export default function AppShell({ panelOpen, onTogglePanel }) {
   const { view, step } = useAppState();

@@ -28,12 +28,6 @@
   height: 12px;
 }
 
-.high {
-  background-color: var(--colorPaletteGreenBackground1);
-  color: var(--colorPaletteGreenForeground1);
-  border-color: var(--colorPaletteGreenBorder1);
-}
-
 .medium {
   background-color: var(--colorPaletteYellowBackground1);
   color: var(--colorPaletteYellowForeground1);
@@ -46,10 +40,19 @@
   border-color: var(--colorPaletteDarkOrangeBorder1);
 }
 
+/* Corrected by the seller. Success green per the brief, but the filled variant
+   rather than the tint High already uses — the two appear on the same screen,
+   and two identical pills reading different words is worse than either. */
 .confirmed {
-  background-color: var(--colorBrandBackground2);
-  color: var(--colorBrandForeground2);
-  border-color: var(--colorBrandStroke2);
+  background-color: var(--colorPaletteGreenForeground1);
+  color: var(--colorNeutralForegroundOnBrand);
+  border-color: var(--colorPaletteGreenForeground1);
+}
+
+.high {
+  background-color: var(--colorPaletteGreenBackground1);
+  color: var(--colorPaletteGreenForeground1);
+  border-color: var(--colorPaletteGreenBorder1);
 }
 
 /* The trigger is a bare button so the pill inside keeps its own shape; all the

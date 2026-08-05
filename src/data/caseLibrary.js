@@ -7,6 +7,7 @@
    actually produce when you open it.
    --------------------------------------------------------------------------- */
 
+import { capabilitiesSoldBy } from './capabilityModel.js';
 import { buildBusinessCase } from './model.js';
 import { CURRENT_USER } from './session.js';
 
@@ -14,6 +15,34 @@ export const CASE_STATUS = {
   draft: { label: 'Draft', color: 'informative' },
   published: { label: 'Published', color: 'success' },
 };
+
+/* ---------------------------------------------------------------------------
+   Capability-model inputs.
+
+   Every case carries what the capability flow reads: the bundle the customer is
+   on, the future state, the negotiated rate per license, and one contract per
+   incumbent vendor. The old skus/bundle/competitors fields stay for the landing
+   page, which still computes from the licensing model.
+
+   Contracts derive their capabilities from the catalogue rather than listing
+   them by hand, so a fixture cannot claim a vendor covers something the
+   catalogue disagrees with. `sole` is the seller's confirmation that the
+   customer does not use the vendor for a capability the future state does not
+   deliver — without it the partial-cover rule refuses to count the contract.
+   --------------------------------------------------------------------------- */
+const contracts = (currentLicenses, futureLicenses, rows) =>
+  rows.map(([id, vendor, annualCost, yearContractEnds, sole]) => ({
+    id,
+    vendor,
+    annualCost,
+    yearContractEnds,
+    /* Everything the catalogue says the vendor covers, not only what this move
+       displaces. Narrowing it made a contract that earns nothing look like one
+       nobody had filled in — the model already filters to what it can price,
+       and the full list is what explains why the rest earns nothing. */
+    capabilityIds: capabilitiesSoldBy(vendor),
+    soleUseConfirmed: !!sole,
+  }));
 
 /** Convenience: a 3-year snapshot with seats level across the horizon. */
 const seats = (n, years = 3) => Array.from({ length: years }, () => String(n));
@@ -47,6 +76,28 @@ export const MY_CASES = [
         description:
           'Reduce vendor sprawl across the security estate and modernise security operations. Consolidate the security tooling detected on this account onto a single platform to lower operational complexity, and extend a stretched SOC with AI assistance rather than additional headcount.',
       },
+      /* The plainest version of the move: E3 today, E5 tomorrow, one upgrade
+         path and nothing bolted on. The rate is the negotiated one, not rate
+         card — at 18,000 seats nobody pays list, and quoting list would sink a
+         case that is sound.
+
+         Splunk is deliberately not here. Without Sentinel the future state adds
+         no SIEM, so there would be nothing for a SIEM contract to displace, and
+         naming one would only produce a row worth nothing. */
+      currentLicenses: ['m365-e3'],
+      futureMode: 'path',
+      futurePath: 'e3-e5',
+      futureLicenses: ['m365-e5'],
+      rateByLicense: { 'm365-e5': '43' },
+      /* Okta is here deliberately and contributes nothing: E3 already grants
+         Entra ID P1, so identity is retained rather than gained and there is no
+         displacement to price. It is the case's own worked example of the model
+         refusing a saving it cannot defend. */
+      capabilityContracts: contracts(['m365-e3'], ['m365-e5'], [
+        ['c1c1', 'CrowdStrike Falcon', '1350000', '2026'],
+        ['c1c2', 'Okta Workforce Identity', '720000', '2026'],
+        ['c1c3', 'Proofpoint', '410000', '2026'],
+      ]),
       caseSetup: { name: 'Contoso FY27 Security Consolidation', analysisPeriod: 3 },
       outcomes: ['identity', 'threat', 'endpoint', 'ai-security', 'consolidation'],
       skus: [
@@ -87,6 +138,14 @@ export const MY_CASES = [
         numberOfUsers: '9500',
         bcbRole: 'internal',
       },
+      currentLicenses: ['m365-e3'],
+      futureMode: 'products',
+      futureLicenses: ['m365-e3', 'defender-suite', 'sentinel'],
+      rateByLicense: { 'defender-suite': '3', sentinel: '1.2' },
+      capabilityContracts: contracts(['m365-e3'], ['m365-e3', 'defender-suite', 'sentinel'], [
+        ['c2c1', 'SentinelOne Singularity', '544000', '2026'],
+        ['c2c2', 'IBM QRadar', '442000', '2026'],
+      ]),
       caseSetup: { name: 'Northwind Traders — Endpoint Displacement', analysisPeriod: 3 },
       outcomes: ['endpoint', 'threat'],
       skus: [
@@ -124,6 +183,15 @@ export const MY_CASES = [
         numberOfUsers: '24000',
         bcbRole: 'customer-facing',
       },
+      currentLicenses: ['m365-e3'],
+      futureMode: 'path',
+      futurePath: 'e3-entra',
+      futureLicenses: ['m365-e3', 'entra-suite'],
+      rateByLicense: { 'entra-suite': '2.5' },
+      capabilityContracts: contracts(['m365-e3'], ['m365-e3', 'entra-suite'], [
+        ['c3c1', 'Okta Lifecycle Management', '1062000', '2026'],
+        ['c3c2', 'CyberArk Privileged Access Manager', '414000', '2027'],
+      ]),
       caseSetup: { name: 'Litware — Identity Consolidation', analysisPeriod: 4 },
       outcomes: ['identity', 'consolidation'],
       skus: [
@@ -170,6 +238,16 @@ export const EXAMPLE_CASES = [
         numberOfUsers: '42000',
         bcbRole: 'customer-facing',
       },
+      currentLicenses: ['m365-e3'],
+      futureMode: 'products',
+      futureLicenses: ['m365-e5', 'sentinel', 'purview-suite'],
+      rateByLicense: { 'm365-e5': '41', sentinel: '1.2', 'purview-suite': '2' },
+      capabilityContracts: contracts(['m365-e3'], ['m365-e5', 'sentinel', 'purview-suite'], [
+        ['e1c1', 'CrowdStrike Falcon', '2320000', '2026'],
+        ['e1c2', 'Okta Workforce Identity', '1280000', '2026'],
+        ['e1c3', 'Splunk Enterprise Security', '1680000', '2026'],
+        ['e1c4', 'Broadcom/Symantec DLP', '624000', '2027'],
+      ]),
       caseSetup: { name: 'Fabrikam — Full Security Estate Consolidation', analysisPeriod: 3 },
       outcomes: ['identity', 'threat', 'endpoint', 'data', 'consolidation'],
       skus: [
@@ -209,6 +287,13 @@ export const EXAMPLE_CASES = [
         numberOfUsers: '3400',
         bcbRole: 'customer-facing',
       },
+      currentLicenses: ['m365-e3'],
+      futureMode: 'products',
+      futureLicenses: ['m365-e3', 'sentinel', 'security-copilot'],
+      rateByLicense: { sentinel: '2', 'security-copilot': '1.5' },
+      capabilityContracts: contracts(['m365-e3'], ['m365-e3', 'sentinel', 'security-copilot'], [
+        ['e2c1', 'Splunk Enterprise Security', '310000', '2026'],
+      ]),
       caseSetup: { name: 'Tailspin Toys — SOC Modernisation', analysisPeriod: 3 },
       outcomes: ['threat', 'ai-security'],
       skus: [
@@ -244,6 +329,19 @@ export const EXAMPLE_CASES = [
         numberOfUsers: '28000',
         bcbRole: 'internal',
       },
+      currentLicenses: ['m365-e3'],
+      futureMode: 'products',
+      futureLicenses: ['m365-e3', 'purview-suite', 'entra-suite'],
+      rateByLicense: { 'purview-suite': '2', 'entra-suite': '1.5' },
+      /* Ping and Varonis both sell something this move does not deliver, so the
+         partial-cover rule blocks them until someone confirms the customer does
+         not use them for it. Confirmed here, which is what the checkbox on the
+         contract card records. */
+      capabilityContracts: contracts(['m365-e3'], ['m365-e3', 'purview-suite', 'entra-suite'], [
+        ['e3c1', 'Broadcom/Symantec DLP', '1305000', '2026'],
+        ['e3c2', 'Ping Identity', '801000', '2027', true],
+        ['e3c3', 'Varonis', '700000', '2026', true],
+      ]),
       caseSetup: { name: 'Woodgrove Bank — Compliance-Driven Investment', analysisPeriod: 5 },
       outcomes: ['data', 'identity', 'consolidation'],
       skus: [

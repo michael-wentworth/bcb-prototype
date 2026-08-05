@@ -1,0 +1,692 @@
+/* Shared chrome for the five capability steps. Matches the form steps it
+   replaces — same card padding, same 8px radius, same border-led separation. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalXXL);
+}
+
+.card.card {
+  padding: var(--spacingVerticalXL) var(--spacingHorizontalXXL) var(--spacingVerticalXXL);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalL);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--fontSizeBase500);
+  line-height: 24px;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.cardLead {
+  margin: var(--spacingVerticalXS) 0 0;
+  max-width: 76ch;
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalXL);
+}
+
+/* ------------------------------ selectable tiles --------------------------- */
+
+.tileName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+  min-width: 0;
+}
+
+.tileMeta {
+  flex: none;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+/* Selected state is Fluent's own: the brand-2 ground with a brand-1 edge, the
+   pairing its selectable tags use. No icon — a mark inserted on selection sat in
+   the text flow, re-wrapped the label and changed the tile's height, so the grid
+   reflowed on every click. Colour carries it with nothing to lay out.
+
+   Selectors are compound rather than a bare .tileOn because .licenseTile and
+   .path are declared later in this file; a single class would tie on
+   specificity and lose on source order, which is exactly what happened. */
+.licenseTile.tileOn,
+.path.pathOn {
+  border-color: var(--colorBrandStroke1);
+  background-color: var(--colorBrandBackground2);
+  /* Drawn inward, so the edge reads at 2px without displacing any content the
+     way an actual border-width change would. */
+  box-shadow: inset 0 0 0 1px var(--colorBrandStroke1);
+}
+
+.licenseTile.tileOn .tileName,
+.licenseTile.tileOn .tileMeta,
+.path.pathOn .pathLabel {
+  color: var(--colorBrandForeground2);
+}
+
+.licenseTile.tileOn:hover,
+.path.pathOn:hover {
+  background-color: var(--colorBrandBackground2Hover, var(--colorBrandBackground2));
+  border-color: var(--colorBrandStroke1);
+}
+
+.groupLabel {
+  margin: 0 0 var(--spacingVerticalS);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--colorNeutralForeground3);
+}
+
+/* ------------------------------ path options ------------------------------- */
+
+.paths {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+}
+
+.path {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalL);
+  width: 100%;
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.path:hover {
+  border-color: var(--colorBrandStroke2);
+}
+
+.path:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+.pathOn .pathLabel {
+  color: var(--colorBrandForeground2);
+}
+
+.pathLabel {
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.pathNote {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightRegular);
+  color: var(--colorNeutralForeground2);
+}
+
+.pathGain {
+  flex: none;
+  max-width: 40%;
+  text-align: right;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+/* -------------------------------- the delta -------------------------------- */
+
+
+
+
+/* ------------------------------ area breakdown ----------------------------- */
+
+.areaRow {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+  padding: var(--spacingVerticalS) 0;
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+}
+
+.areaName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.areaBar {
+  display: flex;
+  height: 20px;
+  border-radius: var(--borderRadiusSmall);
+  overflow: hidden;
+  background-color: var(--colorNeutralBackground4);
+}
+
+.segRetained { background-color: var(--colorNeutralForeground4); }
+.segNew { background-color: var(--colorBrandBackground); }
+.segConsolidation { background-color: var(--colorPaletteGreenBackground3, #107c10); }
+.segStrategic { background-color: var(--colorPalettePurpleBackground2, #8764b8); }
+
+.areaCount {
+  text-align: right;
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground3);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalL);
+  margin-top: var(--spacingVerticalM);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+}
+
+/* ----------------------------- competitor mapping -------------------------- */
+
+.mapGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+  padding-bottom: var(--spacingVerticalL);
+}
+
+.mapCap {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
+  gap: var(--spacingHorizontalL);
+  align-items: start;
+  padding: var(--spacingVerticalM) 0;
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+}
+
+.mapCapName {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.mapCapProduct {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.vendorRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.vendor {
+  padding: 4px 10px;
+  border-radius: var(--borderRadiusCircular);
+  border: 1px solid var(--colorNeutralStroke2);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+  cursor: pointer;
+}
+
+.vendor:hover {
+  border-color: var(--colorBrandStroke2);
+  color: var(--colorBrandForeground2);
+}
+
+.vendorOn {
+  border-color: var(--colorBrandStroke1);
+  background-color: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground2);
+  font-weight: var(--fontWeightSemibold);
+}
+
+.vendorNone {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.costRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px 130px 32px;
+  gap: var(--spacingHorizontalS);
+  align-items: center;
+  margin-top: var(--spacingVerticalS);
+}
+
+.costLabel {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+/* -------------------------------- results ---------------------------------- */
+
+.kpis {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+.kpiLabel {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.kpiValue {
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.kpiBrand .kpiValue { color: var(--colorBrandForeground1); }
+.kpiGood .kpiValue { color: var(--colorPaletteGreenForeground1, #0e700e); }
+
+.kpiNote {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fontSizeBase300);
+}
+
+.table thead th {
+  text-align: left;
+  padding: var(--spacingVerticalS) var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground3);
+  white-space: nowrap;
+}
+
+.table tbody td,
+.table tbody th {
+  padding: var(--spacingVerticalM) var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+  text-align: left;
+  font-weight: var(--fontWeightRegular);
+  vertical-align: baseline;
+}
+
+.table tbody td.numeric,
+.table thead th.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.excluded {
+  color: var(--colorNeutralForeground3);
+}
+
+.empty {
+  padding: var(--spacingVerticalXXL) 0;
+  text-align: center;
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase300);
+}
+
+.uplift {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--spacingHorizontalL);
+  align-items: start;
+}
+
+/* The current-license picker fills the measure rather than sitting in narrow
+   270px columns — eleven bundles in a cramped grid reads as a wall, and this is
+   the single most consequential choice on the step. */
+.licenseGrid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacingHorizontalM);
+}
+
+.licenseTile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--durationFaster) var(--curveEasyEase),
+    background-color var(--durationFaster) var(--curveEasyEase);
+}
+
+.licenseTile:hover {
+  border-color: var(--colorBrandStroke2);
+}
+
+.licenseTile:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 1px;
+}
+
+/* A price the customer's own sheet did not supply. Small, but present on every
+   tile it applies to — a made-up number that looks identical to a real one is
+   worse than no number. */
+/* ---------------------------- competitor table ----------------------------- */
+
+/* Thirty-odd capabilities as stacked cards of chips was unreadable. One table,
+   one row per capability, and the vendor list behind a search field — the lists
+   are eight or nine deep now and no chip row survives that. */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.mapTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fontSizeBase300);
+}
+
+.mapTable thead th {
+  text-align: left;
+  padding: var(--spacingVerticalS) var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground3);
+  white-space: nowrap;
+}
+
+.mapTable tbody td,
+.mapTable tbody th {
+  padding: 6px var(--spacingHorizontalM);
+  border-bottom: 1px solid var(--colorNeutralStroke3);
+  text-align: left;
+  font-weight: var(--fontWeightRegular);
+  vertical-align: middle;
+}
+
+/* Reads as "Intune · Endpoint management": the solution area carries the weight
+   and the group sits under it. Uppercase tracking is gone — it flattened the two
+   halves into one run of letters, which is exactly the problem. */
+.groupRow th {
+  padding-top: var(--spacingVerticalXL);
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightRegular);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--colorNeutralForeground2);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+
+.groupArea {
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.groupSep {
+  margin: 0 var(--spacingHorizontalXS);
+  color: var(--colorNeutralForeground4);
+}
+
+.groupName {
+  color: var(--colorNeutralForeground3);
+}
+
+.capCell {
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.msCell {
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase200);
+}
+
+/* A named row is the only kind that can carry a saving, so it is the only kind
+   that changes colour. */
+.rowNamed {
+  background-color: var(--colorBrandBackground2);
+}
+
+.vendorPicker {
+  min-width: 210px;
+  width: 100%;
+}
+
+.costInput {
+  width: 130px;
+}
+
+.yearInput {
+  width: 96px;
+}
+
+.numericCol {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ------------------------------ vendor contracts --------------------------- */
+
+.quickAdd {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+  flex-wrap: wrap;
+}
+
+.quickAddBox {
+  min-width: 320px;
+}
+
+.quickAddHint {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.contracts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+}
+
+/* One card per contract, because one contract is what the customer is billed
+   for. The capability table below shows where each one lands. */
+.contract {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalXS);
+  padding: var(--spacingVerticalM) var(--spacingHorizontalL);
+  border: 1px solid var(--colorNeutralStroke2);
+  border-left: 3px solid var(--colorPaletteGreenBorder2, #107c10);
+  border-radius: var(--borderRadiusLarge);
+  background-color: var(--colorNeutralBackground1);
+}
+
+/* Blocked means the model will not count it yet, so it does not get the colour
+   that says "this is money". */
+.contractBlocked {
+  border-left-color: var(--colorPaletteDarkOrangeBorder1, #da3b01);
+}
+
+.contractHead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  flex-wrap: wrap;
+}
+
+.contractVendor {
+  font-size: var(--fontSizeBase400);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.contractCaps {
+  flex: 1 1 auto;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.contractReason {
+  margin: 0;
+  font-size: var(--fontSizeBase200);
+  line-height: 18px;
+  color: var(--colorNeutralForeground2);
+}
+
+.rowEcho {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* An owned row is a statement, not a question - it reads back rather than
+   asking, so it sits a shade quieter than the rows that still want an answer. */
+.rowOwned td,
+.rowOwned th {
+  background-color: var(--colorNeutralBackground2);
+}
+
+.ownedVendor {
+  display: block;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground2);
+}
+
+/* A second question inside a card, a clear step below its h2. Sits on the same
+   left edge as the card title so the two read as one column, not a nested box. */
+.subSection {
+  margin-top: var(--spacingVerticalL);
+}
+
+.subHead {
+  margin: 0;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+/* Sits on the contract card so a product we do not carry can be told what it
+   covers without leaving the card it was just typed into. */
+.contractLink {
+  max-width: 320px;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Ordered by what each gap costs the figure, so the list reads as a worklist
+   rather than as a scolding. */
+.gap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px var(--spacingHorizontalM);
+  padding-left: var(--spacingHorizontalM);
+  border-left: 2px solid var(--colorNeutralStroke2);
+}
+
+
+
+
+
+/* --------------------------- the one question ----------------------------- */
+
+.askRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalS);
+}
+
+.askThanks {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground2);
+}
+
+.askThanksIcon {
+  flex: none;
+  color: var(--colorPaletteGreenForeground1);
+}
+
+/* Two charts side by side where the space allows, stacked below that — a
+   payback curve squeezed into half a narrow viewport is unreadable. */
+.chartRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: var(--spacingVerticalXXXL) var(--spacingHorizontalL);
+  align-items: start;
+}

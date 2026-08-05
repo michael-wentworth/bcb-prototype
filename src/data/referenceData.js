@@ -9,15 +9,14 @@
 /* ----------------------------- Workflow steps ------------------------------ */
 
 export const STEPS = [
-  // Current state, then future state, then what it is worth — the arc a business
-  // case actually makes. Step 2 is "Recommended solution" rather than "AI
-  // recommendations": the copilot can propose a starting point, but the SKU
-  // table and the displacement mapping are filled in by hand, and the label
-  // should not claim otherwise. It is also singular on purpose — the step
-  // produces one proposal, not a menu of options.
-  { id: 'customer', label: 'Customer environment', caption: 'Current state' },
-  { id: 'sku', label: 'Recommended solution', caption: 'Future state' },
-  { id: 'report', label: 'Business case report', caption: 'Value & justification' },
+  /* Three steps, and the middle one is the whole product conversation: what they
+     own, what they would move to, what that changes, and what it replaces. Those
+     were four screens once and it was three too many — the capability delta is a
+     consequence of the two selections above it, so putting it elsewhere made the
+     seller walk away from the controls that produce it. */
+  { id: 'customer', label: 'Customer details', caption: 'Who this is for' },
+  { id: 'products', label: 'Product selection', caption: 'Current and future state' },
+  { id: 'report', label: 'Business case report', caption: 'What it is worth' },
 ];
 
 /* -------------------------- Customer Information --------------------------- */
