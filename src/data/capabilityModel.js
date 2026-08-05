@@ -141,6 +141,36 @@ export function competitorChoices(delta) {
   return [...byGroup.values()];
 }
 
+/**
+ * Every capability the future state delivers, grouped the way the table reads,
+ * with each one marked as already owned or newly gained.
+ *
+ * Wider than competitorChoices on purpose. A table of only the new capabilities
+ * answers "what changes" but never "what will they have", and the second is the
+ * question the customer is actually buying an answer to. Retained rows also have
+ * a true answer for who supplies them today — Microsoft already does — which an
+ * empty vendor dropdown was quietly failing to say.
+ *
+ * Iterated over CAPABILITIES rather than the delta so ordering is the catalogue's
+ * and does not shift when a license selection changes.
+ */
+export function futureCapabilityGroups(delta) {
+  const future = new Set(delta.future);
+  const retained = new Set(delta.retained);
+  const mappable = new Set(delta.potentialConsolidation);
+  const byGroup = new Map();
+  CAPABILITIES.filter((c) => future.has(c.id)).forEach((c) => {
+    const key = `${c.area}:${c.group}`;
+    if (!byGroup.has(key)) byGroup.set(key, { area: c.area, group: c.group, capabilities: [] });
+    byGroup.get(key).capabilities.push({
+      ...c,
+      retained: retained.has(c.id),
+      mappable: mappable.has(c.id),
+    });
+  });
+  return [...byGroup.values()];
+}
+
 /* ------------------------------- the money -------------------------------- */
 
 /**
@@ -164,9 +194,13 @@ export function competitorChoices(delta) {
  * cannot cancel the contract, so nothing is counted until the seller confirms
  * this customer does not use it for that.
  */
-export function evaluateContract(contract, futureCaps, displaceable, years) {
+export function evaluateContract(contract, futureCaps, displaceable, years, strategicFuture = new Set()) {
   const sold = capabilitiesSoldBy(contract.vendor);
   const linked = (contract.capabilityIds || []).filter((id) => displaceable.has(id));
+  /* Named against something the move adds, but which the model calls net-new.
+     Worth separating from "covers nothing this move adds": the two are identical
+     in the arithmetic and mean opposite things to whoever is reading. */
+  const strategicLinked = (contract.capabilityIds || []).filter((id) => strategicFuture.has(id));
   const uncovered = sold.filter((id) => !futureCaps.has(id));
   const blocked = uncovered.length > 0 && !contract.soleUseConfirmed;
 
@@ -188,14 +222,17 @@ export function evaluateContract(contract, futureCaps, displaceable, years) {
     yearsSaved: counts ? yearsSaved : 0,
     saved: counts ? annualCost * yearsSaved : 0,
     displaceable: counts,
+    strategicLinked,
     reason:
-      linked.length === 0
-        ? 'None of the capabilities this covers are added by the future state, so the spend continues.'
-        : blocked
-          ? `Also covers ${uncovered.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}, which the future state does not deliver - confirm they do not use it for that.`
-          : yearsSaved === 0
-            ? 'The contract ends after the analysis period, so no saving lands inside it.'
-            : null,
+      linked.length === 0 && strategicLinked.length > 0
+        ? `${strategicLinked.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')} counts as net-new rather than a displacement, so this carries no saving.`
+        : linked.length === 0
+          ? 'Covers nothing the future state adds, so the spend continues.'
+          : blocked
+            ? `Also covers ${uncovered.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}, which the future state does not deliver — confirm the customer does not use it for that.`
+            : yearsSaved === 0
+              ? 'The contract ends after the analysis period.'
+              : null,
   };
 }
 
@@ -205,12 +242,16 @@ export function buildCapabilityCase({
   currentLicenses = [],
   futureLicenses = [],
   contracts = [],
-  /* Per user per month, and the seller's number rather than the catalogue's.
-     List prices are the wrong basis for an enterprise case — an estate of this
-     size does not pay rate card, and quoting one would overstate the investment
-     badly enough to sink a case that is actually sound. Blank falls back to the
-     list delta so the model always has something to work with. */
-  negotiatedUplift = '',
+  /* Seats per license per year, and the rate per license. Both hold overrides
+     only — a blank falls back to the headcount and the catalogue price — so the
+     autofilled figure a seller sees is always current rather than a stale copy
+     taken when the license was first picked.
+
+     Seats are per year because a rollout is: 1,200 seats in year one and 5,000
+     by year three is a different case from 5,000 on day one, and a flat
+     multiplication cannot tell them apart. */
+  seatsByLicense = {},
+  rateByLicense = {},
 } = {}) {
   const years = Math.max(1, Math.min(5, Number(analysisPeriod) || 3));
   const users = num(numberOfUsers);
@@ -219,24 +260,40 @@ export function buildCapabilityCase({
   const currentPerUser = annualPerUserOf(currentLicenses);
   const futurePerUser = annualPerUserOf(futureLicenses);
   const listUplift = Math.max(0, futurePerUser - currentPerUser);
-  const negotiated = String(negotiatedUplift ?? '').trim();
-  const usingList = negotiated === '';
-  const incrementalPerUser = usingList ? listUplift : num(negotiated) * 12;
+
+  /* Blank means "not overridden", so the default is read live rather than
+     copied into state when the license is picked. */
+  const rateOf = (id) => {
+    const set = String(rateByLicense[id] ?? '').trim();
+    return set === '' ? entitlementById(id)?.pupm || 0 : num(set);
+  };
+  const seatsOf = (id, y) => {
+    const set = String(seatsByLicense[id]?.[y] ?? '').trim();
+    return set === '' ? users : num(set);
+  };
+  const usingList = futureLicenses.every((id) => String(rateByLicense[id] ?? '').trim() === '');
 
   const currentAnnual = currentPerUser * users;
-  const futureAnnual = futurePerUser * users;
-  const incrementalAnnual = incrementalPerUser * users;
+  const futureByYear = Array.from({ length: years }, (_, y) =>
+    futureLicenses.reduce((sum, id) => sum + rateOf(id) * 12 * seatsOf(id, y), 0));
+  const futureAnnual = futureByYear[0] || 0;
 
-  const microsoftByYear = Array.from({ length: years }, () => incrementalAnnual);
-  const investmentTotal = incrementalAnnual * years;
+  /* The current spend continues either way, so only the difference is the
+     investment. Floored at zero per year: a year where the future state costs
+     less than today is a saving on a different line, not a negative cost here. */
+  const microsoftByYear = futureByYear.map((f) => Math.max(0, f - currentAnnual));
+  const investmentTotal = microsoftByYear.reduce((a, b) => a + b, 0);
+  const incrementalAnnual = microsoftByYear[0] || 0;
+  const incrementalPerUser = users > 0 ? incrementalAnnual / users : 0;
 
   /* One line per contract. A vendor cannot appear twice, so the same spend
      cannot be counted twice however it was entered. */
   const futureCaps = grantsOf(futureLicenses);
   const displaceable = new Set(delta.consolidation);
+  const strategicFuture = new Set(delta.strategic);
   const competitorLines = contracts
     .filter((c) => c.vendor)
-    .map((c) => evaluateContract(c, futureCaps, displaceable, years));
+    .map((c) => evaluateContract(c, futureCaps, displaceable, years, strategicFuture));
 
   const competitorByYear = Array.from({ length: years }, (_, y) =>
     competitorLines.reduce((sum, l) => sum + (y + 1 >= l.firstYear ? l.saved / Math.max(l.yearsSaved, 1) : 0), 0),
@@ -251,14 +308,22 @@ export function buildCapabilityCase({
      from annual totals. */
   const cashflow = [];
   let cumulative = 0;
+  let spent = 0;
   let paybackMonths = null;
   for (let m = 1; m <= years * 12; m += 1) {
     const yearIndex = Math.ceil(m / 12) - 1;
     const benefit = competitorByYear[yearIndex] / 12;
     const cost = microsoftByYear[yearIndex] / 12;
     cumulative += benefit - cost;
+    spent += cost;
     cashflow.push({ month: m, benefit, cost, net: benefit - cost, cumulative });
-    if (paybackMonths === null && cumulative >= 0 && investmentTotal > 0) paybackMonths = m;
+    /* `spent > 0` matters now that seats ramp: a year one costing nothing leaves
+       the curve sitting at zero, which reads as "paid back in month 1" when
+       nothing has been paid at all. Payback only means something once there is
+       an investment to recover. */
+    if (paybackMonths === null && spent > 0 && cumulative >= 0 && investmentTotal > 0) {
+      paybackMonths = m;
+    }
   }
 
   return {
@@ -270,6 +335,7 @@ export function buildCapabilityCase({
     listUplift,
     incrementalPerUser,
     usingList,
+    futureByYear,
     currentAnnual,
     futureAnnual,
     incrementalAnnual,

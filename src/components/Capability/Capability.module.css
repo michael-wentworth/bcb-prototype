@@ -50,7 +50,6 @@
   flex: none;
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
-  font-variant-numeric: tabular-nums;
 }
 
 /* Selected state is Fluent's own: the brand-2 ground with a brand-1 edge, the
@@ -147,92 +146,16 @@
 
 .pathGain {
   flex: none;
+  max-width: 40%;
   text-align: right;
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
-  font-variant-numeric: tabular-nums;
-}
-
-.pathGainValue {
-  display: block;
-  font-size: var(--fontSizeBase500);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorBrandForeground1);
-  line-height: 1.1;
 }
 
 /* -------------------------------- the delta -------------------------------- */
 
-.buckets {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
-  gap: var(--spacingHorizontalM);
-}
 
-.bucket {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacingVerticalS);
-  padding: var(--spacingVerticalL) var(--spacingHorizontalL);
-  border: 1px solid var(--colorNeutralStroke2);
-  border-left: 3px solid var(--colorNeutralStroke1);
-  border-radius: var(--borderRadiusLarge);
-  background-color: var(--colorNeutralBackground1);
-}
 
-/* Each bucket carries a different claim, so each carries a different edge —
-   retained is neutral because it argues nothing, and the two that carry money
-   are the two that read loudest. */
-.bucketRetained { border-left-color: var(--colorNeutralStroke1); }
-.bucketNew { border-left-color: var(--colorBrandStroke1); }
-.bucketConsolidation { border-left-color: var(--colorPaletteGreenBorder2, #107c10); }
-.bucketStrategic { border-left-color: var(--colorPalettePurpleBorderActive, #8764b8); }
-
-.bucketCount {
-  font-size: 32px;
-  line-height: 1;
-  font-weight: var(--fontWeightSemibold);
-  font-variant-numeric: tabular-nums;
-  color: var(--colorNeutralForeground1);
-}
-
-.bucketName {
-  font-size: var(--fontSizeBase300);
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
-}
-
-.bucketWhy {
-  margin: 0;
-  font-size: var(--fontSizeBase200);
-  line-height: 18px;
-  color: var(--colorNeutralForeground2);
-}
-
-.capList {
-  margin: var(--spacingVerticalS) 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.capChip {
-  padding: 2px 8px;
-  border-radius: var(--borderRadiusCircular);
-  background-color: var(--colorNeutralBackground4);
-  font-size: var(--fontSizeBase100);
-  line-height: 16px;
-  color: var(--colorNeutralForeground2);
-}
-
-.capMore {
-  padding: 2px 4px;
-  font-size: var(--fontSizeBase100);
-  line-height: 16px;
-  color: var(--colorNeutralForeground3);
-}
 
 /* ------------------------------ area breakdown ----------------------------- */
 
@@ -479,9 +402,9 @@
 .licenseTile {
   position: relative;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--spacingHorizontalM);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   width: 100%;
   padding: var(--spacingVerticalM) var(--spacingHorizontalL);
   border: 1px solid var(--colorNeutralStroke2);
@@ -507,15 +430,6 @@
 /* A price the customer's own sheet did not supply. Small, but present on every
    tile it applies to — a made-up number that looks identical to a real one is
    worse than no number. */
-.estimate {
-  margin-left: 6px;
-  padding: 0 5px;
-  border-radius: var(--borderRadiusSmall);
-  background-color: var(--colorNeutralBackground4);
-  color: var(--colorNeutralForeground3);
-  font-size: var(--fontSizeBase100);
-}
-
 /* ---------------------------- competitor table ----------------------------- */
 
 /* Thirty-odd capabilities as stacked cards of chips was unreadable. One table,
@@ -550,21 +464,30 @@
   vertical-align: middle;
 }
 
+/* Reads as "Intune · Endpoint management": the solution area carries the weight
+   and the group sits under it. Uppercase tracking is gone — it flattened the two
+   halves into one run of letters, which is exactly the problem. */
 .groupRow th {
-  padding-top: var(--spacingVerticalL);
-  font-size: var(--fontSizeBase200);
-  font-weight: var(--fontWeightSemibold);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  padding-top: var(--spacingVerticalXL);
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightRegular);
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--colorNeutralForeground2);
   border-bottom: 1px solid var(--colorNeutralStroke2);
 }
 
 .groupArea {
-  margin-left: 8px;
-  font-weight: var(--fontWeightRegular);
-  letter-spacing: 0;
-  text-transform: none;
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+.groupSep {
+  margin: 0 var(--spacingHorizontalXS);
+  color: var(--colorNeutralForeground4);
+}
+
+.groupName {
   color: var(--colorNeutralForeground3);
 }
 
@@ -678,4 +601,92 @@
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
   font-variant-numeric: tabular-nums;
+}
+
+
+/* An owned row is a statement, not a question - it reads back rather than
+   asking, so it sits a shade quieter than the rows that still want an answer. */
+.rowOwned td,
+.rowOwned th {
+  background-color: var(--colorNeutralBackground2);
+}
+
+.ownedVendor {
+  display: block;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground2);
+}
+
+/* A second question inside a card, a clear step below its h2. Sits on the same
+   left edge as the card title so the two read as one column, not a nested box. */
+.subSection {
+  margin-top: var(--spacingVerticalL);
+}
+
+.subHead {
+  margin: 0;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  color: var(--colorNeutralForeground1);
+}
+
+/* Sits on the contract card so a product we do not carry can be told what it
+   covers without leaving the card it was just typed into. */
+.contractLink {
+  max-width: 320px;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Ordered by what each gap costs the figure, so the list reads as a worklist
+   rather than as a scolding. */
+.gap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px var(--spacingHorizontalM);
+  padding-left: var(--spacingHorizontalM);
+  border-left: 2px solid var(--colorNeutralStroke2);
+}
+
+
+
+
+
+/* --------------------------- the one question ----------------------------- */
+
+.askRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalS);
+}
+
+.askThanks {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground2);
+}
+
+.askThanksIcon {
+  flex: none;
+  color: var(--colorPaletteGreenForeground1);
+}
+
+/* Two charts side by side where the space allows, stacked below that — a
+   payback curve squeezed into half a narrow viewport is unreadable. */
+.chartRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: var(--spacingVerticalXXXL) var(--spacingHorizontalL);
+  align-items: start;
 }
