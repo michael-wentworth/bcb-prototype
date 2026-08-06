@@ -70,7 +70,7 @@ export default function MultiSelect({
                 onMouseDown={() => add(query.trim())}
               >
                 <Add16Filled aria-hidden="true" />
-                Add &ldquo;{query.trim()}&rdquo; — saved to this customer only
+                Add &ldquo;{query.trim()}&rdquo; for this customer only
               </button>
             </li>
           ) : null}

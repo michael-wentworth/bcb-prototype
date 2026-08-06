@@ -76,7 +76,7 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
           The old control existed solely in the collapsed state, which meant you
           had to already know it was there to find it. */}
       <Tooltip
-        content={panelOpen ? 'Hide the copilot' : 'Show the copilot'}
+        content={panelOpen ? 'Hide copilot' : 'Show copilot'}
         relationship="label"
         withArrow
       >
@@ -86,7 +86,7 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
           onClick={onTogglePanel}
           icon={panelOpen ? <Sparkle20Filled /> : <Sparkle20Regular />}
           className={styles.copilot}
-          aria-label={panelOpen ? 'Hide the copilot panel' : 'Show the copilot panel'}
+          aria-label={panelOpen ? 'Hide copilot panel' : 'Show copilot panel'}
           aria-controls="copilot-panel"
         >
           <span className={styles.copilotLabel}>Copilot</span>
@@ -126,7 +126,7 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
               icon={<SlideText20Regular />}
               onClick={() => {
                 exported('pptx');
-                notify('PowerPoint generated', 'Executive deck — prototype, no file produced.');
+                notify('PowerPoint generated', 'Prototype only, no file produced');
               }}
             >
               Download PowerPoint
@@ -135,7 +135,7 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
               icon={<DocumentPdf20Regular />}
               onClick={() => {
                 exported('pdf');
-                notify('PDF generated', 'Full business case — prototype, no file produced.');
+                notify('PDF generated', 'Prototype only, no file produced');
               }}
             >
               Download PDF
@@ -156,8 +156,7 @@ export default function CaseActions({ onRename, panelOpen, onTogglePanel }) {
           <DialogBody>
             <DialogTitle>Start over?</DialogTitle>
             <DialogContent>
-              This clears every field in this case — the customer details, the solutions and
-              everything written on the report. It cannot be undone.
+              This clears every field in this case and cannot be undone.
             </DialogContent>
             <DialogActions>
               <Button appearance="secondary" onClick={() => setConfirmReset(false)}>

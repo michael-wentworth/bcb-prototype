@@ -86,7 +86,7 @@ export default function CustomerReport() {
       <StepMasthead
         description={`${caseSetup.analysisPeriod}-year analysis${
           customer.numberOfUsers ? ` across ${Number(customer.numberOfUsers).toLocaleString('en-US')} users` : ''
-        }. Every figure derives from what you entered on the previous two steps.`}
+        }`}
       />
 
       {!c.hasInputs ? (
@@ -94,9 +94,7 @@ export default function CustomerReport() {
           <p className={styles.noInputsTitle}>Nothing to calculate yet</p>
           <p className={styles.noInputsText}>
             Add a competitor product on <strong>Customer environment</strong>, or a Microsoft
-            product on{' '}
-            <strong>Recommended solution</strong>, and the numbers here will fill in. You can still
-            write the narrative below in the meantime.
+            product on <strong>Recommended solution</strong>.
           </p>
         </Card>
       ) : null}
@@ -115,7 +113,7 @@ export default function CustomerReport() {
           <p className={styles.claimCaption}>
             {c.netBenefit >= 0
               ? `over ${c.years} years, net of the Microsoft investment`
-              : `over ${c.years} years — the investment is not recovered in this horizon`}
+              : `over ${c.years} years, with the investment not recovered`}
           </p>
         </section>
       ) : null}
@@ -135,25 +133,25 @@ export default function CustomerReport() {
         <MetricTile
           label="Estimated savings"
           value={money(c.annualNetBenefit)}
-          caption="Average net, per year"
+          caption="Average net per year"
           icon={<MoneyHand20Regular />}
           loading={!reportReady}
-          explain={`${money(c.netBenefit)} of net benefit across the ${c.years}-year horizon.`}
+          explain={`${money(c.netBenefit)} net benefit over ${c.years} years.`}
         />
         <MetricTile
           label="Payback period"
-          value={c.paybackMonths ? `${c.paybackMonths} month${c.paybackMonths === 1 ? '' : 's'}` : '—'}
+          value={c.paybackMonths ? `${c.paybackMonths} month${c.paybackMonths === 1 ? '' : 's'}` : 'None'}
           caption={c.paybackMonths ? undefined : 'Does not break even in horizon'}
           icon={<Timer20Regular />}
           loading={!reportReady}
-          explain="Competitor savings only begin once each contract lapses, which is what moves payback out."
+          explain="Competitor savings begin only when each contract lapses."
         />
         <MetricTile
           label="Vendors displaced"
           value={String(c.vendorsConsolidated)}
           icon={<Layer20Regular />}
           loading={!reportReady}
-          explain="Competitor contracts that lapse inside the horizon. Later contracts are excluded."
+          explain="Competitor contracts that lapse inside the horizon."
         />
       </section>
 
@@ -177,9 +175,6 @@ export default function CustomerReport() {
       <Card className={styles.narrativeCard}>
         <div className={styles.narrativeHead}>
           <h2 className={styles.cardTitle}>The written case</h2>
-          <p className={styles.narrativeLead}>
-            The parts a reader remembers after the numbers have faded.
-          </p>
         </div>
         {NARRATIVE_SECTIONS.map((section) => (
           <NarrativeSection key={section.id} section={section} />
@@ -202,7 +197,7 @@ export default function CustomerReport() {
                     <span className={styles.ledgerLabel}>{l.currentProduct}</span>
                     <span className={styles.ledgerDetail}>
                       {l.newMicrosoftProduct ? `Displaced by ${l.newMicrosoftProduct}. ` : ''}
-                      Contract ends {l.yearContractEnds} — {l.yearsOfBenefit} of {c.years} years in
+                      Contract ends {l.yearContractEnds}, {l.yearsOfBenefit} of {c.years} years in
                       scope
                     </span>
                   </div>
@@ -213,20 +208,19 @@ export default function CustomerReport() {
               <li className={styles.ledgerItem}>
                 <div className={styles.ledgerMain}>
                   <span className={styles.ledgerLabel}>Additional products &amp; savings</span>
-                  <span className={styles.ledgerDetail}>Entered as an annual value</span>
+                  <span className={styles.ledgerDetail}>Annual value</span>
                 </div>
                 <span className={styles.ledgerValue}>{money(c.additionalTotal)}</span>
               </li>
             ) : null}
             {c.benefitTotal === 0 ? (
-              <li className={styles.ledgerEmpty}>No benefit lines yet.</li>
+              <li className={styles.ledgerEmpty}>No benefit lines yet</li>
             ) : null}
           </ul>
           {c.currentMicrosoftAnnual > 0 ? (
             <p className={styles.baselineNote}>
-              The existing Microsoft bundle ({money(c.currentMicrosoftAnnual)} a year) is
-              deliberately <strong>not</strong> counted as a saving — the customer keeps paying it.
-              It appears in the spend comparison as baseline, not in the return.
+              The existing Microsoft bundle ({money(c.currentMicrosoftAnnual)} a year) is{' '}
+              <strong>not</strong> counted as a saving, because the customer keeps paying it.
             </p>
           ) : null}
         </Card>
@@ -258,7 +252,7 @@ export default function CustomerReport() {
                 </li>
               );
             })}
-            {skus.length === 0 ? <li className={styles.ledgerEmpty}>No SKUs added yet.</li> : null}
+            {skus.length === 0 ? <li className={styles.ledgerEmpty}>No SKUs added yet</li> : null}
           </ul>
 
           <div className={styles.assumptions}>
@@ -270,7 +264,7 @@ export default function CustomerReport() {
               </div>
               <div className={styles.assumption}>
                 <dt>Users</dt>
-                <dd>{customer.numberOfUsers ? Number(customer.numberOfUsers).toLocaleString('en-US') : '—'}</dd>
+                <dd>{customer.numberOfUsers ? Number(customer.numberOfUsers).toLocaleString('en-US') : 'Not set'}</dd>
               </div>
               <div className={styles.assumption}>
                 <dt>Currency</dt>
@@ -310,14 +304,14 @@ export default function CustomerReport() {
           <Button
             appearance="primary"
             icon={<SlideText20Regular />}
-            onClick={() => notify('PowerPoint generated', 'Executive deck — prototype, no file produced.')}
+            onClick={() => notify('PowerPoint generated', 'Prototype, no file produced')}
           >
             Download PowerPoint
           </Button>
           <Button
             appearance="secondary"
             icon={<DocumentPdf20Regular />}
-            onClick={() => notify('PDF generated', 'Full business case — prototype, no file produced.')}
+            onClick={() => notify('PDF generated', 'Prototype, no file produced')}
           >
             Download PDF
           </Button>

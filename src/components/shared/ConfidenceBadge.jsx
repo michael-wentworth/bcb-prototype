@@ -86,7 +86,7 @@ export default function ConfidenceBadge({ level = 'medium', basis, evidence, ai 
       </PopoverTrigger>
       <PopoverSurface className={styles.surface}>
         <p className={styles.surfaceHead}>
-          {isAi ? `Populated by the copilot — ${heading}` : heading}
+          {isAi ? `${heading}, populated by the copilot` : heading}
         </p>
         {note ? <p className={styles.basis}>{note}</p> : null}
         {basis && tone !== 'confirmed' ? <p className={styles.basis}>{basis}</p> : null}

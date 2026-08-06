@@ -477,6 +477,67 @@
   border-bottom: 1px solid var(--colorNeutralStroke2);
 }
 
+/* The whole group header is the hit target, not just the chevron: the row is
+   already a full-width band and a 16px glyph inside it is a needle to hit. */
+.groupToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalXS);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.groupToggle:hover .groupArea {
+  color: var(--colorBrandForeground2);
+}
+
+.groupToggle:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+  border-radius: var(--borderRadiusSmall);
+}
+
+.groupChevron {
+  flex: none;
+  color: var(--colorNeutralForeground3);
+}
+
+/* What a shut group still says about itself. Pushed to the end of the row so it
+   lines up down the table and can be scanned without reading the names. */
+.groupCount {
+  margin-left: auto;
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground3);
+}
+
+.collapseAll {
+  align-self: flex-end;
+  padding: 3px 10px;
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusCircular);
+  background: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+  cursor: pointer;
+}
+
+.collapseAll:hover {
+  background: var(--colorNeutralBackground1Hover);
+}
+
+.collapseAll:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
 .groupArea {
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
@@ -534,8 +595,15 @@
   flex-wrap: wrap;
 }
 
-.quickAddBox {
-  min-width: 320px;
+/* Doubled, and a flex basis rather than a min-width. Fluent's own Combobox
+   class sets BOTH width and min-width to 250px, so a single module class lost
+   on specificity and the min-width never applied: the field rendered at 250px
+   with a 214px input, one pixel short of its own placeholder, which clipped the
+   ellipsis. Growing to fill the row also keeps it honest as the card resizes. */
+.quickAddBox.quickAddBox {
+  flex: 1 1 340px;
+  min-width: 0;
+  max-width: 460px;
 }
 
 .quickAddHint {
@@ -584,7 +652,36 @@
   color: var(--colorNeutralForeground1);
 }
 
+/* Chips, not a comma-joined sentence. This is a set the seller builds from the
+   table below one row at a time, and a run-on string read as prose the eye
+   skips rather than a list it can count. */
 .contractCaps {
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.contractCap {
+  padding: 1px 8px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorNeutralBackground3);
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.contractFields {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  margin-left: auto;
+}
+
+.contractCapsEmpty {
   flex: 1 1 auto;
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
@@ -632,10 +729,6 @@
 
 /* Sits on the contract card so a product we do not carry can be told what it
    covers without leaving the card it was just typed into. */
-.contractLink {
-  max-width: 320px;
-}
-
 
 
 
@@ -689,4 +782,188 @@
   grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: var(--spacingVerticalXXXL) var(--spacingHorizontalL);
   align-items: start;
+}
+
+/* ------------------------- licensing impact preview ------------------------ */
+
+/* Three columns on a wide card, stacking below that. The net sits with the two
+   figures it is the difference of rather than under them, so the whole card
+   reads in one line and stays inside its height budget. */
+.impactRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacingVerticalL) var(--spacingHorizontalXXL);
+  align-items: start;
+}
+
+.impactCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.impactLabel {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+.impactValue {
+  font-size: 26px;
+  line-height: 30px;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+/* Thin marks, rounded data-end, anchored to a shared baseline. The two bars are
+   on one scale so the gap between them is the net, drawn. */
+.impactBar {
+  display: block;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorNeutralBackground4);
+  overflow: hidden;
+}
+
+.impactFillStops,
+.impactFillUplift {
+  display: block;
+  height: 100%;
+  border-radius: var(--borderRadiusSmall);
+}
+
+/* Same colour language as the report charts: the current estate recedes to
+   grey, the Microsoft state carries the accent. */
+.impactFillStops {
+  background-color: var(--viz-context, #8a8886);
+}
+
+.impactFillUplift {
+  background-color: var(--viz-accent, #2a78d6);
+}
+
+/* The net has no bar — it is the difference between the two beside it, and a
+   third bar on the same axis would invite reading it as a third quantity. */
+.impactNet .impactBar {
+  display: none;
+}
+
+/* No divider rule. A left border is only a divider while the three columns
+   share a row — once the grid wraps it becomes a stray vertical line above the
+   net figure, and the colour on the value already sets it apart. */
+.impactNet {
+  padding-left: 0;
+}
+
+.impactNote {
+  font-size: var(--fontSizeBase200);
+  line-height: 16px;
+  color: var(--colorNeutralForeground3);
+}
+
+.impactGood {
+  color: var(--colorPaletteGreenForeground1);
+}
+
+.impactBad {
+  color: var(--colorPaletteDarkOrangeForeground1);
+}
+
+.impactContext {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacingHorizontalS);
+  font-size: var(--fontSizeBase300);
+  line-height: 20px;
+  color: var(--colorNeutralForeground2);
+}
+
+.impactSparkle {
+  flex: none;
+  margin-top: 2px;
+  color: var(--colorBrandForeground1);
+}
+
+.impactDetails {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+}
+
+.impactDetailRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacingHorizontalL);
+  align-items: baseline;
+  padding-bottom: var(--spacingVerticalS);
+  border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+
+.impactDetailRow dt {
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground1);
+}
+
+.impactDetailRow dd {
+  margin: 0;
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.impactDetailNet {
+  border-bottom: none;
+  font-weight: var(--fontWeightSemibold);
+}
+
+.impactDetailNote {
+  display: block;
+  max-width: 64ch;
+  margin-top: 2px;
+  font-size: var(--fontSizeBase200);
+  line-height: 16px;
+  color: var(--colorNeutralForeground3);
+}
+
+/* Its own class. This referenced the confidence panel's toggle, which went with
+   that panel — leaving an undefined CSS-module key, which resolves to no class
+   at all and renders a default grey browser button across the card. */
+.impactToggle {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacingHorizontalXS);
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorBrandForeground1);
+  cursor: pointer;
+}
+
+.impactToggle:hover {
+  text-decoration: underline;
+}
+
+.impactToggle:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+  border-radius: var(--borderRadiusSmall);
+}
+
+/* The model's own verdict per contract, so the card cannot contradict the
+   contract list on the same step. */
+.impactReasons {
+  margin: var(--spacingVerticalXS) 0 0;
+  padding-left: var(--spacingHorizontalL);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fontSizeBase200);
+  line-height: 17px;
+  color: var(--colorNeutralForeground3);
 }

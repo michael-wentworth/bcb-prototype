@@ -68,11 +68,11 @@ export default function SharePopover({ children, onNameIt }) {
     const link = `${window.location.origin}/case/${activeCaseId ?? 'draft'}`;
     try {
       await navigator.clipboard.writeText(link);
-      notify('Share link copied', 'Prototype — nothing left the browser.');
+      notify('Share link copied', 'Nothing left the browser');
     } catch {
       // Clipboard needs a secure context; localhost is fine, a plain-http LAN
       // address is not, and failing silently would look like a dead button.
-      notify('Share link created', 'Copy was blocked by the browser, so nothing was written.');
+      notify('Share link created', 'The browser blocked the copy');
     }
     setOpen(false);
   };
@@ -89,7 +89,7 @@ export default function SharePopover({ children, onNameIt }) {
         <PopoverTrigger disableButtonEnhancement>{children}</PopoverTrigger>
 
         <PopoverSurface className={styles.surface}>
-          <h3 className={styles.heading}>Share this business case</h3>
+          <h3 className={styles.heading}>Share this case</h3>
 
           {/* The one place the name is shown in full. That is what makes
               truncating it in the band acceptable. */}
@@ -106,7 +106,7 @@ export default function SharePopover({ children, onNameIt }) {
 
           {name ? null : (
             <div className={styles.warn}>
-              <span>This case has no name — the link would show “Untitled business case”.</span>
+              <span>Without a name, the link would show “Untitled business case”.</span>
               {onNameIt ? (
                 <Button
                   appearance="transparent"
@@ -142,7 +142,7 @@ export default function SharePopover({ children, onNameIt }) {
               icon={<SlideText20Regular />}
               onClick={() => {
                 recordSignal(SIGNALS.REPORT_DOWNLOADED, { format: 'pptx', from: 'share' });
-                notify('PowerPoint generated', 'Executive deck — prototype, no file produced.');
+                notify('PowerPoint generated', 'Prototype only, no file produced');
               }}
             >
               PowerPoint
@@ -151,7 +151,7 @@ export default function SharePopover({ children, onNameIt }) {
               icon={<DocumentPdf20Regular />}
               onClick={() => {
                 recordSignal(SIGNALS.REPORT_DOWNLOADED, { format: 'pdf', from: 'share' });
-                notify('PDF generated', 'Full business case — prototype, no file produced.');
+                notify('PDF generated', 'Prototype only, no file produced');
               }}
             >
               PDF
@@ -159,7 +159,7 @@ export default function SharePopover({ children, onNameIt }) {
           </div>
 
           <p className={styles.caption}>
-            Recipients and permissions are not wired up in this prototype.
+            Recipients and permissions are not wired up
           </p>
         </PopoverSurface>
       </Popover>

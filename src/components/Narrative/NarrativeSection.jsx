@@ -64,7 +64,7 @@ export default function NarrativeSection({ section }) {
         <div className={styles.tools}>
           <Menu>
             <MenuTrigger disableButtonEnhancement>
-              <Tooltip content="Copilot actions for this section" relationship="label" withArrow>
+              <Tooltip content="Copilot actions" relationship="label" withArrow>
                 <Button
                   appearance="subtle"
                   size="small"

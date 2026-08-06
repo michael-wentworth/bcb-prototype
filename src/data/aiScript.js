@@ -24,7 +24,7 @@ export const STEP_SUGGESTIONS = [
   [
     { label: 'Use the Contoso example', kind: 'demo' },
     { label: 'Which fields drive the numbers?' },
-    { label: 'What competitor products are in this estate?' },
+    { label: 'What competitor products does the customer use?' },
   ],
   [
     { label: 'What would this path add?' },
@@ -53,8 +53,8 @@ export const STEP_SUGGESTIONS = [
 
 export function getStepIntro(stepIndex) {
   const line = [
-    'Describe the customer in a sentence and I will fill in this step.',
-    'Pick what they own and where they are going — the capability analysis underneath follows from those two choices.',
+    'Describe the customer and I will fill in this step.',
+    'Pick what the customer owns today and where the customer is going.',
     'Change a license or a contract year and everything here recalculates.',
   ][stepIndex];
   if (!line) return null;
@@ -87,14 +87,14 @@ const INTENTS = [
       'Reading the description',
       'Matching to account records',
       'Reading the licensing move',
-      'Estimating the competitor estate',
+      'Estimating the competitor products',
     ],
     delay: 2800,
     build: () => ({
       blocks: [
         {
           type: 'text',
-          text: "I filled the whole case in — customer details, the licensing move, and the competitor contracts it displaces.",
+          text: 'I filled in the whole case: customer details, the licensing move and the competitor contracts it displaces.',
         },
         {
           type: 'fields',
@@ -123,7 +123,7 @@ const INTENTS = [
              in install-base signal credited the copilot with work the seller
              did — and it still named Splunk, which this case dropped when it
              became a plain E5 move with no SIEM to displace. */
-          text: 'You named the products; I estimated what each one costs a year and when its contract ends. Both change the numbers — correct them on product selection before this goes out.',
+          text: 'You named the products. I estimated the annual cost and contract end year for each, so correct those on product selection.',
         },
         {
           type: 'actions',
@@ -164,7 +164,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'Nothing to justify yet — pick where the customer is going and the analysis follows from it.',
+              text: 'Nothing to justify yet. Pick where the customer is going.',
             },
             { type: 'actions', items: [{ label: 'Go to product selection', kind: 'navigate', step: 1 }] },
           ],
@@ -175,14 +175,14 @@ const INTENTS = [
       const blocks = [
         {
           type: 'text',
-          text: `${list(licenseNames(ctx.futureLicenses))} would give the customer ${d.gained.length} capabilities they do not have today, on top of the ${d.retained.length} they already own.`,
+          text: `${list(licenseNames(ctx.futureLicenses))} adds ${d.gained.length} new capabilities on top of the ${d.retained.length} the customer already owns.`,
         },
         {
           type: 'bullets',
           items: [
-            `**Already owned** — ${d.retained.length}. The floor the case stands on, not part of the return.`,
-            `**Gained with a market equivalent** — ${d.potentialConsolidation.length}. Each one is a consolidation opportunity until you name who supplies it.`,
-            `**Net-new** — ${d.strategic.length}. Nothing comparable to displace, so the argument is capability the estate did not have.`,
+            `**Already owned**: ${d.retained.length}`,
+            `**Gained with a market equivalent**: ${d.potentialConsolidation.length}`,
+            `**Net-new**: ${d.strategic.length}`,
           ],
         },
       ];
@@ -196,7 +196,7 @@ const INTENTS = [
           type: 'callout',
           tone: 'coach',
           title: 'Nothing is a displacement yet',
-          text: 'A gained capability only becomes a saving once you name the incumbent supplying it today.',
+          text: 'A gained capability becomes a saving only once you name the vendor supplying it.',
         });
       }
       return { blocks };
@@ -220,7 +220,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'Nothing selected yet. Choose an upgrade path, or pick individual SKUs if you already know what you are selling.',
+              text: 'Nothing selected yet. Choose an upgrade path or individual SKUs.',
             },
             { type: 'actions', items: [{ label: 'Go to product selection', kind: 'navigate', step: 1 }] },
           ],
@@ -237,8 +237,8 @@ const INTENTS = [
               if (!sku) return `**${id}**`;
               const adds = sku.grants.filter((g) => !currentCaps.has(g)).length;
               return adds > 0
-                ? `**${sku.name}** — adds ${adds} capabilit${adds === 1 ? 'y' : 'ies'} the customer does not have today.`
-                : `**${sku.name}** — already owned, carried through unchanged.`;
+                ? `**${sku.name}**: adds ${adds} new capabilit${adds === 1 ? 'y' : 'ies'}`
+                : `**${sku.name}**: already owned`;
             }),
           },
           c.usingList
@@ -246,7 +246,7 @@ const INTENTS = [
                 type: 'callout',
                 tone: 'coach',
                 title: 'Still priced at list',
-                text: 'No negotiated rate is set, so the investment is computed from rate card — which overstates it on any enterprise agreement. Set the rate per license on step 2.',
+                text: 'No negotiated rate set, so the investment is at rate card and overstated. Set the rate per license on step 2.',
               }
             : null,
         ].filter(Boolean),
@@ -271,7 +271,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'No incumbents named yet. Add them on step 2 with a cost and a contract end year, and the case can argue on savings as well as capability.',
+              text: 'No vendors named yet. Add them on step 2 with a cost and a contract end year.',
             },
             { type: 'actions', items: [{ label: 'Go to product selection', kind: 'navigate', step: 1 }] },
           ],
@@ -316,14 +316,14 @@ const INTENTS = [
       blocks: [
         {
           type: 'text',
-          text: 'Because savings only start when the old contract actually stops.',
+          text: 'Savings only start when the old contract stops.',
         },
         {
           type: 'bullets',
           items: [
             'Benefit begins the year **after** the contract ends.',
-            `Your analysis period is **${ctx.caseSetup.analysisPeriod} year${Number(ctx.caseSetup.analysisPeriod) === 1 ? '' : 's'}**, so anything ending later is excluded and flagged in the table.`,
-            'This is the single most common way a business case overstates savings.',
+            `Your analysis period is **${ctx.caseSetup.analysisPeriod} year${Number(ctx.caseSetup.analysisPeriod) === 1 ? '' : 's'}**, so anything ending later is excluded.`,
+            'The most common way a business case overstates savings.',
           ],
         },
       ],
@@ -338,14 +338,14 @@ const INTENTS = [
       blocks: [
         {
           type: 'text',
-          text: 'It changes who the report is written for, and what it exposes:',
+          text: 'It changes who the report is for and what it shows:',
         },
         {
           type: 'bullets',
           items: [
-            '**Customer-facing pitch** — internal-only pricing detail hidden.',
-            '**Internal planning** — full detail, including discounting and margin commentary.',
-            '**Partner enablement** — written for a partner seller taking it to their own customer.',
+            '**Customer-facing pitch**: internal pricing detail hidden',
+            '**Internal planning**: full detail, including discounting and margin',
+            '**Partner enablement**: written for a partner seller',
           ],
         },
       ],
@@ -353,7 +353,7 @@ const INTENTS = [
   },
   {
     id: 'DETECT_COMPETITORS',
-    test: (input) => has(input, 'detect the competitor', 'in this estate', 'what competitor', 'which competitor'),
+    test: (input) => has(input, 'detect the competitor', 'what competitor', 'which competitor'),
     thinking: ['Scanning install-base signal', 'Mapping onto capabilities'],
     delay: 2000,
     build: (input, ctx) => {
@@ -365,7 +365,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'I need an account name before I can infer an estate. Fill that in above, or add the products by hand on step 2.',
+              text: 'I need an account name first. Add it above, or add the products by hand on step 2.',
             },
           ],
         };
@@ -380,20 +380,20 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: `Already done — ${lines.length} product${lines.length === 1 ? '' : 's'} on this account, worth ${sym}${(total / 1e6).toFixed(2)}M a year:`,
+              text: `${lines.length} product${lines.length === 1 ? '' : 's'} on this account, worth ${sym}${(total / 1e6).toFixed(2)}M a year:`,
             },
             {
               type: 'bullets',
               items: lines.map((l) => {
                 const covers = capNames(l.capabilityIds);
-                return `**${l.vendor}** — ${covers.length ? list(covers) : 'not linked to a capability yet'}, ${sym}${Number(l.annualCost).toLocaleString()} a year, contract ends ${l.endYear || 'unknown'}`;
+                return `**${l.vendor}**: ${covers.length ? list(covers) : 'not linked to a capability yet'}, ${sym}${Number(l.annualCost).toLocaleString()} a year, contract ends ${l.endYear || 'unknown'}`;
               }),
             },
             {
               type: 'callout',
               tone: 'warning',
               title: 'Estimated, not sourced',
-              text: `The contract end years — ${years.join(' and ')} — are guesses. They gate the whole savings calculation, so they are worth a phone call before this reaches a customer.`,
+              text: `Contract end years (${years.join(' and ')}) are guesses. They gate every saving, so confirm them with the customer.`,
             },
           ],
         };
@@ -403,13 +403,13 @@ const INTENTS = [
         blocks: [
           {
             type: 'text',
-            text: 'Adding the products I can see against this account, with estimated annual cost and contract end years. Correct them on step 2 before this reaches a customer.',
+            text: 'Adding the products I can see on this account, with estimated annual cost and contract end years. Correct them on step 2.',
           },
           {
             type: 'callout',
             tone: 'warning',
             title: 'Estimated, not sourced',
-            text: 'Contract end years in particular are guesses. They gate the entire savings calculation, so they are worth a phone call.',
+            text: 'Contract end years are guesses. They gate every saving, so confirm them with the customer.',
           },
         ],
         actions: [{ type: 'fillCase' }],
@@ -431,27 +431,27 @@ const INTENTS = [
       const c = ctx.capabilityCase;
       const gaps = [];
 
-      if (!ctx.customer.numberOfUsers) gaps.push('**Number of users** — nothing can be priced without it.');
-      if (!ctx.caseSetup.name) gaps.push('**Business case name** — the identifier this case is saved under.');
+      if (!ctx.customer.numberOfUsers) gaps.push('**Number of users**: nothing can be priced without it');
+      if (!ctx.caseSetup.name) gaps.push('**Business case name**: what this case is saved under');
       if ((ctx.futureLicenses || []).length === 0)
-        gaps.push('**A future state** — pick an upgrade path or the individual SKUs, or there is no investment to return on.');
+        gaps.push('**A future state**: pick an upgrade path or individual SKUs');
       if (c?.usingList && (ctx.futureLicenses || []).length > 0)
-        gaps.push('**A negotiated rate** — the investment is at list, which overstates it on any enterprise agreement.');
+        gaps.push('**A negotiated rate**: the investment is at list and overstated');
 
       const lines = c?.competitorLines || [];
       if (lines.length === 0)
-        gaps.push('**Incumbent products** — without them the case rests on capability gained alone.');
+        gaps.push('**Current vendors**: without them the case rests on capability alone');
 
       const unlinked = lines.filter((l) => (l.capabilityIds || []).length === 0);
       if (unlinked.length > 0)
         gaps.push(
-          `**${unlinked.length} contract${unlinked.length === 1 ? '' : 's'} not linked to a capability** — ${list(unlinked.map((l) => l.vendor))}. Say what ${unlinked.length === 1 ? 'it covers' : 'they cover'} and the saving can be counted.`,
+          `**${unlinked.length} contract${unlinked.length === 1 ? '' : 's'} not linked to a capability**: ${list(unlinked.map((l) => l.vendor))}. Say what ${unlinked.length === 1 ? 'it covers' : 'they cover'} to count the saving.`,
         );
 
       const blocked = lines.filter((l) => l.blocked);
       if (blocked.length > 0)
         gaps.push(
-          `**${blocked.length} contract${blocked.length === 1 ? '' : 's'} awaiting confirmation** — ${list(blocked.map((l) => l.vendor))} also cover${blocked.length === 1 ? 's' : ''} something this move does not deliver, so nothing is counted until you confirm the customer does not use ${blocked.length === 1 ? 'it' : 'them'} for that.`,
+          `**${blocked.length} contract${blocked.length === 1 ? '' : 's'} awaiting confirmation**: ${list(blocked.map((l) => l.vendor))} also cover${blocked.length === 1 ? 's' : ''} something this move does not deliver. Nothing counts until you confirm the customer does not use ${blocked.length === 1 ? 'it' : 'them'} for that.`,
         );
 
       /* Two different reasons a named contract earns nothing, and they were
@@ -463,13 +463,13 @@ const INTENTS = [
       );
       if (retainedOnly.length > 0)
         gaps.push(
-          `**${retainedOnly.length} contract${retainedOnly.length === 1 ? '' : 's'} covering capabilities the customer already owns** — ${list(retainedOnly.map((l) => l.vendor))}. Nothing this move adds, so there is no displacement to price. Not a gap you can close; expect the question instead.`,
+          `**${retainedOnly.length} contract${retainedOnly.length === 1 ? '' : 's'} covering capabilities the customer already owns**: ${list(retainedOnly.map((l) => l.vendor))}. Nothing this move adds, so there is no displacement to price.`,
         );
 
       const late = lines.filter((l) => !l.blocked && (l.linked || []).length > 0 && !l.displaceable);
       if (late.length > 0)
         gaps.push(
-          `**${late.length} contract${late.length === 1 ? '' : 's'} outside the horizon** — ${list(late.map((l) => l.vendor))}, ending too late to contribute inside a ${c.years}-year analysis.`,
+          `**${late.length} contract${late.length === 1 ? '' : 's'} outside the horizon**: ${list(late.map((l) => l.vendor))}, ending too late for a ${c.years}-year analysis.`,
         );
 
       /* The mirror of the coverage check: something present that nothing asked
@@ -477,7 +477,7 @@ const INTENTS = [
       const untouched = c ? capNames(c.delta.newMicrosoft) : [];
       if (untouched.length > 3)
         gaps.push(
-          `**${untouched.length} gained capabilities with no incumbent named** — each one is a consolidation opportunity the case is currently arguing for free.`,
+          `**${untouched.length} gained capabilities with no vendor named**: each one is a consolidation opportunity`,
         );
 
       return {
@@ -496,7 +496,7 @@ const INTENTS = [
             type: 'callout',
             tone: 'coach',
             title: 'The two that always matter',
-            text: 'Customer-confirmed competitor spend and contract dates. Everything else in this model is arithmetic; those two are the assumptions a CFO will test.',
+            text: 'Customer-confirmed competitor spend and contract dates are the assumptions a CFO will test.',
           },
         ].filter(Boolean),
       };
@@ -516,14 +516,14 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'Nothing to calculate yet — the model needs a seat count and a future state. Both are on the first two steps.',
+              text: 'Nothing to calculate yet. The model needs a seat count and a future state.',
             },
           ],
         };
       }
       return {
         blocks: [
-          { type: 'text', text: `${c.years}-year nominal, no discount rate.` },
+          { type: 'text', text: `${c.years}-year nominal, no discount rate` },
           {
             type: 'metrics',
             items: [
@@ -536,8 +536,8 @@ const INTENTS = [
             type: 'text',
             text:
               c.investmentTotal > 0
-                ? `${money(c.netBenefit)} ÷ ${money(c.investmentTotal)} = ${formatPercent(c.roi)}. The uplift counted is only the **difference** between what the customer pays today and what they would pay — the current estate continues either way, on both sides of the ledger.`
-                : `There is no Microsoft uplift in this case yet, so there is no return to divide. The savings side already stands at ${money(c.competitorTotal)}.`,
+                ? `${money(c.netBenefit)} ÷ ${money(c.investmentTotal)} = ${formatPercent(c.roi)}. The uplift counted is only the **difference** between what the customer pays today and what the customer would pay.`
+                : `No Microsoft uplift yet, so there is no return to divide. Savings stand at ${money(c.competitorTotal)}.`,
           },
           {
             type: 'callout',
@@ -548,10 +548,10 @@ const INTENTS = [
                 ? 'This case does not break even'
                 : 'Nothing to pay back yet',
             text: c.paybackMonths
-              ? 'Costs start immediately, but each competitor saving only begins the year after its contract lapses.'
+              ? 'Costs start immediately, but each saving begins the year after its contract lapses.'
               : c.investmentTotal > 0
-                ? 'Not within the current horizon. Either the analysis period is too short for the contract end dates, or too few incumbents are named against what this move adds.'
-                : 'With nothing on the Microsoft side of the ledger there is no period to measure.',
+                ? 'Either the analysis period is too short for the contract end dates, or too few vendors are named.'
+                : 'Nothing on the Microsoft side yet, so there is no period to measure.',
           },
         ].filter(Boolean),
       };
@@ -564,24 +564,24 @@ const INTENTS = [
     delay: 2000,
     build: () => ({
       blocks: [
-        { type: 'text', text: 'Three you should expect:' },
+        { type: 'text', text: 'Three to expect:' },
         {
           type: 'objections',
           items: [
             {
-              objection: '"Your savings assume we actually turn the incumbent off."',
+              objection: '"Your savings assume we switch these products off."',
               response:
-                'Correct, and that is what the Year contract ends field is for. Every saving in this case is dated to a contract lapse rather than assumed on day one — show them the table.',
+                'Correct, and that is what the Year contract ends field is for. Every saving is dated to a contract lapse, not assumed on day one.',
             },
             {
               objection: '"Defender is not as good as our best-of-breed tool."',
               response:
-                'The case is not that one control wins; it is that correlated signal across the estate closes incidents faster. Offer a proof of concept on one business unit.',
+                'The case is not that one control wins. It is that correlated signal across all the tools closes incidents faster. Offer a proof of concept on one business unit.',
             },
             {
               objection: '"This is a licensing exercise dressed up as strategy."',
               response:
-                'Lead with the outcomes the customer told you they cared about, not with the savings. The consolidation is the mechanism; the outcomes are the goal.',
+                'Lead with the outcomes the customer named, not with the savings. Consolidation is the mechanism, not the goal.',
             },
           ],
         },
@@ -596,15 +596,15 @@ const INTENTS = [
     delay: 1300,
     build: () => ({
       blocks: [
-        { type: 'text', text: 'Five inputs move the result more than everything else combined:' },
+        { type: 'text', text: 'Five inputs move the result:' },
         {
           type: 'bullets',
           items: [
-            '**Number of users** — every per-user rate multiplies through it.',
-            '**Current bundle** — decides which capabilities are gained rather than already owned, and only gained ones can carry a saving.',
-            '**Rate per license** — at list the uplift is overstated; the negotiated rate is the one the case should quote.',
-            '**Competitor cost** — the only benefit line in the model.',
-            '**Year contract ends** — a saving starts the year after the contract lapses, so this decides how much lands inside the horizon.',
+            '**Number of users**: every per-user rate multiplies through it',
+            '**Current bundle**: decides which capabilities are gained rather than already owned',
+            '**Rate per license**: at list the uplift is overstated',
+            '**Competitor cost**: the only benefit line in the model',
+            '**Year contract ends**: a saving starts the year after the contract lapses',
           ],
         },
       ],
@@ -621,9 +621,9 @@ const INTENTS = [
         {
           type: 'bullets',
           items: [
-            '**Populate** — describe the customer and I fill the form, with confidence on each field.',
-            '**Explain** — ask why anything is in the case and I show what it was drawn from.',
-            '**Coach** — ask what is missing and I name the gaps and what closing them is worth.',
+            '**Populate**: describe the customer and I fill the form',
+            '**Explain**: ask why anything is in the case and I show what it was drawn from',
+            '**Coach**: ask what is missing and I name the gaps',
           ],
         },
       ],
@@ -638,7 +638,7 @@ const FALLBACKS = [
     blocks: [
       {
         type: 'text',
-        text: 'Describe the customer — their size, what they run on Microsoft today, and which security vendors they pay — and I can fill this step from it.',
+        text: 'Describe the customer and I can fill this step: size, Microsoft licensing today, and the security vendors the customer pays.',
       },
       { type: 'actions', items: [{ label: 'Use the Contoso example', kind: 'demo' }] },
     ],

@@ -85,12 +85,12 @@ export default function StepMasthead({ description }) {
                       {/* "Step 3 of 3" used to be printed above the title. Three
                           markers with the third filled says it already, so it
                           survives only for anyone who cannot see them. */}
-                      <span className={styles.srOnly}>{` — step ${i + 1} of ${STEPS.length}`}</span>
+                      <span className={styles.srOnly}>{`, step ${i + 1} of ${STEPS.length}`}</span>
                     </h1>
                   </span>
                 ) : (
                   <Tooltip
-                    content={`${s.label} — ${s.caption}`}
+                    content={s.caption}
                     relationship="description"
                     withArrow
                     positioning="below"
@@ -108,7 +108,7 @@ export default function StepMasthead({ description }) {
                       </span>
                       <span className={styles.label}>{s.label}</span>
                       <span className={styles.srOnly}>
-                        {state === 'complete' ? ' — visited' : ' — not started'}
+                        {state === 'complete' ? ', visited' : ', not started'}
                       </span>
                     </button>
                   </Tooltip>

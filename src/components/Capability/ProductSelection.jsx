@@ -9,7 +9,7 @@ import {
   Tab,
   TabList,
 } from '@fluentui/react-components';
-import { Dismiss16Regular } from '@fluentui/react-icons';
+import { ChevronDown16Regular, ChevronRight16Regular, Dismiss16Regular } from '@fluentui/react-icons';
 import {
   BASE_SKUS,
   CURRENT_BUNDLES,
@@ -34,6 +34,7 @@ import { AUTHORSHIP } from '../../data/authoring.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import ConfidenceBadge from '../shared/ConfidenceBadge.jsx';
+import LicensingImpact from './LicensingImpact.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import styles from './Capability.module.css';
@@ -146,6 +147,23 @@ export default function ProductSelection() {
     linkVendor(name, capId ? [...new Set([capId, ...fromCatalogue])] : fromCatalogue);
   };
 
+  /* Collapsed groups, by key. Expanded is the default: a seller who has just
+     picked a future state needs to see what is in it, and a table that opens
+     shut hides the work. Collapsing is for after that, once the groups that
+     matter are known. */
+  const [collapsed, setCollapsed] = useState(() => new Set());
+  const groupKey = (g) => `${g.area}:${g.group}`;
+  const toggleGroup = (key) =>
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  const allCollapsed = groups.length > 0 && groups.every((g) => collapsed.has(groupKey(g)));
+  const toggleAll = () =>
+    setCollapsed(allCollapsed ? new Set() : new Set(groups.map(groupKey)));
+
   const allVendors = useMemo(() => {
     const set = new Set();
     groups.forEach((g) => g.capabilities.forEach((c) => c.competitors.forEach((v) => set.add(v))));
@@ -160,18 +178,6 @@ export default function ProductSelection() {
   /* Every capability this move adds, flat, for the card-level picker. Retained
      ones are excluded: Microsoft already supplies them, so there is nothing for
      a competitor contract to attach to. */
-  const linkable = useMemo(
-    () => groups.flatMap((g) => g.capabilities).filter((c) => !c.retained),
-    [groups],
-  );
-  const [linkQueries, setLinkQueries] = useState({});
-  const setLinkQuery = (id, value) => setLinkQueries((q) => ({ ...q, [id]: value }));
-  const linkableFor = (l) => {
-    const q = (linkQueries[l.id] || '').trim().toLowerCase();
-    return linkable.filter(
-      (c) => !l.capabilityIds.includes(c.id) && (!q || c.name.toLowerCase().includes(q)),
-    );
-  };
 
   /* Same pill step 1 uses. It renders only where the copilot supplied the
      value, and turns into "Confirmed by you" the moment the seller changes it —
@@ -227,7 +233,7 @@ export default function ProductSelection() {
 
   return (
     <div className={styles.root}>
-      <StepMasthead description="The customer's licensing today, the future state, and what it replaces" />
+      <StepMasthead description="Licensing today, the future state, and what it replaces" />
 
       {/* ----------------------------- current state ---------------------------- */}
       <Card className={styles.card}>
@@ -236,9 +242,7 @@ export default function ProductSelection() {
             Which Microsoft bundle is the customer on today?{' '}
             {badge('currentLicenses')}
           </h2>
-          <p className={styles.cardLead}>
-            Leave unselected if the customer is not on one of these.
-          </p>
+          <p className={styles.cardLead}>Leave unselected if none apply</p>
         </div>
         {/* Six options, because that is what a seller is actually asked. One of
             them is two licenses, which is the whole reason the current state is
@@ -274,16 +278,16 @@ export default function ProductSelection() {
           </h2>
           <p className={styles.cardLead}>
             {currentLicenses.length
-              ? `Paths are filtered to what applies from ${currentLicenses
+              ? `Paths from ${currentLicenses
                   .map((id) => licenseById(id)?.name)
                   .filter(Boolean)
-                  .join(' + ')}.`
-              : 'No current bundle, so these are starting points rather than upgrades.'}
+                  .join(' + ')}`
+              : 'No current bundle, so these are starting points, not upgrades'}
           </p>
         </div>
 
         <TabList selectedValue={futureMode} onTabSelect={(_, d) => setFutureMode(d.value)}>
-          <Tab value="path">Upgrade licensing path</Tab>
+          <Tab value="path">Upgrade path</Tab>
           <Tab value="products">Individual SKUs</Tab>
         </TabList>
 
@@ -337,7 +341,7 @@ export default function ProductSelection() {
               })}
             </ul>
             <p className={styles.cardLead}>
-              Bases first, then the add-ons{base ? ` sold against ${licenseById(base)?.name}` : ''}.
+              Bases first, then add-ons{base ? ` for ${licenseById(base)?.name}` : ''}
             </p>
           </>
         )}
@@ -352,9 +356,7 @@ export default function ProductSelection() {
                 lead — which is what pushed them 37px apart. */}
             <div className={styles.subSection}>
               <h3 className={styles.subHead}>How many seats?{' '}{badge('rateByLicense')}</h3>
-              <p className={styles.cardLead}>
-                Autofilled from step 1 and the price list. Change either where the deal differs.
-              </p>
+              <p className={styles.cardLead}>Autofilled from step 1 and the price list</p>
             </div>
             <div className={styles.tableWrap}>
               <table className={styles.mapTable}>
@@ -413,17 +415,14 @@ export default function ProductSelection() {
         <Card className={styles.card}>
           <div>
             <h2 className={styles.cardTitle}>What the customer would have, and who supplies it today</h2>
-            <p className={styles.cardLead}>
-              Name the incumbent where there is one. Only named incumbents with a cost produce a
-              saving, and most rows will be blank.
-            </p>
+            <p className={styles.cardLead}>Name the vendor where there is one</p>
           </div>
 
           <div className={styles.quickAdd}>
             <Combobox
               freeform
               className={styles.quickAddBox}
-              placeholder="Add a product the customer already uses…"
+              placeholder="Add a product the customer uses…"
               value={vendorQuery}
               selectedOptions={[]}
               onChange={(e) => setVendorQuery(e.target.value)}
@@ -444,19 +443,19 @@ export default function ProductSelection() {
                  used to add a vendor called "Crowd". Enter, or the explicit
                  "Add … — not in the list" option, both still commit. */
               onBlur={() => setVendorQuery('')}
-              aria-label="Add a product the customer already uses"
+              aria-label="Add a product the customer uses"
             >
               {vendorMatches.slice(0, 30).map((v) => (
                 <Option key={v} text={v}>{v}</Option>
               ))}
               {vendorQuery.trim() && !vendorMatches.some((v) => v.toLowerCase() === vendorQuery.trim().toLowerCase()) ? (
                 <Option key="__custom" text={vendorQuery.trim()}>
-                  Add &ldquo;{vendorQuery.trim()}&rdquo; &mdash; not in the list
+                  Add &ldquo;{vendorQuery.trim()}&rdquo;
                 </Option>
               ) : null}
             </Combobox>
             <span className={styles.quickAddHint}>
-              Type any name to add a product we do not list.
+              Type any name to add one we do not list
             </span>
           </div>
 
@@ -474,71 +473,62 @@ export default function ProductSelection() {
                     {/* What the seller said it covers, not what the model can
                         price. `linked` is narrowed to displaceable capabilities,
                         so a contract named against a net-new one reported itself
-                        as unlinked while the row above plainly showed it. */}
-                    <span className={styles.contractCaps}>
-                      {l.capabilityIds.length
-                        ? l.capabilityIds
-                            .map((id) => capabilityById(id)?.name)
-                            .filter(Boolean)
-                            .join(', ')
-                        : 'Not linked to a capability yet'}
-                    </span>
-                    <Input
-                      size="small"
-                      className={styles.costInput}
-                      value={l.annualCost || ''}
-                      onChange={(_, d) => updateContract(l.id, 'annualCost', d.value)}
-                      contentBefore="$"
-                      placeholder="Annual cost"
-                      aria-label={`Annual cost for ${l.vendor}`}
-                    />
-                    <Input
-                      size="small"
-                      className={styles.yearInput}
-                      value={l.yearContractEnds || ''}
-                      onChange={(_, d) => updateContract(l.id, 'yearContractEnds', d.value)}
-                      placeholder="Ends"
-                      aria-label={`Contract end year for ${l.vendor}`}
-                    />
-                    <Button
-                      appearance="subtle"
-                      size="small"
-                      icon={<Dismiss16Regular />}
-                      aria-label={`Remove ${l.vendor}`}
-                      onClick={() => removeContract(l.id)}
-                    />
+                        as unlinked while the row above plainly showed it.
+
+                        Read-only, and the only place these are listed. The table
+                        below is where a vendor is put against a capability, and
+                        this row is what that adds up to. */}
+                    {l.capabilityIds.length ? (
+                      <ul className={styles.contractCaps}>
+                        {l.capabilityIds.map((id) => (
+                          <li key={id} className={styles.contractCap}>
+                            {capabilityById(id)?.name || id}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className={styles.contractCapsEmpty}>Not linked yet</span>
+                    )}
+                    {/* One group, so the two fields and the remove button move
+                        together. Loose in the flex row, a long chip list pushed
+                        the button onto a line of its own. */}
+                    <div className={styles.contractFields}>
+                      <Input
+                        size="small"
+                        className={styles.costInput}
+                        value={l.annualCost || ''}
+                        onChange={(_, d) => updateContract(l.id, 'annualCost', d.value)}
+                        contentBefore="$"
+                        placeholder="Annual cost"
+                        aria-label={`Annual cost for ${l.vendor}`}
+                      />
+                      <Input
+                        size="small"
+                        className={styles.yearInput}
+                        value={l.yearContractEnds || ''}
+                        onChange={(_, d) => updateContract(l.id, 'yearContractEnds', d.value)}
+                        placeholder="Ends"
+                        aria-label={`Contract end year for ${l.vendor}`}
+                      />
+                      <Button
+                        appearance="subtle"
+                        size="small"
+                        icon={<Dismiss16Regular />}
+                        aria-label={`Remove ${l.vendor}`}
+                        onClick={() => removeContract(l.id)}
+                      />
+                    </div>
                   </div>
                   {l.capabilityIds.length === 0 ? (
                     <p className={styles.contractReason}>
-                      Not in our catalogue — say where it applies.
+                      Pick this vendor against a capability in the table below.
                     </p>
                   ) : l.reason ? (
                     <p className={styles.contractReason}>{l.reason}</p>
                   ) : null}
-                  {/* A product the catalogue has never heard of has to be given
-                      its capabilities by hand, and sending the seller off to
-                      hunt for the right row to do it was the long way round. */}
-                  <Combobox
-                    size="small"
-                    className={styles.contractLink}
-                    placeholder="Link to a capability…"
-                    value={linkQueries[l.id] ?? ''}
-                    selectedOptions={[]}
-                    onChange={(e) => setLinkQuery(l.id, e.target.value)}
-                    onOptionSelect={(_, d) => {
-                      const cap = linkable.find((c) => c.name === d.optionText);
-                      if (cap) linkVendor(l.vendor, [cap.id]);
-                      setLinkQuery(l.id, '');
-                    }}
-                    aria-label={`Link ${l.vendor} to a capability`}
-                  >
-                    {linkableFor(l).slice(0, 40).map((c) => (
-                      <Option key={c.id} text={c.name}>{c.name}</Option>
-                    ))}
-                  </Combobox>
                   {l.blocked ? (
                     <Checkbox
-                      label="The customer does not use it for those — count this contract"
+                      label="The customer does not use it for those, so count this contract"
                       checked={!!l.soleUseConfirmed}
                       onChange={(_, d) => updateContract(l.id, 'soleUseConfirmed', !!d.checked)}
                     />
@@ -548,33 +538,66 @@ export default function ProductSelection() {
             </ul>
           ) : null}
 
+          {/* One control for the whole table, because collapsing fifteen groups
+              one chevron at a time to find the three that matter is the problem,
+              not the solution. */}
+          {groups.length > 1 ? (
+            <button type="button" className={styles.collapseAll} onClick={toggleAll}>
+              {allCollapsed ? 'Expand all' : 'Collapse all'}
+            </button>
+          ) : null}
+
           <div className={styles.tableWrap}>
             <table className={styles.mapTable}>
               <thead>
                 <tr>
                   <th scope="col">Capability</th>
-                  <th scope="col">Microsoft delivers it with</th>
+                  <th scope="col">Microsoft product</th>
                   <th scope="col">Current vendor</th>
                   <th scope="col" className={styles.numericCol}>Annual cost</th>
                   <th scope="col" className={styles.numericCol}>Contract ends</th>
                 </tr>
               </thead>
               <tbody>
-                {groups.map((g) => (
-                  <React.Fragment key={`${g.area}:${g.group}`}>
+                {groups.map((g) => {
+                  const key = groupKey(g);
+                  const shut = collapsed.has(key);
+                  const Chevron = shut ? ChevronRight16Regular : ChevronDown16Regular;
+                  /* What a collapsed group still has to report. Without it,
+                     shutting a group hides whether there is anything left to do
+                     in it, which is the one thing the seller is scanning for. */
+                  const mappable = g.capabilities.filter((c) => !c.retained);
+                  const named = mappable.filter((c) => contractFor(c.id)).length;
+                  const tally =
+                    mappable.length === 0 ? 'All owned' : `${named} of ${mappable.length} named`;
+                  return (
+                  <React.Fragment key={key}>
                     <tr className={styles.groupRow}>
                       <th scope="colgroup" colSpan={5}>
-                        {/* Area first: it is the parent — Entra owns four of
-                            these groups — and leading with the group put the
-                            child above the parent. The separator is a real
-                            element so the two can never run together, which is
-                            how this read as "Endpoint managementIntune". */}
-                        <span className={styles.groupArea}>{areaById(g.area)?.label}</span>{' '}
-                        <span className={styles.groupSep} aria-hidden="true">·</span>{' '}
-                        <span className={styles.groupName}>{g.group}</span>
+                        <button
+                          type="button"
+                          className={styles.groupToggle}
+                          aria-expanded={!shut}
+                          /* Spelled out, because the separator between area and
+                             group is aria-hidden and the three spans would
+                             otherwise be read as one run-on word. */
+                          aria-label={`${areaById(g.area)?.label} ${g.group}, ${tally}`}
+                          onClick={() => toggleGroup(key)}
+                        >
+                          <Chevron className={styles.groupChevron} aria-hidden="true" />
+                          {/* Area first: it is the parent — Entra owns four of
+                              these groups — and leading with the group put the
+                              child above the parent. The separator is a real
+                              element so the two can never run together, which is
+                              how this read as "Endpoint managementIntune". */}
+                          <span className={styles.groupArea}>{areaById(g.area)?.label}</span>
+                          <span className={styles.groupSep} aria-hidden="true">·</span>
+                          <span className={styles.groupName}>{g.group}</span>
+                          <span className={styles.groupCount}>{tally}</span>
+                        </button>
                       </th>
                     </tr>
-                    {g.capabilities.map((c) => {
+                    {shut ? null : g.capabilities.map((c) => {
                       const ctr = contractFor(c.id);
                       const q = queries[c.id];
                       const typed = q !== undefined ? q : ctr?.vendor || '';
@@ -595,12 +618,8 @@ export default function ProductSelection() {
                               <span className={styles.ownedVendor}>{ownedVia(c.id)}</span>
                               <span className={styles.rowEcho}>Already owned</span>
                             </td>
-                            <td className={styles.numericCol}>
-                              <span className={styles.rowEcho}>—</span>
-                            </td>
-                            <td className={styles.numericCol}>
-                              <span className={styles.rowEcho}>—</span>
-                            </td>
+                            <td className={styles.numericCol} />
+                            <td className={styles.numericCol} />
                           </tr>
                         );
                       }
@@ -688,14 +707,12 @@ export default function ProductSelection() {
                               {typed.trim() &&
                               !matches.some((v) => v.toLowerCase() === typed.trim().toLowerCase()) ? (
                                 <Option key="__custom" text={typed.trim()}>
-                                  Add &ldquo;{typed.trim()}&rdquo; &mdash; not in the list
+                                  Add &ldquo;{typed.trim()}&rdquo;
                                 </Option>
                               ) : null}
                             </Combobox>
                             {!c.mappable ? (
-                              <span className={styles.rowEcho}>
-                                Net-new — no saving counted
-                              </span>
+                              <span className={styles.rowEcho}>Net-new, no saving counted</span>
                             ) : null}
                           </td>
                           <td className={styles.numericCol}>
@@ -703,28 +720,34 @@ export default function ProductSelection() {
                                 each capability it covers - editing them per row
                                 would ask the same question up to nine times. */}
                             <span className={styles.rowEcho}>
-                              {ctr?.annualCost ? `$${Number(ctr.annualCost).toLocaleString()}` : '—'}
+                              {ctr?.annualCost ? `$${Number(ctr.annualCost).toLocaleString()}` : ''}
                             </span>
                           </td>
                           <td className={styles.numericCol}>
-                            <span className={styles.rowEcho}>{ctr?.yearContractEnds || '—'}</span>
+                            <span className={styles.rowEcho}>{ctr?.yearContractEnds || ''}</span>
                           </td>
                         </tr>
                       );
                     })}
                   </React.Fragment>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
         </Card>
       ) : null}
 
+      {/* Last, because it is the answer rather than an input. Every figure in it
+          moves when a vendor changes in the table above, so it reads as the
+          running total of the step rather than as something to fill in. */}
+      <LicensingImpact />
+
       <StepFooter
         hint={
           delta.future.length
-            ? 'Name an incumbent against a capability to turn it into a saving.'
-            : 'Pick a future state to see the analysis.'
+            ? 'Name a vendor to turn a capability into a saving'
+            : 'Pick a future state to see the analysis'
         }
       />
     </div>

@@ -157,7 +157,7 @@ export function buildBusinessCase({
 /* ------------------------------- Formatters -------------------------------- */
 
 export function formatCurrency(value, { compact = true, symbol = '$' } = {}) {
-  if (value == null || Number.isNaN(value)) return '—';
+  if (value == null || Number.isNaN(value)) return 'n/a';
   const abs = Math.abs(value);
   const sign = value < 0 ? '−' : '';
   if (!compact || abs < 1000) {
@@ -176,7 +176,7 @@ function trimZeros(s) {
 }
 
 export function formatPercent(ratio) {
-  if (ratio == null || Number.isNaN(ratio)) return '—';
+  if (ratio == null || Number.isNaN(ratio)) return 'n/a';
   const pct = Math.round(ratio * 100);
   // Same U+2212 minus formatCurrency uses. Left to the default number formatting
   // this returns an ASCII hyphen, so a negative case rendered "−US$1.29M ÷

@@ -22,9 +22,6 @@ export default function CustomerFields() {
     <Card className={styles.card}>
       <div>
         <h2 className={styles.cardTitle}>Who is this for?</h2>
-        <p className={styles.cardLead}>
-          Enough to size and frame the case. Everything else the report needs is derived.
-        </p>
       </div>
 
       <div className={styles.tiles} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
@@ -36,8 +33,7 @@ export default function CustomerFields() {
           />
         </FormField>
 
-        <FormField label="Number of users" required meta={fieldMeta.numberOfUsers}
-          help="Every per-user figure multiplies through it">
+        <FormField label="Number of users" required meta={fieldMeta.numberOfUsers}>
           <Input
             value={customer.numberOfUsers}
             onChange={(_, d) => setCustomer('numberOfUsers', d.value)}
@@ -72,7 +68,7 @@ export default function CustomerFields() {
         </FormField>
 
         <FormField label="Analysis period (years)"
-          help="Sets the horizon for cost, benefit and ROI">
+          help="Horizon for cost, benefit and ROI">
           <Dropdown
             value={`${caseSetup.analysisPeriod} years`}
             selectedOptions={[String(caseSetup.analysisPeriod)]}

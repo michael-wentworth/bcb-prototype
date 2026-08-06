@@ -68,8 +68,7 @@ function Masthead({ onStart, onOpen }) {
           <div>
             <h1 className={styles.wordmark}>Security Business Case Builder</h1>
             <p className={styles.mastheadLine}>
-              Build a defensible ROI case for your customer: what they would buy, what they
-              would retire, and what the switch is worth.
+              Build a defensible ROI case for your customer
             </p>
           </div>
           <div className={styles.mastheadActions}>
@@ -129,8 +128,6 @@ function Result({ onOpen }) {
         </div>
 
         <p className={styles.foot}>
-          This is the page you put in front of the customer. Three of their four contracts
-          lapse in the same year; the fourth runs a year longer.{' '}
           <button type="button" className={styles.inlineLink} onClick={onOpen}>
             See the full report
           </button>
@@ -169,9 +166,6 @@ function WhatChanges() {
         <h2 className={styles.sectionTitle}>
           {CONSOLIDATION.vendorCount} vendors out, one platform in
         </h2>
-        <p className={styles.sectionLede}>
-          You show them spend that stops, not spend you estimated.
-        </p>
 
         {/* Category, not brand. This page is public marketing, so naming a
             competitor beside an invented price would be Microsoft publishing a
@@ -205,7 +199,7 @@ function WhatChanges() {
             </ul>
             <span className={styles.toCost}>{money(CONSOLIDATION.annualCost)}/yr</span>
             <span className={styles.toNote}>
-              Licensed as {CONSOLIDATION.products.join(', ')}.
+              Licensed as {CONSOLIDATION.products.join(', ')}
             </span>
           </div>
         </div>
@@ -244,8 +238,7 @@ function WhyTiming() {
         <h2 className={styles.sectionTitle}>It gets better every year</h2>
         <p className={styles.sectionLede}>
           A vendor cannot be switched off mid-contract, so each saving starts the year after
-          that contract lapses. Your case says so — nothing in the first year, climbing as the
-          others fall away. That is the part a CFO checks, and the reason they believe the rest.
+          that contract lapses.
         </p>
 
         <ol className={styles.years}>
@@ -266,10 +259,9 @@ function WhyTiming() {
         <div className={styles.steady}>
           <span className={styles.steadyValue}>{pct(STEADY.ratio)}</span>
           <span className={styles.steadyText}>
-            The number you quote for the years after the switch — {money(STEADY.saves)} a year
-            of spend stopping against {money(STEADY.costs)} of Microsoft. The {pct(CASE.roi)} above
-            is the blended figure across all {CASE.years} years, held down by a first year in which
-            nothing can be switched off yet.
+            The rate after the switch: {money(STEADY.saves)} a year of spend stopping against{' '}
+            {money(STEADY.costs)} of Microsoft. The {pct(CASE.roi)} above blends all{' '}
+            {CASE.years} years.
           </span>
         </div>
 
@@ -279,16 +271,14 @@ function WhyTiming() {
             <span className={styles.factValue}>{pct(EXCLUDED.inflatedRoi)}</span>
             <span className={styles.factText}>
               What you could report if the {money(EXCLUDED.annual)} a year the customer already
-              spends on {EXCLUDED.bundleName} were counted as a saving. The tool will not — that
-              spend continues either way, and a CFO who spots it will not trust the rest.
+              spends on {EXCLUDED.bundleName} counted as a saving.
             </span>
           </li>
           <li className={styles.fact}>
             <span className={styles.factValue}>{pct(STRESS.roi)}</span>
             <span className={styles.factText}>
-              What the same case reports if none of their contracts lapse inside the analysis
-              period. Nothing can be switched off, so there is nothing to save — and it tells you
-              that rather than finding a saving anyway.
+              What the same case reports if none of the customer's contracts lapse inside the
+              analysis period.
             </span>
           </li>
         </ul>
@@ -318,8 +308,7 @@ function Close({ onStart }) {
       <div className={styles.grid}>
         <h2 className={styles.sectionTitle}>Independent research behind the category</h2>
         <p className={styles.sectionLede}>
-          Figures you can put in a deck as they are. They are not what your case is built from
-          — that is your customer's own contracts — but they are what it is argued against.
+          Figures you can put in a deck as they are
         </p>
 
         <ul className={styles.evidence}>
@@ -331,14 +320,14 @@ function Close({ onStart }) {
           ))}
         </ul>
         <p className={styles.evidenceNote}>
-          Forrester Total Economic Impact™ studies, commissioned by Microsoft.
+          Forrester Total Economic Impact™ studies, commissioned by Microsoft
         </p>
 
         <div className={styles.close}>
           <h2 className={styles.closeTitle}>Build the same thing for your customer</h2>
           <p className={styles.closeText}>
-            Their seats, their vendors, their contract dates — about ten minutes, and the copilot
-            fills most of it from a sentence.
+            Enter the customer's seats, vendors and contract dates. The copilot fills most of it
+            from a sentence.
           </p>
           <Button appearance="primary" size="large" icon={<Add20Filled />} onClick={onStart}>
             Build your own case

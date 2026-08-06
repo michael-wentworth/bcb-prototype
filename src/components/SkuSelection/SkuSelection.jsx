@@ -73,7 +73,7 @@ export default function SkuSelection() {
   return (
     <div className={styles.root}>
       <StepMasthead
-        description="Review what the copilot has proposed: the outcomes it has to serve, the Microsoft products that serve them, and the vendors each one replaces."
+        description="Review the proposed outcomes, the Microsoft products that serve them, and the vendors they replace."
       />
 
       {/* ---------------------- Outcomes and coverage ---------------------- */}
@@ -93,10 +93,7 @@ export default function SkuSelection() {
         <div className={styles.cardHead}>
           <div>
             <h2 className={styles.cardTitle}>Recommended Microsoft solution</h2>
-            <p className={styles.cardLead}>
-              The SKUs you are proposing, and the seats and price behind each one. This is the
-              investment side of the case.
-            </p>
+            <p className={styles.cardLead}>Seats and price for each product you are proposing</p>
           </div>
         </div>
 
@@ -327,7 +324,7 @@ function Outcomes({ outcomes, skus, authorship, competitorRows, users, onToggle,
       <div className={styles.cardHead}>
         <div>
           <h2 className={styles.cardTitle}>
-            What security outcomes is the customer trying to achieve?
+            Security outcomes
             {/* The copilot selects these on a populate and nothing said so — the
                 one AI-authored surface in the app with no marker on it. Section
                 authorship was already being tracked in state and read by no
@@ -336,16 +333,13 @@ function Outcomes({ outcomes, skus, authorship, competitorRows, users, onToggle,
               <ConfidenceBadge
                 level="medium"
                 basis="Selected from your description"
-                evidence="I picked these from the goals you stated. Deselect anything the customer has not actually asked for — every one of them has to be answered by something in the proposal."
+                evidence="Deselect anything the customer has not asked for."
                 ai
                 compact
               />
             ) : null}
           </h2>
-          <p className={styles.cardLead}>
-            Pick the outcomes this proposal has to serve. Each one shows the Microsoft product
-            that delivers it.
-          </p>
+          <p className={styles.cardLead}>Pick the outcomes this proposal has to serve</p>
         </div>
       </div>
 
@@ -370,7 +364,7 @@ function Outcomes({ outcomes, skus, authorship, competitorRows, users, onToggle,
           ))}
         </div>
       ) : (
-        <p className={styles.allPicked}>Every outcome is on the case.</p>
+        <p className={styles.allPicked}>Every outcome is on the case</p>
       )}
 
       {selected.length > 0 ? (
@@ -405,7 +399,7 @@ function Outcomes({ outcomes, skus, authorship, competitorRows, users, onToggle,
                           </span>
                         ) : (
                           <span className={styles.coverageGap}>
-                            Map a competitor product to a Microsoft replacement on this step.
+                            Map a competitor product to a Microsoft replacement
                           </span>
                         )
                       ) : null}
@@ -419,7 +413,7 @@ function Outcomes({ outcomes, skus, authorship, competitorRows, users, onToggle,
                       line.served.length === 0 &&
                       line.suggested.length === 0 ? (
                         <span className={styles.coverageGap}>
-                          Nothing in the catalogue covers this.
+                          Nothing in the catalogue covers this
                         </span>
                       ) : null}
                       {line.served.length === 0
@@ -491,21 +485,13 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
       <div className={styles.cardHead}>
         <div>
           <h2 className={styles.cardTitle}>Vendor consolidation</h2>
-          <p className={styles.cardLead}>
-            What each incumbent vendor gives way to. The products and their costs come from the
-            customer environment you captured on step 1 — the Microsoft replacement is the decision
-            you make here.
-          </p>
+          <p className={styles.cardLead}>What each vendor gives way to</p>
         </div>
       </div>
 
       {rows.length === 0 ? (
         <>
-          <p className={styles.emptyNote}>
-            No competitor products have been captured for this customer, so there is nothing to
-            displace. Add them to the competitive environment on step 1 and they will appear here
-            ready to map.
-          </p>
+          <p className={styles.emptyNote}>No competitor products captured for this customer</p>
           <div className={styles.rowActions}>
             <Button appearance="secondary" onClick={onBack}>
               Go to customer environment
@@ -519,15 +505,11 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
               <span className={styles.statValue}>
                 {mapped.length} of {rows.length}
               </span>
-              <span className={styles.statLabel}>
-                competitor products mapped to a Microsoft replacement
-              </span>
+              <span className={styles.statLabel}>competitor products mapped</span>
             </div>
             <div className={styles.stat}>
               <span className={styles.statValue}>{formatCurrency(mappedSpend, { symbol })}</span>
-              <span className={styles.statLabel}>
-                annual competitor spend those mappings carry
-              </span>
+              <span className={styles.statLabel}>annual competitor spend mapped</span>
             </div>
           </div>
 
@@ -548,7 +530,7 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
                     <tr key={r.id}>
                       <td>
                         <span className={styles.cellMain}>{r.currentProduct}</span>
-                        <span className={styles.cellSub}>{r.softwareSolution || '—'}</span>
+                        <span className={styles.cellSub}>{r.softwareSolution || 'Not set'}</span>
                       </td>
                       <td className={styles.numeric}>
                         {formatCurrency(annualSpend(r), { symbol })}
@@ -569,7 +551,7 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
                           placeholder={
                             anyOption.length
                               ? 'Select a Microsoft product'
-                              : 'Add a Microsoft product above first'
+                              : 'Add a Microsoft product first'
                           }
                           disabled={anyOption.length === 0}
                           aria-label={`Microsoft product replacing ${r.currentProduct}`}

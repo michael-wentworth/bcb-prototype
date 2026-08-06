@@ -16,7 +16,7 @@ const VIEWS = {
   landing: {
     icon: <ShieldCheckmark20Regular />,
     title: 'Security BCB',
-    lead: 'This destination has no page yet.',
+    lead: 'No page here yet',
   },
 };
 
@@ -59,8 +59,7 @@ function ExampleCases() {
         <div>
           <h1 className={styles.title}>Example cases</h1>
           <p className={styles.lead}>
-            Finished business cases built for Microsoft customers. Open one to see how it is put
-            together — the inputs, the assumptions and the narrative are all readable.
+            Finished business cases built for Microsoft customers
           </p>
         </div>
         <Button appearance="primary" icon={<Add20Filled />} onClick={newCase}>
@@ -95,7 +94,7 @@ function ExampleCases() {
                 </div>
                 <div>
                   <dt>Payback</dt>
-                  <dd>{m.paybackMonths ? `${m.paybackMonths} mo` : '—'}</dd>
+                  <dd>{m.paybackMonths ? `${m.paybackMonths} mo` : 'n/a'}</dd>
                 </div>
                 <div>
                   <dt>Horizon</dt>
@@ -108,8 +107,7 @@ function ExampleCases() {
       </div>
 
       <p className={styles.footNote}>
-        Opening an example loads its inputs into the builder so you can see exactly how the numbers
-        were produced. Editing it will not change the published example.
+        Editing an example will not change the published example.
       </p>
     </div>
   );

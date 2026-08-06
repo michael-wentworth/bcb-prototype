@@ -64,9 +64,7 @@ export default function SpendComparison({ current, future, contractCount, symbol
       <figcaption className={styles.caption}>
         <div>
           <h2 className={styles.chartTitle}>Annual security spend</h2>
-          <p className={styles.chartSub}>
-            {money(reduction)} a year comes out of the licensing line alone.
-          </p>
+          <p className={styles.chartSub}>{money(reduction)} a year off the licensing line</p>
         </div>
         <button type="button" className={styles.tableToggle} onClick={() => setShowTable((v) => !v)}>
           {showTable ? 'Hide data' : 'View data'}

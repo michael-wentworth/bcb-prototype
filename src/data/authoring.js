@@ -47,19 +47,19 @@ export const NARRATIVE_SECTIONS = [
   {
     id: 'summary',
     label: 'Executive summary',
-    lead: 'The paragraph a CFO reads first.',
+    lead: 'The paragraph a CFO reads first',
     placeholder: 'Summarise the case in a paragraph…',
   },
   {
     id: 'recommendations',
     label: 'Recommendations',
-    lead: 'What you want the customer to commit to, and when.',
+    lead: 'What you want the customer to commit to, and when',
     placeholder: 'What should the customer do next?',
   },
   {
     id: 'risks',
     label: 'Risk analysis',
-    lead: 'What could go wrong and what you would do about it. A case with no stated risks reads as one nobody stress-tested.',
+    lead: 'What could go wrong and what you would do about it',
     placeholder: 'What are the risks, and how are they mitigated?',
   },
 ];

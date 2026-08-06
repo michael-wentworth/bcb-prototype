@@ -22,7 +22,11 @@ export const capabilitiesSoldBy = (vendor) =>
 
 export const CASE_START_YEAR = 2026;
 
-const num = (v) => {
+/* Every money and count field on this form is free text, so "1,350,000" and
+   "$1.35m" both arrive as strings. Exported because any consumer reading a raw
+   contract off state has to strip the same formatting — a bare Number() there
+   returns NaN and poisons whatever it feeds. */
+export const num = (v) => {
   const n = Number(String(v ?? '').replace(/[^0-9.-]/g, ''));
   return Number.isFinite(n) ? n : 0;
 };
@@ -204,7 +208,11 @@ export function evaluateContract(contract, futureCaps, displaceable, years, stra
   const uncovered = sold.filter((id) => !futureCaps.has(id));
   const blocked = uncovered.length > 0 && !contract.soleUseConfirmed;
 
-  const annualCost = num(contract.annualCost);
+  /* Floored at zero. The cost box is free text, so "-400000" is accepted, and a
+     negative annual contract cost is not a state the world has: left signed it
+     produces a negative saving that reduces the case total while still drawing
+     in the savings colour everywhere downstream. */
+  const annualCost = Math.max(0, num(contract.annualCost));
   const endYear = num(contract.yearContractEnds) || CASE_START_YEAR;
   const firstYear = Math.max(1, endYear - CASE_START_YEAR + 2);
   const yearsSaved = Math.max(0, years - firstYear + 1);
@@ -225,13 +233,13 @@ export function evaluateContract(contract, futureCaps, displaceable, years, stra
     strategicLinked,
     reason:
       linked.length === 0 && strategicLinked.length > 0
-        ? `${strategicLinked.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')} counts as net-new rather than a displacement, so this carries no saving.`
+        ? `${strategicLinked.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')} counts as net-new, not a displacement, so there is no saving.`
         : linked.length === 0
-          ? 'Covers nothing the future state adds, so the spend continues.'
+          ? 'No overlap with the future state, so the spend continues.'
           : blocked
-            ? `Also covers ${uncovered.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}, which the future state does not deliver — confirm the customer does not use it for that.`
+            ? `Also covers ${uncovered.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}, which the future state does not deliver. Confirm the customer does not use it for that.`
             : yearsSaved === 0
-              ? 'The contract ends after the analysis period.'
+              ? 'Contract ends after the analysis period.'
               : null,
   };
 }
