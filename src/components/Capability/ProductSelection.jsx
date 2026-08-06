@@ -9,7 +9,7 @@ import {
   Tab,
   TabList,
 } from '@fluentui/react-components';
-import { Dismiss16Regular } from '@fluentui/react-icons';
+import { ChevronDown16Regular, ChevronRight16Regular, Dismiss16Regular } from '@fluentui/react-icons';
 import {
   BASE_SKUS,
   CURRENT_BUNDLES,
@@ -146,6 +146,23 @@ export default function ProductSelection() {
     const fromCatalogue = capabilitiesSoldBy(name);
     linkVendor(name, capId ? [...new Set([capId, ...fromCatalogue])] : fromCatalogue);
   };
+
+  /* Collapsed groups, by key. Expanded is the default: a seller who has just
+     picked a future state needs to see what is in it, and a table that opens
+     shut hides the work. Collapsing is for after that, once the groups that
+     matter are known. */
+  const [collapsed, setCollapsed] = useState(() => new Set());
+  const groupKey = (g) => `${g.area}:${g.group}`;
+  const toggleGroup = (key) =>
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  const allCollapsed = groups.length > 0 && groups.every((g) => collapsed.has(groupKey(g)));
+  const toggleAll = () =>
+    setCollapsed(allCollapsed ? new Set() : new Set(groups.map(groupKey)));
 
   const allVendors = useMemo(() => {
     const set = new Set();
@@ -521,6 +538,15 @@ export default function ProductSelection() {
             </ul>
           ) : null}
 
+          {/* One control for the whole table, because collapsing fifteen groups
+              one chevron at a time to find the three that matter is the problem,
+              not the solution. */}
+          {groups.length > 1 ? (
+            <button type="button" className={styles.collapseAll} onClick={toggleAll}>
+              {allCollapsed ? 'Expand all' : 'Collapse all'}
+            </button>
+          ) : null}
+
           <div className={styles.tableWrap}>
             <table className={styles.mapTable}>
               <thead>
@@ -533,21 +559,45 @@ export default function ProductSelection() {
                 </tr>
               </thead>
               <tbody>
-                {groups.map((g) => (
-                  <React.Fragment key={`${g.area}:${g.group}`}>
+                {groups.map((g) => {
+                  const key = groupKey(g);
+                  const shut = collapsed.has(key);
+                  const Chevron = shut ? ChevronRight16Regular : ChevronDown16Regular;
+                  /* What a collapsed group still has to report. Without it,
+                     shutting a group hides whether there is anything left to do
+                     in it, which is the one thing the seller is scanning for. */
+                  const mappable = g.capabilities.filter((c) => !c.retained);
+                  const named = mappable.filter((c) => contractFor(c.id)).length;
+                  const tally =
+                    mappable.length === 0 ? 'All owned' : `${named} of ${mappable.length} named`;
+                  return (
+                  <React.Fragment key={key}>
                     <tr className={styles.groupRow}>
                       <th scope="colgroup" colSpan={5}>
-                        {/* Area first: it is the parent — Entra owns four of
-                            these groups — and leading with the group put the
-                            child above the parent. The separator is a real
-                            element so the two can never run together, which is
-                            how this read as "Endpoint managementIntune". */}
-                        <span className={styles.groupArea}>{areaById(g.area)?.label}</span>{' '}
-                        <span className={styles.groupSep} aria-hidden="true">·</span>{' '}
-                        <span className={styles.groupName}>{g.group}</span>
+                        <button
+                          type="button"
+                          className={styles.groupToggle}
+                          aria-expanded={!shut}
+                          /* Spelled out, because the separator between area and
+                             group is aria-hidden and the three spans would
+                             otherwise be read as one run-on word. */
+                          aria-label={`${areaById(g.area)?.label} ${g.group}, ${tally}`}
+                          onClick={() => toggleGroup(key)}
+                        >
+                          <Chevron className={styles.groupChevron} aria-hidden="true" />
+                          {/* Area first: it is the parent — Entra owns four of
+                              these groups — and leading with the group put the
+                              child above the parent. The separator is a real
+                              element so the two can never run together, which is
+                              how this read as "Endpoint managementIntune". */}
+                          <span className={styles.groupArea}>{areaById(g.area)?.label}</span>
+                          <span className={styles.groupSep} aria-hidden="true">·</span>
+                          <span className={styles.groupName}>{g.group}</span>
+                          <span className={styles.groupCount}>{tally}</span>
+                        </button>
                       </th>
                     </tr>
-                    {g.capabilities.map((c) => {
+                    {shut ? null : g.capabilities.map((c) => {
                       const ctr = contractFor(c.id);
                       const q = queries[c.id];
                       const typed = q !== undefined ? q : ctr?.vendor || '';
@@ -680,7 +730,8 @@ export default function ProductSelection() {
                       );
                     })}
                   </React.Fragment>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

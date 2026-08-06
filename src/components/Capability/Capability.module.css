@@ -477,6 +477,67 @@
   border-bottom: 1px solid var(--colorNeutralStroke2);
 }
 
+/* The whole group header is the hit target, not just the chevron: the row is
+   already a full-width band and a 16px glyph inside it is a needle to hit. */
+.groupToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalXS);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.groupToggle:hover .groupArea {
+  color: var(--colorBrandForeground2);
+}
+
+.groupToggle:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+  border-radius: var(--borderRadiusSmall);
+}
+
+.groupChevron {
+  flex: none;
+  color: var(--colorNeutralForeground3);
+}
+
+/* What a shut group still says about itself. Pushed to the end of the row so it
+   lines up down the table and can be scanned without reading the names. */
+.groupCount {
+  margin-left: auto;
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground3);
+}
+
+.collapseAll {
+  align-self: flex-end;
+  padding: 3px 10px;
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusCircular);
+  background: var(--colorNeutralBackground1);
+  font-family: inherit;
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+  cursor: pointer;
+}
+
+.collapseAll:hover {
+  background: var(--colorNeutralBackground1Hover);
+}
+
+.collapseAll:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
 .groupArea {
   font-weight: var(--fontWeightSemibold);
   color: var(--colorNeutralForeground1);
