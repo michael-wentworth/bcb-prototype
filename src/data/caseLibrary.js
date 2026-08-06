@@ -101,7 +101,7 @@ export const MY_CASES = [
       caseSetup: { name: 'Contoso FY27 Security Consolidation', analysisPeriod: 3 },
       outcomes: ['identity', 'threat', 'endpoint', 'ai-security', 'consolidation'],
       skus: [
-        { id: 'c1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate the Security Estate', pricePerMonth: '4', seats: seats(18000) },
+        { id: 'c1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate Security Tooling', pricePerMonth: '4', seats: seats(18000) },
         { id: 'c1s2', skuId: 'sentinel', solutionArea: 'Security', solutionPlay: 'Modernize Security Operations', pricePerMonth: '1.5', seats: seats(18000) },
         { id: 'c1s3', skuId: 'security-copilot', solutionArea: 'Security', solutionPlay: 'Adopt AI Safely', pricePerMonth: '0.8', seats: seats(18000) },
       ],
@@ -179,7 +179,7 @@ export const MY_CASES = [
         industry: 'Energy & resources',
         geography: 'weu',
         segment: 'Enterprise',
-        salesMotion: 'Upsell to existing estate',
+        salesMotion: 'Upsell to existing customer',
         numberOfUsers: '24000',
         bcbRole: 'customer-facing',
       },
@@ -220,14 +220,14 @@ export const MY_CASES = [
 export const EXAMPLE_CASES = [
   {
     id: 'ex-fabrikam',
-    title: 'Fabrikam Security Estate Consolidation',
+    title: 'Fabrikam Security Consolidation',
     customer: 'Fabrikam Financial',
     industry: 'Financial services',
     status: 'published',
     owner: 'Microsoft',
     modified: 'Curated example',
     modifiedOrder: 20,
-    highlight: 'Four vendors retired across a 42,000-seat estate',
+    highlight: 'Four vendors retired across 42,000 seats',
     input: {
       customer: {
         accountName: 'Fabrikam Financial',
@@ -248,10 +248,10 @@ export const EXAMPLE_CASES = [
         ['e1c3', 'Splunk Enterprise Security', '1680000', '2026'],
         ['e1c4', 'Broadcom/Symantec DLP', '624000', '2027'],
       ]),
-      caseSetup: { name: 'Fabrikam Security Estate Consolidation', analysisPeriod: 3 },
+      caseSetup: { name: 'Fabrikam Security Consolidation', analysisPeriod: 3 },
       outcomes: ['identity', 'threat', 'endpoint', 'data', 'consolidation'],
       skus: [
-        { id: 'e1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate the Security Estate', pricePerMonth: '3.5', seats: seats(42000) },
+        { id: 'e1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate Security Tooling', pricePerMonth: '3.5', seats: seats(42000) },
         { id: 'e1s2', skuId: 'sentinel', solutionArea: 'Security', solutionPlay: 'Modernize Security Operations', pricePerMonth: '1.2', seats: seats(42000) },
         { id: 'e1s3', skuId: 'purview', solutionArea: 'Security', solutionPlay: 'Safeguard Data and Compliance', pricePerMonth: '1', seats: seats(42000) },
       ],
@@ -275,7 +275,7 @@ export const EXAMPLE_CASES = [
     owner: 'Microsoft',
     modified: 'Curated example',
     modifiedOrder: 21,
-    highlight: 'A small estate and a single displacement',
+    highlight: 'Few products and a single displacement',
     input: {
       customer: {
         accountName: 'Tailspin Toys',
@@ -323,7 +323,7 @@ export const EXAMPLE_CASES = [
         industry: 'Financial services',
         geography: 'uk',
         segment: 'Enterprise',
-        salesMotion: 'Upsell to existing estate',
+        salesMotion: 'Upsell to existing customer',
         numberOfUsers: '28000',
         bcbRole: 'internal',
       },

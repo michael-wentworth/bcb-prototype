@@ -75,21 +75,21 @@ const BLURBS = {
   'o365-e1': 'Office 365 on the web, with basic retention.',
   'o365-e3': 'Office 365 with desktop apps, eDiscovery and audit.',
   'o365-e5': 'Office 365 with advanced compliance, email protection and cloud app security.',
-  'ems-e3': 'Identity and device management for an Office 365 estate.',
+  'ems-e3': 'Identity and device management for Office 365.',
   'ems-e5': 'Identity and device management with identity protection and cloud app security.',
   'defender-suite': 'Threat protection across endpoint, email, identity and cloud apps.',
-  'bp-defender': 'The Defender Suite priced for a Business Premium estate.',
-  'purview-suite': 'Data security, governance and compliance across the estate.',
-  'bp-purview': 'The Purview Suite priced for a Business Premium estate.',
-  'bp-defender-purview': 'Defender and Purview together, priced for a Business Premium estate.',
+  'bp-defender': 'The Defender Suite priced for Business Premium.',
+  'purview-suite': 'Data security, governance and compliance.',
+  'bp-purview': 'The Purview Suite priced for Business Premium.',
+  'bp-defender-purview': 'Defender and Purview together, priced for Business Premium.',
   'entra-suite': 'Identity governance, network access and privileged access.',
   'external-id': 'Identity for customers and partners, separate from the workforce directory.',
   'intune-suite': 'Advanced endpoint management and privilege control.',
   sentinel: 'Cloud-native security operations: SIEM, SOAR and unified investigation.',
   'security-copilot': 'AI assistance for the security operations team.',
   'defender-cloud': 'Protection and posture management for cloud workloads.',
-  'm365-copilot': 'AI assistance across the productivity estate.',
-  'agent-365': 'Governance for AI agents operating in the estate.',
+  'm365-copilot': 'AI assistance across Microsoft 365.',
+  'agent-365': 'Governance for AI agents.',
 };
 
 export function buildReport({
@@ -369,7 +369,7 @@ export function buildReport({
       title: 'Operational efficiency',
       value: null,
       text: consolidation.displacedCount
-        ? `${consolidation.displacedCount} vendor${consolidation.displacedCount === 1 ? '' : 's'} off the estate.`
+        ? `${consolidation.displacedCount} vendor${consolidation.displacedCount === 1 ? '' : 's'} retired.`
         : named.length
           ? 'Every named vendor keeps running, so there is no consolidation to claim.'
           : 'Consolidation shows once vendors are named.',

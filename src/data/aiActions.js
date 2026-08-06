@@ -64,7 +64,7 @@ const GENERATED = {
     const company = ctx.customer?.accountName || 'The customer';
     const seats = ctx.customer?.numberOfUsers
       ? `${Number(String(ctx.customer.numberOfUsers).replace(/[^0-9.]/g, '') || 0).toLocaleString('en-US')} users`
-      : 'the estate';
+      : 'the organization';
     const vendors = c.competitorLines.length;
 
     return `${company} runs ${vendors || 'several'} third-party security ${

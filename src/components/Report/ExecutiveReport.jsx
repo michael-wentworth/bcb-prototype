@@ -381,7 +381,7 @@ export default function ExecutiveReport() {
         </table>
         </div>
 
-        <CashFlowChart rows={r.financial.byYear} years={c.years} />
+        <CashFlowChart rows={r.financial.byYear} />
 
         {/* The run-rate sits one click down. It answers a different question to
             the curve above, and an executive asks the curve's question first. */}
@@ -398,9 +398,6 @@ export default function ExecutiveReport() {
       <Card className={styles.card}>
         <div>
           <h2 className={styles.cardTitle}>Capability coverage</h2>
-          <p className={styles.cardLead}>
-            What the estate covers today against what it would cover after.
-          </p>
         </div>
 
         <div className={styles.coverage}>
@@ -437,7 +434,7 @@ export default function ExecutiveReport() {
             {r.consolidation.vendorCount === 0
               ? 'No vendors named.'
               : r.consolidation.displacedCount
-                ? `${r.consolidation.displacedCount} of ${r.consolidation.vendorCount} named vendor${r.consolidation.vendorCount === 1 ? '' : 's'} come off the estate.`
+                ? `${r.consolidation.displacedCount} of ${r.consolidation.vendorCount} named vendor${r.consolidation.vendorCount === 1 ? '' : 's'} can be retired.`
                 : 'No named vendor can be displaced.'}
           </p>
         </div>

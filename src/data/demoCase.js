@@ -135,7 +135,7 @@ export const DEMO_EXTRACTION = {
    * seat count does not pay rate card, and quoting list would overstate cost.
    */
   skus: [
-    { skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate the Security Estate', pricePerMonth: '4' },
+    { skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate Security Tooling', pricePerMonth: '4' },
     { skuId: 'sentinel', solutionArea: 'Security', solutionPlay: 'Modernize Security Operations', pricePerMonth: '1.5' },
     { skuId: 'security-copilot', solutionArea: 'Security', solutionPlay: 'Adopt AI Safely', pricePerMonth: '0.8' },
   ],

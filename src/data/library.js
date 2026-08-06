@@ -55,7 +55,7 @@ export const ANALYST_STUDIES = [
     product: 'Microsoft Security',
     area: 'security',
     format: 'study',
-    covers: 'The consolidated security estate, not product by product',
+    covers: 'All the security products together, not one at a time',
   },
   {
     id: 'tei-security-info',
@@ -140,7 +140,7 @@ export const ANALYST_STUDIES = [
     product: 'Microsoft 365 E3',
     area: 'm365',
     format: 'study',
-    covers: 'The productivity and security baseline most estates are already on',
+    covers: 'The productivity and security baseline most organizations are already on',
     featured: true,
   },
   {

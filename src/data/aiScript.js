@@ -24,7 +24,7 @@ export const STEP_SUGGESTIONS = [
   [
     { label: 'Use the Contoso example', kind: 'demo' },
     { label: 'Which fields drive the numbers?' },
-    { label: 'What competitor products are in this estate?' },
+    { label: 'What competitor products does the customer use?' },
   ],
   [
     { label: 'What would this path add?' },
@@ -87,7 +87,7 @@ const INTENTS = [
       'Reading the description',
       'Matching to account records',
       'Reading the licensing move',
-      'Estimating the competitor estate',
+      'Estimating the competitor products',
     ],
     delay: 2800,
     build: () => ({
@@ -353,7 +353,7 @@ const INTENTS = [
   },
   {
     id: 'DETECT_COMPETITORS',
-    test: (input) => has(input, 'detect the competitor', 'in this estate', 'what competitor', 'which competitor'),
+    test: (input) => has(input, 'detect the competitor', 'what competitor', 'which competitor'),
     thinking: ['Scanning install-base signal', 'Mapping onto capabilities'],
     delay: 2000,
     build: (input, ctx) => {
@@ -576,7 +576,7 @@ const INTENTS = [
             {
               objection: '"Defender is not as good as our best-of-breed tool."',
               response:
-                'The case is not that one control wins. It is that correlated signal across the estate closes incidents faster. Offer a proof of concept on one business unit.',
+                'The case is not that one control wins. It is that correlated signal across all the tools closes incidents faster. Offer a proof of concept on one business unit.',
             },
             {
               objection: '"This is a licensing exercise dressed up as strategy."',

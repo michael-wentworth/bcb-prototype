@@ -354,18 +354,18 @@ export const LICENSING_PATHS = [
      when the current selection is empty. */
   { id: 'none-m365e3', label: 'Start on Microsoft 365 E3', from: [], to: ['m365-e3'], note: 'The enterprise baseline' },
   { id: 'none-m365e5', label: 'Start on Microsoft 365 E5', from: [], to: ['m365-e5'], note: 'Security and compliance from day one' },
-  { id: 'none-bp', label: 'Start on Business Premium', from: [], to: ['bus-premium'], note: 'For an estate under 300 seats' },
+  { id: 'none-bp', label: 'Start on Business Premium', from: [], to: ['bus-premium'], note: 'For under 300 seats' },
 
   /* -------------------------- Business bundles -------------------------- */
   { id: 'bb-bp', label: 'Business Basic to Business Premium', from: ['bus-basic'], to: ['bus-premium'], note: 'Adds device management and endpoint protection' },
-  { id: 'bb-e3', label: 'Business Basic to Microsoft 365 E3', from: ['bus-basic'], to: ['m365-e3'], note: 'The enterprise baseline as the estate grows' },
+  { id: 'bb-e3', label: 'Business Basic to Microsoft 365 E3', from: ['bus-basic'], to: ['m365-e3'], note: 'The enterprise baseline as the company grows' },
 
   { id: 'bs-bp', label: 'Business Standard to Business Premium', from: ['bus-standard'], to: ['bus-premium'], note: 'The security half Standard does not carry' },
-  { id: 'bs-e3', label: 'Business Standard to Microsoft 365 E3', from: ['bus-standard'], to: ['m365-e3'], note: 'Moves the estate onto enterprise terms' },
-  { id: 'bs-e5', label: 'Business Standard to Microsoft 365 E5', from: ['bus-standard'], to: ['m365-e5'], note: 'Straight to the full estate' },
+  { id: 'bs-e3', label: 'Business Standard to Microsoft 365 E3', from: ['bus-standard'], to: ['m365-e3'], note: 'Moves onto enterprise terms' },
+  { id: 'bs-e5', label: 'Business Standard to Microsoft 365 E5', from: ['bus-standard'], to: ['m365-e5'], note: 'Straight to the full bundle' },
 
-  { id: 'bp-m365e3', label: 'Business Premium to Microsoft 365 E3', from: ['bus-premium'], to: ['m365-e3'], note: 'The enterprise baseline as the estate grows' },
-  { id: 'bp-m365e5', label: 'Business Premium to Microsoft 365 E5', from: ['bus-premium'], to: ['m365-e5'], note: 'Straight to the full security and compliance estate' },
+  { id: 'bp-m365e3', label: 'Business Premium to Microsoft 365 E3', from: ['bus-premium'], to: ['m365-e3'], note: 'The enterprise baseline as the company grows' },
+  { id: 'bp-m365e5', label: 'Business Premium to Microsoft 365 E5', from: ['bus-premium'], to: ['m365-e5'], note: 'Straight to full security and compliance' },
   { id: 'bp-def', label: 'Business Premium to Defender Suite for Business Premium', from: ['bus-premium'], to: ['bus-premium', 'bp-defender'], note: 'Threat protection without leaving the bundle' },
   { id: 'bp-pur', label: 'Business Premium to Purview Suite for Business Premium', from: ['bus-premium'], to: ['bus-premium', 'bp-purview'], note: 'Data security and governance without leaving the bundle' },
   { id: 'bp-defpur', label: 'Business Premium to Defender and Purview Suites for Business Premium', from: ['bus-premium'], to: ['bus-premium', 'bp-defender-purview'], note: 'Both suites, priced together' },
@@ -374,7 +374,7 @@ export const LICENSING_PATHS = [
   { id: 'f1-f3', label: 'Microsoft 365 F1 to F3', from: ['m365-f1'], to: ['m365-f3'], note: 'Adds device management for frontline staff' },
   { id: 'f1-e3', label: 'Microsoft 365 F1 to E3', from: ['m365-f1'], to: ['m365-e3'], note: 'Moves frontline users onto the knowledge-worker bundle' },
   { id: 'f3-e3', label: 'Microsoft 365 F3 to E3', from: ['m365-f3'], to: ['m365-e3'], note: 'Adds the information protection layer' },
-  { id: 'f3-e5', label: 'Microsoft 365 F3 to E5', from: ['m365-f3'], to: ['m365-e5'], note: 'The full jump for a frontline-heavy estate' },
+  { id: 'f3-e5', label: 'Microsoft 365 F3 to E5', from: ['m365-f3'], to: ['m365-e5'], note: 'The full jump for a frontline-heavy workforce' },
 
   /* ---------------------------- Office 365 ------------------------------ */
   { id: 'o1-o3', label: 'Office 365 E1 to E3', from: ['o365-e1'], to: ['o365-e3'], note: 'Adds eDiscovery and audit' },
@@ -399,14 +399,14 @@ export const LICENSING_PATHS = [
   { id: 'e3-security', label: 'Microsoft 365 E3 plus Defender Suite', from: ['m365-e3'], to: ['m365-e3', 'defender-suite'], note: 'Security only, without the compliance half of E5' },
   { id: 'e3-purview', label: 'Microsoft 365 E3 plus Purview Suite', from: ['m365-e3'], to: ['m365-e3', 'purview-suite'], note: 'Data security and governance, including discovery' },
   { id: 'e3-entra', label: 'Microsoft 365 E3 plus Entra Suite', from: ['m365-e3'], to: ['m365-e3', 'entra-suite'], note: 'Identity governance and network access without changing the base' },
-  { id: 'e3-e5-copilot', label: 'Microsoft 365 E3 to E5 plus Security Copilot', from: ['m365-e3'], to: ['m365-e5', 'security-copilot'], note: 'The full estate with the SOC productivity layer' },
+  { id: 'e3-e5-copilot', label: 'Microsoft 365 E3 to E5 plus Security Copilot', from: ['m365-e3'], to: ['m365-e5', 'security-copilot'], note: 'The full bundle with the SOC productivity layer' },
 
   /* Already holding a suite. E5 contains it, so the move is a consolidation
      rather than an addition - and it only shows for customers who own both. */
   { id: 'e3def-e5', label: 'Microsoft 365 E3 + Microsoft Defender Suite to Microsoft 365 E5', from: ['m365-e3', 'defender-suite'], to: ['m365-e5'], note: 'Folds the suite into the bundle that already contains it' },
   { id: 'e3pur-e5', label: 'Microsoft 365 E3 + Microsoft Purview Suite to Microsoft 365 E5', from: ['m365-e3', 'purview-suite'], to: ['m365-e5'], note: 'Folds the suite into the bundle that already contains it' },
 
-  { id: 'e5-copilot', label: 'Microsoft 365 E5 plus Security Copilot', from: ['m365-e5'], to: ['m365-e5', 'security-copilot'], note: 'The SOC productivity layer on a complete estate' },
+  { id: 'e5-copilot', label: 'Microsoft 365 E5 plus Security Copilot', from: ['m365-e5'], to: ['m365-e5', 'security-copilot'], note: 'The SOC productivity layer on a complete bundle' },
   { id: 'e5-entra', label: 'Microsoft 365 E5 plus Entra Suite', from: ['m365-e5'], to: ['m365-e5', 'entra-suite'], note: 'Adds governance, ZTNA and secure web gateway' },
   { id: 'e5-sentinel', label: 'Microsoft 365 E5 plus Sentinel', from: ['m365-e5'], to: ['m365-e5', 'sentinel'], note: 'Brings security operations onto the same platform' },
   { id: 'e5-intune', label: 'Microsoft 365 E5 plus Intune Suite', from: ['m365-e5'], to: ['m365-e5', 'intune-suite'], note: 'The advanced endpoint management add-ons' },

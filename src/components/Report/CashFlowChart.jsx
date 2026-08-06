@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useId } from '@fluentui/react-components';
 import useElementWidth from '../ResultsDashboard/useElementWidth.js';
 import { formatCurrency } from '../../data/model.js';
@@ -42,37 +42,35 @@ function niceTicks(min, max, count = 4) {
 }
 
 /**
- * Benefits, costs and the running balance, one column per year.
+ * The shape of the table above it, and nothing else.
  *
- * Bars for the two flows and a line for the balance, because they answer
- * different questions: the bars are "what happened that year", the line is
- * "where does the customer stand". Both are dollars on one shared axis, so the
- * line can be read against the bars rather than against a second scale nobody
- * calibrates.
+ * One column per year, pivoting on the zero line: benefit up, cost down, both
+ * on the same centre so a year reads as one object. Offsetting them sideways
+ * put a year's two figures at a different x AND a different y, which scattered
+ * the chart and left the eye pairing columns by guesswork.
  *
- * Costs point down. A cost drawn upward next to a benefit makes the reader do
- * the subtraction; drawn below the zero line the net is the visible gap.
+ * No data table of its own. The card leads with these figures laid out by year,
+ * and a toggle that reprints them transposed is the same content twice.
  */
-export default function CashFlowChart({ rows, years, symbol = '$' }) {
+export default function CashFlowChart({ rows, symbol = '$' }) {
   const [wrapRef, width] = useElementWidth(680);
-  const [showTable, setShowTable] = useState(false);
   const clipId = useId('cf-clip');
   const money = (v) => formatCurrency(v, { symbol });
-  const exact = (v) => formatCurrency(v, { symbol, compact: false });
 
-  /* A case with no incumbents and a future state no dearer than today has
-     nothing to plot. An axis drawn over it is a fabricated scale, so say so
-     instead: the table above already carries the zeros. */
+  /* A case with no vendors and a future state no dearer than today has nothing
+     to plot. An axis drawn over it is a fabricated scale, so say so instead:
+     the table above already carries the zeros. */
   if (rows.every((r) => r.benefit === 0 && r.cost === 0)) {
     return (
       <p className={styles.chartEmpty}>
-        No benefits or costs to plot. Name a vendor, or set a rate above what the customer
-        pays today.
+        No benefits or costs to plot. Name a vendor, or set a rate above what the customer pays
+        today.
       </p>
     );
   }
 
-  /* Start at zero, so the line has an origin rather than beginning mid-air. */
+  /* Start at zero, so the balance line has an origin rather than beginning
+     mid-air. */
   const points = [{ label: 'Start', cumulative: 0, benefit: 0, cost: 0, origin: true }, ...rows];
 
   const values = rows.flatMap((r) => [r.benefit, -r.cost, r.cumulative]);
@@ -85,7 +83,7 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
   const plotH = height - PAD_T - PAD_B;
   const plotW = Math.max(60, width - AXIS_W - 8);
   const colW = plotW / points.length;
-  const barW = Math.max(6, Math.min(30, colW * 0.24));
+  const barW = Math.max(10, Math.min(34, colW * 0.34));
 
   const y = (v) => PAD_T + ((top - v) / span) * plotH;
   const x = (i) => AXIS_W + colW * (i + 0.5);
@@ -95,20 +93,6 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
 
   return (
     <div className={styles.chart} ref={wrapRef}>
-      <div className={styles.chartHead}>
-        <div>
-          <h3 className={styles.chartTitle}>Cash flow by year</h3>
-        </div>
-        <button
-          type="button"
-          className={styles.chartToggle}
-          aria-expanded={showTable}
-          onClick={() => setShowTable((v) => !v)}
-        >
-          {showTable ? 'Hide data' : 'View data'}
-        </button>
-      </div>
-
       <svg
         className={styles.chartSvg}
         viewBox={`0 0 ${width} ${height}`}
@@ -117,7 +101,10 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
         preserveAspectRatio="xMinYMid meet"
         role="img"
         aria-label={`Cash flow by year. ${rows
-          .map((r) => `${r.label}: benefit ${money(r.benefit)}, cost ${money(r.cost)}, running balance ${money(r.cumulative)}`)
+          .map(
+            (r) =>
+              `${r.label}: benefit ${money(r.benefit)}, cost ${money(r.cost)}, running balance ${money(r.cumulative)}`,
+          )
           .join('. ')}`}
       >
         <defs>
@@ -135,7 +122,13 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
               x2={AXIS_W + plotW}
               y2={y(t)}
             />
-            <text className={styles.cfAxis} x={AXIS_W - 8} y={y(t)} textAnchor="end" dominantBaseline="middle">
+            <text
+              className={styles.cfAxis}
+              x={AXIS_W - 8}
+              y={y(t)}
+              textAnchor="end"
+              dominantBaseline="middle"
+            >
               {money(t)}
             </text>
           </g>
@@ -156,7 +149,7 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
                 {p.benefit > 0 ? (
                   <rect
                     className={styles.cfBenefit}
-                    x={x(i) - barW - 1}
+                    x={x(i) - barW / 2}
                     y={y(p.benefit)}
                     width={barW}
                     height={Math.max(1, zero - y(p.benefit))}
@@ -166,7 +159,7 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
                 {p.cost > 0 ? (
                   <rect
                     className={styles.cfCost}
-                    x={x(i) + 1}
+                    x={x(i) - barW / 2}
                     y={zero}
                     width={barW}
                     height={Math.max(1, y(-p.cost) - zero)}
@@ -184,13 +177,7 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
         </g>
 
         {points.map((p, i) => (
-          <text
-            key={p.label}
-            className={styles.cfTick}
-            x={x(i)}
-            y={height - 14}
-            textAnchor="middle"
-          >
+          <text className={styles.cfTick} key={p.label} x={x(i)} y={height - 14} textAnchor="middle">
             {p.label}
           </text>
         ))}
@@ -210,41 +197,6 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
           Running balance
         </li>
       </ul>
-
-      {showTable ? (
-        <div className={styles.tableWrap}>
-        <table className={styles.dataTable}>
-          <thead>
-            <tr>
-              <th scope="col">Year</th>
-              <th scope="col" className={styles.numeric}>
-                Benefits
-              </th>
-              <th scope="col" className={styles.numeric}>
-                Costs
-              </th>
-              <th scope="col" className={styles.numeric}>
-                Net
-              </th>
-              <th scope="col" className={styles.numeric}>
-                Running balance
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.label}>
-                <th scope="row">{r.label}</th>
-                <td className={styles.numeric}>{exact(r.benefit)}</td>
-                <td className={styles.numeric}>{exact(r.cost)}</td>
-                <td className={styles.numeric}>{exact(r.net)}</td>
-                <td className={styles.numeric}>{exact(r.cumulative)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </div>
-      ) : null}
     </div>
   );
 }

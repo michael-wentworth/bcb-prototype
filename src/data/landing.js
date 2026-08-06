@@ -72,7 +72,7 @@ export const PILLARS = [
   {
     id: 'compliant',
     label: 'Stay compliant',
-    lead: 'Secure and govern your organization’s data across your entire digital estate.',
+    lead: 'Secure and govern your organization’s data.',
     stats: [
       {
         value: '75%',

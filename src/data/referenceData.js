@@ -60,7 +60,7 @@ export const CUSTOMER_SEGMENTS = [
 
 export const SALES_MOTIONS = [
   'New workload / greenfield',
-  'Upsell to existing estate',
+  'Upsell to existing customer',
   'Competitive displacement',
   'Renewal / True-up',
   'Consolidation',
@@ -277,7 +277,7 @@ export const SOLUTION_PLAYS = [
   'Secure Devices and Endpoints',
   'Secure Cloud Workloads',
   'Adopt AI Safely',
-  'Consolidate the Security Estate',
+  'Consolidate Security Tooling',
 ];
 
 /**
@@ -290,7 +290,7 @@ export const MICROSOFT_SKUS = [
     name: 'Microsoft 365 E5',
     listPrice: 57,
     solutionArea: 'Modern Work',
-    solutionPlay: 'Consolidate the Security Estate',
+    solutionPlay: 'Consolidate Security Tooling',
     includes: ['m365-e5-security', 'defender-xdr', 'defender-endpoint', 'defender-office', 'entra-p2', 'purview', 'intune'],
   },
   {
@@ -298,7 +298,7 @@ export const MICROSOFT_SKUS = [
     name: 'Microsoft 365 E5 Security',
     listPrice: 12,
     solutionArea: 'Security',
-    solutionPlay: 'Consolidate the Security Estate',
+    solutionPlay: 'Consolidate Security Tooling',
     includes: ['defender-xdr', 'defender-endpoint', 'defender-office', 'entra-p2'],
   },
   {
