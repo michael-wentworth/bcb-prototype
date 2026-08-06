@@ -202,11 +202,11 @@ export const EXCLUDED = {
 export const REFUSALS = [
   {
     title: 'Spend the customer keeps paying',
-    text: `The ${EXCLUDED.bundleName} licenses underneath this estate cost ${exact(EXCLUDED.annual)} a year. They are not a saving, because the customer keeps paying them.`,
+    text: `${EXCLUDED.bundleName} licenses cost ${exact(EXCLUDED.annual)} a year. The customer keeps paying them, so they are not a saving.`,
   },
   {
     title: 'Savings before the contract ends',
-    text: 'A vendor cannot be switched off mid-term. Benefit starts the year after the contract lapses, which is why year one here is nil.',
+    text: 'Benefit starts the year after a contract lapses, so year one here is nil.',
   },
   {
     title: 'Anything beyond the horizon',
@@ -214,6 +214,6 @@ export const REFUSALS = [
     // can contribute is startYear + years - 2. One ending in the final analysis
     // year is already too late — an off-by-one here would be the single error
     // that discredits a page whose whole claim is that the arithmetic is shown.
-    text: `A contract ending in ${CASE_START_YEAR + base.years - 1} or later contributes nothing to a ${base.years}-year case, however large it is — the saving would start after the horizon closes.`,
+    text: `A contract ending in ${CASE_START_YEAR + base.years - 1} or later contributes nothing to a ${base.years}-year case, however large it is.`,
   },
 ];

@@ -66,9 +66,6 @@ export default function WaterfallChart({ steps, total, totalLabel, symbol = '$' 
       <div className={styles.chartHead}>
         <div>
           <h3 className={styles.chartTitle}>Annual licensing, today to future</h3>
-          <p className={styles.chartLead}>
-            What stops, what starts, and what the estate costs a year either side of the move.
-          </p>
         </div>
         <button
           type="button"

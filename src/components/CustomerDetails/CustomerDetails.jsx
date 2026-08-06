@@ -99,12 +99,12 @@ export default function CustomerDetails() {
         <div className={styles.grid}>
           <FormField
             label="Analysis period (years)"
-            help="Sets the horizon for cost, benefit and ROI"
+            help="Horizon for cost, benefit and ROI"
           >
             {(id) => (
               <Dropdown
                 id={id}
-                placeholder="Select number of years"
+                placeholder="Select years"
                 value={caseSetup.analysisPeriod ? `${caseSetup.analysisPeriod} years` : ''}
                 selectedOptions={[String(caseSetup.analysisPeriod)]}
                 onOptionSelect={(_, d) => setCaseSetup('analysisPeriod', Number(d.optionValue))}
@@ -292,7 +292,7 @@ export default function CustomerDetails() {
           </FormField>
 
           <FormField label="Currency">
-            {(id) => <Input id={id} value={customer.geography ? currency : '—'} disabled />}
+            {(id) => <Input id={id} value={customer.geography ? currency : ''} disabled />}
           </FormField>
 
           <FormField label="Customer segment" meta={fieldMeta.segment}>
@@ -334,7 +334,6 @@ export default function CustomerDetails() {
           <FormField
             label="Number of users"
             required
-            help="Seeds the per-year seat defaults"
             meta={fieldMeta.numberOfUsers}
           >
             {(id) => (
@@ -366,9 +365,9 @@ export default function CustomerDetails() {
                  — where nothing is filled in and the hint is most useful — was
                  the one place it never appeared. */
               customer.numberOfDevices
-                ? 'Endpoint count for Defender-related calculations'
+                ? 'Endpoints used in Defender calculations'
                 : effectiveDevices > 0
-                  ? `Defaults to 1.2 × users — ${effectiveDevices.toLocaleString('en-US')} devices`
+                  ? `Defaults to 1.2 × users (${effectiveDevices.toLocaleString('en-US')} devices)`
                   : 'Defaults to 1.2 × users'
             }
           >
@@ -391,7 +390,7 @@ export default function CustomerDetails() {
               className={styles.textarea}
               value={customer.description}
               onChange={(_, d) => setCustomer('description', d.value)}
-              placeholder="Optional notes about this customer or engagement"
+              placeholder="Notes about this customer or engagement"
               resize="vertical"
             />
           )}
@@ -405,7 +404,7 @@ export default function CustomerDetails() {
 
       {/* ------------------------- Business Case Setup ------------------------ */}
 
-      <StepFooter hint="Fill in what you know — you can move between steps freely and come back." />
+      <StepFooter hint="Fill in what you know" />
     </div>
   );
 }
@@ -450,7 +449,7 @@ function CompetitorSearch({ onPick, symbol }) {
         <ul className={styles.results} role="listbox" aria-label="Matching products">
           {matches.length === 0 ? (
             <li className={styles.noResult}>
-              Nothing matches. Use <strong>Add a product that is not listed</strong> below.
+              Nothing matches. Use <strong>Add a new product</strong> below.
             </li>
           ) : (
             matches.map((c) => (
@@ -542,10 +541,7 @@ function CompetitiveEnvironment({
     <Card className={styles.card}>
       <div className={styles.cardHead}>
         <h2 className={styles.cardTitle}>Competitor products</h2>
-        <p className={styles.cardLead}>
-          What the customer buys outside Microsoft today. Search, or enter a product not in our
-          database.
-        </p>
+        <p className={styles.cardLead}>What the customer buys outside Microsoft today</p>
       </div>
 
       <p className={styles.subHead}>Add a competitor product</p>
@@ -599,7 +595,7 @@ function CompetitiveEnvironment({
             {competitors.rows.length === 0 ? (
               <tr>
                 <td colSpan={6} className={styles.tableEmpty}>
-                  No competitor products added yet.
+                  No competitor products added yet
                 </td>
               </tr>
             ) : (
@@ -619,7 +615,7 @@ function CompetitiveEnvironment({
                         <td className={`${styles.cellFixed} ${styles.cellProductText}`}>
                           {r.currentProduct}
                         </td>
-                        <td className={styles.cellFixed}>{r.softwareSolution || '—'}</td>
+                        <td className={styles.cellFixed}>{r.softwareSolution || ''}</td>
                       </>
                     ) : (
                       <>
@@ -642,8 +638,8 @@ function CompetitiveEnvironment({
                               basis={r.stated ? 'Stated directly' : 'Inferred from install-base signal'}
                               evidence={
                                 r.stated
-                                  ? 'Named in the description you gave me. The contract end year is still an estimate — confirm it before this reaches a customer.'
-                                  : 'Detected against this account rather than stated — confirm the product and its contract end year before this reaches a customer.'
+                                  ? 'Named in the description you gave me. Confirm the contract end year before this reaches a customer.'
+                                  : 'Detected against this account, not stated. Confirm the product and its contract end year before this reaches a customer.'
                               }
                               ai
                               compact
@@ -654,7 +650,7 @@ function CompetitiveEnvironment({
                           <Dropdown
                             size="small"
                             className={styles.cellSolution}
-                            placeholder="—"
+                            placeholder="Select"
                             aria-label={`Software solution for ${r.currentProduct}`}
                             value={r.softwareSolution}
                             selectedOptions={r.softwareSolution ? [r.softwareSolution] : []}
@@ -675,7 +671,7 @@ function CompetitiveEnvironment({
                       <Input
                         size="small"
                         className={styles.cellCost}
-                        aria-label={`Annual cost at MSRP for ${r.currentProduct}`}
+                        aria-label={`Annual cost for ${r.currentProduct}`}
                         value={r.competitorCost}
                         contentBefore={symbol}
                         onChange={(_, d) => onUpdate(r.id, { competitorCost: d.value })}
@@ -719,16 +715,15 @@ function CompetitiveEnvironment({
 
       {competitors.rows.length > 0 ? (
         <p className={styles.tableNote}>
-          Catalogue costs are indicative — replace them with what the customer actually pays, and
-          set each contract end year. To change a catalogue product itself, remove the row and add
-          the right one. You will map these to Microsoft products in step 2.
+          Catalogue costs are indicative. Replace them with what the customer pays, and set each
+          contract end year.
         </p>
       ) : null}
 
       {competitors.rows.some((r) => !lineFor(r.id)?.displaceable) ? (
         <p className={styles.horizonNote}>
-          A contract ending after the analysis period contributes nothing to this case — the
-          customer is still paying for it. Extend the analysis period or correct the end year.
+          A contract ending after the analysis period adds nothing to this case. Extend the
+          analysis period or correct the end year.
         </p>
       ) : null}
 

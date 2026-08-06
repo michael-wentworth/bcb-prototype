@@ -229,13 +229,13 @@ export function evaluateContract(contract, futureCaps, displaceable, years, stra
     strategicLinked,
     reason:
       linked.length === 0 && strategicLinked.length > 0
-        ? `${strategicLinked.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')} counts as net-new rather than a displacement, so this carries no saving.`
+        ? `${strategicLinked.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')} counts as net-new, not a displacement, so there is no saving.`
         : linked.length === 0
-          ? 'Covers nothing the future state adds, so the spend continues.'
+          ? 'No overlap with the future state, so the spend continues.'
           : blocked
-            ? `Also covers ${uncovered.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}, which the future state does not deliver — confirm the customer does not use it for that.`
+            ? `Also covers ${uncovered.map((id) => capabilityById(id)?.name).filter(Boolean).join(', ')}, which the future state does not deliver. Confirm the customer does not use it for that.`
             : yearsSaved === 0
-              ? 'The contract ends after the analysis period.'
+              ? 'Contract ends after the analysis period.'
               : null,
   };
 }

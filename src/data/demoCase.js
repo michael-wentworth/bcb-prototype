@@ -12,7 +12,7 @@
    operations, SOC headcount — which read well but named nothing the capability
    model consumes, so the fill had to invent the licensing move behind it. */
 export const DEMO_PROMPT =
-  'Contoso has 18,000 employees on Microsoft 365 E3 and wants to move to E5. Today they run CrowdStrike Falcon for endpoint, Okta for identity and Proofpoint for email security.';
+  'Contoso has 18,000 employees on Microsoft 365 E3 and wants to move to E5. Today Contoso runs CrowdStrike Falcon for endpoint, Okta for identity and Proofpoint for email security.';
 
 /** Field-level provenance, shown against each populated field. */
 export const EXTRACTION_EVIDENCE = {
@@ -32,12 +32,12 @@ export const EXTRACTION_EVIDENCE = {
   rateByLicense: {
     confidence: 'low',
     basis: 'Estimated from comparable agreements',
-    evidence: 'No negotiated rate exists in any record I can read. This is a placeholder for the one you land.',
+    evidence: 'No negotiated rate exists in any record I can read',
   },
   capabilityContracts: {
     confidence: 'medium',
     basis: 'Products named by you, cost and end year inferred',
-    evidence: 'CrowdStrike, Okta and Proofpoint were stated. Annual cost and contract end year are estimated from install-base signal.',
+    evidence: 'Cost and end year estimated from install-base signal',
   },
 
   website: {
@@ -53,18 +53,18 @@ export const EXTRACTION_EVIDENCE = {
   bundleId: {
     confidence: 'high',
     basis: 'Stated directly',
-    evidence: '"…currently uses Microsoft 365 E3…"',
+    evidence: '"…on Microsoft 365 E3…"',
   },
   annualPerUser: {
     confidence: 'medium',
     basis: 'List price for the stated bundle',
-    evidence: 'Microsoft 365 E3 at $432 per user per year — replace with the negotiated rate',
+    evidence: 'Microsoft 365 E3 at $432 per user per year',
   },
   additionalValue: {
     confidence: 'medium',
     basis: 'Stated as an expectation',
     evidence:
-      '"…expected to carry around $200,000 a year in negotiated concessions." Expected, not signed — confirm before this reaches a customer',
+      '"…expected to carry around $200,000 a year in negotiated concessions." Expected, not signed',
   },
   accountName: { confidence: 'high', basis: 'Stated directly', evidence: '"Contoso has 18,000 employees…"' },
   opportunityId: {
@@ -75,7 +75,7 @@ export const EXTRACTION_EVIDENCE = {
   opportunityName: {
     confidence: 'medium',
     basis: 'Matched to account record',
-    evidence: 'Name of the open security opportunity on the Contoso Ltd. account in MSX',
+    evidence: 'The open security opportunity on the Contoso Ltd. account in MSX',
   },
   tpid: {
     confidence: 'high',
@@ -86,12 +86,12 @@ export const EXTRACTION_EVIDENCE = {
   industry: {
     confidence: 'high',
     basis: 'Matched to account record',
-    evidence: 'Contoso Ltd. — discrete manufacturing, MSX account taxonomy',
+    evidence: 'Discrete manufacturing in the MSX account taxonomy',
   },
   geography: {
     confidence: 'medium',
     basis: 'Inferred from account footprint',
-    evidence: 'Headquarters and the majority of seats in the United States, with smaller operations in Germany and the UK',
+    evidence: 'Headquarters and most seats in the United States',
   },
   segment: { confidence: 'medium', basis: 'Inferred from seat count', evidence: 'A seat count of 18,000 sits in the Enterprise band' },
   salesMotion: {
@@ -121,7 +121,7 @@ export const DEMO_EXTRACTION = {
     numberOfDevices: '',
     bcbRole: 'customer-facing',
     description:
-      'Reduce vendor sprawl across the security estate and modernise security operations. Consolidate the security tooling detected on this account onto a single platform to lower operational complexity, and extend a stretched SOC with AI assistance rather than additional headcount.',
+      'Reduce vendor sprawl, consolidate security tooling onto one platform, and extend a stretched SOC with AI rather than headcount.',
   },
 
   /** Named from the opportunity, so "I filled the whole case in" is true. */

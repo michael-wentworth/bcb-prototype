@@ -38,7 +38,7 @@ const TABS = [
 
 const SORTS = [
   { id: 'modified', label: 'Last modified' },
-  { id: 'title', label: 'Name (A–Z)' },
+  { id: 'title', label: 'Name (A to Z)' },
   { id: 'customer', label: 'Customer' },
 ];
 
@@ -255,7 +255,7 @@ function CaseRow({ entry, onOpen, codesInView = [] }) {
         <div className={styles.stat}>
           <span className={styles.statLabel}>Payback</span>
           <span className={styles.statValue}>
-            {m.paybackMonths ? `${m.paybackMonths} mo` : '—'}
+            {m.paybackMonths ? `${m.paybackMonths} mo` : 'n/a'}
           </span>
         </div>
       </div>
@@ -273,18 +273,13 @@ function EmptyState({ query, onNew, onExamples, onOpenExample }) {
   if (query.trim()) {
     return (
       <div className={styles.empty}>
-        <p className={styles.emptyTitle}>No matches</p>
-        <p className={styles.emptyText}>Nothing matches “{query.trim()}”.</p>
+        <p className={styles.emptyTitle}>No case matches “{query.trim()}”</p>
       </div>
     );
   }
   return (
     <div className={styles.empty}>
       <p className={styles.emptyTitle}>No cases here yet</p>
-      <p className={styles.emptyText}>
-        Start one from scratch, or read a finished example first — it is the quickest way to see what
-        a complete case looks like.
-      </p>
       <div className={styles.emptyActions}>
         <Button appearance="primary" icon={<Add20Filled />} onClick={onNew}>
           Create business case

@@ -57,12 +57,12 @@ function coverage(ids, set) {
    because a product card with an empty description reads as a rendering fault
    rather than as a product nobody wrote a line for. */
 const BLURBS = {
-  'm365-e5': 'The enterprise bundle: identity, endpoint, email and compliance on one agreement.',
-  'm365-e3': 'The enterprise baseline for productivity, device management and identity.',
-  'm365-f1': 'Frontline identity, for staff who sign in but do not sit at a desk.',
+  'm365-e5': 'Identity, endpoint, email and compliance in one bundle.',
+  'm365-e3': 'Productivity, device management and identity.',
+  'm365-f1': 'Frontline identity for staff who do not sit at a desk.',
   'm365-f3': 'Frontline productivity with device management and identity.',
-  'bus-premium': 'The small-business bundle: device management, identity and baseline threat protection.',
-  'bus-standard': 'Small-business productivity, without the security and device management layer.',
+  'bus-premium': 'Small-business device management, identity and baseline threat protection.',
+  'bus-standard': 'Small-business productivity, without security or device management.',
   'bus-basic': 'Small-business productivity on the web, without desktop apps or device management.',
   'o365-e1': 'Office 365 on the web, with basic retention.',
   'o365-e3': 'Office 365 with desktop apps, eDiscovery and audit.',
@@ -203,10 +203,10 @@ export function buildReport({
         adds: adds.map((cap) => cap.name),
         /* Why it is here, in the customer's terms rather than the catalogue's. */
         rationale: adds.length
-          ? `Adds ${adds.length} capabilit${adds.length === 1 ? 'y' : 'ies'} the customer does not have today, across ${areas} solution area${areas === 1 ? '' : 's'}.`
+          ? `Adds ${adds.length} new capabilit${adds.length === 1 ? 'y' : 'ies'} across ${areas} area${areas === 1 ? '' : 's'}.`
           : redundant
-            ? `Everything it carries is already granted by ${nameList(uniq(alreadyInStack.map((cap) => claimedBy.get(cap.id))))}. Check the quote is not paying twice.`
-            : 'Already owned. Carried into the future state so the analysis compares like with like.',
+            ? `Already granted by ${nameList(uniq(alreadyInStack.map((cap) => claimedBy.get(cap.id))))}. Check the quote is not paying twice.`
+            : 'Already owned',
         estimated: sku.source === 'estimate',
         notPerUser: sku.notPerUser || null,
       });
@@ -306,18 +306,18 @@ export function buildReport({
       text: annualSavings
         ? `${displacedVendorCount} contract${displacedVendorCount === 1 ? '' : 's'} stop inside the horizon.`
         : named.length
-          ? `${named.length} incumbent${named.length === 1 ? ' is' : 's are'} named, but none can be counted inside the horizon. The ledger in Assumptions says why for each.`
-          : 'No incumbent spend has been named against what this move adds yet.',
+          ? `${named.length} incumbent${named.length === 1 ? ' is' : 's are'} named, but none can be counted inside the horizon.`
+          : 'No incumbent spend named against what this move adds.',
     },
     {
       id: 'consolidation',
       title: 'Operational efficiency',
       value: null,
       text: consolidation.displacedCount
-        ? `${consolidation.displacedCount} vendor${consolidation.displacedCount === 1 ? '' : 's'} off the estate — fewer consoles, contracts and integrations to run.`
+        ? `${consolidation.displacedCount} vendor${consolidation.displacedCount === 1 ? '' : 's'} off the estate.`
         : named.length
-          ? 'Every named incumbent keeps running under this move, so there is no consolidation to claim.'
-          : 'Consolidation is available once incumbents are named against the capabilities this move adds.',
+          ? 'Every named incumbent keeps running, so there is no consolidation to claim.'
+          : 'Consolidation shows once incumbents are named.',
     },
     {
       id: 'security',
@@ -330,8 +330,8 @@ export function buildReport({
       title: 'AI enablement',
       value: null,
       text: netNewByArea('ai')
-        ? `${netNewByArea('ai')} AI capabilit${netNewByArea('ai') === 1 ? 'y' : 'ies'} the estate does not have today.`
-        : 'No AI capability in this move. Security Copilot and Agent 365 are the products that carry it.',
+        ? `${netNewByArea('ai')} new AI capabilit${netNewByArea('ai') === 1 ? 'y' : 'ies'}.`
+        : 'No AI capability in this move. Security Copilot and Agent 365 carry it.',
     },
   ];
 
@@ -359,50 +359,50 @@ export function buildReport({
       label: 'Microsoft pricing',
       value:
         futureLicenses.length === 0
-          ? 'No future state selected yet.'
+          ? 'No future state selected.'
           : atList.length === 0
-            ? 'Negotiated rate entered for every future license, not list.'
+            ? 'Negotiated rate on every future license, not list.'
             : rated.length === 0
-              ? 'List price throughout — no negotiated rate entered, so the investment is overstated.'
-              : `Negotiated rate entered for ${nameList(rated.map(nameOf))}. ${nameList(atList.map(nameOf))} still at list price, which overstates the investment.`,
+              ? 'List price throughout, so the investment is overstated.'
+              : `Negotiated rate for ${nameList(rated.map(nameOf))}. ${nameList(atList.map(nameOf))} still at list, which overstates the investment.`,
     },
     {
       label: 'Competitor pricing',
       value: named.length
-        ? 'Seller-entered annual cost per contract. Not sourced from any price list.'
+        ? 'Seller-entered annual cost per contract.'
         : 'No incumbents named.',
     },
     {
       label: 'Contract dates',
-      value: `Each saving starts the year after its contract lapses. A blank end year is read as ${CASE_START_YEAR}, which forfeits the first year of that saving.`,
+      value: `Each saving starts the year after its contract lapses. A blank end year is read as ${CASE_START_YEAR}, losing the first year of that saving.`,
     },
     {
       label: 'Savings method',
       value:
-        'Only competitor spend that stops is counted. Security, compliance and productivity value are stated as capability, never converted to currency.',
+        'Only competitor spend that stops is counted. Security, compliance and productivity value stay as capability, never currency.',
     },
     {
       label: 'ROI method',
-      value: `${years}-year nominal, no discount rate. Investment is the difference from what the customer pays today, not the whole Microsoft bill.`,
+      value: `${years}-year nominal, no discount rate. Investment is the difference from what the customer pays today.`,
     },
   ];
 
   if (microsoftChange < 0) {
     assumptions.push({
       label: 'Microsoft spend falls',
-      value: `At the rates entered, the future state costs ${money(Math.abs(microsoftChange))} a year less than the current bundle. The chart shows that; ROI does not, because a return has no meaning against a negative investment.`,
+      value: `At the rates entered, the future state costs ${money(Math.abs(microsoftChange))} a year less than the current bundle. ROI is not shown against a negative investment.`,
     });
   }
   if (dropped.length) {
     assumptions.push({
       label: 'Capabilities not replaced',
-      value: `${nameList(dropped.map((cap) => cap.name))} — covered today by ${nameList(droppedFrom)}, and not delivered by the future state. The saving assumes the customer does not need ${dropped.length === 1 ? 'it' : 'them'}.`,
+      value: `${nameList(dropped.map((cap) => cap.name))}: covered today by ${nameList(droppedFrom)}, not delivered by the future state. The saving assumes the customer does not need ${dropped.length === 1 ? 'it' : 'them'}.`,
     });
   }
   if (estimatedSkus.length) {
     assumptions.push({
       label: 'Estimated prices',
-      value: `${estimatedSkus.map((s) => s.name).join(', ')} — our own estimate rather than the price list. Replace before quoting.`,
+      value: `${estimatedSkus.map((s) => s.name).join(', ')}: our own estimate, not the price list. Replace before quoting.`,
     });
   }
   if (notPerUser.length) {
@@ -443,7 +443,7 @@ export function buildReport({
       steps.push({
         id: `confirm-${l.id}`,
         text: `Confirm how ${l.vendor} is used`,
-        detail: l.reason || 'Blocked by the partial-cover rule until confirmed.',
+        detail: l.reason || 'No saving until sole use is confirmed.',
       }),
     );
   /* Deliberately no confidence gaps here. "Seats per year" and "Incumbents
@@ -453,18 +453,16 @@ export function buildReport({
 
   /* ---------------------------- the summary ------------------------------- */
 
-  const products = state.future.licenses.join(', ');
   const summary = (() => {
     const head = `${customer.accountName || 'This customer'} runs ${state.current.licenses.join(' and ') || 'no Microsoft bundle'} today${vendors.length ? `, alongside ${vendors.length} named security vendor${vendors.length === 1 ? '' : 's'}` : ''}.`;
-    const rec = products ? ` Microsoft recommends ${products}.` : '';
-    const gain = ` The move adds ${netNew.length} capabilities the estate does not have today.`;
+    const gain = ` The move adds ${netNew.length} new capabilities.`;
     if (annualSavings) {
-      return `${head}${rec}${gain} Displacing the named incumbents stops ${money(annualSavings)} a year against ${money(annualInvestment)} of additional Microsoft licensing.`;
+      return `${head}${gain} Displacing the named incumbents stops ${money(annualSavings)} a year against ${money(annualInvestment)} of new Microsoft licensing.`;
     }
     if (named.length) {
-      return `${head}${rec}${gain} None of those contracts can be counted inside the ${years}-year horizon, so the case rests on capability rather than on savings — the ledger in Assumptions says why for each.`;
+      return `${head}${gain} None of those contracts can be counted inside the ${years}-year horizon, so the case rests on capability rather than savings.`;
     }
-    return `${head}${rec}${gain} No incumbent spend has been named against those capabilities yet, so the case currently rests on capability rather than on savings.`;
+    return `${head}${gain} No incumbent spend named against those capabilities, so the case rests on capability rather than savings.`;
   })();
 
   return {

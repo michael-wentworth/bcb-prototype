@@ -71,17 +71,17 @@ export const BCB_ROLES = [
   {
     id: 'customer-facing',
     label: 'Customer-facing pitch',
-    detail: 'Report is written for the customer. Internal-only pricing detail is hidden.',
+    detail: 'Written for the customer, with internal pricing detail hidden',
   },
   {
     id: 'internal',
     label: 'Internal planning',
-    detail: 'Full internal detail, including discounting and margin commentary.',
+    detail: 'Full internal detail, including discounting and margin',
   },
   {
     id: 'partner',
     label: 'Partner enablement',
-    detail: 'Written for a partner seller taking the case to their own customer.',
+    detail: 'For a partner seller taking the case to their own customer',
   },
 ];
 
@@ -195,60 +195,56 @@ export const SECURITY_OUTCOMES = [
   {
     id: 'identity',
     label: 'Identity and access management protection',
-    detail:
-      'Prevent unauthorized access and reduce identity-based breaches by enforcing Zero Trust principles.',
+    detail: 'Prevent unauthorized access and reduce identity-based breaches',
     implies: ['entra-p2'],
     rationale:
-      'Conditional access and risk-based sign-in are what close the standing exposure a separate IAM tool leaves behind — they have to sit with the directory rather than beside it.',
+      'Conditional access and risk-based sign-in close the exposure a separate IAM tool leaves behind.',
   },
   {
     id: 'threat',
     label: 'Threat detection & response (SOC/SIEM/XDR)',
-    detail: 'Detect and respond to threats faster while improving SOC efficiency.',
+    detail: 'Detect and respond to threats faster',
     implies: ['defender-xdr', 'sentinel'],
     rationale:
-      'Detection is only as good as the signal it correlates. One pipeline instead of two consoles is what shortens the gap between an alert and a decision.',
+      'One pipeline instead of two consoles shortens the gap between an alert and a decision.',
   },
   {
     id: 'data',
     label: 'Data security and compliance',
-    detail: 'Protect sensitive data and reduce risk of data leaks or compliance violations.',
+    detail: 'Protect sensitive data and reduce the risk of leaks or compliance violations',
     implies: ['purview'],
     rationale:
-      'Classification travels with the file rather than with the perimeter around it, which is the only version of data protection that survives the file being moved.',
+      'Classification travels with the file, so protection survives the file being moved.',
   },
   {
     id: 'endpoint',
     label: 'End point and device security',
-    detail: 'Reduce endpoint compromise and improve device visibility and control.',
+    detail: 'Reduce endpoint compromise and improve device visibility and control',
     implies: ['defender-endpoint', 'intune'],
     rationale:
-      'Device-level detection and the configuration baseline behind it are two halves of one control. Split across vendors, each blames the other.',
+      'Device-level detection and its configuration baseline are two halves of one control.',
   },
   {
     id: 'cloud',
     label: 'Cloud & application security',
-    detail: 'Secure cloud workloads and applications while reducing misconfiguration risk.',
+    detail: 'Secure cloud workloads and reduce misconfiguration risk',
     implies: ['defender-cloud'],
-    rationale:
-      'Workload protection and posture in one place, because a cloud incident almost always begins as a misconfiguration nobody was watching.',
+    rationale: 'Workload protection and posture in one place.',
   },
   {
     id: 'ai-security',
     label: 'AI-powered security (Security Copilot)',
-    detail:
-      'Increase security team productivity and reduce time to detect and respond using AI.',
+    detail: 'Increase security team productivity and cut time to detect and respond',
     implies: ['security-copilot'],
     rationale:
-      'Investigation in natural language is what turns SOC headcount into throughput rather than into more alerts triaged.',
+      'Investigation in natural language turns SOC headcount into throughput.',
   },
   {
     id: 'consolidation',
     label: 'Reduce cost and vendor consolidation',
-    detail: 'Replace multiple tools and point solutions with a unified platform solution.',
+    detail: 'Replace point solutions with one platform',
     implies: ['m365-e5'],
-    rationale:
-      'Not a product. Every contract that stops paying is the outcome, and it is delivered by what the suite absorbs rather than by another line item.',
+    rationale: 'Not a product. Every contract that stops paying is the outcome.',
     /* Not answered by buying a product. A seller who has already sold the suite
        and mapped four contracts to it has delivered this outcome; telling them
        to add another SKU for it is advice that contradicts their own table. */
@@ -257,11 +253,10 @@ export const SECURITY_OUTCOMES = [
   {
     id: 'agents',
     label: 'Security and AI agents control plane (Agent 365)',
-    detail:
-      'Secure and govern AI agents while improving automation, visibility, and control across agent-driven workflows.',
+    detail: 'Secure and govern AI agents',
     implies: ['agent-365'],
     rationale:
-      'AI agents reach data and systems on their own credentials, so governing what they can touch is a control plane nothing else in the estate covers.',
+      'AI agents reach data on their own credentials, so governing them is a control plane nothing else covers.',
   },
 ];
 

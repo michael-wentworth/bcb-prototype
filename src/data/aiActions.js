@@ -75,15 +75,15 @@ Consolidating onto Microsoft brings those capabilities into licensing the custom
       c.investmentTotal,
     )} over ${c.years} year${c.years === 1 ? '' : 's'} against ${formatCurrency(
       c.benefitTotal,
-    )} in modelled benefit — a ${formatPercent(c.roi)} return and ${formatCurrency(
+    )} in modelled benefit: a ${formatPercent(c.roi)} return and ${formatCurrency(
       c.annualNetBenefit,
     )} in average annual net benefit${
       c.paybackMonths ? `, with payback in month ${c.paybackMonths}` : ''
     }.
 
-Each displacement begins only once that vendor's contract lapses, which is why the return builds across the period rather than landing on day one.
+Each displacement begins once that vendor's contract lapses, so the return builds across the period.
 
-Competitor pricing and contract end dates remain the assumptions worth confirming with the customer before this is presented.`;
+Confirm competitor pricing and contract end dates with the customer before presenting.`;
   },
 
   recommendations: (ctx) => {
@@ -95,7 +95,7 @@ Competitor pricing and contract end dates remain the assumptions worth confirmin
 
 **Sequence each cutover to land at contract renewal**, so ${company} never pays twice for the same capability. Owner: Security operations. Timing: as each contract lapses.
 
-**Confirm competitor spend and contract end dates** before the case goes to committee — they gate every saving in the model. Owner: Account team. Timing: immediately.`;
+**Confirm competitor spend and contract end dates** before the case goes to committee. They gate every saving. Owner: Account team. Timing: immediately.`;
   },
 
   risks: () => `**Migration overrun.** A large identity and endpoint cutover slipping past the deployment window delays every benefit in the model. Mitigation: phase by business unit and budget a parallel-run period.
@@ -109,11 +109,11 @@ Competitor pricing and contract end dates remain the assumptions worth confirmin
 
 const EXPANSIONS = {
   summary:
-    'The case does not depend on a single line item. Excluding the least-certain displacement still leaves the case comfortably positive.',
+    'Excluding the least-certain displacement still leaves the case positive.',
   recommendations:
-    '**Confirm the assumptions before committee** — current security spend and SIEM ingest volume are modelled rather than customer-supplied, and both are cheap to verify. Owner: Account team. Timing: before the next review.',
+    '**Confirm the assumptions before committee.** Security spend and SIEM ingest volume are modelled, not customer-supplied. Owner: Account team. Timing: before the next review.',
   risks:
-    '**Sponsor turnover.** A case that depends on one executive sponsor is fragile. Mitigation: have the CISO and the CFO co-sign the assumptions before it goes to committee.',
+    '**Sponsor turnover.** A case that depends on one executive sponsor is fragile. Mitigation: have the CISO and the CFO co-sign the assumptions.',
 };
 
 /**
@@ -124,7 +124,7 @@ export function applyNarrativeAction(sectionId, currentText, actionId, ctx) {
   if (actionId === 'generate') {
     const gen = GENERATED[sectionId];
     if (!gen) return null;
-    return { text: gen(ctx), note: 'Drafted from the analysis.', fromScratch: true };
+    return { text: gen(ctx), note: 'Drafted from the analysis', fromScratch: true };
   }
 
   const body = String(currentText || '');
@@ -134,25 +134,25 @@ export function applyNarrativeAction(sectionId, currentText, actionId, ctx) {
     case 'rewrite':
       return {
         text: leadWithOutcome(body),
-        note: 'Rewritten to lead with the outcome rather than the context.',
+        note: 'Rewritten to lead with the outcome',
         fromScratch: false,
       };
     case 'summarize':
       return {
         text: condense(body),
-        note: 'Condensed to the opening point of each paragraph.',
+        note: 'Condensed to the opening point of each paragraph',
         fromScratch: false,
       };
     case 'expand':
       return {
         text: `${body}\n\n${EXPANSIONS[sectionId] || EXPANSIONS.summary}`,
-        note: 'Expanded with a supporting paragraph.',
+        note: 'Expanded with a supporting paragraph',
         fromScratch: false,
       };
     case 'clarity':
       return {
         text: tighten(body),
-        note: 'Tightened by removing hedges and wordy constructions.',
+        note: 'Tightened by removing hedges',
         fromScratch: false,
       };
     default:

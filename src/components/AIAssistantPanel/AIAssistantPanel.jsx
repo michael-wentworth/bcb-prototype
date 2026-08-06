@@ -150,9 +150,7 @@ export default function AIAssistantPanel({ onCollapse }) {
               <span className={styles.starterText}>
                 <span className={styles.starterLabel}>{starter.label}</span>
                 <span className={styles.starterHint}>
-                  Fills every step from one sentence — customer, outcomes, Microsoft products
-                  and competitor contracts — so you can read a finished business case straight
-                  away.
+                  Fills every step from one sentence
                 </span>
               </span>
             </button>
@@ -186,7 +184,7 @@ export default function AIAssistantPanel({ onCollapse }) {
           value={draft}
           onChange={(_, data) => setDraft(data.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Describe the customer, or ask why a recommendation is here…"
+          placeholder="Describe the customer, or ask why something is here…"
           resize="none"
           appearance="outline"
           aria-label="Message the business case copilot"
@@ -204,7 +202,7 @@ export default function AIAssistantPanel({ onCollapse }) {
         </Tooltip>
       </div>
       <p className={styles.disclaimer}>
-        Scripted prototype. Responses are illustrative and use mock data.
+        Scripted prototype using mock data
       </p>
     </aside>
   );

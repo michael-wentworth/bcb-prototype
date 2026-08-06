@@ -110,22 +110,22 @@ export const PILLARS = [
 /** What's new, newest first. `tag` drives the small label on each entry. */
 export const UPDATES = [
   {
-    period: 'July – August 2026',
+    period: 'July to August 2026',
     entries: [
       {
         tag: 'New',
         title: 'Customer report download restored',
-        text: 'Download and export the finished ROI report for offline sharing and analysis.',
+        text: 'Download and export the finished ROI report',
       },
       {
         tag: 'Feature',
         title: 'Competitor benchmarks',
-        text: 'The executive summary now names the competitors in the deal, for sharper displacement insight.',
+        text: 'The executive summary now names the competitors in the deal',
       },
       {
         tag: 'Security',
         title: 'Data centralised under SFI',
-        text: 'All application data now complies with Secure Future Initiative standards.',
+        text: 'All application data now complies with Secure Future Initiative standards',
       },
     ],
   },
@@ -135,12 +135,12 @@ export const UPDATES = [
       {
         tag: 'Update',
         title: 'New Security BCB address',
-        text: 'The upgraded URL is now available to partners on Transform.',
+        text: 'The upgraded URL is now available to partners on Transform',
       },
       {
         tag: 'Security',
         title: 'MISE compliance updated',
-        text: 'Stronger sign-in security and tighter prevention of unauthorised access.',
+        text: 'Stronger sign-in security and tighter prevention of unauthorised access',
       },
     ],
   },

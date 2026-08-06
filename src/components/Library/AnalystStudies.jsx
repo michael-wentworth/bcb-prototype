@@ -86,7 +86,7 @@ export default function AnalystStudies() {
   const open = (study) =>
     dispatchToast(
       <Toast>
-        <ToastTitle>{study.product} — not part of this prototype</ToastTitle>
+        <ToastTitle>{study.product} is not part of this prototype</ToastTitle>
       </Toast>,
       { intent: 'info', position: 'top-end' },
     );
@@ -99,9 +99,7 @@ export default function AnalystStudies() {
         <div>
           <h1 className={styles.title}>Analyst studies</h1>
           <p className={styles.lead}>
-            The independent research behind the numbers this tool produces. Every study here is a
-            Forrester Total Economic Impact commission — cite them for the benefit categories your
-            case argues, and hand a customer the infographic rather than the full report.
+            The independent research behind the numbers this tool produces
           </p>
         </div>
         <p className={styles.headerCount}>
@@ -141,7 +139,7 @@ export default function AnalystStudies() {
       </div>
 
       {visible.length === 0 ? (
-        <p className={styles.empty}>No study matches “{query}”.</p>
+        <p className={styles.empty}>No study matches “{query}”</p>
       ) : (
         <ul className={styles.grid}>
           {visible.map((group) => (

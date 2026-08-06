@@ -43,7 +43,7 @@ export default function Learning() {
   const notReal = (label) =>
     dispatchToast(
       <Toast>
-        <ToastTitle>{label} — not part of this prototype</ToastTitle>
+        <ToastTitle>{label} is not part of this prototype</ToastTitle>
       </Toast>,
       { intent: 'info', position: 'top-end' },
     );
@@ -74,8 +74,7 @@ export default function Learning() {
         <div>
           <h1 className={styles.title}>Learning</h1>
           <p className={styles.lead}>
-            Everything on how to use this tool: a written guide, a narrated walkthrough, and
-            enablement for each solution area you might be building a case around.
+            How to use this tool: a guide, a walkthrough, and enablement for each solution area
           </p>
         </div>
       </header>
@@ -117,7 +116,7 @@ export default function Learning() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Training</h2>
         <p className={styles.sectionLead}>
-          One deck per solution area, plus a customer scenario to build alongside.
+          One deck per solution area, plus a customer scenario to build alongside
         </p>
         <ul className={styles.grid}>
           {training.map((resource) => (
@@ -149,7 +148,7 @@ export default function Learning() {
         <div className={styles.teamsBody}>
           <h2 className={styles.teamsTitle}>The BCB Teams group</h2>
           <p className={styles.teamsLead}>
-            Announcements, releases, and somewhere to ask when a case will not behave.
+            Announcements, releases, and somewhere to ask questions
           </p>
         </div>
         <div className={styles.teamsActions}>

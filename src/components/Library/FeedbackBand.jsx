@@ -20,7 +20,7 @@ export default function FeedbackBand() {
       <Toaster toasterId={toasterId} />
       <h2 className={styles.feedbackTitle}>Have feedback?</h2>
       <p className={styles.feedbackLead}>
-        Tell us what is missing from this library, or what you could not find.
+        Tell us what is missing from this library
       </p>
       <Button
         appearance="primary"

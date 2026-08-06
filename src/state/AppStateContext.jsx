@@ -1207,11 +1207,11 @@ export function AppStateProvider({ children }) {
           () =>
             pushAssistant(
               [
-                { type: 'text', text: `**${section?.label}** — ${preview.note}` },
+                { type: 'text', text: `**${section?.label}**: ${preview.note}` },
                 {
                   type: 'callout',
                   tone: 'coach',
-                  title: 'How to undo this',
+                  title: 'Undo this',
                   text: 'Use "Revert to my version" on the section.',
                 },
               ],
@@ -1257,7 +1257,7 @@ export function AppStateProvider({ children }) {
       () =>
         pushAssistant(
           [
-            { type: 'text', text: 'How confident do you feel in this business case?' },
+            { type: 'text', text: 'How confident are you in this business case?' },
             { type: 'confidence' },
           ],
           'CONFIDENCE_ASK',

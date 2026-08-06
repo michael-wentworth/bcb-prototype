@@ -56,7 +56,7 @@ for (const cs of CASES) {
 
   /* 2. the estate-wide gain agrees with the sum of the rows and the summary */
   const rowGain = r.coverage.reduce((s, row) => s + row.gained, 0);
-  const said = Number(/adds (\d+) capabilities/.exec(r.summary)?.[1]);
+  const said = Number(/adds (\d+) new capabilit/.exec(r.summary)?.[1]);
   check(`summary gain ${said} === row total ${rowGain}`, said === rowGain);
 
   /* 3. the stack credits each capability once, and totals the same gain */

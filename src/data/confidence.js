@@ -90,7 +90,7 @@ export function buildConfidence({
     gap:
       futureLicenses.length === 0
         ? 'No future state chosen, so there is nothing to price.'
-        : 'The licensing move came from the copilot and has not been reviewed.',
+        : 'From the copilot, not yet confirmed.',
   });
 
   /* Empty is a legal answer — "not on a Microsoft bundle" — and state cannot
@@ -106,8 +106,8 @@ export function buildConfidence({
     step: PRODUCT_STEP,
     gap:
       currentLicenses.length === 0
-        ? 'No current bundle, so the entire future bill counts as new spend and nothing counts as already owned.'
-        : 'The current bundle came from the copilot and has not been reviewed.',
+        ? 'No current bundle, so the whole future bill counts as new spend.'
+        : 'From the copilot, not yet confirmed.',
   });
 
   add({
@@ -120,7 +120,7 @@ export function buildConfidence({
     gap:
       num(customer.numberOfUsers) <= 0
         ? 'Without a seat count nothing can be priced.'
-        : 'The seat count came from the copilot and has not been confirmed.',
+        : 'From the copilot, not yet confirmed.',
   });
 
   /* Three tiers, not two. An override is a real number; an untouched price from
@@ -137,7 +137,7 @@ export function buildConfidence({
     applies: true,
     score: futureLicenses.length ? mean(futureLicenses.map(rateScore)) : 0,
     step: PRODUCT_STEP,
-    gap: 'Some licenses are still priced at list. Nobody at this seat count pays rate card.',
+    gap: 'Some licenses are still priced at list.',
   });
 
   /* Deliberately light. A flat headcount across the horizon is often the right
@@ -152,7 +152,7 @@ export function buildConfidence({
     applies: years > 1 && futureLicenses.length > 0,
     score: seatSlots.length ? seatSlots.filter(Boolean).length / seatSlots.length : 0,
     step: PRODUCT_STEP,
-    gap: 'Seats default to the headcount every year. A phased rollout would change the investment.',
+    gap: 'Seats default to the headcount every year.',
   });
 
   /* ----------------------------- the incumbents --------------------------- */
@@ -169,7 +169,7 @@ export function buildConfidence({
       ? delta.consolidation.length / delta.potentialConsolidation.length
       : 0,
     step: PRODUCT_STEP,
-    gap: `${delta.newMicrosoft.length} gained capabilit${delta.newMicrosoft.length === 1 ? 'y has' : 'ies have'} no incumbent named, so the case claims no saving on ${delta.newMicrosoft.length === 1 ? 'it' : 'them'}.`,
+    gap: `${delta.newMicrosoft.length} gained capabilit${delta.newMicrosoft.length === 1 ? 'y has' : 'ies have'} no incumbent named, so the case claims no saving.`,
   });
 
   /* Kept separate from coverage and never multiplied by it: many vendors with
@@ -186,7 +186,7 @@ export function buildConfidence({
     applies: askableContracts,
     score: named.length ? named.filter((ct) => num(ct.annualCost) > 0).length / named.length : 0,
     step: PRODUCT_STEP,
-    gap: 'A named vendor with no annual cost sits in the table contributing nothing.',
+    gap: 'A named vendor with no annual cost contributes nothing.',
   });
 
   /* Read off the raw contract. The model substitutes the case start year for a
@@ -199,7 +199,7 @@ export function buildConfidence({
     applies: askableContracts,
     score: named.length ? named.filter((ct) => usableYear(ct.yearContractEnds)).length / named.length : 0,
     step: PRODUCT_STEP,
-    gap: 'A blank end year is treated as this year, which quietly gives up the first year of that saving.',
+    gap: 'A blank end year is read as this year, losing the first year of that saving.',
   });
 
   const askable = lines.filter((l) => (l.uncovered || []).length > 0);
@@ -210,7 +210,7 @@ export function buildConfidence({
     applies: askable.length > 0,
     score: askable.length ? askable.filter((l) => l.soleUseConfirmed).length / askable.length : 0,
     step: PRODUCT_STEP,
-    gap: 'A contract that also covers something this move does not deliver stays uncounted until you confirm it.',
+    gap: 'A contract that also covers something this move does not deliver stays uncounted until confirmed.',
   });
 
   /* A contract linked only to net-new capabilities is a resolved answer, not a
@@ -241,7 +241,7 @@ export function buildConfidence({
     applies: lines.length > 0,
     score: lines.length ? 1 - dead.length / lines.length : 0,
     step: PRODUCT_STEP,
-    gap: 'Some contracts cannot produce a saving as entered — unlinked, or lapsing outside the horizon.',
+    gap: 'Some contracts are unlinked or lapse outside the horizon, so they produce no saving.',
   });
 
   /* ------------------------------- the total ------------------------------ */

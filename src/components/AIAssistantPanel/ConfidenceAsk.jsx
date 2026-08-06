@@ -34,7 +34,7 @@ export default function ConfidenceAsk() {
       <p className={styles.confidenceThanks} role="status">
         <CheckmarkCircle16Filled className={styles.confidenceThanksIcon} aria-hidden="true" />
         <span>
-          Thanks — noted.
+          Thanks.
           {/* Proof the corrections went somewhere, stated as fact rather than as
               a promise about training. Skipped at zero: "0 corrections helped"
               is a worse sentence than silence. */}

@@ -228,7 +228,7 @@ export default function ProductSelection() {
 
   return (
     <div className={styles.root}>
-      <StepMasthead description="The customer's licensing today, the future state, and what it replaces" />
+      <StepMasthead description="Licensing today, the future state, and what it replaces" />
 
       {/* ----------------------------- current state ---------------------------- */}
       <Card className={styles.card}>
@@ -237,9 +237,7 @@ export default function ProductSelection() {
             Which Microsoft bundle is the customer on today?{' '}
             {badge('currentLicenses')}
           </h2>
-          <p className={styles.cardLead}>
-            Leave unselected if the customer is not on one of these.
-          </p>
+          <p className={styles.cardLead}>Leave unselected if none apply</p>
         </div>
         {/* Six options, because that is what a seller is actually asked. One of
             them is two licenses, which is the whole reason the current state is
@@ -275,16 +273,16 @@ export default function ProductSelection() {
           </h2>
           <p className={styles.cardLead}>
             {currentLicenses.length
-              ? `Paths are filtered to what applies from ${currentLicenses
+              ? `Paths from ${currentLicenses
                   .map((id) => licenseById(id)?.name)
                   .filter(Boolean)
-                  .join(' + ')}.`
-              : 'No current bundle, so these are starting points rather than upgrades.'}
+                  .join(' + ')}`
+              : 'No current bundle, so these are starting points, not upgrades'}
           </p>
         </div>
 
         <TabList selectedValue={futureMode} onTabSelect={(_, d) => setFutureMode(d.value)}>
-          <Tab value="path">Upgrade licensing path</Tab>
+          <Tab value="path">Upgrade path</Tab>
           <Tab value="products">Individual SKUs</Tab>
         </TabList>
 
@@ -338,7 +336,7 @@ export default function ProductSelection() {
               })}
             </ul>
             <p className={styles.cardLead}>
-              Bases first, then the add-ons{base ? ` sold against ${licenseById(base)?.name}` : ''}.
+              Bases first, then add-ons{base ? ` for ${licenseById(base)?.name}` : ''}
             </p>
           </>
         )}
@@ -353,9 +351,7 @@ export default function ProductSelection() {
                 lead — which is what pushed them 37px apart. */}
             <div className={styles.subSection}>
               <h3 className={styles.subHead}>How many seats?{' '}{badge('rateByLicense')}</h3>
-              <p className={styles.cardLead}>
-                Autofilled from step 1 and the price list. Change either where the deal differs.
-              </p>
+              <p className={styles.cardLead}>Autofilled from step 1 and the price list</p>
             </div>
             <div className={styles.tableWrap}>
               <table className={styles.mapTable}>
@@ -420,17 +416,14 @@ export default function ProductSelection() {
         <Card className={styles.card}>
           <div>
             <h2 className={styles.cardTitle}>What the customer would have, and who supplies it today</h2>
-            <p className={styles.cardLead}>
-              Name the incumbent where there is one. Only named incumbents with a cost produce a
-              saving, and most rows will be blank.
-            </p>
+            <p className={styles.cardLead}>Name the incumbent where there is one</p>
           </div>
 
           <div className={styles.quickAdd}>
             <Combobox
               freeform
               className={styles.quickAddBox}
-              placeholder="Add a product the customer already uses…"
+              placeholder="Add a product the customer uses…"
               value={vendorQuery}
               selectedOptions={[]}
               onChange={(e) => setVendorQuery(e.target.value)}
@@ -451,19 +444,19 @@ export default function ProductSelection() {
                  used to add a vendor called "Crowd". Enter, or the explicit
                  "Add … — not in the list" option, both still commit. */
               onBlur={() => setVendorQuery('')}
-              aria-label="Add a product the customer already uses"
+              aria-label="Add a product the customer uses"
             >
               {vendorMatches.slice(0, 30).map((v) => (
                 <Option key={v} text={v}>{v}</Option>
               ))}
               {vendorQuery.trim() && !vendorMatches.some((v) => v.toLowerCase() === vendorQuery.trim().toLowerCase()) ? (
                 <Option key="__custom" text={vendorQuery.trim()}>
-                  Add &ldquo;{vendorQuery.trim()}&rdquo; &mdash; not in the list
+                  Add &ldquo;{vendorQuery.trim()}&rdquo;
                 </Option>
               ) : null}
             </Combobox>
             <span className={styles.quickAddHint}>
-              Type any name to add a product we do not list.
+              Type any name to add one we do not list
             </span>
           </div>
 
@@ -488,7 +481,7 @@ export default function ProductSelection() {
                             .map((id) => capabilityById(id)?.name)
                             .filter(Boolean)
                             .join(', ')
-                        : 'Not linked to a capability yet'}
+                        : 'Not linked yet'}
                     </span>
                     <Input
                       size="small"
@@ -517,7 +510,7 @@ export default function ProductSelection() {
                   </div>
                   {l.capabilityIds.length === 0 ? (
                     <p className={styles.contractReason}>
-                      Not in our catalogue — say where it applies.
+                      Not in our catalogue, so say where it applies.
                     </p>
                   ) : l.reason ? (
                     <p className={styles.contractReason}>{l.reason}</p>
@@ -545,7 +538,7 @@ export default function ProductSelection() {
                   </Combobox>
                   {l.blocked ? (
                     <Checkbox
-                      label="The customer does not use it for those — count this contract"
+                      label="The customer does not use it for those, so count this contract"
                       checked={!!l.soleUseConfirmed}
                       onChange={(_, d) => updateContract(l.id, 'soleUseConfirmed', !!d.checked)}
                     />
@@ -560,7 +553,7 @@ export default function ProductSelection() {
               <thead>
                 <tr>
                   <th scope="col">Capability</th>
-                  <th scope="col">Microsoft delivers it with</th>
+                  <th scope="col">Microsoft product</th>
                   <th scope="col">Current vendor</th>
                   <th scope="col" className={styles.numericCol}>Annual cost</th>
                   <th scope="col" className={styles.numericCol}>Contract ends</th>
@@ -602,12 +595,8 @@ export default function ProductSelection() {
                               <span className={styles.ownedVendor}>{ownedVia(c.id)}</span>
                               <span className={styles.rowEcho}>Already owned</span>
                             </td>
-                            <td className={styles.numericCol}>
-                              <span className={styles.rowEcho}>—</span>
-                            </td>
-                            <td className={styles.numericCol}>
-                              <span className={styles.rowEcho}>—</span>
-                            </td>
+                            <td className={styles.numericCol} />
+                            <td className={styles.numericCol} />
                           </tr>
                         );
                       }
@@ -695,14 +684,12 @@ export default function ProductSelection() {
                               {typed.trim() &&
                               !matches.some((v) => v.toLowerCase() === typed.trim().toLowerCase()) ? (
                                 <Option key="__custom" text={typed.trim()}>
-                                  Add &ldquo;{typed.trim()}&rdquo; &mdash; not in the list
+                                  Add &ldquo;{typed.trim()}&rdquo;
                                 </Option>
                               ) : null}
                             </Combobox>
                             {!c.mappable ? (
-                              <span className={styles.rowEcho}>
-                                Net-new — no saving counted
-                              </span>
+                              <span className={styles.rowEcho}>Net-new, no saving counted</span>
                             ) : null}
                           </td>
                           <td className={styles.numericCol}>
@@ -710,11 +697,11 @@ export default function ProductSelection() {
                                 each capability it covers - editing them per row
                                 would ask the same question up to nine times. */}
                             <span className={styles.rowEcho}>
-                              {ctr?.annualCost ? `$${Number(ctr.annualCost).toLocaleString()}` : '—'}
+                              {ctr?.annualCost ? `$${Number(ctr.annualCost).toLocaleString()}` : ''}
                             </span>
                           </td>
                           <td className={styles.numericCol}>
-                            <span className={styles.rowEcho}>{ctr?.yearContractEnds || '—'}</span>
+                            <span className={styles.rowEcho}>{ctr?.yearContractEnds || ''}</span>
                           </td>
                         </tr>
                       );
@@ -730,8 +717,8 @@ export default function ProductSelection() {
       <StepFooter
         hint={
           delta.future.length
-            ? 'Name an incumbent against a capability to turn it into a saving.'
-            : 'Pick a future state to see the analysis.'
+            ? 'Name an incumbent to turn a capability into a saving'
+            : 'Pick a future state to see the analysis'
         }
       />
     </div>

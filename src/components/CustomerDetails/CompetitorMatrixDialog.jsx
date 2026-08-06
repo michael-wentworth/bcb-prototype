@@ -83,8 +83,7 @@ export default function CompetitorMatrixDialog({ open, onOpenChange, onAdd, symb
               <div>
                 <span className={styles.titleText}>Competitor product matrix</span>
                 <span className={styles.subtitle}>
-                  Reference pricing used to prefill a row. Every figure is indicative — replace it
-                  with what the customer actually pays.
+                  Indicative pricing used to prefill a row
                 </span>
               </div>
               <div className={styles.titleTools}>
@@ -130,7 +129,7 @@ export default function CompetitorMatrixDialog({ open, onOpenChange, onAdd, symb
                     <tr>
                       <td colSpan={5} className={styles.empty}>
                         No product matches &ldquo;{query}&rdquo;. Close this and use{' '}
-                        <strong>Add a new product</strong> to enter it by hand.
+                        <strong>Add a new product</strong>.
                       </td>
                     </tr>
                   ) : (
@@ -168,7 +167,7 @@ export default function CompetitorMatrixDialog({ open, onOpenChange, onAdd, symb
             <span className={styles.showing}>
               {filtered.length === 0
                 ? 'No matches'
-                : `Showing ${current * PAGE_SIZE + 1}–${Math.min(
+                : `Showing ${current * PAGE_SIZE + 1}-${Math.min(
                     filtered.length,
                     current * PAGE_SIZE + PAGE_SIZE,
                   )} of ${filtered.length}`}

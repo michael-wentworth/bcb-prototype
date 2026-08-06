@@ -93,13 +93,11 @@ export default function ExecutiveReport() {
   if (!c.hasInputs) {
     return (
       <div className={styles.root}>
-        <StepMasthead description="What the move is worth, and what it is worth beyond the money" />
+        <StepMasthead description="What the move is worth" />
         <Card className={styles.card}>
-          <p className={styles.empty}>
-            Add a seat count and a future state and the case builds itself from here.
-          </p>
+          <p className={styles.empty}>Add a seat count and a future state.</p>
         </Card>
-        <StepFooter hint="Not enough to calculate yet." />
+        <StepFooter hint="Not enough to calculate yet" />
       </div>
     );
   }
@@ -121,7 +119,7 @@ export default function ExecutiveReport() {
 
   const download = (format, label) => {
     recordSignal(SIGNALS.REPORT_DOWNLOADED, { format, from: 'report' });
-    notify(`${label} generated`, 'Prototype — no file produced.');
+    notify(`${label} generated`, 'Prototype only, no file produced');
   };
 
   return (
@@ -146,7 +144,7 @@ export default function ExecutiveReport() {
             {/* Null is not zero. The model returns null when there is nothing to
                 return on, and printing 0% would state the opposite. */}
             <span className={styles.kpiValue}>
-              {r.kpis.roi === null ? '—' : formatPercent(r.kpis.roi)}
+              {r.kpis.roi === null ? 'n/a' : formatPercent(r.kpis.roi)}
             </span>
             <span className={styles.kpiNote}>
               {r.kpis.roi === null && noInvestment
@@ -162,7 +160,7 @@ export default function ExecutiveReport() {
           <li className={styles.kpi}>
             <span className={styles.kpiLabel}>Payback</span>
             <span className={styles.kpiValue}>
-              {r.kpis.paybackMonths ? `${r.kpis.paybackMonths} mo` : '—'}
+              {r.kpis.paybackMonths ? `${r.kpis.paybackMonths} mo` : 'n/a'}
             </span>
             <span className={styles.kpiNote}>
               {r.kpis.paybackMonths
@@ -187,9 +185,6 @@ export default function ExecutiveReport() {
       <Card className={styles.card}>
         <div>
           <h2 className={styles.cardTitle}>What changes</h2>
-          <p className={styles.cardLead}>
-            The estate today, and the estate this case proposes.
-          </p>
         </div>
 
         <div className={styles.transform}>
@@ -250,9 +245,6 @@ export default function ExecutiveReport() {
       <Card className={styles.card}>
         <div>
           <h2 className={styles.cardTitle}>Recommended solution</h2>
-          <p className={styles.cardLead}>
-            What the customer would buy, and what each product is here to do.
-          </p>
         </div>
 
         <div className={styles.stack}>
@@ -292,10 +284,6 @@ export default function ExecutiveReport() {
       <Card className={styles.card}>
         <div>
           <h2 className={styles.cardTitle}>Financial impact</h2>
-          <p className={styles.cardLead}>
-            Annual licensing either side of the move, and what the {c.years}-year horizon adds up
-            to.
-          </p>
         </div>
 
         <WaterfallChart
@@ -313,7 +301,7 @@ export default function ExecutiveReport() {
           <li className={styles.kpi}>
             <span className={styles.kpiLabel}>Investment over {c.years} years</span>
             <span className={styles.kpiValue}>{money(r.financial.horizonInvestment)}</span>
-            <span className={styles.kpiNote}>Above what they pay today</span>
+            <span className={styles.kpiNote}>Above what the customer pays today</span>
           </li>
           <li className={styles.kpi}>
             <span className={styles.kpiLabel}>Net</span>
@@ -328,8 +316,7 @@ export default function ExecutiveReport() {
         <div>
           <h2 className={styles.cardTitle}>Capability coverage</h2>
           <p className={styles.cardLead}>
-            What the estate covers today — from Microsoft or from a vendor — against what it would
-            cover after. Counted, never estimated.
+            What the estate covers today against what it would cover after.
           </p>
         </div>
 
@@ -347,7 +334,7 @@ export default function ExecutiveReport() {
                   is the after count, and a reader who adds it up gets the
                   number printed beside it. */}
               <span className={styles.coverageGain}>
-                {row.gained > 0 ? `+${row.gained}` : row.lost > 0 ? '' : '—'}
+                {row.gained > 0 ? `+${row.gained}` : row.lost > 0 ? '' : 'None'}
                 {row.lost > 0 ? <span className={styles.coverageLoss}>−{row.lost}</span> : null}
               </span>
             </div>
@@ -355,11 +342,7 @@ export default function ExecutiveReport() {
         </div>
 
         {r.consolidation.dropped.length ? (
-          <p className={styles.cardLead}>
-            Not replaced: {r.consolidation.dropped.join(', ')}. {r.consolidation.droppedFrom.join(' and ')}{' '}
-            {r.consolidation.droppedFrom.length === 1 ? 'covers' : 'cover'} this today and the future state
-            does not, so the saving assumes the customer does not need it.
-          </p>
+          <p className={styles.cardLead}>Not replaced: {r.consolidation.dropped.join(', ')}</p>
         ) : null}
       </Card>
 
@@ -369,10 +352,10 @@ export default function ExecutiveReport() {
           <h2 className={styles.cardTitle}>Vendor consolidation</h2>
           <p className={styles.cardLead}>
             {r.consolidation.vendorCount === 0
-              ? 'No incumbent vendors have been named, so there is nothing to consolidate yet.'
+              ? 'No incumbents named.'
               : r.consolidation.displacedCount
                 ? `${r.consolidation.displacedCount} of ${r.consolidation.vendorCount} named vendor${r.consolidation.vendorCount === 1 ? '' : 's'} come off the estate.`
-                : 'No named vendor can be displaced by this move as it stands.'}
+                : 'No named vendor can be displaced.'}
           </p>
         </div>
 
@@ -389,19 +372,12 @@ export default function ExecutiveReport() {
             <span className={styles.consolidationBig}>
               {r.consolidation.vendorCount - r.consolidation.displacedCount}
             </span>
-            <span className={styles.consolidationLabel}>
-              {r.consolidation.vendorCount === r.consolidation.displacedCount
-                ? 'left — the estate runs on one Microsoft platform'
-                : `still to run alongside Microsoft`}
-            </span>
+            <span className={styles.consolidationLabel}>left</span>
           </div>
         ) : null}
 
         {r.consolidation.remaining.length ? (
-          <p className={styles.cardLead}>
-            Still running: {r.consolidation.remaining.join(', ')}. The mapping on product selection
-            says why each one stays.
-          </p>
+          <p className={styles.cardLead}>Still running: {r.consolidation.remaining.join(', ')}</p>
         ) : null}
       </Card>
 
@@ -409,10 +385,6 @@ export default function ExecutiveReport() {
       <Card className={styles.card}>
         <div>
           <h2 className={styles.cardTitle}>Where the value comes from</h2>
-          <p className={styles.cardLead}>
-            Only the first of these is inside the return. The rest are the argument the money does
-            not make.
-          </p>
         </div>
 
         <div className={styles.drivers}>
@@ -438,9 +410,6 @@ export default function ExecutiveReport() {
             reading top to bottom. */}
         <div>
           <h2 className={styles.cardTitle}>Assumptions</h2>
-          <p className={styles.cardLead}>
-            What the numbers above rest on, and where each saving comes from.
-          </p>
         </div>
 
         <Disclosure label="View assumptions" count={r.assumptions.length}>
@@ -489,7 +458,7 @@ export default function ExecutiveReport() {
                       </td>
                       <td className={styles.numeric}>{exact(l.annualCost)}</td>
                       <td className={styles.numeric}>{l.endYear}</td>
-                      <td className={styles.numeric}>{l.saved ? exact(l.saved) : '—'}</td>
+                      <td className={styles.numeric}>{l.saved ? exact(l.saved) : 'None'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -503,7 +472,6 @@ export default function ExecutiveReport() {
       <Card className={styles.card}>
         <div>
           <h2 className={styles.cardTitle}>Recommended next steps</h2>
-          <p className={styles.cardLead}>Derived from the move and the contracts it displaces.</p>
         </div>
 
         <ul className={styles.steps}>
@@ -517,9 +485,7 @@ export default function ExecutiveReport() {
             </li>
           ))}
           {r.steps.length === 0 ? (
-            <li className={styles.estateEmpty}>
-              Nothing to recommend yet — the future state and the incumbents drive this list.
-            </li>
+            <li className={styles.estateEmpty}>Nothing to recommend yet</li>
           ) : null}
         </ul>
 
@@ -541,7 +507,7 @@ export default function ExecutiveReport() {
       </Card>
 
       <StepFooter
-        hint={`${caseSetup.analysisPeriod}-year horizon. Savings dated to contract lapse, not to signature.`}
+        hint={`${caseSetup.analysisPeriod}-year horizon`}
       />
     </div>
   );

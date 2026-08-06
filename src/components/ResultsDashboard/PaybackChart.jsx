@@ -90,9 +90,7 @@ export default function PaybackChart({ cashflow, paybackMonths, symbol = 'US$' }
       <figcaption className={styles.caption}>
         <div>
           <h2 className={styles.chartTitle}>Cumulative net benefit</h2>
-          <p className={styles.chartSub}>
-            Investment first, return after. The case crosses zero in month {paybackMonths}.
-          </p>
+          <p className={styles.chartSub}>Crosses zero in month {paybackMonths}</p>
         </div>
         <button type="button" className={styles.tableToggle} onClick={() => setShowTable((v) => !v)}>
           {showTable ? 'Hide data' : 'View data'}
@@ -246,7 +244,7 @@ export default function PaybackChart({ cashflow, paybackMonths, symbol = 'US$' }
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <caption className={styles.tableCaption}>
-              Cumulative net benefit by month (every third month shown)
+              Cumulative net benefit, every third month
             </caption>
             <thead>
               <tr>

@@ -63,16 +63,16 @@ export default function LicensingImpact() {
      cannot say the opposite of the figures beside it. */
   const context = () => {
     if (c.competitorLines.length === 0) {
-      return `No incumbents named yet, so the whole ${money(uplift)} a year reads as new spend. Naming who the customer buys from today is what offsets it.`;
+      return `No incumbents named yet, so the whole ${money(uplift)} a year is new spend.`;
     }
     if (stops === 0) {
-      return `Nothing named so far can be switched off inside the horizon, so the ${money(uplift)} a year stands on capability rather than on savings.`;
+      return `Nothing named can be switched off inside the horizon, so the ${money(uplift)} a year stands on capability, not savings.`;
     }
     if (net >= 0) {
-      return `Competitor spend that stops covers the Microsoft investment, with about ${money(net)} a year to spare.`;
+      return `Saves ${money(net)} a year after the Microsoft investment.`;
     }
     const covered = Math.round((stops / uplift) * 100);
-    return `Competitor spend that stops offsets roughly ${covered}% of the Microsoft investment, leaving about ${money(Math.abs(net))} a year of additional licensing.`;
+    return `Covers ${covered}% of the Microsoft investment, leaving ${money(Math.abs(net))} a year of additional licensing.`;
   };
 
   return (
@@ -100,7 +100,7 @@ export default function LicensingImpact() {
             <span className={styles.impactFillUplift} style={{ width: pct(uplift) }} />
           </span>
           <span className={styles.impactNote}>
-            a year above what they pay today{ramps ? ', once fully rolled out' : ''}
+            a year above what the customer pays today{ramps ? ', once fully rolled out' : ''}
           </span>
         </div>
         <div className={`${styles.impactCol} ${styles.impactNet}`}>
@@ -139,11 +139,7 @@ export default function LicensingImpact() {
             <dt>
               Microsoft licensing cost
               <span className={styles.impactDetailNote}>
-                The difference from what they pay today, not the whole bill — the current estate
-                continues either way.
-                {ramps
-                  ? ' Shown at full deployment; the seat ramp on this step makes the earlier years cheaper.'
-                  : ''}
+                The increase, not the whole bill
               </span>
             </dt>
             <dd className={styles.impactBad}>−{exact(uplift)}</dd>
@@ -161,13 +157,10 @@ export default function LicensingImpact() {
             <div className={styles.impactDetailRow}>
               <dt>
                 Competitor spend not counted
-                <span className={styles.impactDetailNote}>
-                  Left out of the net above, each for the reason the model gives:
-                </span>
                 <ul className={styles.impactReasons}>
                   {uncounted.map((l) => (
                     <li key={l.id}>
-                      <strong>{l.vendor}</strong> — {l.reason || 'not counted in this case.'}
+                      <strong>{l.vendor}</strong>: {l.reason || 'not counted in this case'}
                     </li>
                   ))}
                 </ul>

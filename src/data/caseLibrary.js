@@ -74,7 +74,7 @@ export const MY_CASES = [
         website: 'contoso.com',
         bcbRole: 'customer-facing',
         description:
-          'Reduce vendor sprawl across the security estate and modernise security operations. Consolidate the security tooling detected on this account onto a single platform to lower operational complexity, and extend a stretched SOC with AI assistance rather than additional headcount.',
+          'Reduce vendor sprawl, consolidate security tooling onto one platform, and extend a stretched SOC with AI rather than headcount.',
       },
       /* The plainest version of the move: E3 today, E5 tomorrow, one upgrade
          path and nothing bolted on. The rate is the negotiated one, not rate
@@ -118,7 +118,7 @@ export const MY_CASES = [
   },
   {
     id: 'case-northwind',
-    title: 'Northwind Traders — Endpoint Displacement',
+    title: 'Northwind Traders Endpoint Displacement',
     customer: 'Northwind Traders',
     industry: 'Retail & consumer goods',
     status: 'draft',
@@ -146,7 +146,7 @@ export const MY_CASES = [
         ['c2c1', 'SentinelOne Singularity', '544000', '2026'],
         ['c2c2', 'IBM QRadar', '442000', '2026'],
       ]),
-      caseSetup: { name: 'Northwind Traders — Endpoint Displacement', analysisPeriod: 3 },
+      caseSetup: { name: 'Northwind Traders Endpoint Displacement', analysisPeriod: 3 },
       outcomes: ['endpoint', 'threat'],
       skus: [
         { id: 'c2s1', skuId: 'defender-endpoint', solutionArea: 'Security', solutionPlay: 'Secure Devices and Endpoints', pricePerMonth: '3', seats: seats(9500) },
@@ -163,7 +163,7 @@ export const MY_CASES = [
   },
   {
     id: 'case-litware',
-    title: 'Litware — Identity Consolidation',
+    title: 'Litware Identity Consolidation',
     customer: 'Litware Inc.',
     industry: 'Energy & resources',
     status: 'published',
@@ -192,7 +192,7 @@ export const MY_CASES = [
         ['c3c1', 'Okta Lifecycle Management', '1062000', '2026'],
         ['c3c2', 'CyberArk Privileged Access Manager', '414000', '2027'],
       ]),
-      caseSetup: { name: 'Litware — Identity Consolidation', analysisPeriod: 4 },
+      caseSetup: { name: 'Litware Identity Consolidation', analysisPeriod: 4 },
       outcomes: ['identity', 'consolidation'],
       skus: [
         { id: 'c3s1', skuId: 'entra-p2', solutionArea: 'Security', solutionPlay: 'Secure Identities and Access', pricePerMonth: '2.5', seats: seats(24000, 4) },
@@ -220,7 +220,7 @@ export const MY_CASES = [
 export const EXAMPLE_CASES = [
   {
     id: 'ex-fabrikam',
-    title: 'Fabrikam — Full Security Estate Consolidation',
+    title: 'Fabrikam Security Estate Consolidation',
     customer: 'Fabrikam Financial',
     industry: 'Financial services',
     status: 'published',
@@ -248,7 +248,7 @@ export const EXAMPLE_CASES = [
         ['e1c3', 'Splunk Enterprise Security', '1680000', '2026'],
         ['e1c4', 'Broadcom/Symantec DLP', '624000', '2027'],
       ]),
-      caseSetup: { name: 'Fabrikam — Full Security Estate Consolidation', analysisPeriod: 3 },
+      caseSetup: { name: 'Fabrikam Security Estate Consolidation', analysisPeriod: 3 },
       outcomes: ['identity', 'threat', 'endpoint', 'data', 'consolidation'],
       skus: [
         { id: 'e1s1', skuId: 'm365-e5-security', solutionArea: 'Security', solutionPlay: 'Consolidate the Security Estate', pricePerMonth: '3.5', seats: seats(42000) },
@@ -268,15 +268,14 @@ export const EXAMPLE_CASES = [
   },
   {
     id: 'ex-tailspin',
-    title: 'Tailspin Toys — SOC Modernisation',
+    title: 'Tailspin Toys SOC Modernisation',
     customer: 'Tailspin Toys',
     industry: 'Retail & consumer goods',
     status: 'published',
     owner: 'Microsoft',
     modified: 'Curated example',
     modifiedOrder: 21,
-    highlight:
-      'A small estate and a single displacement — shows how tight a focused case can be',
+    highlight: 'A small estate and a single displacement',
     input: {
       customer: {
         accountName: 'Tailspin Toys',
@@ -294,7 +293,7 @@ export const EXAMPLE_CASES = [
       capabilityContracts: contracts(['m365-e3'], ['m365-e3', 'sentinel', 'security-copilot'], [
         ['e2c1', 'Splunk Enterprise Security', '310000', '2026'],
       ]),
-      caseSetup: { name: 'Tailspin Toys — SOC Modernisation', analysisPeriod: 3 },
+      caseSetup: { name: 'Tailspin Toys SOC Modernisation', analysisPeriod: 3 },
       outcomes: ['threat', 'ai-security'],
       skus: [
         { id: 'e2s1', skuId: 'sentinel', solutionArea: 'Security', solutionPlay: 'Modernize Security Operations', pricePerMonth: '2', seats: seats(3400) },
@@ -310,15 +309,14 @@ export const EXAMPLE_CASES = [
   },
   {
     id: 'ex-woodgrove',
-    title: 'Woodgrove Bank — Compliance-Driven Investment',
+    title: 'Woodgrove Bank Compliance-Driven Investment',
     customer: 'Woodgrove Bank',
     industry: 'Financial services',
     status: 'published',
     owner: 'Microsoft',
     modified: 'Curated example',
     modifiedOrder: 22,
-    highlight:
-      'The driver is regulatory, not cost — read it for how to carry a case that barely pays back',
+    highlight: 'The driver is regulatory, not cost',
     input: {
       customer: {
         accountName: 'Woodgrove Bank',
@@ -342,7 +340,7 @@ export const EXAMPLE_CASES = [
         ['e3c2', 'Ping Identity', '801000', '2027', true],
         ['e3c3', 'Varonis', '700000', '2026', true],
       ]),
-      caseSetup: { name: 'Woodgrove Bank — Compliance-Driven Investment', analysisPeriod: 5 },
+      caseSetup: { name: 'Woodgrove Bank Compliance-Driven Investment', analysisPeriod: 5 },
       outcomes: ['data', 'identity', 'consolidation'],
       skus: [
         { id: 'e3s1', skuId: 'purview', solutionArea: 'Security', solutionPlay: 'Safeguard Data and Compliance', pricePerMonth: '3', seats: seats(28000, 5) },

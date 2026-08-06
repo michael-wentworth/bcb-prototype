@@ -30,8 +30,8 @@ export default function CaseConfidencePanel() {
           <span className={styles.kpiLabel}>Business case confidence</span>
           <p className={styles.confidenceLead}>
             {gaps.length === 0
-              ? 'Everything the model needs has been answered.'
-              : `${gaps.length} thing${gaps.length === 1 ? '' : 's'} would make this harder to argue with.`}
+              ? 'Nothing missing'
+              : `${gaps.length} thing${gaps.length === 1 ? '' : 's'} missing`}
           </p>
         </div>
         <span
