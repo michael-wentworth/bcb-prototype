@@ -188,7 +188,9 @@
   border-bottom: none;
 }
 
-.numeric {
+/* Doubled to beat the `.table th, .table td` descendant rule above, which
+   outranks a single class whatever the source order. */
+.numeric.numeric {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }

@@ -4,7 +4,7 @@ import WorkflowHeader from '../WorkflowHeader/WorkflowHeader.jsx';
 import AIAssistantPanel from '../AIAssistantPanel/AIAssistantPanel.jsx';
 import CustomerDetails from '../CustomerDetails/CustomerDetails.jsx';
 import ProductSelection from '../Capability/ProductSelection.jsx';
-import CapabilityReport from '../Capability/CapabilityReport.jsx';
+import ExecutiveReport from '../Report/ExecutiveReport.jsx';
 import MyCases from '../MyCases/MyCases.jsx';
 import Landing from '../Landing/Landing.jsx';
 import Placeholder from './Placeholder.jsx';
@@ -16,7 +16,7 @@ import styles from './AppShell.module.css';
 /* Five capability-led steps. The old three — customer details, SKU table,
    report — are still in the tree but no longer routed to; the flow they served
    asked for a product list where this one asks for two license selections. */
-const STEP_VIEWS = [CustomerDetails, ProductSelection, CapabilityReport];
+const STEP_VIEWS = [CustomerDetails, ProductSelection, ExecutiveReport];
 
 export default function AppShell({ panelOpen, onTogglePanel }) {
   const { view, step } = useAppState();

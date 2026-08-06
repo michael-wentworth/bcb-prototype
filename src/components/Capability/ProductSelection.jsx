@@ -34,6 +34,7 @@ import { AUTHORSHIP } from '../../data/authoring.js';
 import { useAppState } from '../../state/AppStateContext.jsx';
 import FormField from '../shared/FormField.jsx';
 import ConfidenceBadge from '../shared/ConfidenceBadge.jsx';
+import LicensingImpact from './LicensingImpact.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import styles from './Capability.module.css';
@@ -407,6 +408,12 @@ export default function ProductSelection() {
           </>
         ) : null}
       </Card>
+
+      {/* Under the recommendation it prices, and above the mapping that changes
+          it — moving one incumbent in the table below moves these three figures,
+          which is the argument for showing them here rather than only on the
+          report. */}
+      <LicensingImpact />
 
       {/* --------------------------- competitor mapping ------------------------- */}
       {groups.length > 0 ? (

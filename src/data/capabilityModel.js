@@ -22,7 +22,11 @@ export const capabilitiesSoldBy = (vendor) =>
 
 export const CASE_START_YEAR = 2026;
 
-const num = (v) => {
+/* Every money and count field on this form is free text, so "1,350,000" and
+   "$1.35m" both arrive as strings. Exported because any consumer reading a raw
+   contract off state has to strip the same formatting — a bare Number() there
+   returns NaN and poisons whatever it feeds. */
+export const num = (v) => {
   const n = Number(String(v ?? '').replace(/[^0-9.-]/g, ''));
   return Number.isFinite(n) ? n : 0;
 };
