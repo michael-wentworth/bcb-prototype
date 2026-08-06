@@ -21,6 +21,8 @@ import SharePopover from '../shared/SharePopover.jsx';
 import StepMasthead from '../shared/StepMasthead.jsx';
 import StepFooter from '../shared/StepFooter.jsx';
 import CaseConfidencePanel from './CaseConfidencePanel.jsx';
+import CashFlowChart from './CashFlowChart.jsx';
+import SavingsBars from './SavingsBars.jsx';
 import WaterfallChart from './WaterfallChart.jsx';
 import { defender, entra, intune, purview, sentinel } from '../Landing/productLogos.js';
 import styles from './Report.module.css';
@@ -56,11 +58,10 @@ const DRIVER_ICONS = {
  * Every figure is read from one derivation (buildReport) so no two sections can
  * describe the same deal differently.
  *
- * Deliberately not a spreadsheet. There is no year-by-year table anywhere on
- * this page: the horizon shows up as three totals in the financial section and
- * as a payback figure in the summary, and that is the whole of it. The audience
- * is deciding whether to fund something, not auditing a model — the audit lives
- * one disclosure down, in Assumptions.
+ * Deliberately not a spreadsheet. The only figures laid out in a grid are the
+ * three cash-flow rows in the financial section, which are the rows a sponsor
+ * asks for by name. The audience is deciding whether to fund something, not
+ * auditing a model — the audit lives one disclosure down, in Assumptions.
  */
 export default function ExecutiveReport() {
   const {
@@ -130,55 +131,99 @@ export default function ExecutiveReport() {
       />
 
       {/* ------------------------- 1. executive summary ----------------------- */}
-      <Card className={styles.card}>
-        <div>
-          <h2 className={styles.hero}>
-            {customer.accountName || 'This customer'} should move to{' '}
-            {r.state.future.licenses.join(' and ') || 'a future state'}
-          </h2>
-        </div>
+      {/* The one figure the room repeats afterwards, at the size that says so,
+          with the three that reconstruct it directly underneath. Everything
+          below this card is the argument for this number. */}
+      {/* data-tone opts this card out of the house chrome in global.css, which
+          is a (0,3,0) selector and outranks any sensible number of doubled
+          module classes. The module then owns the whole surface. */}
+      <Card className={`${styles.card} ${styles.heroCard}`} data-tone="hero">
+        <div className={styles.heroBlock}>
+          <p className={styles.heroLead}>
+            {r.headline.buying ? `With ${r.headline.buying}, ` : ''}
+            {r.headline.account}{' '}
+            {r.headline.direction === 'save'
+              ? 'could save'
+              : r.headline.direction === 'spend'
+                ? 'would spend a net'
+                : 'breaks even'}
+          </p>
+          <p
+            className={`${styles.heroFigure} ${
+              r.headline.direction === 'spend' ? styles.heroFigureNegative : ''
+            }`}
+          >
+            {exact(Math.abs(r.headline.net))}
+          </p>
 
-        <ul className={styles.kpis}>
-          <li className={`${styles.kpi} ${styles.kpiBrand}`}>
-            <span className={styles.kpiLabel}>Return on investment</span>
-            {/* Null is not zero. The model returns null when there is nothing to
-                return on, and printing 0% would state the opposite. */}
-            <span className={styles.kpiValue}>
-              {r.kpis.roi === null ? 'n/a' : formatPercent(r.kpis.roi)}
+          <ul className={styles.heroStats}>
+            <li className={styles.heroStat}>
+              <span className={styles.heroStatLabel}>{c.years}-year ROI</span>
+              {/* Null is not zero. The model returns null when there is nothing
+                  to return on, and printing 0% would state the opposite. */}
+              <span className={styles.heroStatValue}>
+                {r.kpis.roi === null ? 'n/a' : formatPercent(r.kpis.roi)}
+              </span>
+            </li>
+            <li className={styles.heroStat}>
+              <span className={styles.heroStatLabel}>Payback</span>
+              <span className={styles.heroStatValue}>
+                {r.kpis.paybackMonths
+                  ? `${r.kpis.paybackMonths} months`
+                  : noInvestment
+                    ? 'Nothing to recover'
+                    : 'Not in horizon'}
+              </span>
+            </li>
+          </ul>
+
+          {/* The arithmetic in the open. A headline figure a reader cannot take
+              apart is a figure they have to trust rather than check. */}
+          <div className={styles.equation}>
+            <span className={styles.equationTerm}>
+              <span className={styles.equationLabel}>Total benefits</span>
+              <span className={styles.equationValue}>{exact(r.headline.benefits)}</span>
             </span>
-            <span className={styles.kpiNote}>
-              {r.kpis.roi === null && noInvestment
-                ? 'No additional investment to return on'
-                : `${c.years}-year nominal`}
+            <span className={styles.equationOp} aria-hidden="true">
+              &minus;
             </span>
-          </li>
-          <li className={`${styles.kpi} ${styles.kpiGood}`}>
-            <span className={styles.kpiLabel}>Annual savings</span>
-            <span className={styles.kpiValue}>{money(r.kpis.annualSavings)}</span>
-            <span className={styles.kpiNote}>Once contracts lapse</span>
-          </li>
-          <li className={styles.kpi}>
-            <span className={styles.kpiLabel}>Payback</span>
-            <span className={styles.kpiValue}>
-              {r.kpis.paybackMonths ? `${r.kpis.paybackMonths} mo` : 'n/a'}
+            <span className={styles.equationTerm}>
+              <span className={styles.equationLabel}>Total costs</span>
+              <span className={styles.equationValue}>{exact(r.headline.costs)}</span>
             </span>
-            <span className={styles.kpiNote}>
-              {r.kpis.paybackMonths
-                ? 'From first uplift'
-                : noInvestment
-                  ? 'Nothing to recover'
-                  : 'Not inside the horizon'}
+            <span className={styles.equationOp} aria-hidden="true">
+              =
             </span>
-          </li>
-          <li className={`${styles.kpi} ${styles.kpiConfidence}`}>
-            <CaseConfidencePanel />
-          </li>
-        </ul>
+            <span className={`${styles.equationTerm} ${styles.equationNet}`}>
+              <span className={styles.equationLabel}>Net</span>
+              <span className={styles.equationValue}>{exact(r.financial.horizonNet)}</span>
+            </span>
+          </div>
+        </div>
 
         <p className={styles.summary}>
           <Sparkle16Filled className={styles.summarySparkle} aria-hidden="true" />
           <span>{r.summary}</span>
         </p>
+
+        <div className={styles.heroFoot}>
+          <CaseConfidencePanel />
+          <div className={styles.actions}>
+            <Button
+              appearance="primary"
+              icon={<SlideText20Regular />}
+              onClick={() => download('pptx', 'PowerPoint')}
+            >
+              PowerPoint
+            </Button>
+            <Button icon={<DocumentPdf20Regular />} onClick={() => download('pdf', 'PDF')}>
+              PDF
+            </Button>
+            <SharePopover>
+              <Button>Share</Button>
+            </SharePopover>
+          </div>
+        </div>
       </Card>
 
       {/* ---------------------- 2. current vs future state -------------------- */}
@@ -286,29 +331,67 @@ export default function ExecutiveReport() {
           <h2 className={styles.cardTitle}>Financial impact</h2>
         </div>
 
-        <WaterfallChart
-          steps={r.financial.steps}
-          total={r.financial.futureSpend}
-          totalLabel="Annual licensing after"
-        />
+        {/* Three rows and one column per year. The hero carries the horizon
+            totals; this is where they come apart, which is what a finance
+            reviewer checks the chart against. */}
+        <div className={styles.tableWrap}>
+        <table className={`${styles.dataTable} ${styles.flowTable}`}>
+          <thead>
+            <tr>
+              <th scope="col">Cash flow</th>
+              {r.financial.byYear.map((y) => (
+                <th key={y.label} scope="col" className={styles.numeric}>
+                  {y.label}
+                </th>
+              ))}
+              <th scope="col" className={styles.numeric}>
+                Total
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Benefits</th>
+              {r.financial.byYear.map((y) => (
+                <td key={y.label} className={styles.numeric}>
+                  {exact(y.benefit)}
+                </td>
+              ))}
+              <td className={styles.numeric}>{exact(r.financial.horizonSavings)}</td>
+            </tr>
+            <tr>
+              <th scope="row">Costs</th>
+              {r.financial.byYear.map((y) => (
+                <td key={y.label} className={styles.numeric}>
+                  {exact(y.cost)}
+                </td>
+              ))}
+              <td className={styles.numeric}>{exact(r.financial.horizonInvestment)}</td>
+            </tr>
+            <tr className={styles.flowNet}>
+              <th scope="row">Net</th>
+              {r.financial.byYear.map((y) => (
+                <td key={y.label} className={styles.numeric}>
+                  {exact(y.net)}
+                </td>
+              ))}
+              <td className={styles.numeric}>{exact(r.financial.horizonNet)}</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
 
-        <ul className={styles.kpis}>
-          <li className={`${styles.kpi} ${styles.kpiGood}`}>
-            <span className={styles.kpiLabel}>Savings over {c.years} years</span>
-            <span className={styles.kpiValue}>{money(r.financial.horizonSavings)}</span>
-            <span className={styles.kpiNote}>Competitor spend that stops</span>
-          </li>
-          <li className={styles.kpi}>
-            <span className={styles.kpiLabel}>Investment over {c.years} years</span>
-            <span className={styles.kpiValue}>{money(r.financial.horizonInvestment)}</span>
-            <span className={styles.kpiNote}>Above what the customer pays today</span>
-          </li>
-          <li className={styles.kpi}>
-            <span className={styles.kpiLabel}>Net</span>
-            <span className={styles.kpiValue}>{exact(r.financial.horizonNet)}</span>
-            <span className={styles.kpiNote}>Savings less investment</span>
-          </li>
-        </ul>
+        <CashFlowChart rows={r.financial.byYear} years={c.years} />
+
+        {/* The run-rate sits one click down. It answers a different question to
+            the curve above, and an executive asks the curve's question first. */}
+        <Disclosure label="Annual licensing, today to future">
+          <WaterfallChart
+            steps={r.financial.steps}
+            total={r.financial.futureSpend}
+            totalLabel="Annual licensing after"
+          />
+        </Disclosure>
       </Card>
 
       {/* ------------------------ 5. capability coverage ---------------------- */}
@@ -376,6 +459,14 @@ export default function ExecutiveReport() {
           </div>
         ) : null}
 
+        {/* The same list priced. A vendor count tells the reader how many
+            contracts go; it never says which one the case rests on. */}
+        <SavingsBars
+          rows={r.financial.vendorSavings}
+          total={r.financial.vendorSavingsTotal}
+          years={c.years}
+        />
+
         {r.consolidation.remaining.length ? (
           <p className={styles.cardLead}>Still running: {r.consolidation.remaining.join(', ')}</p>
         ) : null}
@@ -429,6 +520,7 @@ export default function ExecutiveReport() {
           {c.competitorLines.length > 0 ? (
             <>
               <h3 className={styles.subTitle}>Where each saving comes from</h3>
+              <div className={styles.tableWrap}>
               <table className={styles.dataTable}>
                 <thead>
                   <tr>
@@ -463,6 +555,7 @@ export default function ExecutiveReport() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </>
           ) : null}
         </Disclosure>
@@ -488,22 +581,6 @@ export default function ExecutiveReport() {
             <li className={styles.estateEmpty}>Nothing to recommend yet</li>
           ) : null}
         </ul>
-
-        <div className={styles.actions}>
-          <Button
-            appearance="primary"
-            icon={<SlideText20Regular />}
-            onClick={() => download('pptx', 'PowerPoint')}
-          >
-            Download PowerPoint
-          </Button>
-          <Button icon={<DocumentPdf20Regular />} onClick={() => download('pdf', 'PDF')}>
-            Download PDF
-          </Button>
-          <SharePopover>
-            <Button>Share business case</Button>
-          </SharePopover>
-        </div>
       </Card>
 
       <StepFooter

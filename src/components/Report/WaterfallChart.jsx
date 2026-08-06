@@ -29,7 +29,7 @@ const VALUE_MAX = 96;
  * Horizontal, not vertical: the labels are phrases rather than dates, and a
  * vertical waterfall would either rotate them or truncate them.
  */
-export default function WaterfallChart({ steps, total, totalLabel, symbol = '$' }) {
+export default function WaterfallChart({ steps, total, totalLabel, title, symbol = '$' }) {
   const [wrapRef, width] = useElementWidth(680);
   const [showTable, setShowTable] = useState(false);
   const clipId = useId('wf-label');
@@ -65,7 +65,7 @@ export default function WaterfallChart({ steps, total, totalLabel, symbol = '$' 
     <div className={styles.chart} ref={wrapRef}>
       <div className={styles.chartHead}>
         <div>
-          <h3 className={styles.chartTitle}>Annual licensing, today to future</h3>
+          {title ? <h3 className={styles.chartTitle}>{title}</h3> : null}
         </div>
         <button
           type="button"
@@ -138,6 +138,7 @@ export default function WaterfallChart({ steps, total, totalLabel, symbol = '$' 
       </svg>
 
       {showTable ? (
+        <div className={styles.tableWrap}>
         <table className={styles.dataTable}>
           <thead>
             <tr>
@@ -164,6 +165,7 @@ export default function WaterfallChart({ steps, total, totalLabel, symbol = '$' 
             ))}
           </tbody>
         </table>
+        </div>
       ) : null}
     </div>
   );

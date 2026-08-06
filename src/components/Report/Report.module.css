@@ -82,16 +82,159 @@
 
 /* ------------------------------ 1. summary --------------------------------- */
 
-/* The one sentence the room reads first. Larger than a card title because it is
-   the recommendation, not a section label. */
-.hero {
+/* The hero is the only card on the page that is not white. A faint brand wash
+   rather than a colour: it has to read as the top of a document, not as a
+   callout competing with the eight sections under it. */
+/* The Card carries data-tone="hero", which opts it out of the house chrome in
+   global.css. That rule is `.fui-FluentProvider .fui-Card:not([data-tone])` at
+   specificity (0,3,0) and beats any sensible number of doubled module classes,
+   so a border-color declared here alone was dead. Opted out, the module has to
+   restate the border and radius it just gave up. */
+.heroCard.heroCard {
+  background: linear-gradient(
+    170deg,
+    var(--colorBrandBackground2) 0%,
+    var(--colorNeutralBackground1) 62%
+  );
+  border: 1px solid var(--colorBrandStroke2);
+  border-radius: var(--borderRadiusLarge);
+}
+
+.heroBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacingVerticalXS);
+  text-align: center;
+}
+
+.heroLead {
   margin: 0;
-  max-width: 26ch;
-  font-size: 30px;
-  line-height: 38px;
-  font-weight: var(--fontWeightSemibold);
-  color: var(--colorNeutralForeground1);
+  max-width: 60ch;
+  font-size: var(--fontSizeBase400);
+  color: var(--colorNeutralForeground2);
   text-wrap: balance;
+}
+
+/* The figure the room repeats afterwards. Sized so it is the only thing on the
+   card that can be read from the back row. */
+.heroFigure {
+  margin: 0;
+  font-size: clamp(40px, 7vw, 64px);
+  line-height: 1.06;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--colorNeutralForeground1);
+}
+
+/* A case that costs more than it saves prints the same figure, in the colour
+   that says which direction it points. */
+.heroFigureNegative {
+  color: var(--colorPaletteDarkOrangeForeground1);
+}
+
+.heroStats {
+  margin: var(--spacingVerticalM) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacingHorizontalXXL);
+}
+
+.heroStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.heroStatLabel {
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground3);
+}
+
+.heroStatValue {
+  font-size: var(--fontSizeHero700);
+  line-height: 36px;
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+/* Benefits minus costs equals net, written out. A headline a reader cannot take
+   apart is one they have to trust rather than check. */
+.equation {
+  margin-top: var(--spacingVerticalL);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacingHorizontalM);
+}
+
+.equationTerm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--spacingVerticalXS) var(--spacingHorizontalM);
+  border-radius: var(--borderRadiusMedium);
+  background-color: var(--colorNeutralBackground3);
+}
+
+.equationNet {
+  background-color: var(--colorNeutralBackground1);
+  box-shadow: inset 0 0 0 1px var(--colorBrandStroke2);
+}
+
+.equationLabel {
+  font-size: var(--fontSizeBase100);
+  color: var(--colorNeutralForeground3);
+}
+
+.equationValue {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.equationOp {
+  font-size: var(--fontSizeBase400);
+  color: var(--colorNeutralForeground3);
+}
+
+/* Confidence and the export actions share the hero's last row: the qualifier on
+   the number, and what the reader does with it. */
+/* A grid, not a flex row: the confidence panel lays itself out edge to edge, so
+   under flex it took the whole width and pushed the buttons onto their own row.
+   Fixed track for the qualifier, the rest for what the reader does next. */
+.heroFoot {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) 1fr;
+  align-items: center;
+  gap: var(--spacingHorizontalL);
+  padding-top: var(--spacingVerticalM);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+
+.heroFoot .actions {
+  padding-top: 0;
+  border-top: none;
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .heroFoot {
+    grid-template-columns: 1fr;
+  }
+
+  .heroFoot .actions {
+    justify-content: flex-start;
+  }
 }
 
 .kpis {
@@ -504,6 +647,14 @@
   stroke-width: 1;
 }
 
+/* Fluent's Card sets overflow:hidden, so a table wider than the card was hard
+   clipped with no scrollbar and no hint that a column was missing. Every table
+   on this page gets its own scroll container, the same fix the older charts use.
+   Also true of the CSS in ResultsDashboard, deliberately: this is the pattern. */
+.tableWrap {
+  overflow-x: auto;
+}
+
 .dataTable {
   width: 100%;
   border-collapse: collapse;
@@ -524,6 +675,191 @@
   padding: var(--spacingVerticalS) var(--spacingHorizontalM);
   border-bottom: 1px solid var(--colorNeutralStroke3);
   font-weight: var(--fontWeightRegular);
+}
+
+/* ------------------------- the cash flow chart ----------------------------- */
+
+.cfGrid {
+  stroke: var(--colorNeutralStroke3);
+  stroke-width: 1;
+}
+
+/* Zero is not a gridline. Every bar is measured from it and the line crosses
+   it, so it gets the weight of an axis. */
+.cfZero {
+  stroke: var(--colorNeutralStroke1);
+  stroke-width: 1;
+}
+
+.cfAxis,
+.cfTick {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  fill: var(--colorNeutralForeground3);
+}
+
+/* Benefits carry the semantic green; costs stay neutral. The balance is the
+   third thing on the chart, so it takes the third hue as well as the only
+   non-bar shape. */
+.cfBenefit {
+  fill: var(--colorPaletteGreenBackground3);
+}
+
+.cfCost {
+  fill: var(--colorNeutralForeground4);
+}
+
+.cfLine {
+  stroke: var(--colorBrandForeground1);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.cfDot {
+  fill: var(--colorBrandForeground1);
+  stroke: var(--colorNeutralBackground1);
+  stroke-width: 2;
+}
+
+.chartEmpty {
+  margin: 0;
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground3);
+}
+
+.legend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalL);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacingHorizontalXS);
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+}
+
+.swBenefit {
+  background-color: var(--colorPaletteGreenBackground3);
+}
+
+.swCost {
+  background-color: var(--colorNeutralForeground4);
+}
+
+/* The balance is a line on the chart, so its key is a line too. */
+.swLine {
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--colorBrandForeground1);
+}
+
+/* --------------------------- the savings bars ------------------------------ */
+
+.savings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalM);
+}
+
+.savingsList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalS);
+}
+
+.savingsRow {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.1fr) minmax(0, 3fr) auto;
+  align-items: center;
+  gap: var(--spacingHorizontalM);
+}
+
+.savingsName {
+  font-size: var(--fontSizeBase300);
+  color: var(--colorNeutralForeground1);
+}
+
+.savingsTrack {
+  display: block;
+  height: 14px;
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorNeutralBackground3);
+}
+
+.savingsBar {
+  display: block;
+  height: 100%;
+  border-radius: var(--borderRadiusSmall);
+  background-color: var(--colorPaletteGreenBackground3);
+}
+
+.savingsValue {
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.savingsTotal {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: var(--spacingHorizontalM);
+  border-left: 3px solid var(--colorPaletteGreenBackground3);
+}
+
+.savingsTotalValue {
+  font-size: var(--fontSizeBase500);
+  font-weight: var(--fontWeightSemibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.savingsTotalLabel {
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground3);
+}
+
+/* --------------------------- the cash flow table --------------------------- */
+
+/* The one table on the page that leads rather than sits under a disclosure, so
+   it gets a header band and a ruled net row and nothing else. Three rows deep
+   is a summary; anything more would be the spreadsheet this report replaced. */
+.flowTable thead th {
+  background-color: var(--colorNeutralBackground3);
+}
+
+.flowTable thead th:first-child {
+  border-top-left-radius: var(--borderRadiusMedium);
+}
+
+.flowTable thead th:last-child {
+  border-top-right-radius: var(--borderRadiusMedium);
+}
+
+/* Doubled for the same reason .numeric is: `.dataTable tbody th` is a (0,1,2)
+   descendant selector and outranks a single class whatever the source order. */
+.flowNet.flowNet th,
+.flowNet.flowNet td {
+  font-weight: var(--fontWeightSemibold);
+  border-bottom: none;
 }
 
 /* Referenced through styles, never as a literal string — a bare class name in

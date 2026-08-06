@@ -208,7 +208,11 @@ export function evaluateContract(contract, futureCaps, displaceable, years, stra
   const uncovered = sold.filter((id) => !futureCaps.has(id));
   const blocked = uncovered.length > 0 && !contract.soleUseConfirmed;
 
-  const annualCost = num(contract.annualCost);
+  /* Floored at zero. The cost box is free text, so "-400000" is accepted, and a
+     negative annual contract cost is not a state the world has: left signed it
+     produces a negative saving that reduces the case total while still drawing
+     in the savings colour everywhere downstream. */
+  const annualCost = Math.max(0, num(contract.annualCost));
   const endYear = num(contract.yearContractEnds) || CASE_START_YEAR;
   const firstYear = Math.max(1, endYear - CASE_START_YEAR + 2);
   const yearsSaved = Math.max(0, years - firstYear + 1);

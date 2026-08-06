@@ -39,6 +39,14 @@ import { CASE_START_YEAR, num } from './capabilityModel.js';
 
 const uniq = (xs) => [...new Set(xs)];
 const nameList = (xs) => xs.filter(Boolean).join(', ');
+
+/* "A, B and C" rather than "A and B and C", which is what join(' and ') gives
+   the moment a case picks a third SKU. */
+const prose = (xs) => {
+  const list = xs.filter(Boolean);
+  if (list.length < 2) return list[0] || '';
+  return `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}`;
+};
 const money = (v) => `$${Math.round(v).toLocaleString()}`;
 
 /** Coverage of a bucket: how many of its capabilities a set contains. */
@@ -142,8 +150,10 @@ export function buildReport({
      dated to each contract's end, so the average across the horizon understates
      what the customer actually stops paying. */
   const annualSavings = displaced.reduce((sum, l) => sum + l.annualCost, 0);
-  const byYear = c.microsoftByYear || [];
-  const annualInvestment = byYear.length ? byYear[byYear.length - 1] : c.incrementalAnnual || 0;
+  const msByYear = c.microsoftByYear || [];
+  const annualInvestment = msByYear.length
+    ? msByYear[msByYear.length - 1]
+    : c.incrementalAnnual || 0;
 
   const kpis = {
     roi: c.roi,
@@ -213,6 +223,28 @@ export function buildReport({
     });
   const stack = futureLicenses.map((id) => records.get(id)).filter(Boolean);
 
+  /* The one figure a sponsor repeats after the meeting, and the three that let
+     anyone reconstruct it.
+
+     `buying` is what is NEW, not the whole future basket. An upgrade path keeps
+     the base bundle in futureLicenses, so naming the basket credited the saving
+     to the licence the customer already runs: "With Microsoft 365 E3, Defender
+     Suite and Sentinel, Northwind could save", two lines above a summary saying
+     Northwind runs E3 today.
+
+     Direction has three values, not two. Zero is neither a saving nor a spend,
+     and "could spend a net $0" is a sentence nobody should have to parse. */
+  const buying = stack.filter((s) => s.isNew).map((s) => s.name);
+  const net = c.netBenefit || 0;
+  const headline = {
+    net,
+    direction: net > 0 ? 'save' : net < 0 ? 'spend' : 'even',
+    benefits: c.benefitTotal || 0,
+    costs: c.investmentTotal || 0,
+    account: customer.accountName || 'This customer',
+    buying: prose(buying.length ? buying : state.future.licenses),
+  };
+
   /* --------------------------- 4. financial impact ------------------------ */
 
   /* Free text on the form, so a seller typing the natural "1,350,000" arrives
@@ -230,7 +262,30 @@ export function buildReport({
   const futureAnnualSteady = (c.futureByYear || [])[years - 1] ?? c.futureAnnual ?? 0;
   const microsoftChange = futureAnnualSteady - (c.currentAnnual || 0);
 
+  /* Year by year, with the running balance. The horizon totals alone cannot
+     answer the two questions a CFO asks first: when does this turn positive,
+     and how lumpy is it getting there. Both are properties of the curve. */
+  const benefitByYear = c.competitorByYear || [];
+  const costByYear = c.microsoftByYear || [];
+  let running = 0;
+  const byYear = Array.from({ length: years }, (_, y) => {
+    const benefit = benefitByYear[y] || 0;
+    const cost = costByYear[y] || 0;
+    running += benefit - cost;
+    return { year: y + 1, label: `Year ${y + 1}`, benefit, cost, net: benefit - cost, cumulative: running };
+  });
+
+  /* Where the saving comes from, one bar per contract. Section 6 counts vendors
+     coming off the estate; this is the same list priced, which is the question
+     the count invites and never answers. */
+  const vendorSavings = displaced
+    .map((l) => ({ id: l.id, vendor: l.vendor, saved: l.saved, annual: l.annualCost, endYear: l.endYear }))
+    .sort((a, b) => b.saved - a.saved);
+
   const financial = {
+    byYear,
+    vendorSavings,
+    vendorSavingsTotal: vendorSavings.reduce((s, v) => s + v.saved, 0),
     steps: [
       { id: 'today', label: 'Annual licensing today', value: todaySpend, kind: 'total' },
       { id: 'stops', label: 'Competitor spend that stops', value: -annualSavings, kind: 'down' },
@@ -454,7 +509,7 @@ export function buildReport({
   /* ---------------------------- the summary ------------------------------- */
 
   const summary = (() => {
-    const head = `${customer.accountName || 'This customer'} runs ${state.current.licenses.join(' and ') || 'no Microsoft bundle'} today${vendors.length ? `, alongside ${vendors.length} named security vendor${vendors.length === 1 ? '' : 's'}` : ''}.`;
+    const head = `${customer.accountName || 'This customer'} runs ${prose(state.current.licenses) || 'no Microsoft bundle'} today${vendors.length ? `, alongside ${vendors.length} named security vendor${vendors.length === 1 ? '' : 's'}` : ''}.`;
     const gain = ` The move adds ${netNew.length} new capabilities.`;
     if (annualSavings) {
       return `${head}${gain} Displacing the named incumbents stops ${money(annualSavings)} a year against ${money(annualInvestment)} of new Microsoft licensing.`;
@@ -467,6 +522,7 @@ export function buildReport({
 
   return {
     kpis,
+    headline,
     summary,
     state,
     stack,
