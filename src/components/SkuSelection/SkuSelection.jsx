@@ -485,7 +485,7 @@ function CompetitiveDisplacement({ competitors, skus, businessCase, symbol, onMa
       <div className={styles.cardHead}>
         <div>
           <h2 className={styles.cardTitle}>Vendor consolidation</h2>
-          <p className={styles.cardLead}>What each incumbent vendor gives way to</p>
+          <p className={styles.cardLead}>What each vendor gives way to</p>
         </div>
       </div>
 

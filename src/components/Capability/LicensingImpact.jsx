@@ -63,7 +63,7 @@ export default function LicensingImpact() {
      cannot say the opposite of the figures beside it. */
   const context = () => {
     if (c.competitorLines.length === 0) {
-      return `No incumbents named yet, so the whole ${money(uplift)} a year is new spend.`;
+      return `No vendors named yet, so the whole ${money(uplift)} a year is new spend.`;
     }
     if (stops === 0) {
       return `Nothing named can be switched off inside the horizon, so the ${money(uplift)} a year stands on capability, not savings.`;

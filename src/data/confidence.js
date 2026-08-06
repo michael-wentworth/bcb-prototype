@@ -163,13 +163,13 @@ export function buildConfidence({
   add({
     id: 'incumbent-coverage',
     weight: 15,
-    label: 'Incumbents named',
+    label: 'Vendors named',
     applies: delta.potentialConsolidation.length > 0,
     score: delta.potentialConsolidation.length
       ? delta.consolidation.length / delta.potentialConsolidation.length
       : 0,
     step: PRODUCT_STEP,
-    gap: `${delta.newMicrosoft.length} gained capabilit${delta.newMicrosoft.length === 1 ? 'y has' : 'ies have'} no incumbent named, so the case claims no saving.`,
+    gap: `${delta.newMicrosoft.length} gained capabilit${delta.newMicrosoft.length === 1 ? 'y has' : 'ies have'} no vendor named, so the case claims no saving.`,
   });
 
   /* Kept separate from coverage and never multiplied by it: many vendors with

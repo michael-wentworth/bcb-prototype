@@ -416,7 +416,7 @@ export default function ProductSelection() {
         <Card className={styles.card}>
           <div>
             <h2 className={styles.cardTitle}>What the customer would have, and who supplies it today</h2>
-            <p className={styles.cardLead}>Name the incumbent where there is one</p>
+            <p className={styles.cardLead}>Name the vendor where there is one</p>
           </div>
 
           <div className={styles.quickAdd}>
@@ -717,7 +717,7 @@ export default function ProductSelection() {
       <StepFooter
         hint={
           delta.future.length
-            ? 'Name an incumbent to turn a capability into a saving'
+            ? 'Name a vendor to turn a capability into a saving'
             : 'Pick a future state to see the analysis'
         }
       />

@@ -435,7 +435,7 @@ export default function ExecutiveReport() {
           <h2 className={styles.cardTitle}>Vendor consolidation</h2>
           <p className={styles.cardLead}>
             {r.consolidation.vendorCount === 0
-              ? 'No incumbents named.'
+              ? 'No vendors named.'
               : r.consolidation.displacedCount
                 ? `${r.consolidation.displacedCount} of ${r.consolidation.vendorCount} named vendor${r.consolidation.vendorCount === 1 ? '' : 's'} come off the estate.`
                 : 'No named vendor can be displaced.'}
@@ -524,7 +524,7 @@ export default function ExecutiveReport() {
               <table className={styles.dataTable}>
                 <thead>
                   <tr>
-                    <th scope="col">Incumbent</th>
+                    <th scope="col">Vendor</th>
                     <th scope="col">Capability it covers</th>
                     <th scope="col" className={styles.numeric}>
                       Annual

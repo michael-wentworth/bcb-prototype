@@ -361,8 +361,8 @@ export function buildReport({
       text: annualSavings
         ? `${displacedVendorCount} contract${displacedVendorCount === 1 ? '' : 's'} stop inside the horizon.`
         : named.length
-          ? `${named.length} incumbent${named.length === 1 ? ' is' : 's are'} named, but none can be counted inside the horizon.`
-          : 'No incumbent spend named against what this move adds.',
+          ? `${named.length} vendor${named.length === 1 ? ' is' : 's are'} named, but none can be counted inside the horizon.`
+          : 'No vendor spend named against what this move adds.',
     },
     {
       id: 'consolidation',
@@ -371,8 +371,8 @@ export function buildReport({
       text: consolidation.displacedCount
         ? `${consolidation.displacedCount} vendor${consolidation.displacedCount === 1 ? '' : 's'} off the estate.`
         : named.length
-          ? 'Every named incumbent keeps running, so there is no consolidation to claim.'
-          : 'Consolidation shows once incumbents are named.',
+          ? 'Every named vendor keeps running, so there is no consolidation to claim.'
+          : 'Consolidation shows once vendors are named.',
     },
     {
       id: 'security',
@@ -425,7 +425,7 @@ export function buildReport({
       label: 'Competitor pricing',
       value: named.length
         ? 'Seller-entered annual cost per contract.'
-        : 'No incumbents named.',
+        : 'No vendors named.',
     },
     {
       label: 'Contract dates',
@@ -512,12 +512,12 @@ export function buildReport({
     const head = `${customer.accountName || 'This customer'} runs ${prose(state.current.licenses) || 'no Microsoft bundle'} today${vendors.length ? `, alongside ${vendors.length} named security vendor${vendors.length === 1 ? '' : 's'}` : ''}.`;
     const gain = ` The move adds ${netNew.length} new capabilities.`;
     if (annualSavings) {
-      return `${head}${gain} Displacing the named incumbents stops ${money(annualSavings)} a year against ${money(annualInvestment)} of new Microsoft licensing.`;
+      return `${head}${gain} Displacing the named vendors stops ${money(annualSavings)} a year against ${money(annualInvestment)} of new Microsoft licensing.`;
     }
     if (named.length) {
       return `${head}${gain} None of those contracts can be counted inside the ${years}-year horizon, so the case rests on capability rather than savings.`;
     }
-    return `${head}${gain} No incumbent spend named against those capabilities, so the case rests on capability rather than savings.`;
+    return `${head}${gain} No vendor spend named against those capabilities, so the case rests on capability rather than savings.`;
   })();
 
   return {

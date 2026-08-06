@@ -196,7 +196,7 @@ const INTENTS = [
           type: 'callout',
           tone: 'coach',
           title: 'Nothing is a displacement yet',
-          text: 'A gained capability becomes a saving only once you name the incumbent supplying it.',
+          text: 'A gained capability becomes a saving only once you name the vendor supplying it.',
         });
       }
       return { blocks };
@@ -271,7 +271,7 @@ const INTENTS = [
           blocks: [
             {
               type: 'text',
-              text: 'No incumbents named yet. Add them on step 2 with a cost and a contract end year.',
+              text: 'No vendors named yet. Add them on step 2 with a cost and a contract end year.',
             },
             { type: 'actions', items: [{ label: 'Go to product selection', kind: 'navigate', step: 1 }] },
           ],
@@ -440,7 +440,7 @@ const INTENTS = [
 
       const lines = c?.competitorLines || [];
       if (lines.length === 0)
-        gaps.push('**Incumbent products**: without them the case rests on capability alone');
+        gaps.push('**Current vendors**: without them the case rests on capability alone');
 
       const unlinked = lines.filter((l) => (l.capabilityIds || []).length === 0);
       if (unlinked.length > 0)
@@ -477,7 +477,7 @@ const INTENTS = [
       const untouched = c ? capNames(c.delta.newMicrosoft) : [];
       if (untouched.length > 3)
         gaps.push(
-          `**${untouched.length} gained capabilities with no incumbent named**: each one is a consolidation opportunity`,
+          `**${untouched.length} gained capabilities with no vendor named**: each one is a consolidation opportunity`,
         );
 
       return {
@@ -550,7 +550,7 @@ const INTENTS = [
             text: c.paybackMonths
               ? 'Costs start immediately, but each saving begins the year after its contract lapses.'
               : c.investmentTotal > 0
-                ? 'Either the analysis period is too short for the contract end dates, or too few incumbents are named.'
+                ? 'Either the analysis period is too short for the contract end dates, or too few vendors are named.'
                 : 'Nothing on the Microsoft side yet, so there is no period to measure.',
           },
         ].filter(Boolean),
@@ -569,7 +569,7 @@ const INTENTS = [
           type: 'objections',
           items: [
             {
-              objection: '"Your savings assume we turn the incumbent off."',
+              objection: '"Your savings assume we switch these products off."',
               response:
                 'Correct, and that is what the Year contract ends field is for. Every saving is dated to a contract lapse, not assumed on day one.',
             },

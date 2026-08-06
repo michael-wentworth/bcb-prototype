@@ -66,7 +66,7 @@ export default function CashFlowChart({ rows, years, symbol = '$' }) {
   if (rows.every((r) => r.benefit === 0 && r.cost === 0)) {
     return (
       <p className={styles.chartEmpty}>
-        No benefits or costs to plot. Name an incumbent, or set a rate above what the customer
+        No benefits or costs to plot. Name a vendor, or set a rate above what the customer
         pays today.
       </p>
     );
