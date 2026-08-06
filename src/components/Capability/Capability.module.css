@@ -534,8 +534,15 @@
   flex-wrap: wrap;
 }
 
-.quickAddBox {
-  min-width: 320px;
+/* Doubled, and a flex basis rather than a min-width. Fluent's own Combobox
+   class sets BOTH width and min-width to 250px, so a single module class lost
+   on specificity and the min-width never applied: the field rendered at 250px
+   with a 214px input, one pixel short of its own placeholder, which clipped the
+   ellipsis. Growing to fill the row also keeps it honest as the card resizes. */
+.quickAddBox.quickAddBox {
+  flex: 1 1 340px;
+  min-width: 0;
+  max-width: 460px;
 }
 
 .quickAddHint {
@@ -584,7 +591,36 @@
   color: var(--colorNeutralForeground1);
 }
 
+/* Chips, not a comma-joined sentence. This is a set the seller builds from the
+   table below one row at a time, and a run-on string read as prose the eye
+   skips rather than a list it can count. */
 .contractCaps {
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.contractCap {
+  padding: 1px 8px;
+  border-radius: var(--borderRadiusCircular);
+  background-color: var(--colorNeutralBackground3);
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.contractFields {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+  margin-left: auto;
+}
+
+.contractCapsEmpty {
   flex: 1 1 auto;
   font-size: var(--fontSizeBase200);
   color: var(--colorNeutralForeground3);
@@ -632,10 +668,6 @@
 
 /* Sits on the contract card so a product we do not carry can be told what it
    covers without leaving the card it was just typed into. */
-.contractLink {
-  max-width: 320px;
-}
-
 
 
 

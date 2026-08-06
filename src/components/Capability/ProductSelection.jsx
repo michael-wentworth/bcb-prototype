@@ -161,18 +161,6 @@ export default function ProductSelection() {
   /* Every capability this move adds, flat, for the card-level picker. Retained
      ones are excluded: Microsoft already supplies them, so there is nothing for
      a competitor contract to attach to. */
-  const linkable = useMemo(
-    () => groups.flatMap((g) => g.capabilities).filter((c) => !c.retained),
-    [groups],
-  );
-  const [linkQueries, setLinkQueries] = useState({});
-  const setLinkQuery = (id, value) => setLinkQueries((q) => ({ ...q, [id]: value }));
-  const linkableFor = (l) => {
-    const q = (linkQueries[l.id] || '').trim().toLowerCase();
-    return linkable.filter(
-      (c) => !l.capabilityIds.includes(c.id) && (!q || c.name.toLowerCase().includes(q)),
-    );
-  };
 
   /* Same pill step 1 uses. It renders only where the copilot supplied the
      value, and turns into "Confirmed by you" the moment the seller changes it —
@@ -405,12 +393,6 @@ export default function ProductSelection() {
         ) : null}
       </Card>
 
-      {/* Under the recommendation it prices, and above the mapping that changes
-          it — moving one incumbent in the table below moves these three figures,
-          which is the argument for showing them here rather than only on the
-          report. */}
-      <LicensingImpact />
-
       {/* --------------------------- competitor mapping ------------------------- */}
       {groups.length > 0 ? (
         <Card className={styles.card}>
@@ -474,68 +456,59 @@ export default function ProductSelection() {
                     {/* What the seller said it covers, not what the model can
                         price. `linked` is narrowed to displaceable capabilities,
                         so a contract named against a net-new one reported itself
-                        as unlinked while the row above plainly showed it. */}
-                    <span className={styles.contractCaps}>
-                      {l.capabilityIds.length
-                        ? l.capabilityIds
-                            .map((id) => capabilityById(id)?.name)
-                            .filter(Boolean)
-                            .join(', ')
-                        : 'Not linked yet'}
-                    </span>
-                    <Input
-                      size="small"
-                      className={styles.costInput}
-                      value={l.annualCost || ''}
-                      onChange={(_, d) => updateContract(l.id, 'annualCost', d.value)}
-                      contentBefore="$"
-                      placeholder="Annual cost"
-                      aria-label={`Annual cost for ${l.vendor}`}
-                    />
-                    <Input
-                      size="small"
-                      className={styles.yearInput}
-                      value={l.yearContractEnds || ''}
-                      onChange={(_, d) => updateContract(l.id, 'yearContractEnds', d.value)}
-                      placeholder="Ends"
-                      aria-label={`Contract end year for ${l.vendor}`}
-                    />
-                    <Button
-                      appearance="subtle"
-                      size="small"
-                      icon={<Dismiss16Regular />}
-                      aria-label={`Remove ${l.vendor}`}
-                      onClick={() => removeContract(l.id)}
-                    />
+                        as unlinked while the row above plainly showed it.
+
+                        Read-only, and the only place these are listed. The table
+                        below is where a vendor is put against a capability, and
+                        this row is what that adds up to. */}
+                    {l.capabilityIds.length ? (
+                      <ul className={styles.contractCaps}>
+                        {l.capabilityIds.map((id) => (
+                          <li key={id} className={styles.contractCap}>
+                            {capabilityById(id)?.name || id}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className={styles.contractCapsEmpty}>Not linked yet</span>
+                    )}
+                    {/* One group, so the two fields and the remove button move
+                        together. Loose in the flex row, a long chip list pushed
+                        the button onto a line of its own. */}
+                    <div className={styles.contractFields}>
+                      <Input
+                        size="small"
+                        className={styles.costInput}
+                        value={l.annualCost || ''}
+                        onChange={(_, d) => updateContract(l.id, 'annualCost', d.value)}
+                        contentBefore="$"
+                        placeholder="Annual cost"
+                        aria-label={`Annual cost for ${l.vendor}`}
+                      />
+                      <Input
+                        size="small"
+                        className={styles.yearInput}
+                        value={l.yearContractEnds || ''}
+                        onChange={(_, d) => updateContract(l.id, 'yearContractEnds', d.value)}
+                        placeholder="Ends"
+                        aria-label={`Contract end year for ${l.vendor}`}
+                      />
+                      <Button
+                        appearance="subtle"
+                        size="small"
+                        icon={<Dismiss16Regular />}
+                        aria-label={`Remove ${l.vendor}`}
+                        onClick={() => removeContract(l.id)}
+                      />
+                    </div>
                   </div>
                   {l.capabilityIds.length === 0 ? (
                     <p className={styles.contractReason}>
-                      Not in our catalogue, so say where it applies.
+                      Pick this vendor against a capability in the table below.
                     </p>
                   ) : l.reason ? (
                     <p className={styles.contractReason}>{l.reason}</p>
                   ) : null}
-                  {/* A product the catalogue has never heard of has to be given
-                      its capabilities by hand, and sending the seller off to
-                      hunt for the right row to do it was the long way round. */}
-                  <Combobox
-                    size="small"
-                    className={styles.contractLink}
-                    placeholder="Link to a capability…"
-                    value={linkQueries[l.id] ?? ''}
-                    selectedOptions={[]}
-                    onChange={(e) => setLinkQuery(l.id, e.target.value)}
-                    onOptionSelect={(_, d) => {
-                      const cap = linkable.find((c) => c.name === d.optionText);
-                      if (cap) linkVendor(l.vendor, [cap.id]);
-                      setLinkQuery(l.id, '');
-                    }}
-                    aria-label={`Link ${l.vendor} to a capability`}
-                  >
-                    {linkableFor(l).slice(0, 40).map((c) => (
-                      <Option key={c.id} text={c.name}>{c.name}</Option>
-                    ))}
-                  </Combobox>
                   {l.blocked ? (
                     <Checkbox
                       label="The customer does not use it for those, so count this contract"
@@ -713,6 +686,11 @@ export default function ProductSelection() {
           </div>
         </Card>
       ) : null}
+
+      {/* Last, because it is the answer rather than an input. Every figure in it
+          moves when a vendor changes in the table above, so it reads as the
+          running total of the step rather than as something to fill in. */}
+      <LicensingImpact />
 
       <StepFooter
         hint={
