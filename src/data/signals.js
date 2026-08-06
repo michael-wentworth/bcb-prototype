@@ -39,6 +39,12 @@ export const SIGNALS = {
   /* The single explicit question, asked once at the end and only if the copilot
      actually contributed. */
   CONFIDENCE_ANSWERED: 'confidence-answered',
+
+  /* Its follow-up, on the same screen and in the same breath. Not a second ask:
+     the seller has already said how it went, and this is the one detail that
+     makes that answer actionable. Time saved where it went well, and what went
+     wrong where it did not. Skippable, and recorded as skipped when it is. */
+  FEEDBACK_GIVEN: 'feedback-given',
 };
 
 /** Human labels, for anywhere a signal is summarised back. */
@@ -53,6 +59,7 @@ export const SIGNAL_LABELS = {
   [SIGNALS.REPORT_DOWNLOADED]: 'Report downloaded',
   [SIGNALS.REPORT_SHARED]: 'Report shared',
   [SIGNALS.CONFIDENCE_ANSWERED]: 'Confidence rated',
+  [SIGNALS.FEEDBACK_GIVEN]: 'Feedback given',
 };
 
 /* The signals that represent the seller correcting the copilot rather than

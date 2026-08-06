@@ -172,6 +172,9 @@ const initialState = {
   aiUsed: false,
   /* The single explicit answer. null until asked and answered. */
   caseConfidenceAnswer: null,
+  /* The follow-up to that answer. Null while unanswered; an object once the
+     seller has either filled it in or skipped it, which is what ends the ask. */
+  caseFeedback: null,
   /* Asked once. A flag rather than a scan of the message list, because the
      effect that pushes it can fire again on any re-render and "once" has to
      mean once. */
@@ -938,6 +941,14 @@ function reducer(state, action) {
         answer: action.answer,
       });
 
+    /* The detail behind the answer, or an explicit skip. Either way it closes
+       the ask, so nothing can prompt the seller twice. */
+    case 'SUBMIT_FEEDBACK':
+      return withSignal({ ...state, caseFeedback: action.feedback }, SIGNALS.FEEDBACK_GIVEN, {
+        ...action.feedback,
+        answer: state.caseConfidenceAnswer,
+      });
+
     case 'RESET':
       return {
         ...initialState,
@@ -1189,6 +1200,7 @@ export function AppStateProvider({ children }) {
          from anything new the seller has to click. */
       recordSignal: (signalType, detail) => dispatch({ type: 'RECORD_SIGNAL', signalType, detail }),
       answerConfidence: (answer) => dispatch({ type: 'ANSWER_CONFIDENCE', answer }),
+      submitFeedback: (feedback) => dispatch({ type: 'SUBMIT_FEEDBACK', feedback }),
       setNarrative: (id, text) => dispatch({ type: 'SET_NARRATIVE', id, text }),
       revertNarrative: (id) => dispatch({ type: 'REVERT_NARRATIVE', id }),
     }),

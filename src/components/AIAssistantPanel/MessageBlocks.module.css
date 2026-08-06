@@ -384,6 +384,53 @@
   border-radius: var(--borderRadiusCircular);
 }
 
+/* The follow-up, in place of the chips the seller just used. Stacked rather
+   than inline: the panel is narrow, and two labelled controls side by side put
+   both of them below their own labels anyway. */
+.followUp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingVerticalM);
+}
+
+.followUpLabel {
+  display: block;
+  margin-bottom: var(--spacingVerticalXS);
+  font-size: var(--fontSizeBase200);
+  color: var(--colorNeutralForeground2);
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalS);
+}
+
+.sliderRow > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Fixed width and tabular figures, so the slider does not shuffle sideways as
+   the label goes from "5 min" to "30 min" while the seller is dragging it. */
+.sliderValue {
+  flex: none;
+  width: 52px;
+  text-align: right;
+  font-size: var(--fontSizeBase200);
+  font-variant-numeric: tabular-nums;
+  color: var(--colorNeutralForeground1);
+}
+
+.followUpNote {
+  width: 100%;
+}
+
+.followUpActions {
+  display: flex;
+  gap: var(--spacingHorizontalXS);
+}
+
 .confidenceThanks {
   margin: 0;
   display: flex;
